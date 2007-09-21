@@ -1480,8 +1480,6 @@ class MSSqlGenerator extends BaseGenerator {
     }
 }
 
-
-
 class SQLiteGenerator extends BaseGenerator {
     function SQLiteGenerator() {
 	$this->setColumnDefinitionMap(
@@ -1537,20 +1535,44 @@ class SQLiteGenerator extends BaseGenerator {
 	    }
 	    $output .= ");\n\n";
 
-	    /**
-	     * @todo XXX Use PK / UK instead of general index syntax. 
-	     */
 	    for ($i = $firstNonColumn; $i < count($child); $i++) {
-		$crc = $this->getIndexCrc($child[$i]['child']);
-		$output .= 'CREATE INDEX DB_TABLE_PREFIX' . $child[0]['content'] . '_' . $crc
-		    . ' ON DB_TABLE_PREFIX' . $child[0]['content'] . "(";
-		for ($j = 0; $j < count($child[$i]['child']); $j++) {
-		    $output .= 'DB_COLUMN_PREFIX' . $child[$i]['child'][$j]['content'];
-		    if ($j < count($child[$i]['child']) - 1) {
-			$output .= ", ";
-		    }
-		}
-		$output .= ");\n\n";
+	        if ($child[$i]['name'] == 'INDEX') {
+    		    /* column-name */
+    		    $output .= 'CREATE INDEX ';
+    		    $nameKey = strtoupper('name_' . $this->getDbType());
+    		    $columns = $child[$i]['child'];
+    		    if (isset($child[$i]['attrs'][$nameKey])) {
+    			$output .= $child[$i]['attrs'][$nameKey];
+    		    } else {
+    			$output .= 'DB_TABLE_PREFIX' . $child[0]['content']
+    			    . '_' . $this->getIndexCrc($columns);
+    		    }
+    		    $output .= ' ON ' . 'DB_TABLE_PREFIX' . $child[0]['content'] . '(';
+    		    for ($j = 0; $j < count($columns); $j++) {
+    			$output .= 'DB_COLUMN_PREFIX' . $columns[$j]['content'];
+    			if ($j < count($columns) - 1) {
+    			    $output .= ', ';
+    			}
+    		    }
+    		    $output .= ')';
+    		    $output .= ";\n\n";
+    		    break;
+        	} else {
+        	    $output .= 'CREATE UNIQUE INDEX DB_TABLE_PREFIX' . $child[0]['content'];
+		    if (!empty($child[$i]['attrs']['PRIMARY'])) {
+			$output .= '_pkey';
+		    } else {
+                    	$output .= '_' . $this->getIndexCrc($child[$i]['child']);
+                    }
+        	    $output .= ' ON DB_TABLE_PREFIX' . $child[0]['content'] . "(";
+        	    for ($j = 0; $j < count($child[$i]['child']); $j++) {
+        	        $output .= 'DB_COLUMN_PREFIX' . $child[$i]['child'][$j]['content'];
+        	        if ($j < count($child[$i]['child']) - 1) {
+        	    	    $output .= ", ";
+              	        }
+                    }
+        	    $output .= ");\n\n";
+                }
 	    }
 
 	    /* Schema info */
@@ -1581,9 +1603,24 @@ class SQLiteGenerator extends BaseGenerator {
 		    break;
 
 		case 'KEY':
-		    /**
-		     * @todo XXX Use PK / UK instead of general index syntax for keys.
-		     */
+		    $output .= 'CREATE UNIQUE INDEX ';
+		    $columns = $c['child'];
+		    $output .= 'DB_TABLE_PREFIX' . $parent['child'][0]['content'] . '_';
+		    if (!empty($c['attrs']['PRIMARY'])) {
+			$output .= 'pkey';
+            	    } else {
+                	$output .= $this->getIndexCrc($columns);
+            	    }
+		    $output .= ' ON ' . 'DB_TABLE_PREFIX' . $parent['child'][0]['content'] . '(';
+		    for ($i = 0; $i < count($columns); $i++) {
+			$output .= 'DB_COLUMN_PREFIX' . $columns[$i]['content'];
+			if ($i < count($columns) - 1) {
+			    $output .= ', ';
+			}
+		    }
+		    $output .= ')';
+		    $output .= ";\n\n";
+		    break;
 		case 'INDEX':
 		    /* column-name */
 		    $output .= 'CREATE INDEX ';
@@ -1668,13 +1705,47 @@ class SQLiteGenerator extends BaseGenerator {
 	    break;
 
 	case 'ALTER':
-	    /*
-	     * No support for ALTER TABLE ALTER COLUMN in SQLite but
-	     * shoulden't affect type changes since columns store any value.
-	     * @todo How to handle DEFAULT, (NOT) NULL, ...)?
-	     */
+         /* column+ */
+	    for ($i = 0; $i < count($child); $i++) {
+	        /*
+	         * SQLite only supports ADD COLUMN and the workaround DROP COLUMN.
+	         * As a workaround for ALTER COLUMN:
+	         * Create Temporary Table
+	         * Copy current column to temporary
+	         * Delete current column
+	         * Recreate Column with new settings
+	         * Copy content back to current column
+	         * Delete Temporary Table
+	         */
+	        $output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+			    ' ADD COLUMN DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . 'Temp';
+			$output .= ' ' . $this->columnDefinition($child[$i]['child'], false) . ";\n\n";
+		$output .= 'VACUUM DB_TABLE_PREFIX' . $parent['child'][0]['content'] . ";\n\n";
+	        $output .= 'UPDATE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+			    ' SET DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . 'Temp' .
+			    ' = DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . ";\n\n";
+	        $output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+			    ' DROP COLUMN DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . ";\n\n";
+	        $output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+			    ' ADD COLUMN DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'];
+		$output .= ' ' . $this->columnDefinition($child[$i]['child'], false, false);
+		$defaultValue = $this->getDefaultElement($child[$i]['child']);
+	        if (($notNull = $this->getNotNullElement($child[$i]['child']))
+			    && (empty($notNull['attrs']['EMPTY'])
+				|| $notNull['attrs']['EMPTY'] != 'allowed')) {
+	            $output .= " NOT NULL DEFAULT '" . (isset($defaultValue) ? $defaultValue : '') . "'";
+	        } else if ($defaultValue !== null) {
+		    $output .= " DEFAULT '" . $defaultValue . "'";
+		}
+	        $output .= ";\n\n";
+		$output .= 'VACUUM DB_TABLE_PREFIX' . $parent['child'][0]['content'] . ";\n\n"; 
+	 	$output .= 'UPDATE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+			   ' SET DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] .
+			   ' = DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . "Temp;\n\n";
+	        $output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+			   ' DROP COLUMN DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . "Temp;\n\n";
+	    }
 	    break;
-
 	default:
 	    $output .= parent::createSql($node, $index, $lastPeerIndex, $parent);
 	}

@@ -106,11 +106,11 @@ class ADODB_pdo extends ADOConnection {
 			$argDSN .= ';dbname='.$argDatabasename;
 		}
 		try {
-			$this->_connectionID = new PDO($argDSN, $argUsername, $argPassword);
+			$this->_connectionID = new PDO($argDSN, $argUsername,
+                $argPassword, array(PDO::ATTR_PERSISTENT => $persist));
 		} catch (Exception $e) {
 			$this->_connectionID = false;
 			$this->_errorno = -1;
-			//var_dump($e);
 			$this->_errormsg = 'Connection attempt failed: '.$e->getMessage();
 			return false;
 		}
@@ -231,20 +231,20 @@ class ADODB_pdo extends ADOConnection {
 	
 	/* returns queryID or false */
         function _query($sql,$inputarr=false) {
-                $ok = false;
+                $ok = false;    
         	if (is_array($sql)) {
         		$stmt = $sql[1];
         	} else {
         		$stmt = $this->_connectionID->prepare($sql);
-        	}
-        
+        	}     
+                          
         	if ($stmt) {
         		$this->_driver->debug = $this->debug;
         
         		if ($inputarr) $ok = $stmt->execute(array_values($inputarr));
         		else $ok = $stmt->execute();
         	} 
-        
+
         	$this->_errormsg = false;
         	$this->_errorno = false;
         

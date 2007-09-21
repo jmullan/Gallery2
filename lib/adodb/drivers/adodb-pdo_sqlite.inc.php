@@ -39,10 +39,12 @@ class ADODB_pdo_sqlite extends ADODB_pdo {
                 }
         }
 
+	function _connect($argDSN, $argUsername, $argPassword, $argDatabasename, $persist=false) {
+	       return parent::_connect($argDatabasename,'','','',$persist);
+	}
 
         function sqliteDropColumn($sql) {
                 $queryparts = preg_split("/[\s]+/",$sql,10,PREG_SPLIT_NO_EMPTY);
-               // print_r($queryparts);
                 if(count($queryparts) == 6) {
                         $table = $queryparts[2];
                         $temp_table = $table.'_Temp';
@@ -59,39 +61,63 @@ class ADODB_pdo_sqlite extends ADODB_pdo {
                            // DROP Temp table
                            $meta = $this->MetaColumns($table);
                            $fields = Array();
+			   $fieldNames = Array();
                            foreach($meta as $col) {
-                                if($col->name != $removeColumn)
-                                        $fields[] = $col->name;             
+                                if($col->name != $removeColumn) {
+                                       $colText = $col->name;
+				       if(!empty($col->type))
+				       		$colText .= ' '.$col->type;  
+				       if($col->not_null)
+						$colText .= ' NOT NULL';
+				       if(!empty($col->default_value))
+				       		$colText .= ' DEFAULT '.$col->default_value.'';
+				       
+				        $fieldNames[] = $col->name;
+				        $fields[] = $colText;
+				}           
                            }
                            $fieldList = implode(',',$fields);
+			   $fieldNameList = implode(',',$fieldNames);
                            
                            $this->BeginTrans();
                            $sql = "SELECT sql FROM sqlite_master WHERE type = 'index' AND tbl_name = '$table'";
                            $result = $this->Execute($sql);
-                           
                            while(list($index) = $result->FetchRow()) {
-                                  $indexes[] = $index;           
+                                  $indexes[] = $index;
                            }
 
-                           $renameTempSql = 'ALTER TABLE '.$table.' RENAME TO '.$temp_table.';';
-                           $createTableSql = 'CREATE TABLE '.$table.'('.$fieldList.');';
-                           $copyTableContentsSql = 'INSERT INTO '.$table.' SELECT '.$fieldList.' FROM '.$temp_table.';';
+                           $renameTempSql = 'ALTER TABLE '.$table.' RENAME TO '.$temp_table.';'; 
+                           $createTableSql = 'CREATE TABLE '.$table.'('.$fieldList.');'; 
+                           $copyTableContentsSql = 'INSERT INTO '.$table.' SELECT '.$fieldNameList.' FROM '.$temp_table.';';  
                            $removeTableSql = 'DROP TABLE '.$temp_table.';';
-                           $vacuumSql = 'VACUUM '.$table.';';
+                           $vacuumSql = 'VACUUM '.$table.';'; 
 
                            // Do the steps to drop the column by renaming and creating new table
-                           $ok = $this->Execute($renameTempSql);
-                           if($ok) $ok = $this->Execute($createTableSql);
-                           if($ok) $ok = $this->Execute($copyTableContentsSql);       
+                           $ok = $this->Execute($renameTempSql); 
+                           if($ok) $ok = $this->Execute($createTableSql);  
+                           if($ok) $ok = $this->Execute($copyTableContentsSql);             
                            
                            $this->CommitTrans($ok);
                                          
-                           if($ok) $ok = $this->Execute($removeTableSql);                                                     
-                           if($ok) $ok = $this->Execute($vacuumSql);
+                           if($ok) $ok = $this->Execute($removeTableSql);                                                       
+                           if($ok) $ok = $this->Execute($vacuumSql);   
                                                       
                            // Recreate the indexes on the new table from the old
                            foreach($indexes as $indexSQL) {
-                               if($ok) $ok = $this->Execute($indexSQL);  
+			       $listStart = strpos($indexSQL,'(')+1;
+			       $listEnd = strpos($indexSQL,')');
+			       $indexList = substr($indexSQL,$listStart,$listEnd-$listStart);
+			       $indexList = explode(',',$indexList);
+			       $newIndexList = Array();
+			       foreach($indexList as $listItem) {
+			           $listItem = trim($listItem);
+				   if($listItem != $removeColumn) {
+			       		$newIndexList[] = $listItem;    
+				   }
+			       }
+			       $indexSQL = substr($indexSQL,0,$listStart-1);
+			       $indexSQL .= '('.implode(',',$newIndexList).');'; 
+                               $this->Execute($indexSQL);   
                            }
                            return $ok; 
                         }
@@ -190,9 +216,9 @@ class ADODB_pdo_sqlite extends ADODB_pdo {
 	  $save = $ADODB_FETCH_MODE;
 	  $ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
 	  if ($this->fetchMode !== false)
-                $savem = $this->SetFetchMode(false);
+                $savem = $this->SetFetchMode(false);           
 	  $rs = $this->Execute("PRAGMA table_info('$tab')");
-	  if (isset($savem))
+	  if (isset($savem))                                  
                 $this->SetFetchMode($savem);
 	  if (!$rs) {
 	    $ADODB_FETCH_MODE = $save;

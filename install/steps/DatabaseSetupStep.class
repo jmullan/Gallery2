@@ -72,9 +72,8 @@ class DatabaseSetupStep extends InstallStep {
 	    $mysqltType = 'mysqli';
 	}
 	if ($this->_config['type'] == 'pdo_sqlite') {    
-                $this->_config['hostname'] = 'sqlite:' . 
-                    $galleryStub->getConfig('data.gallery.base') . 'gallery2.db';
-                $this->_config['database'] = '';      
+	    $this->_config['database'] = 
+	    	'sqlite:' . $galleryStub->getConfig('data.gallery.base') . 'gallery2.db';   
         }
 	switch ($this->_config['type']) {
 	    case 'mysql':
