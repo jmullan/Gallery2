@@ -33,41 +33,41 @@ class HTTP_WebDAV_Server
     // {{{ Member Variables
 
     /**
-     * URL path for this request
+     * Realm for authentification popups
      *
      * @var string
      */
-    var $path;
+    var $authRealm;
 
     /**
-     * Base URL for this request
-     *
-     * See PHP parse_url structure
-     *
-     * @var array
-     */
-    var $baseUrl;
-
-    /**
-     * Realm string to be used in authentification popups
-     *
-     * @var string
-     */
-    var $authRealm = 'PHP WebDAV';
-
-    /**
-     * String to be used in "X-Dav-Powered-By" header
+     * Value of X-Dav-Powered-By response header
      *
      * @var string
      */
     var $poweredBy;
 
     /**
-     * Remember parsed If: (RFC2518 9.4) header conditions
+     * Request path components
      *
      * @var array
      */
-    var $_if_header_uris = array();
+    var $pathComponents;
+
+    /**
+     * Base URL components
+     *
+     * See PHP parse_url structure
+     *
+     * @var array
+     */
+    var $baseUrlComponents;
+
+    /**
+     * If request header components
+     *
+     * @var array
+     */
+    var $ifHeaderComponents;
 
     /**
      * Array of response headers which have already been sent
@@ -95,46 +95,46 @@ class HTTP_WebDAV_Server
      */
     function init()
     {
-        // auth realm
+        // realm for authentification popups
         $this->authRealm = 'PHP WebDAV';
 
-        // identify ourselves
+        // value of X-Dav-Powered-By response header
         $this->poweredBy = 'PHP class: ' . get_class($this);
 
-        // set path
+        // request path components
+        $this->pathComponents = array();
         if (!empty($_SERVER['PATH_INFO'])) {
-            $this->path = $_SERVER['PATH_INFO'];
+            $this->pathComponents = preg_split('/\//', $_SERVER['PATH_INFO'], -1, PREG_SPLIT_NO_EMPTY);
         }
 
-        // undo damage caused by magic_quotes
-        if (ini_get('magic_quotes_gpc')) {
-            $this->path = stripslashes($this->path);
-        }
-
-        // set base URL
+        // base URL components
+        $this->baseUrlComponents = array();
         if (!empty($_SERVER['SCRIPT_NAME'])) {
-            $this->baseUrl = parse_url($_SERVER['SCRIPT_NAME']);
+            $this->baseUrlComponents = $this->parseUrl($_SERVER['SCRIPT_NAME']);
         }
 
         if (!empty($_SERVER['REQUEST_URI'])) {
-            $scriptUrl = $this->baseUrl;
+            $requestUrlComponents = $this->parseUrl($_SERVER['REQUEST_URI']);
 
-            $this->baseUrl = parse_url($_SERVER['REQUEST_URI']);
-
-            if (!empty($scriptUrl['path'])) {
-                $this->path = substr($this->baseUrl['path'], strlen($scriptUrl['path']));
-                $this->baseUrl['path'] = $scriptUrl['path'];
-            } else if (!empty($this->path)) {
-                $this->baseUrl['path'] = substr($this->baseUrl['path'], 0, strlen($this->baseUrl['path']) - strlen($this->path));
+            if (!empty($this->baseUrlComponents['pathComponents'])) {
+                $this->pathComponents = array_slice($requestUrlComponents['pathComponents'], count($this->baseUrlComponents['pathComponents']));
             }
+
+            $this->baseUrlComponents['pathComponents'] = array_slice($requestUrlComponents['pathComponents'], 0, -count($this->pathComponents));
         }
 
         if (!empty($_SERVER['HTTP_HOST'])) {
-            $this->baseUrl['host'] = $_SERVER['HTTP_HOST'];
+            $this->baseUrlComponents['host'] = $_SERVER['HTTP_HOST'];
         }
 
         if (!empty($_SERVER['QUERY_STRING'])) {
-            $this->baseUrl['query'] = $_SERVER['QUERY_STRING'];
+            $this->baseUrlComponents['query'] = $_SERVER['QUERY_STRING'];
+        }
+
+        // If request header components
+        $this->ifHeaderComponents = array();
+        if (!empty($_SERVER['HTTP_IF'])) {
+            $this->ifHeaderComponents = $this->_if_header_parser($_SERVER['HTTP_IF']);
         }
     }
 
@@ -169,14 +169,14 @@ class HTTP_WebDAV_Server
             $this->setResponseHeader('WWW-Authenticate: Basic realm="'
                 . $this->authRealm . '"');
 
-            // Windows seems to require this being the last header sent
-            // (changed according to PECL bug #3138)
+            // Windows seems to require this being the last response header
+            // sent (changed according to PECL bug #3138)
             $this->setResponseStatus('401 Unauthorized');
             return;
         }
 
-        // check if header conditions
-        if (!$this->_check_if_header_conditions()) {
+        // check if request header components
+        if (!$this->check_if_helper($this->ifHeaderComponents)) {
             $this->setResponseStatus('412 Precondition Failed');
             return;
         }
@@ -470,9 +470,8 @@ class HTTP_WebDAV_Server
     /**
      * OPTIONS method handler
      *
-     * The OPTIONS method handler creates a valid OPTIONS reply including Dav:
-     * and Allow: headers based on the implemented methods found in the actual
-     * instance
+     * OPTIONS method handler responds with DAV and Allow response headers
+     * based on the methods actually implemented by this server instance
      *
      * @param void
      * @return void
@@ -482,23 +481,21 @@ class HTTP_WebDAV_Server
         // get allowed methods
         $allowedMethods = $this->getAllowedMethods();
 
-        // dav header
-        $dav = array(1); // assume we are always dav class 1 compliant
+        // DAV response header
+        $davHeader = array(1); // assume we are always DAV class 1 compliant
         if (in_array('LOCK', $allowedMethods)
                 && in_array('UNLOCK', $allowedMethods)) {
-            $dav[] = 2; // dav class 2 requires that locking is supported
+            $davHeader[] = 2; // DAV class 2 requires locking
         }
 
         // tell clients what we found
         $this->setResponseHeader('Allow: ' . implode(',', $allowedMethods));
-        $this->setResponseHeader('DAV: ' . implode(',', $dav));
+        $this->setResponseHeader('DAV: ' . implode(',', $davHeader));
         $this->setResponseHeader('Content-Length: 0');
 
-        // Microsoft clients default to the Frontpage protocol unless we tell
-        // them to use WebDAV
+        // Microsoft clients default to Frontpage protocol unless we tell them
+        // to use WebDAV
         $this->setResponseHeader('MS-Author-Via: DAV');
-
-        $this->setResponseStatus('200 OK');
     }
 
     // }}}
@@ -513,9 +510,6 @@ class HTTP_WebDAV_Server
      */
     function propfind_request_helper(&$options)
     {
-        $options = array();
-        $options['path'] = $this->path;
-
         // RFC2518 8.1: A client may submit a Depth header with a value of "0",
         // "1", or "infinity" with a PROPFIND on a collection resource with
         // internal member URIs.  DAV compliant servers MUST support the "0",
@@ -570,8 +564,8 @@ class HTTP_WebDAV_Server
         foreach ($status as $file) {
             $response = array();
 
-            // copy href to response
-            foreach (array('href', 'path') as $key) {
+            // copy to response
+            foreach (array('pathComponents', 'url') as $key) {
                 if (!empty($file[$key])) {
                     $response[$key] = $file[$key];
                 }
@@ -657,6 +651,9 @@ class HTTP_WebDAV_Server
      */
     function propfind_wrapper()
     {
+        $options = array();
+        $options['pathComponents'] = $this->pathComponents;
+
         // prepare data-structure from PROPFIND request
         if (!$this->propfind_request_helper($options)) {
             return;
@@ -681,9 +678,6 @@ class HTTP_WebDAV_Server
      */
     function proppatch_request_helper(&$options)
     {
-        $options = array();
-        $options['path'] = $this->path;
-
         $options['namespaces'] = array();
 
         // Microsoft needs this special namespace for date and time values
@@ -724,8 +718,8 @@ class HTTP_WebDAV_Server
         $file = $status;
         $response = array();
 
-        // copy href to response
-        foreach (array('href', 'path', 'responsedescription') as $key) {
+        // copy to response
+        foreach (array('pathComponents', 'url', 'responsedescription') as $key) {
             if (!empty($file[$key])) {
                 $response[$key] = $file[$key];
             }
@@ -775,10 +769,13 @@ class HTTP_WebDAV_Server
     function proppatch_wrapper()
     {
         // check resource is not locked
-        if (!$this->check_locks_wrapper($this->path)) {
+        if (!$this->check_locks_wrapper($this->pathComponents)) {
             $this->setResponseStatus('423 Locked');
             return;
         }
+
+        $options = array();
+        $options['pathComponents'] = $this->pathComponents;
 
         // perpare data-structure from PROPATCH request
         if (!$this->proppatch_request_helper($options)) {
@@ -805,7 +802,7 @@ class HTTP_WebDAV_Server
     function mkcol_wrapper()
     {
         $options = array();
-        $options['path'] = $this->path;
+        $options['pathComponents'] = $this->pathComponents;
 
         $status = $this->mkcol($options);
 
@@ -824,10 +821,17 @@ class HTTP_WebDAV_Server
      */
     function get_request_helper(&$options)
     {
-        // TODO check for invalid stream
-
-        $options = array();
-        $options['path'] = $this->path;
+        // RFC4918 8.4: Some of these new methods do not define bodies.
+        // Servers MUST examine all requests for a body, even when a body was
+        // not expected.  In cases where a request body is present but would be
+        // ignored by a server, the server MUST reject the request with 415
+        // (Unsupported Media Type).  This informs the client (which may have
+        // been attempting to use an extension) that the body could not be
+        // processed as the client intended.
+        if (!empty($_SERVER['CONTENT_LENGTH'])) {
+            $this->setResponseStatus('415 Unsupported Media Type');
+            return;
+        }
 
         $this->_get_ranges($options);
 
@@ -835,27 +839,29 @@ class HTTP_WebDAV_Server
     }
 
     /**
-     * Parse HTTP Range: header
+     * Parse Range request header
      *
      * @param  array options array to store result in
      * @return void
      */
     function _get_ranges(&$options)
     {
-        // process Range: header if present
-        if (!empty($_SERVER['HTTP_RANGE'])) {
+        if (empty($_SERVER['HTTP_RANGE'])) {
+            return;
+        }
 
-            // we only support standard 'bytes' range specifications for now
-            if (ereg('bytes[[:space:]]*=[[:space:]]*(.+)', $_SERVER['HTTP_RANGE'], $matches)) {
-                $options['ranges'] = array();
+        // we support only standard bytes range specification
+        if (!ereg('bytes[[:space:]]*=[[:space:]]*(.+)', $_SERVER['HTTP_RANGE'], $matches)) {
+            return;
+        }
 
-                // ranges are comma separated
-                foreach (explode(',', $matches[1]) as $range) {
-                    // ranges are either from-to pairs or just end positions
-                    list($start, $end) = explode('-', $range);
-                    $options['ranges'][] = ($start === '') ? array('last' => $end) : array('start' => $start, 'end' => $end);
-                }
-            }
+        $options['ranges'] = array();
+
+        // ranges are comma separated
+        foreach (explode(',', $matches[1]) as $range) {
+            // ranges are either from-to pairs or just end positions
+            list($start, $end) = explode('-', $range);
+            $options['ranges'][] = ($start === '') ? array('last' => $end) : array('start' => $start, 'end' => $end);
         }
     }
 
@@ -997,8 +1003,7 @@ class HTTP_WebDAV_Server
      * @param int end byte position
      * @param int total resource byte size
      */
-    function _multipart_byterange_header($mimetype = false, $from = false,
-        $to = false, $total = false)
+    function _multipart_byterange_header($mimetype = false, $from = false, $to = false, $total = false)
     {
         if ($mimetype === false) {
             if (empty($this->multipart_separator)) {
@@ -1007,7 +1012,6 @@ class HTTP_WebDAV_Server
                 // but it's really not likely and rather expensive to check
                 $this->multipart_separator = 'SEPARATOR_' . md5(microtime());
 
-                // generate HTTP header
                 $this->setResponseHeader(
                     'Content-Type: multipart/byteranges; boundary='
                     . $this->multipart_separator, false);
@@ -1039,6 +1043,9 @@ class HTTP_WebDAV_Server
      */
     function get_wrapper()
     {
+        $options = array();
+        $options['pathComponents'] = $this->pathComponents;
+
         // perpare data-structure from GET request
         if (!$this->get_request_helper($options)) {
             return;
@@ -1064,7 +1071,7 @@ class HTTP_WebDAV_Server
     function head_wrapper()
     {
         $options = array();
-        $options['path'] = $this->path;
+        $options['pathComponents'] = $this->pathComponents;
 
         // TODO: get_response_helper needn't do any output in case of HEAD
         // responses.  Is the advantage to optimizing it worthwhile?
@@ -1096,9 +1103,6 @@ class HTTP_WebDAV_Server
      */
     function put_request_helper(&$options)
     {
-        $options = array();
-        $options['path'] = $this->path;
-
         /* Content-Length may be zero */
         if (!isset($_SERVER['CONTENT_LENGTH'])) {
             return;
@@ -1133,7 +1137,7 @@ class HTTP_WebDAV_Server
             switch ($key) {
             case 'HTTP_CONTENT_ENCODING': // RFC2616 14.11
 
-                // TODO support this if ext/zlib filters are available
+                // TODO: Support this if ext/zlib filters are available
                 $this->setResponseStatus('501 Not Implemented');
                 echo "The service does not support '$value' content encoding";
                 return;
@@ -1152,8 +1156,8 @@ class HTTP_WebDAV_Server
 
             case 'HTTP_CONTENT_LOCATION': // RFC2616 14.14
 
-                // meaning of the Content-Location header in PUT or POST
-                // requests is undefined; servers are free to ignore it in
+                // meaning of the Content-Location request header in PUT or
+                // POST requests is undefined; servers are free to ignore it in
                 // those cases
                 break;
 
@@ -1161,7 +1165,8 @@ class HTTP_WebDAV_Server
 
                 // single byte range requests are supported
                 // the header format is also specified in RFC2616 14.16
-                // TODO we have to ensure that implementations support this or send 501 instead
+                // TODO: We have to ensure that implementations support this or
+                // send 501 instead
                 if (!preg_match('@bytes\s+(\d+)-(\d+)/((\d+)|\*)@', $value, $matches)) {
                     $this->setResponseStatus('400 Bad Request');
                     echo 'The service does only support single byte ranges';
@@ -1174,14 +1179,14 @@ class HTTP_WebDAV_Server
                 }
                 $option['ranges'][] = $range;
 
-                // TODO make sure the implementation supports partial PUT
-                // this has to be done in advance to avoid data being overwritten
-                // on implementations that do not support this...
+                // TODO: Make sure the implementation supports partial PUT
+                // this has to be done in advance to avoid data being
+                // overwritten on implementations that do not support this...
                 break;
 
             case 'HTTP_CONTENT_MD5': // RFC2616 14.15
 
-                // TODO maybe we can just pretend here?
+                // TODO: Maybe we can just pretend here?
                 $this->setResponseStatus('501 Not Implemented');
                 echo 'The service does not support content MD5 checksum verification';
                 return;
@@ -1193,7 +1198,7 @@ class HTTP_WebDAV_Server
 
             default:
 
-                // any other unknown Content-* headers
+                // any other unknown Content-* request headers
                 $this->setResponseStatus('501 Not Implemented');
                 echo "The service does not support '$key'";
                 return;
@@ -1230,7 +1235,7 @@ class HTTP_WebDAV_Server
 
             if (!empty($options['ranges'])) {
 
-                // TODO multipart support is missing (see also above)
+                // TODO: Multipart support is missing (see also above)
                 if (0 == fseek($stream, $range[0]['start'], SEEK_SET)) {
                     $length = $range[0]['end'] - $range[0]['start'] + 1;
                     if (!fwrite($stream, fread($options['stream'], $length))) {
@@ -1267,10 +1272,13 @@ class HTTP_WebDAV_Server
     function put_wrapper()
     {
         // check resource is not locked
-        if (!$this->check_locks_wrapper($this->path)) {
+        if (!$this->check_locks_wrapper($this->pathComponents)) {
             $this->setResponseStatus('423 Locked');
             return;
         }
+
+        $options = array();
+        $options['pathComponents'] = $this->pathComponents;
 
         // perpare data-structure from PUT request
         if (!$this->put_request_helper($options)) {
@@ -1310,13 +1318,13 @@ class HTTP_WebDAV_Server
         }
 
         // check resource is not locked
-        if (!$this->check_locks_wrapper($this->path)) {
+        if (!$this->check_locks_wrapper($this->pathComponents)) {
             $this->setResponseStatus('423 Locked');
             return;
         }
 
         $options = array();
-        $options['path'] = $this->path;
+        $options['pathComponents'] = $this->pathComponents;
 
         // call user handler
         $status = $this->delete($options);
@@ -1340,8 +1348,17 @@ class HTTP_WebDAV_Server
      */
     function copymove_request_helper(&$options)
     {
-        $options = array();
-        $options['path'] = $this->path;
+        // RFC4918 8.4: Some of these new methods do not define bodies.
+        // Servers MUST examine all requests for a body, even when a body was
+        // not expected.  In cases where a request body is present but would be
+        // ignored by a server, the server MUST reject the request with 415
+        // (Unsupported Media Type).  This informs the client (which may have
+        // been attempting to use an extension) that the body could not be
+        // processed as the client intended.
+        if (!empty($_SERVER['CONTENT_LENGTH'])) {
+            $this->setResponseStatus('415 Unsupported Media Type');
+            return;
+        }
 
         // RFC2518 8.8.3: The COPY method on a collection without a Depth
         // header MUST act as if a Depth header with value "infinity" was
@@ -1359,39 +1376,7 @@ class HTTP_WebDAV_Server
             $options['overwrite'] = $_SERVER['HTTP_OVERWRITE'] == 'T';
         }
 
-        $destUrl = parse_url($_SERVER['HTTP_DESTINATION']);
-
-        // does the destination resource belong on this server?
-        if ($destUrl['host'] != $this->baseUrl['host']
-                || (empty($destUrl['port']) ? 80 : $destUrl['port']) != (empty($this->baseUrl['port']) ? 80 : $this->baseUrl['port'])
-                || strncmp($destUrl['path'], $this->baseUrl['path'], strlen($this->baseUrl['path']))) {
-            $options['dest_url'] = $_SERVER['HTTP_DESTINATION'];
-            return true;
-        }
-        if (!empty($this->baseUrl['query'])) {
-            if (empty($destUrl['query'])) {
-                $options['dest_url'] = $_SERVER['HTTP_DESTINATION'];
-                return true;
-            }
-
-            $queryComponents = preg_split('/&/', $this->baseUrl['query'], -1, PREG_SPLIT_NO_EMPTY);
-            $destQueryComponents = preg_split('/&/', $destUrl['query'], -1, PREG_SPLIT_NO_EMPTY);
-            foreach ($queryComponents as $queryComponent) {
-                if (!in_array($queryComponent, $destQueryComponents)) {
-                    $options['dest_url'] = $_SERVER['HTTP_DESTINATION'];
-                    return true;
-                }
-            }
-        }
-
-        $options['dest'] = substr($destUrl['path'], strlen($this->baseUrl['path']));
-
-        // check source and destination are not the same - data could be lost
-        // if overwrite is true - RFC2518 8.8.5
-        if ($options['dest'] == $this->path) {
-            $this->setResponseStatus('403 Forbidden');
-            return;
-        }
+        $options['destinationUrlComponents'] = $this->parseUrl($_SERVER['HTTP_DESTINATION']);
 
         return true;
     }
@@ -1410,16 +1395,33 @@ class HTTP_WebDAV_Server
     {
         // no need to check source is not locked
 
+        $options = array();
+        $options['pathComponents'] = $this->pathComponents;
+
         // perpare data-structure from COPY request
         if (!$this->copymove_request_helper($options)) {
             return;
         }
 
-        // check destination is not locked
-        if (!empty($options['dest']) &&
-                !$this->check_locks_wrapper($options['dest'])) {
-            $this->setResponseStatus('423 Locked');
-            return;
+        // does the destination resource belong on this server?
+        if ($this->isDescendentUrl($options['destinationUrlComponents'])) {
+            $options['destinationPathComponents'] = array_slice(
+                $options['destinationUrlComponents']['pathComponents'],
+                count($this->baseUrlComponents['pathComponents']));
+
+            // RFC4918 9.8.5: 403 (Forbidden) - The operation is forbidden.  A
+            // special case for COPY could be that the source and destination
+            // resources are the same resource.
+            if ($options['destinationPathComponents'] == $this->pathComponents) {
+                $this->setResponseStatus('403 Forbidden');
+                return;
+            }
+
+            // check destination is not locked
+            if (!$this->check_locks_wrapper($options['destinationPathComponents'])) {
+                $this->setResponseStatus('423 Locked');
+                return;
+            }
         }
 
         // call user handler
@@ -1445,21 +1447,37 @@ class HTTP_WebDAV_Server
     function move_wrapper()
     {
         // check resource is not locked
-        if (!$this->check_locks_wrapper($this->path)) {
+        if (!$this->check_locks_wrapper($this->pathComponents)) {
             $this->setResponseStatus('423 Locked');
             return;
         }
+
+        $options = array();
+        $options['pathComponents'] = $this->pathComponents;
 
         // perpare data-structure from MOVE request
         if (!$this->copymove_request_helper($options)) {
             return;
         }
 
-        // check destination is not locked
-        if (!empty($options['dest']) &&
-                !$this->check_locks_wrapper($options['dest'])) {
-            $this->setResponseStatus('423 Locked');
-            return;
+        // does the destination resource belong on this server?
+        if ($this->isDescendentUrl($options['destinationUrlComponents'])) {
+            $options['destinationPathComponents'] = array_slice(
+                $options['destinationUrlComponents']['pathComponents'],
+                count($this->baseUrlComponents['pathComponents']));
+
+            // RFC2518 8.8.5: Check source and destination are not the same -
+            // data could be lost if overwrite is true
+            if ($options['destinationPathComponents'] == $this->pathComponents) {
+                $this->setResponseStatus('403 Forbidden');
+                return;
+            }
+
+            // check destination is not locked
+            if (!$this->check_locks_wrapper($options['destinationPathComponents'])) {
+                $this->setResponseStatus('423 Locked');
+                return;
+            }
         }
 
         // call user handler
@@ -1484,11 +1502,8 @@ class HTTP_WebDAV_Server
      */
     function lock_request_helper(&$options)
     {
-        $options = array();
-        $options['path'] = $this->path;
-
-        // a LOCK request with an If header but without a body is used to
-        // refresh a lock.  Content-Lenght may be unset or zero.
+        // a LOCK request with an If request header but without a body is used
+        // to refresh a lock.  Content-Lenght may be unset or zero.
         if (empty($_SERVER['CONTENT_LENGTH']) && !empty($_SERVER['HTTP_IF'])) {
 
             // FIXME: Refresh multiple locks?
@@ -1534,7 +1549,7 @@ class HTTP_WebDAV_Server
         $options['type']  = $parser->locktype;
         $options['owner'] = $parser->owner;
 
-        $options['token'] = $this->_new_locktoken();
+        $options['token'] = $this->getLockToken();
 
         return true;
     }
@@ -1559,8 +1574,8 @@ class HTTP_WebDAV_Server
             foreach ($options['locks'] as $lock) {
                 $response = array();
 
-                // copy href to response
-                foreach (array('href', 'path') as $key) {
+                // copy to response
+                foreach (array('pathComponents', 'url') as $key) {
                     if (!empty($lock[$key])) {
                         $response[$key] = $lock[$key];
                     }
@@ -1576,16 +1591,14 @@ class HTTP_WebDAV_Server
             return;
         }
 
-        if ($status === true) {
-            $status = '200 OK';
-        } else if ($status === false) {
+        if (empty($status)) {
             $status = '423 Locked';
         }
 
         // set response headers before we start printing
         $this->setResponseStatus($status);
 
-        if ($status{0} == 2) { // 2xx states are ok
+        if ($status === true || $status{0} == 2) { // 2xx status is OK
             $this->setResponseHeader('Content-Type: text/xml; charset="utf-8"');
 
             // RFC2518 8.10.1: In order to indicate the lock token associated
@@ -1595,7 +1608,7 @@ class HTTP_WebDAV_Server
             // in the response for a successful refresh LOCK request because a
             // new lock was not created.
             if (empty($options['update']) || !empty($options['token'])) {
-                $this->setResponseHeader("Lock-Token: <$options[token]>");
+                $this->setResponseHeader('Lock-Token: <' . $options['token'] . '>');
             }
 
             $lock = array();
@@ -1637,6 +1650,9 @@ class HTTP_WebDAV_Server
      */
     function lock_wrapper()
     {
+        $options = array();
+        $options['pathComponents'] = $this->pathComponents;
+
         // perpare data-structure from LOCK request
         if (!$this->lock_request_helper($options)) {
             return;
@@ -1645,12 +1661,12 @@ class HTTP_WebDAV_Server
         // check resource is not locked
         if (!empty($options['update'])
                 && !$this->check_locks_wrapper(
-                    $this->path, $options['scope'] == 'shared')) {
+                    $this->pathComponents, $options['scope'] == 'shared')) {
             $this->setResponseStatus('423 Locked');
             return;
         }
 
-        $options['locks'] = $this->getDescendentsLocks($this->path);
+        $options['locks'] = $this->getDescendentsLocks($this->pathComponents);
         if (empty($options['locks'])) {
 
             // call user handler
@@ -1673,10 +1689,21 @@ class HTTP_WebDAV_Server
      */
     function unlock_request_helper(&$options)
     {
-        $options = array();
-        $options['path'] = $this->path;
+        // RFC4918 8.4: Some of these new methods do not define bodies.
+        // Servers MUST examine all requests for a body, even when a body was
+        // not expected.  In cases where a request body is present but would be
+        // ignored by a server, the server MUST reject the request with 415
+        // (Unsupported Media Type).  This informs the client (which may have
+        // been attempting to use an extension) that the body could not be
+        // processed as the client intended.
+        if (!empty($_SERVER['CONTENT_LENGTH'])) {
+            $this->setResponseStatus('415 Unsupported Media Type');
+            return;
+        }
 
+        // RFC4918 9.11.1: 400 (Bad Request) - No lock token was provided.
         if (empty($_SERVER['HTTP_LOCK_TOKEN'])) {
+            $this->setResponseStatus('400 Bad Request');
             return;
         }
 
@@ -1698,6 +1725,9 @@ class HTTP_WebDAV_Server
      */
     function unlock_wrapper()
     {
+        $options = array();
+        $options['pathComponents'] = $this->pathComponents;
+
         // perpare data-structure from DELETE request
         if (!$this->unlock_request_helper($options)) {
             return;
@@ -1724,11 +1754,11 @@ class HTTP_WebDAV_Server
 
         // ...and body
         $options['namespaces']['DAV:'] = 'D';
-	asort($options['namespaces']);
+        asort($options['namespaces']);
 
         $namespaces = '';
         foreach ($options['namespaces'] as $namespace => $prefix) {
-            $namespaces .= " xmlns:$prefix=\"$namespace\"";
+            $namespaces .= ' xmlns:' . $prefix . '="' . $namespace . '"';
         }
 
         echo "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n";
@@ -1738,13 +1768,10 @@ class HTTP_WebDAV_Server
             echo "  <D:response>\n";
 
             // print href
-            if (empty($response['href'])) {
-                if (empty($response['path'])) {
-                    $response['path'] = null;
-                }
-                $response['href'] = $this->getHref($response['path']);
+            if (empty($response['url'])) {
+                $response['url'] = $this->getUrl($response);
             }
-            echo "    <D:href>$response[href]</D:href>\n";
+            echo "    <D:href>$response[url]</D:href>\n";
 
             // report all found properties and their values (if any)
             // nothing to do if no properties were returend for a file
@@ -1913,9 +1940,118 @@ class HTTP_WebDAV_Server
         return implode('', $locks);
     }
 
-    function getHref($path=null)
+    function getUrl($urlComponents=null, $baseUrlComponents=null, $options=null)
     {
-        return '/' . trim($this->baseUrl['path'], '/') . '/' . $path;
+        $urlComponents = $this->getUrlComponents($urlComponents, $baseUrlComponents, $options);
+
+        $url = '';
+        if (!empty($options['absoluteUrl'])
+                && !empty($urlComponents['scheme'])
+                && !empty($urlComponents['host'])) {
+            $url = $urlComponents['scheme'] . '://' . $urlComponents['host'];
+
+            // hide default port
+            if (!empty($urlComponents['port'])
+                    && $urlComponents['port'] != getservbyname($urlComponents['scheme'], 'tcp')) {
+                $url .= ':' . $urlComponents['port'];
+            }
+        }
+
+        $url .= '/' . implode('/', $urlComponents['pathComponents']);
+
+        return $url;
+    }
+
+    function getUrlComponents($urlComponents=null, $baseUrlComponents=null, $options=null)
+    {
+        if (!isset($baseUrlComponents)) {
+            $baseUrlComponents = $this->baseUrlComponents;
+        }
+
+        foreach (array('scheme', 'host', 'port') as $component) {
+            if (empty($urlComponents[$component]) && !empty($baseUrlComponents[$component])) {
+                $urlComponents[$component] = $baseUrlComponents[$component];
+            }
+        }
+
+        if (empty($urlComponents['pathComponents'])) {
+            $urlComponents['pathComponents'] = array();
+        }
+
+        if (!empty($baseUrlComponents['pathComponents'])) {
+            $urlComponents['pathComponents'] = array_merge($baseUrlComponents['pathComponents'], $urlComponents['pathComponents']);
+        }
+
+        return $urlComponents;
+    }
+
+    function isDescendentUrl($urlComponents, $baseUrlComponents=null)
+    {
+        if (!isset($baseUrlComponents)) {
+            $baseUrlComponents = $this->baseUrlComponents;
+        }
+
+        // set default port for descendent
+        if (!empty($urlComponents['scheme']) && empty($urlComponents['port'])) {
+            $urlComponents['port'] = getservbyname($urlComponents['scheme'], 'tcp');
+        }
+
+        // set default port for ancestor
+        if (!empty($baseUrlComponents['scheme']) && empty($baseUrlComponents['port'])) {
+            $baseUrlComponents['port'] = getservbyname($baseUrlComponents['scheme'], 'tcp');
+        }
+
+        // if descendent has scheme, host or port, check it matches ancestor
+        foreach (array('scheme', 'host', 'port') as $component) {
+            if (!empty($urlComponents[$component])
+                    && (empty($baseUrlComponents[$component])
+                        || $urlComponents[$component] != $baseUrlComponents[$component])) {
+                return false;
+            }
+        }
+
+        // if ancestor has path components and descendent has path components,
+        // check that descendent path components start with ancestor path
+        // components
+        if (!empty($baseUrlComponents['pathComponents'])
+                && (empty($urlComponents['pathComponents'])
+                    || array_slice($urlComponents['pathComponents'], 0, count($baseUrlComponents['pathComponents'])) != $baseUrlComponents['pathComponents'])) {
+            return false;
+        }
+
+        // if ancestor has query string and descendent has query string, check
+        // that descendent has all ancestor query components
+        if (!empty($baseUrlComponents['query'])) {
+            if (empty($urlComponents['query'])) {
+                return false;
+            }
+
+            $queryComponents = preg_split('/&/', $urlComponents['query'], -1, PREG_SPLIT_NO_EMPTY);
+            $baseQueryComponents = preg_split('/&/', $baseUrlComponents['query'], -1, PREG_SPLIT_NO_EMPTY);
+            foreach ($baseQueryComponents as $queryComponent) {
+                if (!in_array($queryComponent, $queryComponents)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    function parseUrl($url)
+    {
+        $urlComponents = parse_url($url);
+
+        if (!empty($urlComponents['scheme']) && empty($urlComponents['port'])) {
+            $urlComponents['port'] = getservbyname($urlComponents['scheme'], 'tcp');
+        }
+
+        $urlComponents['pathComponents'] = array();
+        if (!empty($urlComponents['path'])) {
+            $urlComponents['pathComponents'] = preg_split('/\//', $urlComponents['path'], -1, PREG_SPLIT_NO_EMPTY);
+        }
+
+        return $urlComponents;
     }
 
     function getProp($reqprop, $file, $options)
@@ -1934,7 +2070,7 @@ class HTTP_WebDAV_Server
                 && $reqprop['ns'] == 'DAV:'
                 && method_exists($this, 'getLocks')) {
             return $this->mkprop('DAV:', 'lockdiscovery',
-                $this->getLocks($file['path']));
+                $this->getLocks($file['pathComponents']));
         }
 
         // in case the requested property had a value, like calendar-data
@@ -1944,10 +2080,10 @@ class HTTP_WebDAV_Server
         return $reqprop;
     }
 
-    function getDescendentsLocks($path)
+    function getDescendentsLocks($pathComponents)
     {
         $options = array();
-        $options['path'] = $path;
+        $options['pathComponents'] = $pathComponents;
         $options['depth'] = 'infinity';
         $options['props'] = array();
         $options['props'][] = $this->mkprop('DAV:', 'lockdiscovery', null);
@@ -2070,12 +2206,12 @@ class HTTP_WebDAV_Server
     // {{{ UUID stuff
 
     /**
-     * Generate Unique Universal IDentifier for lock token
+     * Get new Universally Unique Identifier
      *
      * @param void
-     * @return string a new UUID
+     * @return string new Universally Unique Identifier
      */
-    function _new_uuid()
+    function uuid_create()
     {
         // use uuid extension from PECL if available
         if (function_exists('uuid_create')) {
@@ -2085,7 +2221,7 @@ class HTTP_WebDAV_Server
         // fallback
         $uuid = md5(microtime() . getmypid()); // this should be random enough for now
 
-        // set variant and version fields for 'true' random uuid
+        // set variant and version fields for true random uuid
         $uuid{12} = '4';
         $n = 8 + (ord($uuid{16}) & 3);
         $hex = '0123456789abcdef';
@@ -2100,101 +2236,104 @@ class HTTP_WebDAV_Server
     }
 
     /**
-     * Create a new opaque lock token as defined in RFC2518
+     * Get unique lock token
      *
      * @param void
-     * @return string new RFC2518 opaque lock token
+     * @return string unique lock token
      */
-    function _new_locktoken()
+    function getLockToken()
     {
-        return 'opaquelocktoken:' . $this->_new_uuid();
+        // RFC4918 6.5: This specification encourages servers to create
+        // Universally Unique Identifiers (UUIDs) for lock tokens, and to use
+        // the URI form defined by "A Universally Unique Identifier (UUID) URN
+        // Namespace" ([RFC4122]).
+        return 'urn:uuid:' . $this->uuid_create();
     }
 
     // }}}
 
-    // {{{ WebDAV If: header parsing
+    // {{{ If request header
 
     /**
      *
      *
-     * @param string header string to parse
+     * @param string to parse
      * @param int current parsing position
      * @return array next token (type and value)
      */
-    function _if_header_lexer($string, &$pos)
+    function _if_header_lexer($str, &$pos)
     {
+        $len = strlen($str);
+
         // skip whitespace
-        while (ctype_space($string{$pos})) {
-            ++$pos;
-        }
+        do {
+            if ($pos >= $len) {
+                return;
+            }
+        } while (ctype_space($chr = substr($str, $pos++, 1)));
 
-        // already at end of string?
-        if (strlen($string) <= $pos) {
-            return;
-        }
+        // check character
+        switch ($chr) {
 
-        // get next character
-        $c = $string{$pos++};
-
-        // now it depends on what we found
-        switch ($c) {
-
-            // URLs are enclosed in <...>
+            // State tokens enclosed in <...>
             case '<':
-                $pos2 = strpos($string, '>', $pos);
-                $uri = substr($string, $pos, $pos2 - $pos);
-                $pos = $pos2 + 1;
-                return array('URI', $uri);
+                $stateToken = substr($str, $pos, strpos($str, '>', $pos) - $pos);
+                $pos += strlen($stateToken) + 1;
+                return array('URI', $stateToken);
 
-            // ETags are enclosed in [...]
+            // Entity tags enclosed in [...]
             case '[':
                 $type = 'ETAG_STRONG';
-                if ($string{$pos} == 'W') {
+                if (substr($str, $pos, 1) == 'W') {
                     $type = 'ETAG_WEAK';
                     $pos += 2;
                 }
 
-                $pos2 = strpos($string, ']', $pos);
-                $etag = substr($string, $pos + 1, $pos2 - $pos - 2);
-                $pos = $pos2 + 1;
-                return array($type, $etag);
+                $entityTag = substr($str, $pos, strpos($str, ']', $pos) - $pos);
+                $pos += strlen($entityTag) + 1;
+                return array($type, $entityTag);
 
             // 'N' indicates negation
             case 'N':
                 $pos += 2;
                 return array('NOT', 'Not');
-
-            // anything else is passed verbatim char by char
-            default:
-                return array('CHAR', $c);
         }
+
+        // anything else is returned verbatim
+        return array('CHAR', $chr);
     }
 
     /**
-     * Parse If: header
+     * Parse If request header
      *
-     * @param string header string
-     * @return array URLs and their conditions
+     * @param string to parse
+     * @return array If header components
      */
     function _if_header_parser($str)
     {
+        $ifHeaderComponents = array();
+
+	// parsed URLs are path absolute
+	$baseUrlComponents = $this->getUrlComponents();
+	$baseUrlComponents['pathComponents'] = null;
+
         $pos = 0;
         $len = strlen($str);
 
-        $uris = array();
-
-        // parser loop
         while ($pos < $len) {
 
             // get next token
             $token = $this->_if_header_lexer($str, $pos);
 
-            // check for URL
-            $uri = '';
+            $urlComponents = array();
             if ($token[0] == 'URI') {
-                $uri = $token[1]; // remember URL
-                $token = $this->_if_header_lexer($str, $pos); // get next token
+                // normalize URL
+                $urlComponents = $this->parseUrl($token[1]);
+
+                // get next token
+                $token = $this->_if_header_lexer($str, $pos);
             }
+            $url = $this->getUrl($urlComponents, $baseUrlComponents, array('absoluteUrl' => true));
 
             // sanity check
             if ($token[0] != 'CHAR' || $token[1] != '(') {
@@ -2202,101 +2341,81 @@ class HTTP_WebDAV_Server
             }
 
             $list = array();
-            $level = 1;
-            while ($level) {
+            while ($pos < $len) {
+
+                // get next token
                 $token = $this->_if_header_lexer($str, $pos);
+
+                if ($token[0] == 'CHAR' && $token[1] == ')') {
+                    break;
+                }
 
                 $not = '';
                 if ($token[0] == 'NOT') {
                     $not = '!';
+
+                    // get next token
                     $token = $this->_if_header_lexer($str, $pos);
                 }
 
                 switch ($token[0]) {
-                    case 'CHAR':
-                        switch ($token[1]) {
-                            case '(':
-                                $level++;
-                                break;
-
-                            case ')':
-                                $level--;
-                                break;
-
-                            default:
-                                return;
-                        }
-                        break;
-
                     case 'URI':
-                        $list[] = $not . "<$token[1]>";
+                        $list[] = $not . '<' . $token[1] . '>';
                         break;
 
                     case 'ETAG_WEAK':
-                        $list[] = $not . "[W/'$token[1]']";
+                        $list[] = $not . '[W/"' . $token[1] . '"]';
                         break;
 
                     case 'ETAG_STRONG':
-                        $list[] = $not . "['$token[1]']";
+                        $list[] = $not . '["' . $token[1] . '"]';
                         break;
-
-                    default:
-                        return;
                 }
             }
 
-            // RFC2518 9.4.1: The No-tag-list production describes a series of
-            // state tokens and ETags.  If multiple No-tag-list productions are
-            // used then one only needs to match the state of the resource for
-            // the method to be allowed to continue.
+            // RFC4918 10.4.3: A Condition that consists of a single entity-tag
+            // or state-token evaluates to true if the resource matches the
+            // described state (where the individual matching functions are
+            // defined below in Section 10.4.4).  Prefixing it with "Not"
+            // reverses the result of the evaluation (thus, the "Not" applies
+            // only to the subsequent entity-tag or state-token).
             //
-            // FIXME: Since only one list of conditions must be satisfied, it
-            // is a mistake to merge all lists of conditions.  Instead, a URL
-            // should reference an array of arrays of conditions, the inner
-            // array representing a conjunction and the outer array
-            // representing a disjunction, or $uris shouldn't be associative,
-            // but be an array of productions array('href' => $href,
-            // 'conditions' => array($condition, ...))
-            if (!empty($uris[$uri])) {
-                $uris[$uri] = array_merge($uris[$uri], $list);
-                continue;
-            }
-            $uris[$uri] = $list;
+            // Each List production describes a series of conditions.  The
+            // whole list evaluates to true if and only if each condition
+            // evaluates to true (that is, the list represents a logical
+            // conjunction of Conditions).
+            //
+            // Each No-tag-list and Tagged-list production may contain one or
+            // more Lists.  They evaluate to true if and only if any of the
+            // contained lists evaluates to true (that is, if there's more than
+            // one List, that List sequence represents a logical disjunction of
+            // the Lists).
+            //
+            // Finally, the whole If header evaluates to true if and only if at
+            // least one of the No-tag-list or Tagged-list productions
+            // evaluates to true.  If the header evaluates to false, the server
+            // MUST reject the request with a 412 (Precondition Failed) status.
+            // Otherwise, execution of the request can proceed as if the header
+            // wasn't present.
+            $ifHeaderComponents[$url][] = $list;
         }
 
-        return $uris;
+        return $ifHeaderComponents;
     }
 
     /**
-     * Check if conditions from If: headers are met
+     * Check If request header
      *
-     * The If: header is an extension to HTTP/1.1 defined in RFC2518 9.4
-     *
-     * @param void
+     * @param array If request header components
      * @return boolean
      */
-    function _check_if_header_conditions()
+    function check_if_helper($ifHeaderComponents)
     {
-        if (empty($_SERVER['HTTP_IF'])) {
-            return true;
-        }
-
-        $this->_if_header_uris =
-            $this->_if_header_parser($_SERVER['HTTP_IF']);
-
         // any match is ok
-        foreach ($this->_if_header_uris as $uri => $conditions) {
-
-            // RFC2518 9.4.1: If a method, due to the presence of a Depth or
-            // Destination header, is applied to multiple resources then the
-            // No-tag-list production MUST be applied to each resource the
-            // method is applied to.
-            if (empty($uri)) {
-                $uri = $this->getHref($this->path);
-            }
+        foreach ($ifHeaderComponents as $url => $lists) {
 
             // all must match
-            foreach ($conditions as $condition) {
+            foreach ($list as $condition) {
 
                 // lock tokens may be free form (RFC2518 6.3)
                 // but if opaquelocktokens are used (RFC2518 6.4)
@@ -2307,7 +2426,7 @@ class HTTP_WebDAV_Server
                     }
                 }
 
-                if (!$this->_check_uri_condition($uri, $condition)) {
+                if (!$this->_check_uri_condition($url, $condition)) {
                     continue 2;
                 }
             }
@@ -2317,14 +2436,14 @@ class HTTP_WebDAV_Server
     }
 
     /**
-     * Check a single URL condition parsed from an if-header
+     * Check a single URL condition from If request header
      *
      * @abstract
      * @param string URL to check
      * @param string condition to check for this URL
-     * @return boolean condition check result
+     * @return boolean
      */
-    function _check_uri_condition($uri, $condition)
+    function _check_uri_condition($url, $condition)
     {
         // not really implemented here,
         // implementations must override
@@ -2332,32 +2451,43 @@ class HTTP_WebDAV_Server
     }
 
     /**
-     * For each lock on the requested resource, check that the lock token is in
-     * the If header.  If requesting a shared lock, check only exclusive locks
-     * on the requested resource.
+     * For each lock, check that the lock token was submitted in the If request
+     * header.  If requesting a shared lock, check only exclusive locks.
      *
      * @param array of locks
-     * @param string path of resource to check
-     * @param boolean exclusive lock?
+     * @param array if request header components
+     * @param boolean check only exclusive locks
      * @return boolean true if the request is allowed
      */
-    function check_locks_helper($locks, $path, $exclusive_only=false)
+    function check_locks_helper($locks, $ifHeaderComponents, $shared=false)
     {
-        $conditions = array();
-        if (!empty($_SERVER['HTTP_IF'])) {
-            $conditions = $this->_if_header_parser($_SERVER['HTTP_IF']);
-        }
-
         foreach ($locks as $lock) {
-            if ($exclusive_only && ($lock['scope'] == 'shared')) {
+            if ($shared && ($lock['scope'] == 'shared')) {
                 continue;
             }
 
-            // for both Tagged-list and No-tag-list productions
-            foreach (array($this->getHref($path), '') as $href) {
-                if (!empty($conditions[$href])
-                        && in_array("<$lock[token]>", $conditions[$href])) {
-                    continue 2;
+            // RFC4918 10.4.4: A lock state token is considered to match if the
+            // resource is anywhere in the scope of the lock.
+            if ($lock['depth'] === 0) {
+                $lists = $ifHeaderComponents[$this->getUrl($lock, null, array('absoluteUrl' => true))];
+                foreach ($lists as $list) {
+                    if (in_array('<' . $lock['token'] . '>', $list)) {
+                        continue 2;
+                    }
+                }
+
+                return false;
+            }
+
+            foreach ($ifHeaderComponents as $url => $lists) {
+                if (!$this->isDescendentUrl($this->parseUrl($url), $this->getUrlComponents($lock))) {
+                    continue;
+                }
+
+                foreach ($lists as $list) {
+                    if (in_array('<' . $lock['token'] . '>', $list)) {
+                        continue 3;
+                    }
                 }
             }
 
@@ -2368,17 +2498,17 @@ class HTTP_WebDAV_Server
     }
 
     /**
-     * @param string path of resource to check
-     * @param boolean exclusive lock?
+     * @param array path components to check
+     * @param boolean check only exclusive locks
      */
-    function check_locks_wrapper($path, $exclusive_only=false)
+    function check_locks_wrapper($pathComponents, $shared=false)
     {
         if (!method_exists($this, 'getLocks')) {
             return true;
         }
 
-        return $this->check_locks_helper(
-            $this->getLocks($path), $path, $exclusive_only);
+        return $this->check_locks_helper($this->getLocks($pathComponents),
+            $this->ifHeaderComponents, $shared);
     }
 
     // }}}
@@ -2493,21 +2623,6 @@ class HTTP_WebDAV_Server
         default:
             return utf8_encode($text);
         }
-    }
-
-    /**
-     * Make sure path ends in a slash
-     *
-     * @param string directory path
-     * @return string directory path with trailing slash
-     */
-    function _slashify($path)
-    {
-        if (substr($path, -1) != '/') {
-            $path .= '/';
-        }
-
-        return $path;
     }
 }
 

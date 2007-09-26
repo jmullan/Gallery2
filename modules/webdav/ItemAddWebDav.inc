@@ -46,10 +46,10 @@ class ItemAddWebDav extends ItemAddPlugin {
 	}
 
 	$path = WebDavHelper::getRequestVariable('path', true, false);
-	$pathComponent = urldecode(basename($path));
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
 	/* Check resource is not locked */
-	$ret = WebDavHelper::checkLocks($path);
+	$ret = WebDavHelper::checkLocks($pathComponents);
 	if ($ret) {
 	    return array($ret, null, null);
 	}
@@ -58,6 +58,11 @@ class ItemAddWebDav extends ItemAddPlugin {
 	list ($ret, $webDavOptions, $stream, $mimeType) = WebDavHelper::putRequestHelper();
 	if ($ret) {
 	    return array($ret, null, null);
+	}
+
+	$pathComponent = null;
+	if (!empty($pathComponents)) {
+	    $pathComponent = urldecode($pathComponents[count($pathComponents) - 1]);
 	}
 
 	/* If the mime type is unknown try to get a mime type from the file name */

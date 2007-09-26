@@ -57,7 +57,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 	$this->_requestVariables = null;
 
 	/* Reset response headers */
-	$this->_responseHeaders =& GalleryUtilities::_responseHeaders();
+	$this->_responseHeaders =& GalleryUtilities::_getResponseHeaders();
 	$this->_responseHeaders = null;
 
 	/* Create test items */
@@ -165,25 +165,6 @@ class DownloadDavMountTest extends GalleryTestCase {
 	return null;
     }
 
-    function _getHref($path=null) {
-	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
-	    $href = '/gallery2/w/';
-	    if (!empty($path)) {
-		$href .= $path;
-	    }
-
-	    return $href;
-	}
-
-	$href = '/gallery2/main.php?g2_controller=webdav.WebDav';
-	if (!empty($path)) {
-	    $href .= '&amp;g2_path=' . $path;
-	}
-
-	return $href;
-    }
-
     function testWithItemId() {
 	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
 	if ($ret) {
@@ -213,7 +194,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<dm:mount xmlns:dm="http://purl.org/NET/webdav/mount">',
-	    '  <dm:url>http://example.com' . $this->_getHref() . '</dm:url>',
+	    '  <dm:url>http://example.com/gallery2/w/</dm:url>',
 	    '  <dm:open>' . ltrim($path, '/') . '</dm:open>',
 	    '  <dm:username>' . $this->_user->getUserName() . '</dm:username>',
 	    '</dm:mount>');
@@ -249,7 +230,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<dm:mount xmlns:dm="http://purl.org/NET/webdav/mount">',
-	    '  <dm:url>http://example.com' . $this->_getHref() . '</dm:url>',
+	    '  <dm:url>http://example.com/gallery2/w/</dm:url>',
 	    '  <dm:open>' . ltrim($path, '/') . '</dm:open>',
 	    '  <dm:username>' . $this->_user->getUserName() . '</dm:username>',
 	    '</dm:mount>');
@@ -279,7 +260,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<dm:mount xmlns:dm="http://purl.org/NET/webdav/mount">',
-	    '  <dm:url>http://example.com' . $this->_getHref() . '</dm:url>',
+	    '  <dm:url>http://example.com/gallery2/w/</dm:url>',
 	    '  <dm:username>' . $this->_user->getUserName() . '</dm:username>',
 	    '</dm:mount>');
 	$this->assertEquals($expectedOutput, split("\r?\n", trim($output)));
@@ -306,7 +287,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<dm:mount xmlns:dm="http://purl.org/NET/webdav/mount">',
-	    '  <dm:url>http://example.com' . $this->_getHref() . '</dm:url>',
+	    '  <dm:url>http://example.com/gallery2/w/</dm:url>',
 	    '  <dm:username>' . $this->_user->getUserName() . '</dm:username>',
 	    '</dm:mount>');
 	$this->assertEquals($expectedOutput, split("\r?\n", trim($output)));
@@ -355,7 +336,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<dm:mount xmlns:dm="http://purl.org/NET/webdav/mount">',
-	    '  <dm:url>http://example.com' . $this->_getHref() . '</dm:url>',
+	    '  <dm:url>http://example.com/gallery2/w/</dm:url>',
 	    '  <dm:open>' . ltrim($path, '/') . '</dm:open>',
 	    '</dm:mount>');
 	$this->assertEquals($expectedOutput, split("\r?\n", trim($output)));
@@ -397,7 +378,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<dm:mount xmlns:dm="http://purl.org/NET/webdav/mount">',
-	    '  <dm:url>http://example.com' . $this->_getHref() . '</dm:url>',
+	    '  <dm:url>http://example.com/gallery2/w/</dm:url>',
 	    '  <dm:open>' . ltrim($path, '/') . '</dm:open>',
 	    '  <dm:username>' . $this->_user->getUserName() . '</dm:username>',
 	    '</dm:mount>');
@@ -440,7 +421,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<dm:mount xmlns:dm="http://purl.org/NET/webdav/mount">',
-	    '  <dm:url>http://example.com' . $this->_getHref() . '</dm:url>',
+	    '  <dm:url>http://example.com/gallery2/w/</dm:url>',
 	    '  <dm:open>' . ltrim($path, '/') . '</dm:open>',
 	    '  <dm:username>' . $this->_user->getUserName() . '</dm:username>',
 	    '</dm:mount>');

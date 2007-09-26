@@ -40,6 +40,8 @@ class WebDavHelperTest extends GalleryTestCase {
 	}
 	global $gallery;
 
+	$this->_userId = $gallery->getActiveUserId();
+
 	/* Try to use the rewrite URL generator */
 	$this->_urlGenerator =& $gallery->getUrlGenerator();
 	list ($ret, $this->_urlGenerator) = GalleryCoreApi::newFactoryInstance(
@@ -195,12 +197,16 @@ class WebDavHelperTest extends GalleryTestCase {
 	$this->_requestVariables =& WebDavHelper::_requestVariables();
 	$this->_requestVariables = null;
 
+	/* Reset response headers */
+	$this->_responseHeaders =& GalleryUtilities::_getResponseHeaders();
+	$this->_responseHeaders = null;
+
 	/* Register event listeners */
 	$this->_registerFactoryImplementationForTest('GalleryEventListener',
 	    'WebDavModule', 'WebDavModule',
 	    'modules/webdav/module.inc', 'webdav',
 	    array('GalleryEntity::delete',
-		  'GalleryEntity::save'));
+		'GalleryEntity::save'));
     }
 
     function tearDown() {
@@ -254,6 +260,26 @@ class WebDavHelperTest extends GalleryTestCase {
 	    if ($ret) {
 		return $ret;
 	    }
+	}
+
+	return null;
+    }
+
+    function _lock($lock) {
+	if (!isset($lock['depth'])) {
+	    $lock['depth'] = 'infinity';
+	}
+
+	$ret = GalleryCoreApi::addMapEntry('WebDavLockMap',
+	    array('depth' => $lock['depth'],
+		'owner' => '<href>' . $this->_urlGenerator->generateUrl(
+		    array('itemId' => $this->_userId), array('forceFullUrl' => true)) . '</href>',
+		'expires' => time() + 30,
+		'token' => 'urn:uuid:e71d4fae-5dec-22d6-fea5-00a0c91e6be4',
+		'path' => implode('/', $lock['pathComponents']),
+		'galleryLockId' => mt_rand()));
+	if ($ret) {
+	    return $ret;
 	}
 
 	return null;
@@ -447,23 +473,17 @@ class WebDavHelperTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
 	$link = WebDavHelper::getMountLink($this->_item->getId());
 
 	$expectedLink = array();
-	$expectedLink['href'] = '/gallery2/main.php?g2_view=webdav.DownloadDavMount&amp;g2_itemId='
-	    . $this->_item->getId();
-	$url = 'http://example.com/gallery2/main.php?g2_controller=webdav.WebDav&amp;g2_itemId='
-	    . $this->_item->getId();
+	$expectedLink['href'] = '/gallery2/v/' . implode('/', $pathComponents) . '.davmount';
 
-	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
-	    $expectedLink['href'] = '/gallery2/v/' . ltrim($path, '/') . '.davmount';
-	    $url = 'http://example.com/gallery2/w/' . ltrim($path, '/');
-	}
-
+	$url = 'http://example.com/gallery2/w/' . implode('/', $pathComponents);
 	$expectedLink['attrs'] =
 	    'style="behavior: url(#default#anchorClick)" folder="' . $url . '"';
+
 	$this->assertEquals($expectedLink, $link);
     }
 
@@ -472,30 +492,23 @@ class WebDavHelperTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
 	$_SERVER['HTTP_USER_AGENT'] = 'MSIE 6';
 
 	$link = WebDavHelper::getMountLink($this->_item->getId());
 
 	$expectedLink = array();
-	$expectedLink['href'] = '/gallery2/main.php?g2_view=webdav.DownloadDavMount&amp;g2_itemId='
-	    . $this->_item->getId();
-	$url = 'http://example.com/gallery2/main.php?g2_controller=webdav.WebDav&amp;g2_itemId='
-	    . $this->_item->getId();
-	$scriptUrl = 'http://example.com/gallery2/main.php?g2_controller=webdav.WebDav&g2_itemId='
-	    . $this->_item->getId();
+	$expectedLink['href'] = '/gallery2/v/' . implode('/', $pathComponents) . '.davmount';
 
-	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
-	    $expectedLink['href'] = '/gallery2/v/' . ltrim($path, '/') . '.davmount';
-	    $url = 'http://example.com/gallery2/w/' . ltrim($path, '/');
-	    $scriptUrl = 'http://example.com/gallery2/w/' . ltrim($path, '/');
-	}
-
+	$url = 'http://example.com/gallery2/w/' . implode('/', $pathComponents);
 	$expectedLink['attrs'] =
 	    'style="behavior: url(#default#anchorClick)" folder="' . $url . '"';
+
+	$scriptUrl = 'http://example.com/gallery2/w/' . implode('/', $pathComponents);
 	$expectedLink['script'] =
 	    "this.style.behavior = 'url(#default#httpFolder)'; this.navigate('$scriptUrl')";
+
 	$this->assertEquals($expectedLink, $link);
     }
 
@@ -504,6 +517,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
 	$_SERVER['HTTP_USER_AGENT'] = 'Konqueror';
 
@@ -511,20 +525,13 @@ class WebDavHelperTest extends GalleryTestCase {
 
 	$expectedLink = array();
 	$expectedLink['href'] =
-	    'webdav://example.com/gallery2/main.php?g2_controller=webdav.WebDav&amp;g2_itemId='
-	    . $this->_item->getId();
-	$url = 'http://example.com/gallery2/main.php?g2_controller=webdav.WebDav&amp;g2_itemId='
-	    . $this->_item->getId();
+	    'webdav://example.com/gallery2/w/' . implode('/', $pathComponents);
 
-	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
-	    $expectedLink['href'] =
-		'webdav://example.com/gallery2/w/' . ltrim($path, '/');
-	    $url = 'http://example.com/gallery2/w/' . ltrim($path, '/');
-	}
+	$url = 'http://example.com/gallery2/w/' . implode('/', $pathComponents);
 
 	$expectedLink['attrs'] =
 	    'style="behavior: url(#default#anchorClick)" folder="' . $url . '"';
+
 	$this->assertEquals($expectedLink, $link);
     }
 
@@ -614,47 +621,14 @@ class WebDavHelperTest extends GalleryTestCase {
 	    $expectedValue['test'])))), $this->_requestVariables);
     }
 
-    function testGetParentPathOfTwoPathComponents() {
-	$path = rawurlencode('The Quick!Brown#Fox')
-	    . '//' . rawurlencode('Jumps Over%The/Lazy_Dog');
-	$this->assertEquals(rawurlencode('The Quick!Brown#Fox'),
-			    WebDavHelper::getParentPath($path));
-    }
-
-    function testGetParentPathTwoPathComponentsWithLeadingAndTrailingPathSeparators() {
-	$path = '//' . rawurlencode('The Quick!Brown#Fox')
-	    . '//' . rawurlencode('Jumps Over%The/Lazy_Dog') . '//';
-	$this->assertEquals('//' . rawurlencode('The Quick!Brown#Fox'),
-			    WebDavHelper::getParentPath($path));
-    }
-
-    function testGetParentPathOfOnePathComponent() {
-	$path = rawurlencode('The Quick!Brown#Fox');
-	$this->assertEquals('', WebDavHelper::getParentPath($path));
-    }
-
-    function testGetParentPathOfOnePathComponentWithLeadingAndTrailingPathSeparators() {
-	$path = '//' . rawurlencode('The Quick!Brown#Fox') . '//';
-	$this->assertEquals('//', WebDavHelper::getParentPath($path));
-    }
-
-    function testGetParentPathOfEmptyPath() {
-	$path = '';
-	$this->assertEquals('', WebDavHelper::getParentPath($path));
-    }
-
-    function testGetParentPathOfPathSeparators() {
-	$path = '//';
-	$this->assertEquals('//', WebDavHelper::getParentPath($path));
-    }
-
-    function testFetchItemIdByPath() {
+    function testFetchItemIdByPathComponents() {
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
-	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPathComponents($pathComponents);
 	if ($ret) {
 	    return $ret;
 	}
@@ -662,8 +636,14 @@ class WebDavHelperTest extends GalleryTestCase {
 	$this->assertEquals($this->_item->getId(), $itemId);
     }
 
-    function testFetchItemIdByBadPath() {
-	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath('bogus');
+    function testFetchItemIdByBadPathComponents() {
+	$pathComponent = 'Jumps Over%The/Lazy_Dog';
+
+	$pathComponents = array();
+	$pathComponents[] = rawurlencode('The Quick!Brown#Fox');
+	$pathComponents[] = rawurlencode($pathComponent);
+
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPathComponents($pathComponents);
 	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 	    return $ret;
 	}
@@ -672,8 +652,10 @@ class WebDavHelperTest extends GalleryTestCase {
 	$this->assertEquals(null, $itemId);
     }
 
-    function testFetchItemIdByEmptyPath() {
-	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath(null);
+    function testFetchItemIdByEmptyPathComponents() {
+	$pathComponents = array();
+
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPathComponents($pathComponents);
 	if ($ret) {
 	    return $ret;
 	}
@@ -681,16 +663,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	$this->assertEquals($this->_getRootId(), $itemId);
     }
 
-    function testFetchItemIdByRootPath() {
-	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath('/');
-	if ($ret) {
-	    return $ret;
-	}
-
-	$this->assertEquals($this->_getRootId(), $itemId);
-    }
-
-    function testFetchItemIdWithWebDavPathByWebDavPath() {
+    function testFetchItemIdWithWebDavPathComponentsByWebDavPathComponents() {
 	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
 	if ($ret) {
 	    return $ret;
@@ -701,9 +674,13 @@ class WebDavHelperTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath(
-	    '/' . rawurlencode('The Quick!Brown#Fox')
-	    . '/' . rawurlencode('Jumps Over%The/Lazy_Dog'));
+	$pathComponent = 'Jumps Over%The/Lazy_Dog';
+
+	$pathComponents = array();
+	$pathComponents[] = rawurlencode('The Quick!Brown#Fox');
+	$pathComponents[] = rawurlencode($pathComponent);
+
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPathComponents($pathComponents);
 	if ($ret) {
 	    return $ret;
 	}
@@ -711,7 +688,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	$this->assertEquals($this->_item->getId(), $itemId);
     }
 
-    function testFetchItemIdWithWebDavPathByPath() {
+    function testFetchItemIdWithWebDavPathComponentsByPathComponents() {
 	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
 	if ($ret) {
 	    return $ret;
@@ -726,8 +703,9 @@ class WebDavHelperTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
-	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPathComponents($pathComponents);
 	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 	    return $ret;
 	}
@@ -798,6 +776,143 @@ class WebDavHelperTest extends GalleryTestCase {
 	$this->assertEquals(null, $itemId);
     }
 
+    function testCheckLocks() {
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $ret;
+	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
+
+	$ret = WebDavHelper::checkLocks($pathComponents);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(null, $this->_responseHeaders);
+    }
+
+    function testCheckLocksWithLock() {
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $ret;
+	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
+
+	$ret = $this->_lock(array('pathComponents' => $pathComponents));
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = WebDavHelper::checkLocks($pathComponents);
+	if ($ret && !($ret->getErrorCode() & ERROR_LOCK_IN_USE)) {
+	    return $ret;
+	}
+
+	$this->assert($ret);
+
+	$expectedHeaders = array();
+	$expectedHeaders['status'] = 'HTTP/1.0 423 Locked';
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
+    }
+
+    function testCheckLocksWithAncestorLock() {
+	list ($ret, $path) = $this->_album->fetchLogicalPath();
+	if ($ret) {
+	    return $ret;
+	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
+
+	$ret = $this->_lock(array('pathComponents' => $pathComponents));
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $ret;
+	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
+
+	$ret = WebDavHelper::checkLocks($pathComponents);
+	if ($ret && !($ret->getErrorCode() & ERROR_LOCK_IN_USE)) {
+	    return $ret;
+	}
+
+	$this->assert($ret);
+
+	$expectedHeaders = array();
+	$expectedHeaders['status'] = 'HTTP/1.0 423 Locked';
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
+    }
+
+    function testCheckLocksNoTagList() {
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $ret;
+	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
+
+	$ret = $this->_lock(array('pathComponents' => $pathComponents));
+	if ($ret) {
+	    return $ret;
+	}
+
+	$_SERVER['HTTP_IF'] = '(<urn:uuid:e71d4fae-5dec-22d6-fea5-00a0c91e6be4>)';
+
+	$ret = WebDavHelper::checkLocks($pathComponents);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(null, $this->_responseHeaders);
+    }
+
+    function testCheckLocksAbsoluteUri() {
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $ret;
+	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
+
+	$ret = $this->_lock(array('pathComponents' => $pathComponents));
+	if ($ret) {
+	    return $ret;
+	}
+
+	$_SERVER['HTTP_IF'] = '<http://example.com/gallery2/w/' . implode('/', $pathComponents)
+	    . '> (<urn:uuid:e71d4fae-5dec-22d6-fea5-00a0c91e6be4>)';
+
+	$ret = WebDavHelper::checkLocks($pathComponents);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(null, $this->_responseHeaders);
+    }
+
+    function testCheckLocksPathAbsolute() {
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $ret;
+	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
+
+	$ret = $this->_lock(array('pathComponents' => $pathComponents));
+	if ($ret) {
+	    return $ret;
+	}
+
+	$_SERVER['HTTP_IF'] = '</gallery2/w/' . implode('/', $pathComponents)
+	    . '> (<urn:uuid:e71d4fae-5dec-22d6-fea5-00a0c91e6be4>)';
+
+	$ret = WebDavHelper::checkLocks($pathComponents);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(null, $this->_responseHeaders);
+    }
+
     function testPropfindFilesRespectsExternalAccessRulesAndDoesNotRepeatProperties() {
 	$files = array();
 	list ($ret, $item, $path, $expectedProps) = $this->_preparePropfindFiles();
@@ -809,7 +924,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$this->assertEquals(array(array('path' => $path, 'props' => $expectedProps)), $files);
+	$this->assertEquals(array($expectedProps), $files);
     }
 
     function testPropfindFilesIgnoresArraysAndObjectData() {
@@ -823,7 +938,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$this->assertEquals(array(array('path' => $path, 'props' => $expectedProps)), $files);
+	$this->assertEquals(array($expectedProps), $files);
     }
 
     function testPropfindFilesUsesPathComponentAsFallbackForTitle() {
@@ -837,7 +952,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$this->assertEquals(array(array('path' => $path, 'props' => $expectedProps)), $files);
+	$this->assertEquals(array($expectedProps), $files);
     }
 
     function _preparePropfindFiles($addObjectAndArrayData=false, $itemTitle='This is the title') {
@@ -847,10 +962,13 @@ class WebDavHelperTest extends GalleryTestCase {
 	    return array($ret, null, null, null);
 	}
 	$this->_markForCleanup($item);
+
 	list ($ret, $path) = $item->fetchLogicalPath();
 	if ($ret) {
 	    return array($ret, null, null, null);
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
+
 	$item->setCreationTimestamp(10000000);
 	$item->setModificationTimestamp(20000000);
 	$item->setSize(300);
@@ -892,7 +1010,9 @@ class WebDavHelperTest extends GalleryTestCase {
 	    }
 	}
 
-	return array(null, $item, $path, $expectedProps);
+	return array(null, $item, $pathComponents,
+	    array('url' => '/gallery2/w/' . implode('/', $pathComponents),
+		'props' => $expectedProps));
     }
 
     function testPropfindFilesRejectsItemObjectWithoutProperMethods() {
@@ -900,7 +1020,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	$user = $gallery->getActiveUser();
 
 	$files = array();
-	$ret = WebDavHelper::_propfindFiles($user, '/', 0, $files);
+	$ret = WebDavHelper::_propfindFiles($user, array(), 0, $files);
 	if ($ret && $ret->getErrorCode() & ERROR_BAD_PARAMETER) {
 	    /* As expected */
 	} else if ($ret) {
@@ -1015,6 +1135,10 @@ class WebDavHelperTestPhpVm extends GalleryPhpVm {
 
     function extension_loaded($functionName) {
 	return $this->_extension_loaded;
+    }
+
+    function header($header, $replace=null) {
+	/* Avoid modifying actual header information */
     }
 }
 

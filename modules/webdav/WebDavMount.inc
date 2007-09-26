@@ -41,8 +41,10 @@ class WebDavMountView extends GalleryView {
 	$itemId = WebDavHelper::getRequestVariable('itemId');
 
 	$path = WebDavHelper::getRequestVariable('path', true, false);
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
+
 	if (!empty($path)) {
-	    list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
+	    list ($ret, $itemId) = WebDavHelper::fetchItemIdByPathComponents($pathComponents);
 	    if ($ret) {
 		return array($ret, null);
 	    }

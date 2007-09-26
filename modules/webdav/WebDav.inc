@@ -66,7 +66,12 @@ class WebDavController extends GalleryController {
 	}
 
 	$path = WebDavHelper::getRequestVariable('path', true, false);
-	$pathComponent = urldecode(basename($path));
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
+
+	$pathComponent = null;
+	if (!empty($pathComponents)) {
+	    $pathComponent = urldecode($pathComponents[count($pathComponents) - 1]);
+	}
 
 	/* Special case to suppress Mac '._' files.  Ignore request but return success. */
 	if (!strncmp($pathComponent, '._', 2)) {
@@ -83,7 +88,7 @@ class WebDavController extends GalleryController {
 	$requestMethod = GalleryUtilities::strToLower(
 	    GalleryUtilities::getServerVar('REQUEST_METHOD'));
 	if ($requestMethod == 'get' || $requestMethod == 'head') {
-	    list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
+	    list ($ret, $itemId) = WebDavHelper::fetchItemIdByPathComponents($pathComponents);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -105,12 +110,12 @@ class WebDavController extends GalleryController {
 				     'status' => array(),
 				     'error' => array()));
 	} else if ($requestMethod == 'put') {
-	    list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
+	    list ($ret, $itemId) = WebDavHelper::fetchItemIdByPathComponents($pathComponents);
 	    if ($ret) {
 		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 		    /* Item doesn't already exist at this path.  Create it. */
-		    $parentPath = WebDavHelper::getParentPath($path);
-		    list ($ret, $parentId) = WebDavHelper::fetchItemIdByPath($parentPath);
+		    list ($ret, $parentId) = WebDavHelper::fetchItemIdByPathComponents(
+			array_slice($pathComponents, 0, -1));
 		    if ($ret) {
 			if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 			    /*

@@ -64,7 +64,7 @@ class WebDavTest extends GalleryTestCase {
 	$this->_requestVariables = null;
 
 	/* Reset response headers */
-	$this->_responseHeaders =& GalleryUtilities::_responseHeaders();
+	$this->_responseHeaders =& GalleryUtilities::_getResponseHeaders();
 	$this->_responseHeaders = null;
 
 	/* Create test items */
@@ -122,9 +122,9 @@ class WebDavTest extends GalleryTestCase {
 	    'WebDavModule', 'WebDavModule',
 	    'modules/webdav/module.inc', 'webdav',
 	    array('Gallery::ActivatePlugin',
-		  'Gallery::Error',
-		  'GalleryEntity::delete',
-		  'GalleryEntity::save'));
+		'Gallery::Error',
+		'GalleryEntity::delete',
+		'GalleryEntity::save'));
     }
 
     function tearDown() {
@@ -199,25 +199,6 @@ class WebDavTest extends GalleryTestCase {
 	return null;
     }
 
-    function _getHref($path=null) {
-	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
-	    $href = '/gallery2/w/';
-	    if (!empty($path)) {
-		$href .= ltrim($path, '/');
-	    }
-
-	    return $href;
-	}
-
-	$href = '/gallery2/main.php?g2_controller=webdav.WebDav';
-	if (!empty($path)) {
-	    $href .= '&amp;g2_path=' . $path;
-	}
-
-	return $href;
-    }
-
     function testOptions() {
 	$_SERVER['REQUEST_METHOD'] = 'OPTIONS';
 
@@ -256,10 +237,11 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
 	$_SERVER['REQUEST_METHOD'] = 'PROPFIND';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	$this->_streams['test://input'] =
 	    implode("\r\n", array('<?xml version="1.0" encoding="utf-8" ?>',
@@ -297,7 +279,7 @@ class WebDavTest extends GalleryTestCase {
 	    . ' xmlns:G="http://gallery2.org/dav/props/"'
 	    . ' xmlns:T="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">',
 	    '  <D:response>',
-	    '    <D:href>' . $this->_getHref($path) . '</D:href>',
+	    '    <D:href>/gallery2/w/' . implode('/', $pathComponents) . '</D:href>',
 	    '    <D:propstat>',
 	    '      <D:prop>',
 	    '        <D:creationdate T:dt="dateTime.tz">'
@@ -338,10 +320,11 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
 	$_SERVER['REQUEST_METHOD'] = 'PROPFIND';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	$this->_streams['test://input'] =
 	    implode("\r\n", array('<?xml version="1.0" encoding="utf-8" ?>',
@@ -379,7 +362,7 @@ class WebDavTest extends GalleryTestCase {
 	    . ' xmlns:G="http://gallery2.org/dav/props/"'
 	    . ' xmlns:T="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">',
 	    '  <D:response>',
-	    '    <D:href>' . $this->_getHref($path) . '</D:href>',
+	    '    <D:href>/gallery2/w/' . implode('/', $pathComponents) . '</D:href>',
 	    '    <D:status>HTTP/1.1 401 Unauthorized</D:status>',
 	    '  </D:response>',
 	    '</D:multistatus>',
@@ -406,12 +389,15 @@ class WebDavTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$path = '/' . rawurlencode('The Quick!Brown#Fox')
-	    . '/' . rawurlencode('Jumps Over%The/Lazy_Dog');
+	$pathComponent = 'Jumps Over%The/Lazy_Dog';
+
+	$pathComponents = array();
+	$pathComponents[] = rawurlencode('The Quick!Brown#Fox');
+	$pathComponents[] = rawurlencode($pathComponent);
 
 	$_SERVER['REQUEST_METHOD'] = 'PROPFIND';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	$this->_streams['test://input'] =
 	    implode("\r\n", array('<?xml version="1.0" encoding="utf-8" ?>',
@@ -449,7 +435,7 @@ class WebDavTest extends GalleryTestCase {
 	    . ' xmlns:G="http://gallery2.org/dav/props/"'
 	    . ' xmlns:T="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">',
 	    '  <D:response>',
-	    '    <D:href>' . $this->_getHref($path) . '</D:href>',
+	    '    <D:href>/gallery2/w/' . implode('/', $pathComponents) . '</D:href>',
 	    '    <D:propstat>',
 	    '      <D:prop>',
 	    '        <D:creationdate T:dt="dateTime.tz">'
@@ -484,10 +470,11 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
 	$_SERVER['REQUEST_METHOD'] = 'PROPPATCH';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	$this->_streams['test://input'] =
 	    implode("\r\n", array('<?xml version="1.0" encoding="utf-8" ?>',
@@ -525,7 +512,7 @@ class WebDavTest extends GalleryTestCase {
 	    . ' xmlns:G="http://gallery2.org/dav/props/"'
 	    . ' xmlns:T="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">',
 	    '  <D:response>',
-	    '    <D:href>' . $this->_getHref($path) . '</D:href>',
+	    '    <D:href>/gallery2/w/' . implode('/', $pathComponents) . '</D:href>',
 	    '    <D:propstat>',
 	    '      <D:prop>',
 	    '        <D:displayname>new title</D:displayname>',
@@ -570,10 +557,11 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
 	$_SERVER['REQUEST_METHOD'] = 'PROPPATCH';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	$this->_streams['test://input'] =
 	    implode("\r\n", array('<?xml version="1.0" encoding="utf-8" ?>',
@@ -630,12 +618,15 @@ class WebDavTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$path = '/' . rawurlencode('The Quick!Brown#Fox')
-	    . '/' . rawurlencode('Jumps Over%The/Lazy_Dog');
+	$pathComponent = 'Jumps Over%The/Lazy_Dog';
+
+	$pathComponents = array();
+	$pathComponents[] = rawurlencode('The Quick!Brown#Fox');
+	$pathComponents[] = rawurlencode($pathComponent);
 
 	$_SERVER['REQUEST_METHOD'] = 'PROPPATCH';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	$this->_streams['test://input'] =
 	    implode("\r\n", array('<?xml version="1.0" encoding="utf-8" ?>',
@@ -673,7 +664,7 @@ class WebDavTest extends GalleryTestCase {
 	    . ' xmlns:G="http://gallery2.org/dav/props/"'
 	    . ' xmlns:T="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">',
 	    '  <D:response>',
-	    '    <D:href>' . $this->_getHref($path) . '</D:href>',
+	    '    <D:href>/gallery2/w/' . implode('/', $pathComponents) . '</D:href>',
 	    '    <D:propstat>',
 	    '      <D:prop>',
 	    '        <D:displayname>new title</D:displayname>',
@@ -712,10 +703,11 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
 	$_SERVER['REQUEST_METHOD'] = 'PROPPATCH';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	$newTitle = "\xd8\xa7\xd9\x84\xd8\xb9\xd9\x86\xd9\x88\xd8\xa7\xd9\x86";
 	$newSummary = "\xd8\xa7\xd9\x84\xd9\x85\xd9\x84\xd8\xae\xd8\xb5";
@@ -759,7 +751,7 @@ class WebDavTest extends GalleryTestCase {
 	    . ' xmlns:G="http://gallery2.org/dav/props/"'
 	    . ' xmlns:T="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">',
 	    '  <D:response>',
-	    '    <D:href>' . $this->_getHref($path) . '</D:href>',
+	    '    <D:href>/gallery2/w/' . implode('/', $pathComponents) . '</D:href>',
 	    '    <D:propstat>',
 	    '      <D:prop>',
 	    '        <D:displayname>' . $newTitle . '</D:displayname>',
@@ -798,11 +790,12 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$path .= $pathComponent;
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
+	$pathComponents[] = $pathComponent;
 
 	$_SERVER['REQUEST_METHOD'] = 'MKCOL';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -821,7 +814,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(array(''), split("\r?\n", $output));
 
-	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPathComponents($pathComponents);
 	if ($ret) {
 	    return $ret;
 	}
@@ -856,11 +849,12 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$path .= $pathComponent;
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
+	$pathComponents[] = $pathComponent;
 
 	$_SERVER['REQUEST_METHOD'] = 'MKCOL';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -899,12 +893,13 @@ class WebDavTest extends GalleryTestCase {
 
 	$pathComponent = 'Jumps Over%The/Lazy_Dog';
 
-	$path = '/' . rawurlencode('The Quick!Brown#Fox') . '/';
-	$path .= rawurlencode($pathComponent);
+	$pathComponents = array();
+	$pathComponents[] = rawurlencode('The Quick!Brown#Fox');
+	$pathComponents[] = rawurlencode($pathComponent);
 
 	$_SERVER['REQUEST_METHOD'] = 'MKCOL';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -923,7 +918,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(array(''), split("\r?\n", $output));
 
-	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPathComponents($pathComponents);
 	if ($ret) {
 	    return $ret;
 	}
@@ -966,10 +961,11 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
 	$_SERVER['REQUEST_METHOD'] = 'DELETE';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -1012,10 +1008,11 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
 	$_SERVER['REQUEST_METHOD'] = 'DELETE';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -1054,11 +1051,12 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$path .= $pathComponent;
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
+	$pathComponents[] = $pathComponent;
 
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	$_SERVER['CONTENT_LENGTH'] = $fileSize;
 	$_SERVER['CONTENT_TYPE'] = 'test/file';
@@ -1089,7 +1087,7 @@ class WebDavTest extends GalleryTestCase {
 
 	//$this->assertEquals(array(''), split("\r?\n", $output));
 
-	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPathComponents($pathComponents);
 	if ($ret) {
 	    return $ret;
 	}
@@ -1128,11 +1126,12 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$path .= $pathComponent;
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
+	$pathComponents[] = $pathComponent;
 
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	$_SERVER['CONTENT_LENGTH'] = $fileSize;
 	$_SERVER['CONTENT_TYPE'] = 'test/file';
@@ -1186,12 +1185,13 @@ class WebDavTest extends GalleryTestCase {
 
 	$pathComponent = 'Jumps Over%The/Lazy_Dog';
 
-	$path = '/' . rawurlencode('The Quick!Brown#Fox') . '/';
-	$path .= rawurlencode($pathComponent);
+	$pathComponents = array();
+	$pathComponents[] = rawurlencode('The Quick!Brown#Fox');
+	$pathComponents[] = rawurlencode($pathComponent);
 
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	$_SERVER['CONTENT_LENGTH'] = $fileSize;
 	$_SERVER['CONTENT_TYPE'] = 'test/file';
@@ -1222,7 +1222,7 @@ class WebDavTest extends GalleryTestCase {
 
 	//$this->assertEquals(array(''), split("\r?\n", $output));
 
-	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPathComponents($pathComponents);
 	if ($ret) {
 	    return $ret;
 	}
@@ -1271,14 +1271,15 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$path .= $pathComponent;
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
+	$pathComponents[] = $pathComponent;
 
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
 	/* Tolerate suppressed error in getImageSize() */
 	set_error_handler('WebDavTest_error_handler');
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	$_SERVER['CONTENT_LENGTH'] = 0;
 	$_SERVER['CONTENT_TYPE'] = 'test/file';
@@ -1307,7 +1308,7 @@ class WebDavTest extends GalleryTestCase {
 
 	//$this->assertEquals(array(''), split("\r?\n", $output));
 
-	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPathComponents($pathComponents);
 	if ($ret) {
 	    return $ret;
 	}
@@ -1338,10 +1339,11 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	$_SERVER['CONTENT_LENGTH'] = $fileSize;
 	$_SERVER['CONTENT_TYPE'] = 'test/file';
@@ -1378,7 +1380,7 @@ class WebDavTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPathComponents($pathComponents);
 	if ($ret) {
 	    return $ret;
 	}
@@ -1415,10 +1417,11 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	$_SERVER['CONTENT_LENGTH'] = $fileSize;
 	$_SERVER['CONTENT_TYPE'] = 'test/file';
@@ -1475,14 +1478,15 @@ class WebDavTest extends GalleryTestCase {
 	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
 	$fileSize = $this->_platform->filesize($filePath);
 
-	$path = '/' . rawurlencode('The Quick!Brown#Fox')
-	    . '/' . rawurlencode('Jumps Over%The/Lazy_Dog');
-
 	$pathComponent = 'Jumps Over%The/Lazy_Dog';
+
+	$pathComponents = array();
+	$pathComponents[] = rawurlencode('The Quick!Brown#Fox');
+	$pathComponents[] = rawurlencode($pathComponent);
 
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	$_SERVER['CONTENT_LENGTH'] = $fileSize;
 	$_SERVER['CONTENT_TYPE'] = 'test/file';
@@ -1519,7 +1523,7 @@ class WebDavTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPathComponents($pathComponents);
 	if ($ret) {
 	    return $ret;
 	}
@@ -1566,10 +1570,11 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	$_SERVER['CONTENT_LENGTH'] = $fileSize;
 	$_SERVER['CONTENT_TYPE'] = 'image/gif';
@@ -1606,7 +1611,7 @@ class WebDavTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPathComponents($pathComponents);
 	if ($ret) {
 	    return $ret;
 	}
@@ -1637,10 +1642,11 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	$_SERVER['CONTENT_LENGTH'] = $fileSize;
 	$_SERVER['CONTENT_TYPE'] = 'test/file';
@@ -1697,6 +1703,7 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
 	$pathComponent = 'testItem-' . rand();
 
@@ -1704,18 +1711,14 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$newPath .= $pathComponent;
+	$newPathComponents = preg_split('/\//', $newPath, -1, PREG_SPLIT_NO_EMPTY);
+	$newPathComponents[] = $pathComponent;
 
 	$_SERVER['REQUEST_METHOD'] = 'MOVE';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
-	$_SERVER['HTTP_DESTINATION'] =
-	    'http://example.com/gallery2/main.php' . $newPath . '?g2_controller=webdav.WebDav';
-	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
-	    $_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/w' . $newPath;
-	}
+	$_SERVER['HTTP_DESTINATION'] = '/gallery2/w/' . implode('/', $newPathComponents);
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -1734,7 +1737,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(array(''), split("\r?\n", $output));
 
-	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($newPath);
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPathComponents($newPathComponents);
 	if ($ret) {
 	    return $ret;
 	}
@@ -1765,6 +1768,7 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
 	$pathComponent = 'testItem-' . rand();
 
@@ -1772,18 +1776,14 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$newPath .= $pathComponent;
+	$newPathComponents = preg_split('/\//', $newPath, -1, PREG_SPLIT_NO_EMPTY);
+	$newPathComponents[] = $pathComponent;
 
 	$_SERVER['REQUEST_METHOD'] = 'MOVE';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
-	$_SERVER['HTTP_DESTINATION'] =
-	    'http://example.com/gallery2/main.php' . $newPath . '?g2_controller=webdav.WebDav';
-	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
-	    $_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/w' . $newPath;
-	}
+	$_SERVER['HTTP_DESTINATION'] = '/gallery2/w/' . implode('/', $newPathComponents);
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -1829,6 +1829,7 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
 	$pathComponent = 'testItem-' . rand();
 
@@ -1836,18 +1837,14 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$newPath .= $pathComponent;
+	$newPathComponents = preg_split('/\//', $newPath, -1, PREG_SPLIT_NO_EMPTY);
+	$newPathComponents[] = $pathComponent;
 
 	$_SERVER['REQUEST_METHOD'] = 'MOVE';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
-	$_SERVER['HTTP_DESTINATION'] =
-	    'http://example.com/gallery2/main.php' . $newPath . '?g2_controller=webdav.WebDav';
-	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
-	    $_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/w' . $newPath;
-	}
+	$_SERVER['HTTP_DESTINATION'] = '/gallery2/w/' . implode('/', $newPathComponents);
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -1899,6 +1896,7 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
 	$pathComponent = 'testItem-' . rand();
 
@@ -1906,18 +1904,14 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$newPath .= $pathComponent;
+	$newPathComponents = preg_split('/\//', $newPath, -1, PREG_SPLIT_NO_EMPTY);
+	$newPathComponents[] = $pathComponent;
 
 	$_SERVER['REQUEST_METHOD'] = 'MOVE';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
-	$_SERVER['HTTP_DESTINATION'] =
-	    'http://example.com/gallery2/main.php' . $newPath . '?g2_controller=webdav.WebDav';
-	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
-	    $_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/w' . $newPath;
-	}
+	$_SERVER['HTTP_DESTINATION'] = '/gallery2/w/' . implode('/', $newPathComponents);
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -1976,25 +1970,22 @@ class WebDavTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$path = '/' . rawurlencode('The Quick!Brown#Fox')
-	    . '/' . rawurlencode('Jumps Over%The/Lazy_Dog');
-
 	$pathComponent = 'Jumps Over%The/Lazy_Dog';
 
-	$newPath = '/' . rawurlencode('The Quick!Brown#Fox')
-	    . '/' . rawurlencode('The Quick!Brown#Fox') . '/';
-	$newPath .= rawurlencode($pathComponent);
+	$pathComponents = array();
+	$pathComponents[] = rawurlencode('The Quick!Brown#Fox');
+	$pathComponents[] = rawurlencode($pathComponent);
+
+	$newPathComponents = array();
+	$newPathComponents[] = rawurlencode('The Quick!Brown#Fox');
+	$newPathComponents[] = rawurlencode('The Quick!Brown#Fox');
+	$newPathComponents[] = rawurlencode($pathComponent);
 
 	$_SERVER['REQUEST_METHOD'] = 'MOVE';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
-	$_SERVER['HTTP_DESTINATION'] =
-	    'http://example.com/gallery2/main.php' . $newPath . '?g2_controller=webdav.WebDav';
-	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
-	    $_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/w' . $newPath;
-	}
+	$_SERVER['HTTP_DESTINATION'] = '/gallery2/w/' . implode('/', $newPathComponents);
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -2013,7 +2004,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(array(''), split("\r?\n", $output));
 
-	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($newPath);
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPathComponents($newPathComponents);
 	if ($ret) {
 	    return $ret;
 	}
@@ -2039,14 +2030,14 @@ class WebDavTest extends GalleryTestCase {
 
     /**
      * Helper function for lock tests.
-     * @param string $path resource to lock
+     * @param array $pathComponents resource to lock
      * @return array object GalleryStatus a status code
      *               array new WebDAV lock (scope, type, depth, owner, expires, token, path)
      */
-    function _testLock($path) {
+    function _testLock($pathComponents) {
 	$_SERVER['REQUEST_METHOD'] = 'LOCK';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	$_SERVER['HTTP_TIMEOUT'] = 'Infinite, Second-4100000000';
 
@@ -2071,7 +2062,7 @@ class WebDavTest extends GalleryTestCase {
 	    return array($ret, null);
 	}
 
-	list ($ret, list ($lock)) = WebDavHelper::getLocks($path);
+	list ($ret, list ($lock)) = WebDavHelper::getLocks($pathComponents);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -2115,7 +2106,8 @@ class WebDavTest extends GalleryTestCase {
     function _testUnlock($lock) {
 	$_SERVER['REQUEST_METHOD'] = 'UNLOCK';
 
-	WebDavHelper::putRequestVariable('path', $lock['path'], true, false);
+	WebDavHelper::putRequestVariable(
+	    'path', implode('/', $lock['pathComponents']), true, false);
 
 	$_SERVER['HTTP_LOCK_TOKEN'] = "<$lock[token]>";
 
@@ -2136,12 +2128,10 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(array(''), split("\r?\n", $output));
 
-	$ret = WebDavHelper::checkLocks($lock['path']);
+	$ret = WebDavHelper::checkLocks($lock['pathComponents']);
 	if ($ret) {
 	    return $ret;
 	}
-
-	return null;
     }
 
     function testLockUnlock() {
@@ -2151,8 +2141,9 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
-	list ($ret, $lock) = $this->_testLock($path);
+	list ($ret, $lock) = $this->_testLock($pathComponents);
 	if ($ret) {
 	    return $ret;
 	}
@@ -2172,8 +2163,9 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
-	list ($ret, $lock) = $this->_testLock($path);
+	list ($ret, $lock) = $this->_testLock($pathComponents);
 	if ($ret) {
 	    return $ret;
 	}
@@ -2182,7 +2174,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['REQUEST_METHOD'] = 'LOCK';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	$_SERVER['HTTP_IF'] = '(<' . $lock['token'] . '>)';
 	$_SERVER['HTTP_TIMEOUT'] = 'Infinite, Second-4100000000';
@@ -2198,7 +2190,7 @@ class WebDavTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	list ($ret, list ($lock)) = WebDavHelper::getLocks($path);
+	list ($ret, list ($lock)) = WebDavHelper::getLocks($pathComponents);
 	if ($ret) {
 	    return $ret;
 	}
@@ -2245,8 +2237,9 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
-	list ($ret, $lock) = $this->_testLock($path);
+	list ($ret, $lock) = $this->_testLock($pathComponents);
 	if ($ret) {
 	    return $ret;
 	}
@@ -2257,10 +2250,11 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 
 	$_SERVER['REQUEST_METHOD'] = 'LOCK';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	$_SERVER['HTTP_TIMEOUT'] = 'Infinite, Second-4100000000';
 
@@ -2285,7 +2279,7 @@ class WebDavTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	list ($ret, $locks) = WebDavHelper::getLocks($path);
+	list ($ret, $locks) = WebDavHelper::getLocks($pathComponents);
 	if ($ret) {
 	    return $ret;
 	}
@@ -2300,7 +2294,7 @@ class WebDavTest extends GalleryTestCase {
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<D:multistatus xmlns:D="DAV:">',
 	    '  <D:response>',
-	    '    <D:href>' . $this->_getHref($lock['path']) . '</D:href>',
+	    '    <D:href>/gallery2/w/' . implode('/', $lock['pathComponents']) . '</D:href>',
 	    '    <D:status>HTTP/1.1 423 Locked</D:status>',
 	    '  </D:response>',
 	    '</D:multistatus>',
@@ -2328,21 +2322,25 @@ class WebDavTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$path = '/' . rawurlencode('The Quick!Brown#Fox')
-	    . '/' . rawurlencode('Jumps Over%The/Lazy_Dog');
+	$pathComponent = 'Jumps Over%The/Lazy_Dog';
 
-	list ($ret, $lock) = $this->_testLock($path);
+	$pathComponents = array();
+	$pathComponents[] = rawurlencode('The Quick!Brown#Fox');
+	$pathComponents[] = rawurlencode($pathComponent);
+
+	list ($ret, $lock) = $this->_testLock($pathComponents);
 	if ($ret) {
 	    return $ret;
 	}
 
 	$this->_responseHeaders = null;
 
-	$path = '/' . rawurlencode('The Quick!Brown#Fox') . '/';
+	$pathComponents = array();
+	$pathComponents[] = rawurlencode('The Quick!Brown#Fox');
 
 	$_SERVER['REQUEST_METHOD'] = 'LOCK';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	$_SERVER['HTTP_TIMEOUT'] = 'Infinite, Second-4100000000';
 
@@ -2367,7 +2365,7 @@ class WebDavTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	list ($ret, $locks) = WebDavHelper::getLocks($path);
+	list ($ret, $locks) = WebDavHelper::getLocks($pathComponents);
 	if ($ret) {
 	    return $ret;
 	}
@@ -2382,7 +2380,7 @@ class WebDavTest extends GalleryTestCase {
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<D:multistatus xmlns:D="DAV:">',
 	    '  <D:response>',
-	    '    <D:href>' . $this->_getHref($lock['path']) . '</D:href>',
+	    '    <D:href>/gallery2/w/' . implode('/', $lock['pathComponents']) . '</D:href>',
 	    '    <D:status>HTTP/1.1 423 Locked</D:status>',
 	    '  </D:response>',
 	    '</D:multistatus>',
@@ -2404,11 +2402,12 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$path .= $pathComponent;
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
+	$pathComponents[] = $pathComponent;
 
 	$_SERVER['REQUEST_METHOD'] = 'GET';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -2437,11 +2436,12 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$path .= $pathComponent;
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
+	$pathComponents[] = $pathComponent;
 
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -2462,7 +2462,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(array(''), split("\r?\n", $output));
 
-	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPathComponents($pathComponents);
 	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 	    return $ret;
 	}
@@ -2500,11 +2500,12 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$path .= $pathComponent;
+	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
+	$pathComponents[] = $pathComponent;
 
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
-	WebDavHelper::putRequestVariable('path', $path, true, false);
+	WebDavHelper::putRequestVariable('path', implode('/', $pathComponents), true, false);
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -2525,7 +2526,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(array(''), split("\r?\n", $output));
 
-	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPathComponents($pathComponents);
 	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 	    return $ret;
 	}
@@ -2623,7 +2624,7 @@ function WebDavTest_error_handler($errno, $errstr, $errfile, $errline) {
     if ($errno == E_NOTICE && preg_match(
 	    '/getimagesize\(\).*: Read error|imagecreatefromgif\(\).*:.* is not a valid GIF file/',
 	    $errstr)) {
-	return null;
+	return;
     }
 
     /* Call default error_handler */
