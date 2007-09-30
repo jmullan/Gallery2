@@ -232,6 +232,10 @@ class UnitTestStorage extends MockObject {
 	return $this->_makeReply('_normalizeValue', array($value, $memberData, $fromDb));
     }
 
+    function validateConnection() {
+	return $this->_makeReply('validateConnection', array());
+    }
+    								
     function &_getExtras() {
     	if (!isset($this->_extras)) {
 	    $this->_extras = new UnitTestStorageExtras();

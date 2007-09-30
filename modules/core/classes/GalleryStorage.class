@@ -1443,6 +1443,16 @@ class GalleryStorage {
 	$extras =& $this->_getExtras();
 	return $extras->_updateTableInfo($moduleId);
     }
+
+    /**
+     * Test whether the current connection and non transactional connection are still valid.  If 
+     * the connections are not valid then reconnect the connection.
+     * @return GalleryStatus
+     */
+    function validateConnection() {
+	$extras =& $this->_getExtras();
+	return $extras->validateConnection();
+    }
 }
 
 /**

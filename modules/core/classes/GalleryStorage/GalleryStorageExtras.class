@@ -2182,5 +2182,34 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	}
 	return null;
     }
+
+    /**
+     * @see GalleryStorage::validateConnection
+     */
+    function validateConnection() {
+	if (isset($this->_gs->_nonTransactionalDb)) {
+	    $time = $this->_gs->_nonTransactionalDb->Time();
+	    if (!$time) {
+		unset($this->_gs->_nonTransactionalDb);
+		list ($ret) = $this->_getNonTransactionalDatabaseConnection();
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+	}
+
+	if (isset($this->_gs->_db)) {
+	    $time = $this->_gs->_db->Time();
+	    if (!$time) {
+		unset($this->_gs->_db);
+		list ($ret, $this->_gs->_db) = $this->_gs->_getConnection();
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+	}
+
+	return null; 
+    }
 }
 ?>

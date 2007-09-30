@@ -2186,6 +2186,10 @@ class CoreModuleExtras {
 
 	case '1.2.1':
 	    /* Add support for g2data/locale hierarchy */
+	    $ret = $storage->checkPoint();
+	    if ($ret) {
+		return $ret;
+	    }
 	    foreach (array('module', 'theme') as $pluginType) {
 		list ($ret, $pluginList[$pluginType]) =
 		    GalleryCoreApi::fetchPluginList($pluginType);
@@ -2216,6 +2220,12 @@ class CoreModuleExtras {
 	    }
 
 	    $ret = $statusMonitor->renderStatusMessage($upgradingMessageText, '', 1);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    /* We might have lost our database connection so check and reconnect */
+	    $ret = $storage->validateConnection();
 	    if ($ret) {
 		return $ret;
 	    }
@@ -2436,6 +2446,8 @@ class CoreModuleExtras {
 	case '1.2.19':
 	    /* Use lightweight event system */
 	case '1.2.20':
+	case '1.2.21':
+	    /* Added GalleryStorage::validateConnection */
 
 	case 'end of upgrade path':
 	    /*
@@ -2770,6 +2782,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.18':
 	case '1.2.19':
 	case '1.2.20':
+	case '1.2.21':
 
 	case 'end of upgrade path':
 	    /*
