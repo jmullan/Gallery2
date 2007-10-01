@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Upgrader 2.3\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-06-01 11:42+0000\n"
-"PO-Revision-Date: 2007-06-07 09:14+0100\n"
+"PO-Revision-Date: 2007-09-23 14:36+0100\n"
 "Last-Translator: Ermanno Baschiera <ebaschiera@gmail.com>\n"
 "Language-Team: Italian <gallery-translations@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -52,22 +52,23 @@ msgid "Unable to commit database transaction"
 msgstr "Impossibile compiere la transazione nel database"
 
 msgid "Database Backup"
-msgstr ""
+msgstr "Backup del Database"
 
 msgid "Error attempting to enable maintenance mode."
-msgstr ""
+msgstr "Errore durante il tentativo di attivare la modalità manutenzione."
 
 msgid "Backing up the Gallery database"
-msgstr ""
+msgstr "Esecuzione in corso del backup del database di Gallery"
 
 msgid "Errors occurred during the database backup"
-msgstr ""
+msgstr "Si sono verificati degli errori durante il backup del database"
 
 msgid "Error attempting to disable maintenance mode."
 msgstr ""
+"Si è verificato un errore durante il tentativo di disabilitare la modalità manutenzione."
 
 msgid "Unable to determine if automated backup is available."
-msgstr ""
+msgstr "Impossibile determinare se sia possibile fare il backup automatico."
 
 msgid "Finish Upgrade"
 msgstr "Conclusione Aggiornamento"
@@ -114,7 +115,7 @@ msgid ""
 "Error: Your version of PHP is configured with safe mode enabled.  You must disable safe mode "
 "before Gallery will run."
 msgstr ""
-"Errore: La versione di PHP che hai è configurata con safe mode abilitato. Devi disabilitare "
+"Errore: La versione di PHP che hai è configurata con safe mode abilitata. Devi disabilitare "
 "safe mode affinché Gallery funzioni."
 
 msgid "Safe Mode"
@@ -142,8 +143,8 @@ msgid ""
 msgstr ""
 "Warning: La funzione exec() è disabilitata in PHP dal parametro <b>disabled_functions</b> di "
 "php.ini. Non sarai in grado di utilizzare moduli che necessitano di binari esterni (ad es. "
-"ImageMagick, NetPBM o Ffmpeg). Questo può essere configurato solo a livello di server, "
-"quindi dovrai cambiarlo nel file php.ini globale."
+"ImageMagick, NetPBM o Ffmpeg). Questo può essere configurato solo a livello di intero "
+"server, quindi dovrai cambiarlo nel file php.ini globale."
 
 msgid "set_time_limit() allowed"
 msgstr "set_time_limit() concesso"
@@ -171,7 +172,7 @@ msgid ""
 msgstr ""
 "Errore: Delle operazioni essenziali sul filesystem sono disabilitate in PHP dal parametro "
 "<b>disabled_functions</b> di php.ini. Devi permettere queste funzioni per far funzionare "
-"Gallery. Le funzioni mancanti sono : %s."
+"Gallery. Le funzioni mancanti sono: %s."
 
 msgid "Memory limit"
 msgstr "Limite memoria"
@@ -486,10 +487,11 @@ msgid ""
 "where %s is located). It must contain the following randomly generated characters:"
 msgstr ""
 "Per procedere nell'aggiornamento, dobbiamo verificare che tu sia davvero chi dici di essere. "
-"Il modo migliore per essere sicuri è di chiederti di fare una piccola modifica alla cartella "
-"di Gallery in modo da provare che hai le autorizzazioni giuste. Allora, ti chiediamo di "
-"creare un nuovo file di testo chiamato %s nella cartella %s del tuo webserver (è il nome "
-"della cartella dove %s si trova). Deve contenere i seguenti caratteri generati casualmente:"
+"Il modo migliore per essere sicuri è di chiederti di fare una piccola modifica nella "
+"cartella di Gallery in modo da provare che hai le autorizzazioni giuste. Allora, ti "
+"chiediamo di creare un nuovo file di testo chiamato %s nella cartella %s del tuo webserver "
+"(è il nome della cartella dove %s si trova). Deve contenere i seguenti caratteri generati "
+"casualmente:"
 
 msgid "Once you've uploaded the file, click below to continue."
 msgstr "Una volta che hai caricato il file, clicca qui sotto per continuare."
@@ -535,7 +537,6 @@ msgstr ""
 msgid "Try Again"
 msgstr "Prova Ancora"
 
-#, fuzzy
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
 "If you fail to make a backup and something goes wrong, there is a strong possibility that we "
@@ -543,19 +544,19 @@ msgid ""
 msgstr ""
 "Prima di fare l'aggiornamento, <b>ti raccomandiamo caldamente</b> di fare un backup del "
 "database! Se non fai il backup e qualcosa va storto, c'è una forte possibilità che non "
-"saremo in grado di aiutarti a recuperare i tuoi dati! Fa' riferimento all'esempio seguente:"
+"saremo in grado di aiutarti a recuperare i tuoi dati!"
 
 msgid "You have three options:"
-msgstr ""
+msgstr "Hai tre opzioni:"
 
 msgid "You have two options:"
-msgstr ""
+msgstr "Hai due opzioni:"
 
 msgid "Do the automated backup (<b>recommended</b>)."
-msgstr ""
+msgstr "Fare il backup automatico (<b>raccomandato</b>)."
 
 msgid "Do a manual backup (see below)."
-msgstr ""
+msgstr "Fare un backup manuale (vedi sotto)."
 
 msgid "MySQL"
 msgstr "MySQL"
@@ -573,21 +574,20 @@ msgid "Microsoft SQL Server"
 msgstr "Microsoft SQL Server"
 
 msgid "Continue without a backup (<b>discouraged</b>)."
-msgstr ""
+msgstr "Continuare senza fare un backup (<b>sconsigliato</b>)."
 
-#, fuzzy
 msgid ""
 "If you choose to perform the automated backup, please be patient.  If you cancel or reload "
 "the page, you may interfere with the backup process."
 msgstr ""
-"Una volta che l'aggiornamento sarà iniziato, sii paziente. Se annulli o ricarichi la pagina, "
-"potresti interferire con il processo di aggiornamento."
+"Se hai deciso di fare il backup automatico, sii paziente. Se annulli o ricarichi la pagina, "
+"potresti interferire con il processo di backup."
 
 msgid "Begin Database Backup"
-msgstr ""
+msgstr "Inizia il Backup del Database"
 
 msgid "Skip Database Backup"
-msgstr ""
+msgstr "Salta il Backup del Database"
 
 #, c-format
 msgid "Continue to Step %d&raquo;"
@@ -597,18 +597,17 @@ msgid "Stack Trace:"
 msgstr "Stack Trace:"
 
 msgid "Gallery Database Backup successful."
-msgstr ""
+msgstr "Backup del Database di Gallery eseguito con successo."
 
-#, fuzzy
 msgid "We've successfully backed up the data in your Gallery database."
-msgstr "Abbiamo aggiornano con successo il Modulo Core di Gallery."
+msgstr "Abbiamo concluso con successo il backup dei dati del database di Gallery."
 
 msgid "The following warnings were produced during the backup process:"
-msgstr ""
+msgstr "Sono stati rilevati i seguenti warning durante il processo di backup:"
 
 #, c-format
 msgid "Your backup is contained in the file %s"
-msgstr ""
+msgstr "Il tuo backup si trova nel file %s"
 
 msgid "Finished!"
 msgstr "Finito!"
@@ -671,7 +670,7 @@ msgstr ""
 "preparazione all'aggiornamento, per favore recuperalo e prova di nuovo."
 
 msgid "If you actually want to run the Gallery 2 installer, please follow the link below."
-msgstr "Se vuoi effettivamente lanciare l'installer di Gallery 2, segui il link qui sotto."
+msgstr "Se vuoi in realtà lanciare l'installer di Gallery 2, segui il link qui sotto."
 
 msgid ""
 "If you want to upgrade from Gallery 1, you first need to install Gallery 2 and then use the "
@@ -712,7 +711,7 @@ msgstr ""
 "aiuteremo a capire qual è il problema."
 
 msgid "Debug Output:"
-msgstr "Output Debug:"
+msgstr "Output di Debug:"
 
 msgid "Upgrading the Gallery Core Module"
 msgstr "Aggiornamento del Modulo Core di Gallery"
