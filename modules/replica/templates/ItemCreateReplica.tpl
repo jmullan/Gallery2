@@ -33,7 +33,7 @@
 	       arg2=$ItemCreateReplica.numPages}
     {/if}
   </p>
-  
+
   {if !empty($form.error.sources.empty)}
   <div class="giError">
     <h2>{g->text text="No sources chosen"}</h2>
@@ -57,7 +57,7 @@
     {rdelim}
     // ]]>
   </script>
-  
+
   <table>
     <colgroup width="60"/>
     {foreach from=$ItemCreateReplica.peers item=peer}
@@ -106,7 +106,7 @@
     {g->text text="Choose a new album for the replica"}
   </p>
 
-<div id="gTreeDiv"></div>  
+<div id="gTreeDiv"></div>
 <script type="text/javascript">
   //<![CDATA[
   var tree;
@@ -122,8 +122,8 @@
      * branch in nodes[] array in order to maintain parent ids.
      *}
     {foreach from=$ItemCreateReplica.albumTree item=album}
-      nodes[{$album.depth}] = new YAHOO.widget.TextNode({ldelim} id: "{$album.data.id}", 
-        label: "{$album.data.title|markup:strip|default:$album.data.pathComponent}",
+      nodes[{$album.depth}] = new YAHOO.widget.TextNode({ldelim} id: "{$album.data.id}",
+        label: "{$album.data.title|markup:strip|escape:javascript|default:$album.data.pathComponent}",
         href: "javascript:onLabelClick({$album.data.id})" {rdelim},
         nodes[{$album.depth-1}], {if $album.depth == 0}true{else}false{/if});
       {* If the destination album is known, expand starting with top ancestor *}
@@ -137,10 +137,10 @@
     tree.draw();
     var node = tree.getNodeByProperty("id", selectedId);
     node.getLabelEl().setAttribute("class", "ygtvlabelselected");
-    
+
     document.getElementById("{g->formVar var="form[destination]"}").value = selectedId;
   {rdelim}
-  
+
   function onLabelClick(id) {ldelim}
     if (selectedId != id) {ldelim}
       var node = tree.getNodeByProperty("id", id);
@@ -153,7 +153,7 @@
       document.getElementById("{g->formVar var="form[destination]"}").value = id;
     {rdelim}
   {rdelim}
-  
+
   YAHOO.util.Event.addListener(window, "load", treeInit);
   //]]>
 </script>
@@ -163,7 +163,7 @@
   <div class="giError">
     {g->text text="No destination chosen"}
   </div>
-  {/if}  
+  {/if}
 </div>
 
 <div class="gbBlock gcBackground1">

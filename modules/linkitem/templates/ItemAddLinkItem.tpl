@@ -11,7 +11,7 @@
       <b> {g->text text="Link to Album:"} </b> &nbsp;
     </label>
   </td><td>
-  <div id="gTreeDiv"></div>  
+  <div id="gTreeDiv"></div>
 <script type="text/javascript">
   //<![CDATA[
   var tree;
@@ -27,8 +27,8 @@
      * branch in nodes[] array in order to maintain parent ids.
      *}
     {foreach from=$ItemAddLinkItem.albumTree item=album}
-      nodes[{$album.depth}] = new YAHOO.widget.TextNode({ldelim} id: "{$album.data.id}", 
-        label: "{$album.data.title|markup:strip|default:$album.data.pathComponent}",
+      nodes[{$album.depth}] = new YAHOO.widget.TextNode({ldelim} id: "{$album.data.id}",
+        label: "{$album.data.title|markup:strip|escape:javascript|default:$album.data.pathComponent}",
         href: "javascript:onLabelClick({$album.data.id})" {rdelim},
         nodes[{$album.depth-1}], {if $album.depth == 0}true{else}false{/if});
       {* If the destination album is known, expand starting with top ancestor *}
@@ -42,10 +42,10 @@
     tree.draw();
     var node = tree.getNodeByProperty("id", selectedId);
     node.getLabelEl().setAttribute("class", "ygtvlabelselected");
-    
+
     document.getElementById("{g->formVar var="form[linkedAlbumId]"}").value = selectedId;
   {rdelim}
-  
+
   function onLabelClick(id) {ldelim}
     if (selectedId != id) {ldelim}
       var node = tree.getNodeByProperty("id", id);
@@ -58,7 +58,7 @@
       document.getElementById("{g->formVar var="form[linkedAlbumId]"}").value = id;
     {rdelim}
   {rdelim}
-  
+
   YAHOO.util.Event.addListener(window, "load", treeInit);
   //]]>
 </script>
