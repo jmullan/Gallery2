@@ -244,7 +244,9 @@ class RepositoryDescriptor extends RepositoryObject {
 	    }
 	    $data['files'][$file] = array(
 		'bytes' => $fileInfo['size'],
+		'bytes_crlf' => $fileInfo['size_crlf'],
 		'hash' => $fileInfo['checksum'],
+		'hash_crlf' => $fileInfo['checksum_crlf'],
 		'packages' => $this->getPackageNames($file));
 
 	    if (basename($file) == 'strings.raw') {
@@ -378,7 +380,7 @@ class RepositoryDescriptor extends RepositoryObject {
 
 		$contents = $platform->file_get_contents($path);
 		$crc = sprintf('%u', $phpVm->crc32($contents));
-		if ($crc != $metaData['hash']) {
+		if ($crc != $metaData['hash'] && $crc != $metaData['hash_crlf']) {
 		    $errors[] = sprintf('%s: bad crc (%s != %s)', $file, $metaData['hash'], $crc);
 		} else {
 		    $stat = $platform->stat($path);
@@ -386,7 +388,8 @@ class RepositoryDescriptor extends RepositoryObject {
 			$errors[] = sprintf('%s: newer than MANIFEST', $file);
 		    }
 
-		    if ($stat[7 /* size */] != $metaData['bytes']) {
+		    if ($stat[7 /* size */] != $metaData['bytes']
+			    && $stat[7] != $metaData['bytes_crlf']) {
 			$errors[] = sprintf('%s: file size mismatch (%s != %s)',
 					    $file, $metaData['bytes'], $stat[7]);
 		    }
