@@ -1,0 +1,627 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2007 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+GalleryCoreApi::requireOnce('modules/notification/classes/NotificationHelper.class');
+GalleryCoreApi::requireOnce('modules/notification/classes/GalleryCoreEventNotifications.class');
+
+/**
+ * NotificationHelper tests
+ * @package Notification
+ * @subpackage PHPUnit
+ * @author Zimzat <zimzat@zimzat.com>
+ * @author Tim Almdal <tnalmdal@shaw.ca>
+ * @version $Revision$
+ */
+class NotificationHelperTest extends GalleryTestCase {
+
+    function NotificationHelperTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	list ($ret, $group) = GalleryCoreApi::fetchGroupByGroupName('Registered Users');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_groupRegistered = $group->getId();
+
+	$this->_unregisterFactoryImplementationForTest('NotificationEvent_1_0');
+	$this->_unregisterFactoryImplementationForTest('NotificationHandler_1_0');
+
+	$ret = $this->_registerFactoryImplementationForTest('NotificationEvent_1_0', 
+	    'NotificationHelperEventTest', 'Test::Event1',
+	    'modules/notification/test/phpunit/NotificationHelperTest.class', 
+	    'notification', array('eventName' => 'Test::Event'));
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = $this->_registerFactoryImplementationForTest('NotificationEvent_1_0', 
+	    'NotificationHelperEventTest2', 'Test::Event2',
+	    'modules/notification/test/phpunit/NotificationHelperTest.class', 
+	    'notification', array('eventName' => 'Test::Event2'));
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = $this->_registerFactoryImplementationForTest(
+	    'NotificationHandler_1_0', 'NotificationHelperNotification', 'Test::EventHandler',
+	    'modules/notification/test/phpunit/NotificationHelperTest.class', 
+	    'notification', array());
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = $this->_registerFactoryImplementationForTest(
+	    'NotificationHandler_1_0', 'NotificationHelperNotificationNew', 'Test:NewHandler',
+	    'modules/notification/test/phpunit/NotificationHelperTest.class', 
+	    'notification', array('Gallery::ViewableTreeChange',
+		  'Gallery::RemovePermission',
+		  'GalleryEntity::save',
+		  'GalleryEntity::delete'));
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'notification');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$userId = $gallery->getActiveUserId();
+	$cacheKey = "GalleryUserGroupHelper::fetchGroupsForUser($userId,,)";
+	$groupData = array($this->_groupRegistered => 'Test Group Name');
+	GalleryDataCache::put($cacheKey, $groupData);
+
+	list ($ret , $this->_coreViewBits) = 
+	    GalleryCoreApi::convertPermissionIdsToBits('core.view');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($this->_album);
+
+	list ($ret, $this->_item1) = $this->_createRandomDataItem($this->_album->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $this->_item2) = $this->_createRandomDataItem($this->_album->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $this->_user) = $this->_createRandomUser();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($this->_user);
+
+	$cacheKey = "GalleryUserGroupHelper::fetchGroupsForUser({$this->_user->getId()},,)";
+	$groupData = array($this->_groupRegistered => 'Test Group Name');
+	GalleryDataCache::put($cacheKey, $groupData);
+
+	$this->_storageSet = true;
+	$gallery->_storage = new UnitTestStorage();
+
+	$this->_saveLockSystem = $gallery->_lockSystem;
+	$gallery->_lockSystem = null;
+    }
+
+    function tearDown() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$gallery->_lockSystem =& $this->_saveLockSystem;
+
+	if (!empty($this->_storageSet)) {
+	    $this->assert($storage->isComplete(), $storage->getRemaining());
+	}
+
+	parent::tearDown();
+    }
+
+    function testGetDefinedEventsDisplay() {
+	list ($ret, $events) = NotificationHelper::getDefinedEvents(true);
+	if ($ret) {
+	    return $ret;
+	}
+	
+	$expected = array('' => $this->_module->translate('Select Event'),
+			  'Test::Event2' => 
+			     $this->_module->translate('NotificationEventTest2 Description'),
+			  'Test::Event1' => 
+			     $this->_module->translate('NotificationEventTest Description'));
+	
+	$this->assertEquals($expected, $events, 'Display');
+
+	list ($ret, $events) = NotificationHelper::getDefinedEvents();
+	if ($ret) {
+	    return $ret;
+	}
+	
+	$expected = array('Test::Event2' => 
+			     $this->_module->translate('NotificationEventTest2 Description'),
+			  'Test::Event1' => 
+			     $this->_module->translate('NotificationEventTest Description'));
+	
+	$this->assertEquals($expected, $events, 'Non Display');
+    }
+
+    function testGetDefinedHandlersDisplay() {
+	list ($ret, $handlers) = NotificationHelper::getDefinedHandlers(true);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$expected = 
+		array('' => $this->_module->translate('Select Handler'),
+		      'Test:NewHandler' => 
+			$this->_module->translate('NotificationHelperNotification New Description'),
+		      'Test::EventHandler' => 
+			$this->_module->translate('NotificationHelperNotification Description'));
+	
+	$this->assertEquals($expected, $handlers, 'Display');
+
+	list ($ret, $handlers) = NotificationHelper::getDefinedHandlers();
+	if ($ret) {
+	    return $ret;
+	}
+	
+	$expected = 
+		array('Test:NewHandler' => 
+			$this->_module->translate('NotificationHelperNotification New Description'),
+		      'Test::EventHandler' => 
+			$this->_module->translate('NotificationHelperNotification Description'));
+	
+	$this->assertEquals($expected, $handlers, 'Non Display');
+    }
+
+    function testGetSubscriptions() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	
+	$userId = $gallery->getActiveUserId();
+
+	$storage->setReply('getMapEntry',
+			   array('SubscriptionMap', array('notificationName', 'itemId'), 
+				 array('userId' => $gallery->getActiveUserId()), array()),
+			   array(null, new UnitTestStorageSearchResults(
+			   		array(array('Test::Event1', 4),
+			   		      array('Test::Event2', 5)))));
+
+	list ($ret, $events) = NotificationHelper::getSubscriptions($userId);
+	if ($ret) {
+	    return $ret;
+	}
+	
+	$this->assertEquals(array('Test::Event1' => array(4), 'Test::Event2' => array(5)), $events,
+				  'UserId search');
+
+	$dummyItemId = 6;
+	$storage->setReply('getMapEntry',
+			   array('SubscriptionMap', array('notificationName', 'itemId'), 
+				 array('userId' => $gallery->getActiveUserId(),
+				       'itemId' => $dummyItemId), array()),
+			   array(null, new UnitTestStorageSearchResults(
+			   		array(array('Test::Event1', 4),
+			   		      array('Test::Event2', 5)))));
+
+	list ($ret, $events) = NotificationHelper::getSubscriptions($userId, $dummyItemId);
+	if ($ret) {
+	    return $ret;
+	}
+	
+	$this->assertEquals(array('Test::Event1' => array(4), 'Test::Event2' => array(5)), $events,
+				  'UserId and Item search');
+    }
+
+    function testGetActiveNotificationsHandlers() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	
+	$storage->setReply('search',
+			   array('
+	    SELECT DISTINCT [::notificationName], [::handlerName] 
+	      FROM [SubscriptionMap]
+	     WHERE [::notificationName] IN (?)', 
+				 array('Test::Event1'), array()),
+			   array(null, new UnitTestStorageSearchResults(
+			   		array(array('Test::Event1', 'Test::EventHandler')))));
+
+	list ($ret, $handlerNames) = 
+	     NotificationHelper::getActiveNotificationsHandlers(array('Test::Event1'));
+	if ($ret) {
+	    return $ret;
+	}
+	
+	$this->assertEquals(array('Test::Event1' => array('Test::EventHandler')), $handlerNames,
+				  'Unexpected notifications and handlers');
+    }
+
+        function testGetActiveSubscriptionsEvents() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	
+	$userId = $gallery->getActiveUserId();
+
+	$storage->setReply('search',
+			   array('SELECT DISTINCT [::notificationName] FROM [SubscriptionMap]', 
+				 array(), array()),
+			   array(null, new UnitTestStorageSearchResults(
+			   		array(array('Test::Event1'), array('Test::Event2')))));
+
+	list ($ret, $events) = NotificationHelper::getActiveSubscriptionsEvents();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(array('Test::Event', 'Test::Event2'), $events, 'Unexpected events');
+    }
+
+    function testSubscribe() {
+	global $gallery;
+
+	/* Load the Implementation factories to cache */
+	list ($ret) = GalleryCoreApi::getAllFactoryImplementationIds('GalleryEventListeners');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$storage =& $gallery->getStorage();
+	
+	$userId = $gallery->getActiveUserId();
+	$itemId = 6;
+	$eventId = 'Test::Event';
+	$handlerName = 'Test::Handler';
+
+	list ($ret, $hintLockId) = GalleryCoreApi::getPluginParameter('module', 'notification',
+								      'id.hintsLock');
+	if ($ret) {
+	    return $ret;
+	}
+	$storage->setReply('acquireWriteLock', array(array($hintLockId), 10), 
+			array(null,
+			      array('lockId' => 42, 'type' => LOCK_WRITE, 
+				    'ids' => array($hintLockId => true))));
+	$getHints = serialize(null);
+	$updateHints = GalleryUtilities::strToLower($eventId);
+	$updateHints = serialize(array($updateHints));
+	$storage->setReply('updateMapEntry',
+			   array('GalleryFactoryMap', 
+				 array('classType' => 'GalleryEventListener', 
+				       'implId' => 'NotificationRouter'),
+				 array('hints' => $updateHints), 
+				 array()),
+			   null);
+	$storage->setReply('isTransactional', array(), false);
+	$storage->setReply('releaseLocks', array(array(42)), null);
+	$storage->setReply('addMapEntry',
+			   array('SubscriptionMap', 
+				 array('userId' => $userId, 'itemId' => $itemId, 
+				       'handlerName' => $handlerName,
+				       'notificationName' => 'Test::Event1'),
+				 array()),
+			   null);
+	$storage->setReply('checkPoint', array(), null);
+
+	$ret = NotificationHelper::subscribe($userId, $itemId, $eventId, 'Test::Event1', 
+					     $handlerName);
+	if ($ret) {
+	    return $ret;
+	}
+	
+	$this->assert($storage->isComplete(), $storage->getRemaining());
+    }
+
+    function testUnsubscribe() {
+	global $gallery;
+
+	/* Load the Implementation factories to cache */
+	list ($ret) = GalleryCoreApi::getAllFactoryImplementationIds('GalleryEventListener');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$registry =& GalleryFactoryHelper_simple::_getSingleton();
+	$registry['hints']['GalleryEventListener'][GalleryUtilities::strToLower('Test::Event1')] = 
+					array('NotificationRouter' => 'TestSubscriptionClass');
+	$registry['ids']['GalleryEventListener']['NotificationRouter'] = 'TestSubscriptionClass';
+	$registry['pluginIds']['GalleryEventListener']['TestSubscriptionClass'] = 'notification';
+	$registry['implementations']['GalleryEventListener']['TestSubscriptionClass'] = 'path';
+
+	$storage =& $gallery->getStorage();
+
+	$userId = $gallery->getActiveUserId();
+	$itemId = 6;
+	$notificationName = 'Test::Event';
+	$handlerName = 'Test::Handler';
+
+	$getHints = serialize(null);
+	$storage->setReply('removeMapEntry',
+			   array('SubscriptionMap', 
+				 array('userId' => $userId, 'itemId' => $itemId, 
+				       'notificationName' => $notificationName,
+				       'handlerId' => $handlerName)),
+			   null);
+
+	list ($ret, $hintLockId) = GalleryCoreApi::getPluginParameter('module', 'notification',
+								      'id.hintsLock');
+	if ($ret) {
+	    return $ret;
+	}
+	$storage->setReply('acquireWriteLock', array(array($hintLockId), 10), 
+			array(null,
+			      array('lockId' => 42, 'type' => LOCK_WRITE, 
+				    'ids' => array($hintLockId => true))));
+	$storage->setReply('search',
+			 array('SELECT COUNT(*) FROM [SubscriptionMap] 
+		 WHERE [SubscriptionMap::notificationName] = ?', array($notificationName), 
+			 array()),
+			 array(null, new UnitTestStorageSearchResults(array(array(0)))));
+
+	$storage->setReply('updateMapEntry',
+			   array('GalleryFactoryMap', 
+				 array('classType' => 'GalleryEventListener', 
+				       'implId' => 'NotificationRouter'),
+				 array('hints' => null), null),
+			   null);
+	$storage->setReply('isTransactional', array(), false);
+	$storage->setReply('releaseLocks', array(array(42)), null);
+	$storage->setReply('checkPoint', array(), null);
+	
+	$ret = NotificationHelper::unsubscribe($userId, $itemId, 'Test::Event', $notificationName, 
+					       $handlerName);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($storage->isComplete(), $storage->getRemaining());
+    }
+
+    function testFormatItemAddedMessage() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	$urlGenerator =& $gallery->getUrlGenerator();
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$expected = $module->translate('Event Handler is required');
+	
+	$url = $urlGenerator->generateUrl(array('view' => 'core.ShowItem',
+						'itemId' => $this->_album->getId()),
+					  array('forceFullUrl' => true,
+						'forceSessionId' => false,
+						'htmlEntities' => false));
+	$event = GalleryCoreApi::newEvent('Gallery::ItemAdded');
+	$event->setData(array($this->_album));
+
+	$notifier = new ItemAddedNotification();
+	$notifier->setEvent($event);
+
+	list ($ret, $testMsg) = $notifier->getNotificationMessage();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$msg = $module->translate(array('arg1' => 'album', 'arg2' => $url, 
+				 'text' =>"A new %s has been added. To view it, click here: \n%s"));
+	$this->assertEquals($msg, $testMsg, 'Single item not formatted propery');
+				  
+	$event = GalleryCoreApi::newEvent('Gallery::ItemAdded');
+	$event->setData(array($this->_item1, $this->_item2));
+	
+	$notifier = new ItemAddedNotification();
+	$notifier->setEvent($event);
+
+	$msg = $module->translate(array('arg1' => 'file', 'arg2' => $url, 
+				 'text' =>"A new %s has been added. To view it, click here: \n%s"));
+	list ($ret, $testMsg) = $notifier->getNotificationMessage();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals($msg, $testMsg, 'Multiple items not formatted propery');
+    }
+
+    function testGetSubscribers() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$userId = $gallery->getActiveUserId();
+	$itemId = 7;
+	$eventId = 'Test::Event';
+	$list = array($userId, $this->_user->getId());
+
+	$storage->setReply('getMapEntry',
+	      array('SubscriptionMap', array('userId'),
+		    array('notificationName' => 'Test::Event1', 'itemId' => $itemId), array()),
+	      array(null, new UnitTestStorageSearchResults(array(array($userId), 
+								 array($this->_user->getId())))));
+	
+	$this->_setResponsesForPermission($itemId, $userId, 
+					  $this->_groupRegistered, $this->_coreViewBits);
+	$this->_setResponsesForPermission($itemId, $this->_user->getId(), 
+					  $this->_groupRegistered, $this->_coreViewBits);
+
+	$notification = new NotificationHelperNotification();
+	$event = new GalleryEvent();
+	$event->setEventName('Test::Event');
+	$event->setData($itemId);
+	$notification->setEvent($event);
+
+	list ($ret, $userList) = NotificationHelper::getSubscribers('Test::Event1', $notification);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals($list, $userList, 'Unexpected user list');
+    }
+
+    function testGetSubscriberByItemId() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$userId = $gallery->getActiveUserId();
+	$itemId = 7;
+	$notificationName = 'Test::Event';
+	$list = array($notificationName => array(array($this->_user->getId(), 'Test::EventHandler'),
+					array($userId, 'Test::EventHandler')));
+
+	$storage->setReply('getMapEntry',
+	      array('SubscriptionMap', 
+		    array('notificationName', 'userId', 'handlerName'),
+		    array('itemId' => $itemId), array()),
+	      array(null, new UnitTestStorageSearchResults(array(
+			array($notificationName, $this->_user->getId(), 'Test::EventHandler'),
+			array($notificationName, $userId, 'Test::EventHandler')))));
+
+	list ($ret, $subscriptions) = NotificationHelper::getSubscriberByEntityId($itemId);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals($list, $subscriptions, 'Unexpected subscription list');
+    }
+
+    function _setResponsesForPermission($itemId, $userId, $groupId, $bits) {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	
+	$storage->setReply('getFunctionSql',
+	      array('BIT_OR', 
+		   array('[GalleryAccessMap::permission]', '[GalleryAccessSubscriberMap::itemId]')),
+	      array(null, 'BIT_OR([GalleryAccessMap::permission])'));
+
+	$storage->setReply('search',
+	      array('
+	SELECT
+	    [GalleryAccessSubscriberMap::itemId],
+	    BIT_OR([GalleryAccessMap::permission])
+	FROM
+	    [GalleryAccessMap], [GalleryAccessSubscriberMap]
+	WHERE
+	    [GalleryAccessSubscriberMap::itemId] IN (?)
+	    AND
+	    [GalleryAccessSubscriberMap::accessListId] = [GalleryAccessMap::accessListId]
+	    AND
+	    [GalleryAccessMap::userOrGroupId] IN (?,?)
+	GROUP BY [GalleryAccessSubscriberMap::itemId]',
+		    array($itemId, $userId, $groupId),
+		    array()),
+	      array(null, new UnitTestStorageSearchResults(array(array($itemId, $bits)))));
+
+	$storage->setReply('convertBitsToInt', array($bits), array($bits));
+    }
+}
+
+class NotificationHelperEventTest extends NotificationEvent_1_0 {
+    function getDescription() {
+	global $gallery;
+	return $this->_translateText('notification', 
+				     $gallery->i18n('NotificationEventTest Description'));
+    }
+    function getPermission() {
+	return 'core.edit';
+    }
+    function getEventSpecs() {
+	return array('eventName' => 'Test::Event');
+    }
+}
+class NotificationHelperEventTest2 extends NotificationEvent_1_0 {
+    function getDescription() {
+	global $gallery;
+	return $this->_translateText('notification', 
+				     $gallery->i18n('NotificationEventTest2 Description'));
+    }
+    function getPermission() {
+	return null;
+    }
+    function getEventSpecs() {
+	return array('eventName' => 'Test::Event2');
+    }
+}
+
+class NotificationHelperNotification extends NotificationHandler_1_0 {
+    function getDescription() {
+	global $gallery;
+	return $this->_translateText('notification', 
+				     $gallery->i18n('NotificationHelperNotification Description'));
+    }
+
+    function getPermission() {
+	return 'core.view';
+    }
+
+    function setEvent($event) {
+	$this->_event = $event;
+    }
+
+    function getEvent() {
+	return $this->_event;
+    }
+
+    function getItemId() {
+	return (int)$this->_event->_data;
+    }
+
+    function getNotificationMessage() {
+	return $this->_message;
+    }
+}
+
+class NotificationHelperNotificationNew extends NotificationHandler_1_0 {
+    function getDescription() {
+	global $gallery;
+	return $this->_translateText('notification', 
+				  $gallery->i18n('NotificationHelperNotification New Description'));
+    }
+
+    function getPermission() {
+	return 'core.view';
+    }
+
+    function setEvent($event) {
+	$this->_event = $event;
+    }
+
+    function getEvent() {
+	return $this->_event;
+    }
+
+    function getItemId() {
+	return (int)$this->_event->_data;
+    }
+
+    function getNotificationMessage() {
+	return $this->_message;
+    }
+}
+?>

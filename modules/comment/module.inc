@@ -40,7 +40,7 @@ class CommentModule extends GalleryModule {
 	$this->setId('comment');
 	$this->setName($gallery->i18n('Comments'));
 	$this->setDescription($gallery->i18n('User commenting system'));
-	$this->setVersion('1.1.6'); /* Update upgrade() function below too */
+	$this->setVersion('1.1.7'); /* Update upgrade() function below too */
 	$this->_templateVersion = 1;
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
 	$this->setCallbacks('registerEventListeners|getItemLinks|getItemSummaries|' .
@@ -162,6 +162,8 @@ class CommentModule extends GalleryModule {
 	    if ($ret) {
 		return $ret;
 	    }
+	case '1.1.6':
+	    /* Add CommentAddNotification class */
 
 	case 'end of upgrade path':
 	    /*
@@ -209,6 +211,14 @@ class CommentModule extends GalleryModule {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'CaptchaAdminOption', 'CommentCaptchaAdminOption', 'CommentCaptchaAdminOption',
 	    'modules/comment/classes/CommentCaptchaAdminOption.class', 'comment', null);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'NotificationEvent_1_0', 'CommentAddNotification', 'CommentAddNotification',
+	    'modules/comment/classes/CommentAddNotification.class', 'comment', 
+	    array('GalleryEntity::save'));
 	if ($ret) {
 	    return $ret;
 	}
@@ -300,9 +310,6 @@ class CommentModule extends GalleryModule {
 	    isset($permissions['comment.view'])) {
 		$views[] = array('name' => $this->translate('View Comments'),
 				 'view' => 'comment.ShowComments');
-
-
-
 	}
 
 	return array(null, $views);
