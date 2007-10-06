@@ -70,7 +70,7 @@ count.  I fear that may be a bit expensive so I'm leaving it out for now.
   {include file="gallery:modules/comment/templates/Comment.tpl"
 	   comment=$comment can=$AdminModerateSpam.can[$comment.id]
 	   item=$item user=$AdminModerateSpam.commenters[$comment.commenterId]
-           ajaxChangeCallback="confirmChangeComment" truncate=1024}
+           ajaxChangeCallback="changeComment" truncate=1024}
   </div>
 </td></tr>
 {/foreach}

@@ -29,7 +29,7 @@
   {include file="gallery:modules/comment/templates/Comment.tpl"
 	   comment=$comment item=$ShowComments.item can=$ShowComments.can
 	   user=$ShowComments.commenters[$comment.commenterId]
-           ajaxChangeCallback="confirmChangeComment" truncate=1024}
+           ajaxChangeCallback="changeComment" truncate=1024}
   </div>
 {/foreach}
 </div>

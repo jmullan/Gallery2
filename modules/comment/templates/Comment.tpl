@@ -26,7 +26,7 @@
 {if !empty($can.markNotSpam)}
 {if $needSeparator}|{/if}
 <span class="marknotspam">
-  <a {if !empty($ajaxChangeCallback)} onclick="{$ajaxChangeCallback}({$comment.id}, 'despam'); return false;"{/if} href="{g->url arg1="controller=comment.AdminModerateSpam" arg2="itemId=`$item.id`" arg3="commentId=`$comment.id`" arg4="action=markNotSpam" arg5="return=true"}">{g->text text="mark as not spam"}</a>
+  <a href="javascript:{$ajaxChangeCallback}({$comment.id}, 'despam');">{g->text text="mark as not spam"}</a>
 </span>
 {assign var="needSeparator" value="true"}
 {/if}
@@ -34,7 +34,7 @@
 {if !empty($can.markSpam)}
 {if $needSeparator}|{/if}
 <span class="markSpam">
-  <a {if !empty($ajaxChangeCallback)} onclick="{$ajaxChangeCallback}({$comment.id}, 'spam'); return false;"{/if} href="{g->url arg1="controller=comment.AdminModerateSpam" arg2="itemId=`$item.id`" arg3="commentId=`$comment.id`" arg4="action=markSpam" arg5="return=true"}">{g->text text="mark as spam"}</a>
+  <a href="javascript:{$ajaxChangeCallback}({$comment.id}, 'spam');">{g->text text="mark as spam"}</a>
 </span>
 {assign var="needSeparator" value="true"}
 {/if}
