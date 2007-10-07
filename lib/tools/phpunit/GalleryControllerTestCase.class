@@ -49,12 +49,18 @@ class GalleryControllerTestCase extends GalleryTestCase {
 
 	list ($ret, $results) = $this->_controller->handleRequest($form);
 	if (isset($errorCode)) {
-	    if (($ret->getErrorCode() & $errorCode) != $errorCode) {
+	    if ($ret) {
+		if (($ret->getErrorCode() & $errorCode) != $errorCode) {
+		    $this->assert(false,
+			    sprintf('Expected error code (%s) but received (%s)',
+				implode(' | ', GalleryStatus::getErrorCodeConstants($errorCode)),
+				implode(' | ', GalleryStatus::getErrorCodeConstants(
+									  $ret->getErrorCode()))));
+		}
+	    } else {
 		$this->assert(false,
-			sprintf('Expected error code (%s) but received (%s)',
-			    implode(' | ', GalleryStatus::getErrorCodeConstants($errorCode)),
-			    implode(' | ', GalleryStatus::getErrorCodeConstants(
-							  $ret->getErrorCode()))));
+			      sprintf('Expected error code (%s) but test was successful',
+				implode(' | ', GalleryStatus::getErrorCodeConstants($errorCode))));
 	    }
 	} else if ($ret) {
 	    $this->fail($ret->getAsHtml());
