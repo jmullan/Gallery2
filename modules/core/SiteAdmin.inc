@@ -214,20 +214,12 @@ class SiteAdminView extends GalleryView {
 	    $SiteAdmin = array();
 	}
 
-	/* Get the links for navigating back to where we came from */
-	$urlGenerator =& $gallery->getUrlGenerator();
-	list ($ret, $navigationLinks) = $urlGenerator->getNavigationLinks();
-	if ($ret) {
-	    return array($ret, null);
-	}
-
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
 	    return array($ret, null);
 	}
 
 	/* Set up my view parameters */
-	$SiteAdmin['navigationLinks'] = $navigationLinks;
 	$SiteAdmin['subViewGroups'] = $subViewGroups;
 	$SiteAdmin['subViewName'] = $subViewName;
 	$SiteAdmin['viewBodyFile'] = $results['body'];

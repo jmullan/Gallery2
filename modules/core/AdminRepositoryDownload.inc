@@ -482,8 +482,8 @@ class AdminRepositoryDownloadController extends GalleryController {
 	/* Show link to return to the previously selected tab. */
 	$redirect['view'] = 'core.SiteAdmin';
 	$redirect['subView'] = 'core.AdminRepository';
-	$redirect['statusId'] = $session->putStatus($status);
-
+	
+	$session->putStatus($status);
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect));
 	return null;

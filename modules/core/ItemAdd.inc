@@ -95,12 +95,8 @@ class ItemAddController extends GalleryController {
 		return array($ret, null);
 	    }
 
-	    if (empty($controller->_statusId)) {
-		$results['status'] = array();
-	    } else {
-		$session =& $gallery->getSession();
-		$results['status'] = $session->getStatus($controller->_statusId);
-	    }
+	    $session =& $gallery->getSession();
+	    $results['status'] = $session->getStatus();
 	    $results['redirect'] = array('view' => 'core.ItemAdmin',
 					 'subView' => 'core.ItemAddConfirmation',
 					 'itemId' => $item->getId());
@@ -182,7 +178,7 @@ class ItemAddController extends GalleryController {
 		      'addPlugin' => $addPluginId, 'itemId' => $item->getId()),
 		array('forceFullUrl' => true));
 	} else {
-	    $this->_statusId = $session->putStatus($status);
+	    $session->putStatus($status);
 	    $doRedirect = ($phpVm->time() - $startTime) <= $autoRedirectSeconds;
 
 	    if (empty($status['addedFiles'])) {
@@ -193,16 +189,14 @@ class ItemAddController extends GalleryController {
 		 */
 		$continueUrl = $urlGenerator->generateUrl(
 		    array('view' => 'core.ItemAdmin', 'subView' => 'core.ItemAdd',
-			  'addPlugin' => $addPluginId, 'itemId' => $item->getId(),
-			  'statusId' => $this->_statusId, 'form' => $form),
+			  'addPlugin' => $addPluginId, 'itemId' => $item->getId(), 'form' => $form),
 		    array('forceFullUrl' => true));
 		$templateAdapter->updateProgressBar(
 		    $this->_coreModule->translate('Adding items'), '', 1);
 	    } else {
 		$continueUrl = $urlGenerator->generateUrl(
 		    array('view' => 'core.ItemAdmin', 'subView' => 'core.ItemAddConfirmation',
-			  'itemId' => $item->getId(), 'statusId' => $this->_statusId),
-		    array('forceFullUrl' => true));
+			  'itemId' => $item->getId()), array('forceFullUrl' => true));
 	    }
 	}
 

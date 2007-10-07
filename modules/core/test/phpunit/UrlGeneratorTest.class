@@ -954,36 +954,6 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$this->assertEquals($expected, $actual);
     }
 
-    function testGetNavigationReturnUrl() {
-	$_GET['g2_foo'] = 'bar';
-	$_GET['g2_return'] = 'http://blabla';
-	$_GET['g2_returnName'] = 'name';
-	$_GET['g2_navId'] = 'navId';
-	$_GET['g2_fromNavId'] = 'fromNavId';
-	/*
-	 * We're forwarding the HTTP authorization header via mod_rewrite to the URL params and
-	 * need to remove it manually for return URLs again.  But we keep it in other places (e.g.
-	 * cacheable URLs) since it might influence Gallery's behavior.
-	 */
-	$_GET['g2_authorization'] = 'authorization';
-	$expected = '/gallery2/phpunit_test.php?g2_foo=bar';
-
-	/* Normal behaviour (php+apache) */
-	$this->assertEquals($expected, $this->_urlGenerator->getNavigationReturnUrl());
-
-	/* IIS: no REQUEST_URI or PATH_INFO, just SCRIPT_NAME */
-	unset($_SERVER['REQUEST_URI']);
-	$_SERVER['SCRIPT_NAME'] = '/gallery2/phpunit_test.php';
-	unset($this->_urlGenerator->_currentUrl);
-	$this->assertEquals($expected, $this->_urlGenerator->getNavigationReturnUrl(), 'iis');
-
-	/* Sometimes IIS has PATH_INFO value the same as SCRIPT_NAME.. */
-	$_SERVER['PATH_INFO'] = $_SERVER['SCRIPT_NAME'];
-	unset($this->_urlGenerator->_currentUrl);
-	$this->assertEquals($expected, $this->_urlGenerator->getNavigationReturnUrl(),
-			    'iis path_info');
-    }
-
     function testGetNavigationReturnUrlNoCookies() {
 	global $gallery;
 
@@ -1091,39 +1061,6 @@ class UrlGeneratorTest extends GalleryTestCase {
 	}
     }
 
-    /*
-     * Make sure getNavigationLinks() returns unchanged URLs
-     * (part of our phishing attack protection)
-     */
-    function testGetNavigationLinks() {
-	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret) {
-	    return $ret;
-	}
-
-	/*
-	 * In initNavigation we accept returnUrl = 'www.EVIL.com' because we have to interpret it
-	 * as relative URL, e.g. for http://example.com/www.EVIL.com/ (album called www.EVIL.com)
-	 * Here we must ensure that we don't add http:// in front the returned URL, since that
-	 * would change the relative to an absolute URL.
-	 */
-	$_GET['g2_return'] = 'www.DONTCARE.com';
-	$_GET['g2_returnName'] = 'I want a pony';
-	$ret = $this->_urlGenerator->initNavigation();
-	if ($ret) {
-	    return ($ret);
-	}
-	list ($ret, $links) = $this->_urlGenerator->getNavigationLinks();
-	if ($ret) {
-	    return ($ret);
-	}
-	$params = array('fromNavId' => $this->_urlGenerator->_navId);
-	$expectedUrl = GalleryUrlGenerator::appendParamsToUrl('www.DONTCARE.com', $params);
-	$this->assertEquals(array(array('url' => $expectedUrl, 'name' => $core->translate(
-				array('text' => 'Back to %s', 'arg1' => 'I want a pony')))),
-			    $links, 'Navigation link was altered');
-    }
-
     /* Regression test to check that we handle embedUri = /foo/bar/ correctly (no file part) */
     function testInitNavigationHandlesEmbedUriWithoutFilePart() {
 	$urlGenerator = new GalleryUrlGenerator();
@@ -1150,10 +1087,6 @@ class UrlGeneratorTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	list ($ret, $viewDescription) = $view->getViewDescription();
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
 
 	$gallery->setCurrentView($currentView);
 	GalleryUtilities::putRequestVariable('view', $currentView);
@@ -1161,10 +1094,8 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$actualUrl = $this->_urlGenerator->generateUrl(
 					array('href' => '/foo.php', 'return' => true),
 					array('forceServerRelativeUrl' => true));
-	$expectedUrl = sprintf('/foo.php?g2_return=%s&amp;g2_returnName=%s',
-			       urlencode('/gallery2/phpunit_test.php?g2_view=core.SiteAdmin'
-				       . '&g2_foo=bar'),
-			       urlencode($viewDescription));
+	$expectedUrl = '/foo.php?g2_return=' .
+	    urlencode('/gallery2/phpunit_test.php?g2_view=core.SiteAdmin&g2_foo=bar');
 	$this->assertEquals($expectedUrl, $actualUrl);
     }
 
@@ -1176,10 +1107,6 @@ class UrlGeneratorTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	list ($ret, $viewDescription) = $view->getViewDescription();
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
 
 	$gallery->setCurrentView($currentView);
 	GalleryUtilities::putRequestVariable('view', $currentView);
@@ -1187,10 +1114,8 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$actualUrl = $this->_urlGenerator->generateUrl(
 					array('href' => '/1st.url', 'return' => true),
 					array('forceServerRelativeUrl' => true));
-	$returnParams = sprintf('g2_return=%s&amp;g2_returnName=%s',
-				urlencode('/gallery2/phpunit_test.php?g2_view=core.MaintenanceMode'
-					. '&g2_foo=bar'),
-				urlencode($viewDescription));
+	$returnParams = 'g2_return=' .
+	    urlencode('/gallery2/phpunit_test.php?g2_view=core.MaintenanceMode&g2_foo=bar');
 	$expectedUrl = '/1st.url?' . $returnParams;
 	$this->assertEquals($expectedUrl, $actualUrl, "1st call with $currentView");
 
@@ -1209,19 +1134,14 @@ class UrlGeneratorTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	list ($ret, $viewDescription) = $view->getViewDescription();
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
 
 	$gallery->setCurrentView($currentView);
 	GalleryUtilities::putRequestVariable('view', $currentView);
 	$actualUrl = $this->_urlGenerator->generateUrl(
 					array('href' => '/3rd.url', 'return' => true),
 					array('forceServerRelativeUrl' => true));
-	$returnParams = sprintf('g2_return=%s&amp;g2_returnName=%s',
-				urlencode('/gallery2/phpunit_test.php?g2_view=core.SiteAdmin'),
-				urlencode($viewDescription));
+	$returnParams = 'g2_return=' . 
+			urlencode('/gallery2/phpunit_test.php?g2_view=core.SiteAdmin');
 	$expectedUrl = '/3rd.url?' . $returnParams;
 	$this->assertEquals($expectedUrl, $actualUrl, "3rd call with $currentView");
     }
@@ -1626,47 +1546,10 @@ class UrlGeneratorTest extends GalleryTestCase {
 	}
     }
 
-    function testGetCacheableUrl1() {
-	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php?foo=bar&g2_navId=blah&bar=baz';
-	$this->assertEquals('http://example.com/gallery2/phpunit_test.php?foo=bar&bar=baz',
-			    $this->_urlGenerator->getCacheableUrl());
-    }
-
-    function testGetCacheableUrl2() {
-	$_SERVER['REQUEST_URI'] =
-	    '/gallery2/phpunit_test.php?foo=bar&g2_navId=blah&bar=baz&g2_return=blaa';
-	$this->assertEquals('http://example.com/gallery2/phpunit_test.php?foo=bar&bar=baz',
-			    $this->_urlGenerator->getCacheableUrl());
-    }
-
-    function testGetCacheableUrl3() {
-	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php?g2_navId=blah';
-	$this->assertEquals('http://example.com/gallery2/phpunit_test.php',
-			    $this->_urlGenerator->getCacheableUrl());
-    }
-
-    function testGetCacheableUrl4() {
+    function testGetCacheableUrl() {
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php';
 	$this->assertEquals('http://example.com/gallery2/phpunit_test.php',
 			    $this->_urlGenerator->getCacheableUrl());
-    }
-
-    function testGenerateUrlWithNavIdAndSessionString() {
-	global $gallery;
-	list ($ret) = $this->_prepareGenerateUrl('', 'phpunit_test.php', null);
-	if ($ret) {
-	    return ($ret);
-	}
-	$session =& $gallery->getSession();
-	$this->assertEquals(true, $session->isPersistent(), 'persistent session');
-	$this->assert(!empty($session->_sessionId), 'session id');
-
-	$actual = $this->_urlGenerator->generateUrl(array('view' => 'foo.Bar', 'navId' => '1234'),
-						    array('forceSessionId' => true));
-	$expected = 'phpunit_test.php?g2_view=foo.Bar&amp;g2_navId=1234&amp;g2_' .
-	    $session->getKey() . '=' . $session->getId();
-
-	$this->assertEquals($expected, $actual, 'url');
     }
 
     function testGenerateUrlWithoutPersistentSession() {
@@ -1686,9 +1569,8 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$this->assert(empty($session->_sessionId), 'session id');
 	$this->assertEquals(SESSION_TEMP_ID, $session->getId(), 'temp id');
 
-	$actual = $this->_urlGenerator->generateUrl(array('view' => 'foo.Bar', 'navId' => '1234'),
+	$actual = $this->_urlGenerator->generateUrl(array('view' => 'foo.Bar'),
 						    array('forceSessionId' => true));
-	/* No navId since there's no persistent session to store the nav history */
 	$expected = 'phpunit_test.php?g2_view=foo.Bar&amp;g2_' . $session->getKey() .
 	    '=' . $session->getId();
 
@@ -1696,7 +1578,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 
 	/* And now force to not use the temp id */
 	$gallery->_session->doNotUseTempId();
-	$actual = $this->_urlGenerator->generateUrl(array('view' => 'foo.Bar', 'navId' => '1234'),
+	$actual = $this->_urlGenerator->generateUrl(array('view' => 'foo.Bar'),
 						    array('forceSessionId' => true));
 	$expected = 'phpunit_test.php?g2_view=foo.Bar';
 	$this->assertEquals($expected, $actual, 'url without temp session id');

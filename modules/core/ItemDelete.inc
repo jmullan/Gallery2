@@ -98,22 +98,10 @@ class ItemDeleteController extends GalleryController {
 
 	    /*
 	     * Figure out where to redirect upon success.
-	     * Can't use return url because it may be for an item we just deleted, but
-	     * check for g2_page param and include that if found (matrix theme specific..)
+	     * Can't use return url because it may be for an item we just deleted
 	     */
 	    $results['redirect'] = array('view' => 'core.ShowItem',
 					 'itemId' => $itemId);
-
-	    $urlGenerator =& $gallery->getUrlGenerator();
-	    list ($ret, $links) = $urlGenerator->getNavigationLinks(1);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	    if (count($links) > 0 &&
-		    preg_match('{' . GalleryUtilities::prefixFormVariable('page') . '=(\d+)}',
-			       $links[0]['url'], $match)) {
-		$results['redirect']['page'] = $match[1];
-	    }
 	} else if (isset($form['action']['next'])) {
 	    $page = GalleryUtilities::getRequestVariables('page');
 	    list ($ret, $peerIds) =

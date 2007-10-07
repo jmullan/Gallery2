@@ -145,25 +145,7 @@ class GalleryTemplateAdapter {
 
 	/* Remember the current url for getting back to where we came from */
 	if (empty($vars['return'])) {
-	    $currentView = $gallery->getCurrentView();
-	    list ($ret, $view) = GalleryView::loadView($currentView);
-	    if ($ret) {
-		$viewDescription = '';
-	    } else {
-		list ($ret, $viewDescription) = $view->getViewDescription();
-		if ($ret) {
-		    $viewDescription = '';
-		}
-	    }
-	    $vars['returnName'] = $viewDescription;
 	    $vars['return'] = $urlGenerator->getNavigationReturnUrl();
-	}
-
-	/* Our navigation id */
-	$navigationId = $urlGenerator->getNavigationId();
-	if (!empty($navigationId)) {
-	    $vars['navId'] = $navigationId;
-	    unset($vars['return']);
 	}
 
 	/* Remember the original URL where this form was first shown */

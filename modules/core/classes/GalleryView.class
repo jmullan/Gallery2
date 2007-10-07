@@ -230,12 +230,7 @@ class GalleryView {
 
 	/* -------------------------------------------------- */
 	/* Get our status */
-	$statusId = GalleryUtilities::getRequestVariables('statusId');
-	if (!empty($statusId)) {
-	    $status = $session->getStatus($statusId);
-	} else {
-	    $status = array();
-	}
+	$status = $session->getStatus();
 	$template->setVariable('status', $status);
 
 	/* -------------------------------------------------- */

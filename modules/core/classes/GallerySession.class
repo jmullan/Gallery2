@@ -504,18 +504,6 @@ class GallerySession {
 		    preg_replace($match, $replace, GalleryUtilities::getRequestVariables($key)));
 	    }
 	}
-
-	if ($this->exists('core.navigation')) {
-	    $navigation = $this->get('core.navigation');
-	    foreach (array_keys($navigation) as $navId) {
-		if (isset($navigation[$navId]['data']['returnUrl'])) {
-		    $navigation[$navId]['data']['returnUrl'] =
-			preg_replace($match, $replace, $navigation[$navId]['data']['returnUrl']);
-		}
-	    }
-	    $this->put('core.navigation', $navigation);
-	}
-
 	return null;
     }
 
@@ -1279,51 +1267,21 @@ class GallerySession {
     /**
      * Store a status message.
      * @param array $statusData
-     * @return string the status id
      */
     function putStatus($statusData) {
-	$tod = gettimeofday();
-	/*
-	 * Prefix the status id with a character so that it doesn't wind up being entirely numeric
-	 * because PHP will renumber numeric keys in associative arrays when you run it through
-	 * functions like array_splice()
-	 */
-	$statusId = 'x' . substr(md5($tod['usec'] + rand(1, 1000)), 0, 8);
-
-	$status =& $this->get('core.status');
-	if (!isset($status)) {
-	    $status = array();
-	}
-
-	$status[$statusId] = $statusData;
-
-	/* Prune extra status messages */
-	$maxStatusMessages = 5;
-	if (sizeof($status) > $maxStatusMessages) {
-	    $status = array_splice($status, -$maxStatusMessages);
-	}
-	$this->put('core.status', $status);
-
-	return $statusId;
+	$this->put('core.status', $statusData);
     }
 
     /**
      * Get a status message.
-     * @param string $statusId
      * @param boolean $remove (optional)
      * @return array the status message
      */
-    function getStatus($statusId, $remove=true) {
-	$status = $this->get('core.status');
-	$statusData = null;
-	if (isset($status) && isset($status[$statusId])) {
-	    $statusData = $status[$statusId];
-	    if ($remove) {
-		unset($status[$statusId]);
-		$this->put('core.status', $status);
-	    }
+    function getStatus($remove=true) {
+	$statusData = $this->get('core.status');
+	if (isset($statusData) && $remove) {
+	    $this->put('core.status', null);
 	}
-
 	return $statusData;
     }
 
@@ -1344,92 +1302,32 @@ class GallerySession {
      *                    'returnUrl' => ...
      *                    ['returnNavId' => ...])
      * @return string the navigation id
+     * @deprecated
+     * @todo will be removed in the next API branch
      */
     function addToNavigation($navigationData) {
-	$tod = gettimeofday();
-	$navId = 'x' . substr(md5($tod['usec'] + rand(1, 1000)), 0, 8);
-
-	$navigation =& $this->get('core.navigation');
-	if (!isset($navigation)) {
-	    $navigation = array();
-	}
-	$navigation[$navId] = array();
-	$navigation[$navId]['data'] = $navigationData;
-	$navigation[$navId]['nextIds'] = array();
-
-	/* Tell our predecessor that he's got a new successor */
-	if (isset($navigationData['returnNavId'])) {
-	    $returnNavId = $navigationData['returnNavId'];
-	    $navigation[$returnNavId]['nextIds'][$navId] = true;
-	}
-
-	/* Prune oldest navigation branches */
-	$maxNavBranches = 10;
-	if (sizeof($navigation) > $maxNavBranches) {
-	    $navigation = array_splice($navigation, -$maxNavBranches);
-	}
-
-	$this->put('core.navigation', $navigation);
-
-	return $navId;
+        return null;
     }
 
     /**
      * Get data for a specific navigation id.
      * @param string $navId the navigation id
      * @return array the navigation data
+     * @deprecated
+     * @todo will be removed in the next API branch
      */
     function getNavigation($navId) {
-	$navigation = $this->get('core.navigation');
-	$navigationData = array();
-	if (isset($navigation[$navId]['data'])) {
-	    $navigationData[] = $navigation[$navId]['data'];
-	    /* Add data from our predecessors, if available */
-	    while (isset($navigation[$navId]['data']['returnNavId'])
-			&& isset($navigation[$navigation[$navId]['data']['returnNavId']]['data'])) {
-		$navId = $navigation[$navId]['data']['returnNavId'];
-		$navigationData[] = $navigation[$navId]['data'];
-	    }
-	}
-
-	return $navigationData;
+	return array();
     }
 
     /**
      * Jump back from one navigation point to one of its predecessors.
      * @param string $fromNavId the source navigation id
      * @param string $destNavId the destination navigation id.  If empty, go back to root.
+     * @deprecated
+     * @todo will be removed in the next API branch
      */
     function jumpNavigation($fromNavId, $destNavId = '') {
-	global $gallery;
-	$gallery->debug("navigation: Jumping back from $fromNavId to $destNavId");
-
-	$navigation = $this->get('core.navigation');
-	$currentId = $fromNavId;
-	/*
-	 * Iterate back to root, deleting everything, until we reach destNavId or an navId that has
-	 * other successors
-	 */
-	while (true) {
-	    $gallery->debug("navigation: deleting $currentId");
-	    $returnNavId = null;
-	    if (isset($navigation[$currentId]['data']['returnNavId'])) {
-		$returnNavId = $navigation[$currentId]['data']['returnNavId'];
-	    }
-	    unset($navigation[$currentId]);
-	    if ($returnNavId == null) {
-		break;
-	    }
-	    unset($navigation[$returnNavId]['nextIds'][$currentId]);
-	    if (count($navigation[$returnNavId]['nextIds']) > 0) {
-		break;
-	    }
-	    if ($returnNavId == $destNavId) {
-		break;
-	    }
-	    $currentId = $returnNavId;
-	}
-	$this->put('core.navigation', $navigation);
     }
 
     /**

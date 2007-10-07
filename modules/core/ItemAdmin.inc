@@ -154,19 +154,11 @@ class ItemAdminView extends GalleryView {
 	    $ItemAdmin = array();
 	}
 
-	/* Get the links for navigating back to where we came from */
-	$urlGenerator =& $gallery->getUrlGenerator();
-	list ($ret, $navigationLinks) = $urlGenerator->getNavigationLinks();
-	if ($ret) {
-	    return array($ret, null);
-	}
-
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
 	    return array($ret, null);
 	}
 
-	$ItemAdmin['navigationLinks'] = $navigationLinks;
 	$ItemAdmin['viewBodyFile'] = $results['body'];
 	$ItemAdmin['item'] = (array)$item;
 	$ItemAdmin['parents'] = $parents;

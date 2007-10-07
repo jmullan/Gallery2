@@ -124,13 +124,6 @@ class GalleryUrlGenerator {
     var $_currentUrlBaseDir;
 
     /**
-     * The navigation id of the current URL.
-     * @var string
-     * @access private
-     */
-    var $_navId = '';
-
-    /**
      * Whether the cookie path was configured by the admin.
      * @var boolean
      * @access private
@@ -485,9 +478,7 @@ class GalleryUrlGenerator {
 	$url .= !empty($parsed['path']) ? $parsed['path'] : '';
 	if (!empty($parsed['query'])) {
 	    parse_str($parsed['query'], $components);
-	    foreach (array('statusId', 'return', 'returnName', 'navId', 'fromNavId') as $special) {
-		unset($components[GALLERY_FORM_VARIABLE_PREFIX . $special]);
-	    }
+	    unset($components[GALLERY_FORM_VARIABLE_PREFIX . 'return']);
 	    $first = true;
 	    foreach ($components as $key => $value) {
 		$url .= $first ? '?' : '&';
@@ -628,38 +619,14 @@ class GalleryUrlGenerator {
 	if (isset($params['return'])) {
 	    /* Cache the return URL / name, they're quite expensive to generate */
 	    if (!isset($this->_returnUrlData[$currentView])) {
-		list ($ret, $view) = GalleryView::loadView($currentView);
-		if (!$ret) {
-		    list ($ret, $viewDescription) = $view->getViewDescription();
-		    if (!$ret) {
-			$this->_returnUrlData[$currentView]['returnName'] = $viewDescription;
-		    }
-		}
 		$this->_returnUrlData[$currentView]['return'] =
 			str_replace('&amp;', '&', $this->getNavigationReturnUrl());
 	    }
-
-	    if (isset($this->_returnUrlData[$currentView]['returnName'])) {
-		$params['returnName'] = $this->_returnUrlData[$currentView]['returnName'];
-	    }
 	    $params['return'] = $this->_returnUrlData[$currentView]['return'];
-	    if (!empty($this->_navId)) {
-		$params['navId'] = $this->_navId;
-	    }
 	}
 
 	/* Navigation */
 	$targetView = isset($params['view']) ? $params['view'] : '';
-	if (!empty($this->_navId) && empty($options['forceDirect'])
-		&& (empty($currentView)
-		    || $currentView == $targetView
-		    || !empty($params['controller']))) {
-	    /*
-	     * We are moving around in the same view or we are redirecting to a controller,
-	     * who knows where it will redirect to.  Let's keep the navigation.
-	     */
-	    $params['navId'] = $this->_navId;
-	}
 
 	/* Replace any known tokens */
 	foreach (array_keys($params) as $key) {
@@ -686,31 +653,24 @@ class GalleryUrlGenerator {
 	if ($session =& $gallery->getSession()) {
 	    $sessionId = $session->getId();
 
-	    /*
-	     * Remove session related parameters if requested (we're already outputting or output
-	     * without fetching the HTML (immediate view / progressbar)
-	     */
-	    if (empty($sessionId) || !$session->isPersistent()) {
-		unset($params['navId']);
-	    } else {
-		/* Add authToken to all controller URLs */
-		if (!empty($options['useAuthToken'])
-			|| (!isset($options['useAuthToken']) && !empty($params['controller']))) {
-		    $params['authToken'] = $session->getAuthToken();
-		}
+	    /* Add authToken to all controller URLs */
+	    if (!empty($sessionId) && $session->isPersistent()
+		&& (!empty($options['useAuthToken'])
+		    || (!isset($options['useAuthToken']) && !empty($params['controller'])))) {
+		$params['authToken'] = $session->getAuthToken();
 	    }
+	}
 
-	    /* Add session parameters to URL */
-	    if (!empty($options['forceSessionId'])
-		|| (!isset($options['forceSessionId']) && !$session->isUsingCookies())) {
-		if (!empty($this->_embedSessionString) && !empty($appSession)) {
-		    list ($sessionKey, $sessionId) = explode(
-			'=', $this->_embedSessionString, 2);
-		    $embedSessionParams = array();
-		    $embedSessionParams[$sessionKey] = $sessionId;
-		} else if (!empty($sessionId)) {
-		    $params[$session->getKey()] = $sessionId;
-		}
+	/* Add session parameters to URL */
+	if (!empty($options['forceSessionId']) || (!isset($options['forceSessionId']) 
+	    && !empty($sessionId) && !$session->isUsingCookies())) {
+	    if (!empty($this->_embedSessionString) && !empty($appSession)) {
+		list ($sessionKey, $sessionId) = explode(
+		    '=', $this->_embedSessionString, 2);
+		$embedSessionParams = array();
+		$embedSessionParams[$sessionKey] = $sessionId;
+	    } else if (!empty($sessionId)) {
+		$params[$session->getKey()] = $sessionId;
 	    }
 	}
 
@@ -838,13 +798,7 @@ class GalleryUrlGenerator {
     function initNavigation() {
 	global $gallery;
 
-	$variables =
-	    GalleryUtilities::getRequestVariables('return', 'returnName', 'navId', 'fromNavId');
-	foreach ($variables as $key  => $value) {
-	    $variables[$key] = is_string($value) ? $value : null;
-	}
-	list ($returnUrl, $returnName, $navId, $fromNavId) = $variables;
-
+	$returnUrl = GalleryUtilities::getRequestVariables('return');
 	if (!empty($returnUrl)) {
 	    /* Detect header injection attempts */
 	    if (!GalleryUtilities::isSafeHttpHeader($returnUrl)) {
@@ -878,27 +832,7 @@ class GalleryUrlGenerator {
 				   $this->makeUrl($this->getCurrentRequestUri()), $returnUrl);
 		return GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__, $message);
 	    }
-
-	    /* Branch a new navigation */
-	    $navData = array('returnUrl' => $returnUrl,
-			     'returnName' => $returnName);
-	    if (!empty($navId)) {
-		$navData['returnNavId'] = $navId;
-	    }
-	    $session =& $gallery->getSession();
-	    $this->_navId = $session->addToNavigation($navData);
-	} else {
-	    if (!empty($fromNavId)) {
-		/* We came back from a navigational branch. Delete it */
-		$session =& $gallery->getSession();
-		$session->jumpNavigation($fromNavId, $navId);
-	    }
-	    if (!empty($navId)) {
-		/* Just continue in our current navigation level */
-		$this->_navId = $navId;
-	    }
 	}
-
 	return null;
     }
 
@@ -906,9 +840,11 @@ class GalleryUrlGenerator {
      * Get the current navigation id.
      *
      * @return string the navigation id
+     * @deprecated
+     * @todo will be removed in the next API branch
      */
     function getNavigationId() {
-	return $this->_navId;
+	return null;
     }
 
     /**
@@ -930,7 +866,7 @@ class GalleryUrlGenerator {
 	}
 
 	$params = GalleryUtilities::getUrlVariablesFiltered(
-		array('return', 'returnName', 'navId', 'fromNavId', 'authorization'), true);
+		array('return', 'authorization'), true);
 
 	return $this->generateUrl($params, array('forceServerRelativeUrl' => 1));
     }
@@ -939,15 +875,11 @@ class GalleryUrlGenerator {
      * Check if we currently have a back link to where we came from.
      *
      * @return boolean true if we can go back
+     * @deprecated
+     * @todo will be removed in the next API branch
      */
     function isNavigationBackPossible() {
-	global $gallery;
-	if (empty($this->_navId)) {
-	    return false;
-	}
-	$session =& $gallery->getSession();
-	$navData = $session->getNavigation($this->_navId);
-	return (count($navData) > 0);
+	return false;
     }
 
     /**
@@ -957,42 +889,11 @@ class GalleryUrlGenerator {
      * @return array ( GalleryStatus a status code,
      *                 array of navigational links: array('url' => ...,
      *                                            'name' => 'Back to ...'))
+     * @deprecated
+     * @todo will be removed in the next API branch
      */
     function getNavigationLinks($depth=null) {
-	global $gallery;
-	if (empty($this->_navId)) {
-	    return array(null, array());
-	}
-
-	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	$session =& $gallery->getSession();
-	$navData = $session->getNavigation($this->_navId);
-	$links = array();
-	$i = 0;
-	foreach ($navData as $navItem) {
-	    $i++;
-	    if (isset($depth) && $i > $depth) {
-		break;
-	    }
-	    $url = $navItem['returnUrl'];
-	    $params = array('fromNavId' => $this->_navId);
-	    if (isset($navItem['returnNavId'])) {
-		$params['navId'] = $navItem['returnNavId'];
-	    }
-	    if (!empty($navItem['returnName'])) {
-		$name = $core->translate(array('text' => 'Back to %s',
-					       'arg1' => $navItem['returnName']));
-	    } else {
-		$name = $core->translate('Back');
-	    }
-	    $url = GalleryUrlGenerator::appendParamsToUrl($url, $params);
-	    $links[] = array('url' => $url, 'name' => $name);
-	}
-	return array(null, $links);
+	return array(null, array());
     }
 
     /**

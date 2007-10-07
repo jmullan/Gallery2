@@ -139,10 +139,10 @@ class AdminMaintenanceController extends GalleryController {
 	$status['run']['success'] = $success;
 	$status['run']['taskId'] = $taskId;
 	$session =& $gallery->getSession();
+	$session->putStatus($status);
 
 	$redirect['view'] = 'core.SiteAdmin';
 	$redirect['subView'] = 'core.AdminMaintenance';
-	$redirect['statusId'] = $session->putStatus($status);
 
 	if ($useProgressBar) {
 	    $templateAdapter =& $gallery->getTemplateAdapter();

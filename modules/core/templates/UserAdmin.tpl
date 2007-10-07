@@ -29,11 +29,7 @@
 	    {/foreach}
 	  </ul>
 	</div>
-
-	{g->block type="core.NavigationLinks" class="gbBlock"
-		  navigationLinks=$UserAdmin.navigationLinks}
       </div></td>
-
       <td>
 	<div id="gsContent" class="gcBorder1">
 	  {include file="gallery:`$UserAdmin.viewBodyFile`" l10Domain=$UserAdmin.viewL10Domain}

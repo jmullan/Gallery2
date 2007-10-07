@@ -289,11 +289,6 @@ function _GalleryMain($embedded=false) {
 	    }
 
 	    $urlToGenerate = $results['redirect'];
-	    /* Keep our navId in the URL */
-	    $navId = $urlGenerator->getNavigationId();
-	    if (!empty($navId)) {
-		$urlToGenerate['navId'] = $navId;
-	    }
 	    $redirectUrl = $urlGenerator->generateUrl($urlToGenerate,
 						      array('forceFullUrl' => true));
 	}
@@ -436,7 +431,7 @@ function _GalleryMain($embedded=false) {
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    /* From now on, don't add navId/sessionId to URLs if there's no persistent session */
+	    /* From now on, don't add sessionId to URLs if there's no persistent session */
 	    $session->doNotUseTempId();
 	}
 

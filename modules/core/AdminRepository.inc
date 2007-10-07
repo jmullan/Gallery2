@@ -241,7 +241,7 @@ class AdminRepositoryController extends GalleryController {
 	$redirect['subView'] = 'core.AdminRepository';
 
 	$session =& $gallery->getSession();
-	$redirect['statusId'] = $session->putStatus($status);
+	$session->putStatus($status);
 
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect));

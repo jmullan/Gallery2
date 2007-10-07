@@ -130,26 +130,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
     function _getStatusFromProgressBar() {
 	global $gallery;
 	$session =& $gallery->getSession();
-
-	$statusId = $this->_getStatusIdFromProgressBar();
-	if (isset($statusId)) {
-	    return $session->getStatus($statusId);
-	}
-	return null;
-    }
-
-    function _getStatusIdFromProgressBar() {
-	global $gallery;
-
-	$completeProgressBarDump = $this->_templateAdapter->getCompleteProgressBarDump();
-	if (!isset($completeProgressBarDump[0])) {
-	    $this->fail('missing continueUrl / statusId');
-	    return null;
-	}
-	if (preg_match('/g2_statusId=([a-z0-9]+)/', $completeProgressBarDump[0], $match)) {
-	    return $match[1];
-	}
-	return null;
+	return $session->getStatus();
     }
 
     function testHandleRequestRequiresAddPermission() {
@@ -216,7 +197,6 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 		  'addPlugin' => 'ItemAddControllerTestPluginFail',
 		  'itemId' => $this->_album->getId()),
 	    true);
-	$this->assertEquals(null, $this->_getStatusFromProgressBar(), 'status');
     }
 
     function testHandleRequestWithProgressBarContinueAdding() {
@@ -234,12 +214,11 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	}
 
 	$this->_assertErrorFromProgressBar(null);
-	$statusId = $this->_getStatusIdFromProgressBar();
 	$this->_assertCompleteProgressBar(
 	    array('view' => 'core.ItemAdmin',
 		  'subView' => 'core.ItemAdd',
 		  'addPlugin' => 'ItemAddControllerTestPluginContinue',
-		  'itemId' => $this->_album->getId(), 'statusId' => $statusId, 'form' => $form),
+		  'itemId' => $this->_album->getId(), 'form' => $form),
 	    true);
 	$this->assertEquals(array(), $this->_getStatusFromProgressBar(), 'status');
     }

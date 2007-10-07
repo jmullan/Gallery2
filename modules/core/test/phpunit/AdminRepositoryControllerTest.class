@@ -143,7 +143,7 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(
 	    array('0', '0', '0.56' /* index downloads have a higher weight */,
 		  '0.67', '0.78', '0.89', '1.0' /* 4 steps for the plugins */,
-		  'complete:view=core.SiteAdmin,subView=core.AdminRepository,statusId=STATUSID'),
+		  'complete:view=core.SiteAdmin,subView=core.AdminRepository'),
 	    $mockAdapter->getProgressBarDump());
 
 	$this->assert($repository->isComplete(), $repository->getRemaining());
@@ -184,14 +184,14 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(
 	    array('0', '0', '0.56' /* index downloads have a higher weight */,
 		  '0.67', '0.78', '0.89', '1.0' /* 4 steps for the plugins */,
-		  'complete:view=core.SiteAdmin,subView=core.AdminRepository,statusId=STATUSID'),
+		  'complete:view=core.SiteAdmin,subView=core.AdminRepository'),
 	    $mockAdapter->getProgressBarDump());
 
 	$this->assert($repository->isComplete(), $repository->getRemaining());
 
 	$session =& $gallery->getSession();
-	$expectedStatus['error']['scanPlugin'] = array('module2');
-	$this->assertEquals($expectedStatus, $session->getStatus('STATUSID'),
+	$expectedStatus['scanPlugin'] = array('module2');
+	$this->assertEquals($expectedStatus, $session->getStatus(),
 			    'scanPlugin error should be in status');
     }
 
@@ -276,9 +276,6 @@ class AdminRepositoryControllerTestUrlGenerator {
     function generateUrl($params=array(), $options=array()) {
 	$buf = array();
 	foreach ($params as $key => $value) {
-	    if ($key == 'statusId') {
-		$value = 'STATUSID';
-	    }
 	    $buf[] = "$key=$value";
 	}
 	return implode(',', $buf);
@@ -372,18 +369,14 @@ class AdminRepositoryControllerTestRepository {
 }
 
 class AdminRepositoryControllerTestSession extends GallerySession {
-    var $_testStatus = array();
+    var $_testStatus;
 
     function putStatus($statusData) {
-	$this->_testStatus[] = $statusData;
-	return 'STATUSID';
+	$this->_testStatus = $statusData;
     }
 
-    function getStatus($statusId, $remove=true) {
-	if ($statusId == 'STATUSID') {
-	    return empty($this->_testStatus) ? false : array_pop($this->_testStatus);
-	}
-	return false;
+    function getStatus($remove=true) {
+	return empty($this->_testStatus) ? false : array_pop($this->_testStatus);
     }
 }
 ?>

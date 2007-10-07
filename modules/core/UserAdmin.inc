@@ -88,20 +88,12 @@ class UserAdminView extends GalleryView {
 	    $template->setVariableByReference('UserAdmin', $UserAdmin);
 	}
 
-	/* Get the links for navigating back to where we came from */
-	$urlGenerator =& $gallery->getUrlGenerator();
-	list ($ret, $navigationLinks) = $urlGenerator->getNavigationLinks();
-	if ($ret) {
-	    return array($ret, null);
-	}
-
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
 	    return array($ret, null);
 	}
 
 	/* Set up my view parameters */
-	$UserAdmin['navigationLinks'] = $navigationLinks;
 	$UserAdmin['subViewChoices'] = $subViewChoices;
 	$UserAdmin['subViewName'] = $subViewName;
 	$UserAdmin['isSiteAdmin'] = $isSiteAdmin;

@@ -47,9 +47,6 @@
 	  {/foreach}
 	</ul>
       </div>
-
-      {g->block type="core.NavigationLinks" class="gbBlock"
-		navigationLinks=$ItemAdmin.navigationLinks}
     </div></td>
 
     <td>

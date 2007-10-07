@@ -163,13 +163,13 @@ class ItemEditController extends GalleryController {
 	    $status['warning'] = array_merge($status['warning'], $optionWarnings);
 	}
 	$session =& $gallery->getSession();
+	$session->putStatus($status);
 
 	$redirect = array();
 	$redirect['view'] = 'core.ItemAdmin';
 	$redirect['subView'] = 'core.ItemEdit';
 	$redirect['itemId'] = $item->getId();
 	$redirect['editPlugin'] = $editPlugin;
-	$redirect['statusId'] = $session->putStatus($status);
 
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect));

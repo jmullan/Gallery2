@@ -383,7 +383,8 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	$this->assert($repository->isComplete(), $repository->getRemaining());
 	$this->assert(empty($_REQUEST['called']), 'No actions should have been taken');
 
-	$status = $this->_getStatusFromProgressBar();
+	$session =& $gallery->getSession();
+	$status = $session->getStatus();
 	$this->assertEquals(
 	    array('error' => array('cantUpgradeInUse' => array('Test Module')),
 		  'languagePacksDeleted' => 0),
@@ -584,18 +585,6 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
 	$this->assert($repository->isComplete(), $repository->getRemaining());
-    }
-
-    /**
-     * This should probably get moved into GalleryTestCase
-     */
-    function _getStatusFromProgressBar() {
-	global $gallery;
-	$session =& $gallery->getSession();
-
-	$progress = $gallery->_templateAdapter->getProgressBarDump();
-	preg_match('/statusId=([^,]*)/', $progress[count($progress)-1], $matches);
-	return $session->getStatus($matches[1]);
     }
 }
 

@@ -257,7 +257,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	}
 
 	$session =& $gallery->getSession();
-	$status = $session->getStatus($mockGenerator->getStatusId());
+	$status = $session->getStatus();
 
 	return array(null, $status);
     }
@@ -275,7 +275,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	/* We still have 2 progressbar resets, even though we don't import albums and make thumbs */
 	list ($ret, $status) = $this->_runBackgroundTask(
 	    array(0, 1, 'reset', 'reset',
-		  'complete:view=core.SiteAdmin,subView=migrate.ImportResults,statusId=STATUSID'));
+		  'complete:view=core.SiteAdmin,subView=migrate.ImportResults'));
 	if ($ret) {
 	    return $ret;
 	}
@@ -306,7 +306,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	/* We still have 2 progressbar resets, even though we don't import albums and make thumbs */
 	list ($ret, $status) = $this->_runBackgroundTask(
 	    array(0, 1, 'reset', 'reset',
-		  'complete:view=core.SiteAdmin,subView=migrate.ImportResults,statusId=STATUSID'));
+		  'complete:view=core.SiteAdmin,subView=migrate.ImportResults'));
 	if ($ret) {
 	    return $ret;
 	}
@@ -341,7 +341,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	/* We still have 2 progressbar resets, even though we don't import albums and make thumbs */
 	list ($ret, $status) = $this->_runBackgroundTask(
 	    array(0, 1, 'reset', 'reset',
-		  'complete:view=core.SiteAdmin,subView=migrate.ImportResults,statusId=STATUSID'));
+		  'complete:view=core.SiteAdmin,subView=migrate.ImportResults'));
 	if ($ret) {
 	    return $ret;
 	}
@@ -399,7 +399,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $status) = $this->_runBackgroundTask(
 	    '0 1 reset [\d \.]* reset ' .
-	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults,statusId=STATUSID');
+	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults');
 	if ($ret) {
 	    return $ret;
 	}
@@ -859,7 +859,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $status) = $this->_runBackgroundTask(
 	    '1 reset [\d \.]* reset [\d \.]* ' .
-	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults,statusId=STATUSID');
+	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults');
 	if ($ret) {
 	    return $ret;
 	}
@@ -977,7 +977,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $status) = $this->_runBackgroundTask(
 	    '1 reset [\d \.]* reset ' .
-	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults,statusId=STATUSID');
+	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults');
 	if ($ret) {
 	    return $ret;
 	}
@@ -1119,7 +1119,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $status) = $this->_runBackgroundTask(
 	    '1 reset [\d \.]* reset ' .
-	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults,statusId=STATUSID');
+	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults');
 	if ($ret) {
 	    return $ret;
 	}
@@ -1289,7 +1289,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $status) = $this->_runBackgroundTask(
 	    '1 reset [\d \.]* reset ' .
-	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults,statusId=STATUSID');
+	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults');
 	if ($ret) {
 	    return $ret;
 	}
@@ -1377,7 +1377,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	ob_start();
 	list ($ret, $status) = $this->_runBackgroundTask(
 	    '1 reset [\d \.]* reset ' .
-	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults,statusId=STATUSID');
+	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults');
 	$buflen = ob_get_length();
 	ob_end_clean();
 	if ($ret) {
@@ -1515,7 +1515,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	ob_start();
 	list ($ret, $status) = $this->_runBackgroundTask(
 	    '1 reset [\d \.]* reset ' .
-	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults,statusId=STATUSID');
+	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults');
 	$buflen = ob_get_length();
 	ob_end_clean();
 	if ($ret) {
@@ -1659,7 +1659,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $status) = $this->_runBackgroundTask(
 	    '1 reset [\d \.]* reset ' .
-	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults,statusId=STATUSID');
+	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults');
 	if ($ret) {
 	    return $ret;
 	}
@@ -1846,7 +1846,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $status) = $this->_runBackgroundTask(
 	    '1 reset [\d \.]* reset ' .
-	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults,statusId=STATUSID');
+	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults');
 	if ($ret) {
 	    return $ret;
 	}
@@ -2011,7 +2011,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $status) = $this->_runBackgroundTask(
 	    '1 reset [\d \.]* reset ' .
-	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults,statusId=STATUSID');
+	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults');
 	if ($ret) {
 	    return $ret;
 	}
@@ -2063,17 +2063,9 @@ class ConfirmImportControllerTestUrlGenerator {
     function generateUrl($params=array(), $options=array()) {
 	$buf = array();
 	foreach ($params as $key => $value) {
-	    if ($key == 'statusId') {
-		$this->_statusId = $value;
-		$value = 'STATUSID';
-	    }
 	    $buf[] = "$key=$value";
 	}
 	return implode(',', $buf);
-    }
-
-    function getStatusId() {
-	return $this->_statusId;
     }
 }
 

@@ -1408,10 +1408,10 @@ class ConfirmImportController extends GalleryController {
 	}
 
 	$session =& $gallery->getSession();
+	$session->putStatus($status);
 
 	$redirect['view'] = 'core.SiteAdmin';
 	$redirect['subView'] = 'migrate.ImportResults';
-	$redirect['statusId'] = $session->putStatus($status);
 
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect));
