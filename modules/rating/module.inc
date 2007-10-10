@@ -32,25 +32,25 @@ class RatingModule extends GalleryModule {
 	$this->setId('rating');
 	$this->setName($gallery->i18n('Rating'));
 	$this->setDescription($gallery->i18n('Item Rating Interface'));
-	$this->setVersion('1.0.10'); /* Update upgrade() too */
+	$this->setVersion('1.0.11'); /* Update upgrade() too */
 	$this->_templateVersion = 1;
-	$this->setCallbacks('getSiteAdminViews|getItemSummaries|registerEventListeners');
+	$this->setCallbacks('getSiteAdminViews|getItemSummaries');
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
-	$this->setRequiredCoreApi(array(7, 27));
+	$this->setRequiredCoreApi(array(7, 34));
 	$this->setRequiredModuleApi(array(3, 6));
-    }
-
-    /**
-     * @see GalleryModule::registerEventListeners
-     */
-    function registerEventListeners() {
-	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new RatingModule());
     }
 
     /**
      * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryEventListener', 'RatingModule', 'RatingModule', 
+	    'modules/rating/module.inc', 'rating', array('GalleryEntity::delete'));
+	if ($ret) {
+	    return $ret;
+	}
+
 	$ret = GalleryCoreApi::registerFactoryImplementation('ItemEditOption', 'RatingItemEdit',
 		'RatingItemEdit', 'modules/rating/RatingItemEdit.inc', 'rating',
 		array('ItemEditAlbum'));
@@ -216,6 +216,8 @@ class RatingModule extends GalleryModule {
 	case '1.0.8.1':
 	    /* .mo file migration */
 	case '1.0.9':
+	case '1.0.10':
+	    /* Refactored to new event registration from core API 7.34 */
 
 	case 'end of upgrade path':
 	    break;

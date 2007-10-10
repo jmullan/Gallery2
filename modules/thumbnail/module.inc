@@ -35,11 +35,11 @@ class ThumbnailModule extends GalleryModule {
 	$this->setId('thumbnail');
 	$this->setName($gallery->i18n('Thumbnail Manager'));
 	$this->setDescription($gallery->i18n('Set default thumbnails for non-image items'));
-	$this->setVersion('1.0.11'); /* Update ThumbnailModuleExtras::upgrade also! */
+	$this->setVersion('1.0.12'); /* Update ThumbnailModuleExtras::upgrade also! */
 	$this->_templateVersion = 1;
 	$this->setGroup('display', $gallery->i18n('Display'));
-	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
-	$this->setRequiredCoreApi(array(7, 27));
+	$this->setCallbacks('getSiteAdminViews');
+	$this->setRequiredCoreApi(array(7, 34));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
@@ -81,6 +81,12 @@ class ThumbnailModule extends GalleryModule {
 	    return $ret;
 	}
 
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryEventListener', 'ThumbnailModule', 'ThumbnailModule', 
+	    'modules/thumbnail/module.inc', 'thumbnail', array('GalleryEntity::delete'));
+	if ($ret) {
+	    return $ret;
+	}
 	return null;
     }
 
@@ -89,13 +95,6 @@ class ThumbnailModule extends GalleryModule {
      */
     function getModuleEntityTypes() {
 	return array('ThumbnailImage');
-    }
-
-    /**
-     * @see GalleryModule::registerEventListeners
-     */
-    function registerEventListeners() {
-	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new ThumbnailModule());
     }
 
     /**

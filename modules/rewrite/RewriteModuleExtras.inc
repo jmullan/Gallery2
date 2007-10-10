@@ -365,6 +365,8 @@ class RewriteModuleExtras {
 	case '1.1.13.2':
 	    /* .mo file migration */
 	case '1.1.14':
+	case '1.1.15':
+	    /* Refactored to new event registration from core API 7.34 */
 
 	case 'end of upgrade path':
 	    break;

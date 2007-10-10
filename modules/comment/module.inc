@@ -40,12 +40,12 @@ class CommentModule extends GalleryModule {
 	$this->setId('comment');
 	$this->setName($gallery->i18n('Comments'));
 	$this->setDescription($gallery->i18n('User commenting system'));
-	$this->setVersion('1.1.7'); /* Update upgrade() function below too */
+	$this->setVersion('1.1.8'); /* Update upgrade() function below too */
 	$this->_templateVersion = 1;
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
-	$this->setCallbacks('registerEventListeners|getItemLinks|getItemSummaries|' .
+	$this->setCallbacks('getItemLinks|getItemSummaries|' .
 			    'getSiteAdminViews|getItemAdminViews');
-	$this->setRequiredCoreApi(array(7, 27));
+	$this->setRequiredCoreApi(array(7, 34));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
@@ -164,6 +164,8 @@ class CommentModule extends GalleryModule {
 	    }
 	case '1.1.6':
 	    /* Add CommentAddNotification class */
+	case '1.1.7':
+	    /* Refactored to new event registration from core API 7.34 */
 
 	case 'end of upgrade path':
 	    /*
@@ -181,19 +183,17 @@ class CommentModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::registerEventListeners
-     */
-    function registerEventListeners() {
-	GalleryCoreApi::requireOnce('modules/comment/classes/GalleryCommentHelper.class');
-	$listener = new GalleryCommentHelper();
-	GalleryCoreApi::registerEventListener('GalleryEntity::delete', $listener, true);
-        GalleryCoreApi::registerEventListener('GalleryEntity::save', $listener, true);
-    }
-
-    /**
      * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryEventListener', 'GalleryCommentHelper', 'GalleryCommentHelper', 
+	    'modules/comment/classes/GalleryCommentHelper.class', 'comment', 
+	    array('GalleryEntity::delete', 'GalleryEntity::save'));
+	if ($ret) {
+	    return $ret;
+	}
+
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryEntity', 'GalleryComment', 'GalleryComment',
 	    'modules/comment/classes/GalleryComment.class', 'comment', null);

@@ -31,12 +31,12 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 
 	$this->setId('httpauth');
 	$this->setName($gallery->i18n('HTTP Auth'));
-	$this->setVersion('1.0.1'); /* Update upgrade() too! */
+	$this->setVersion('1.0.2'); /* Update upgrade() too! */
 	$this->_templateVersion = 1;
 	$this->setDescription($gallery->i18n('Login using HTTP authentication.'));
 	$this->setGroup('authentication', $gallery->i18n('Authentication'));
-	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
-	$this->setRequiredCoreApi(array(7, 20));
+	$this->setCallbacks('getSiteAdminViews');
+	$this->setRequiredCoreApi(array(7, 34));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
@@ -103,29 +103,14 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 	if ($ret) {
 	    return $ret;
 	}
-    }
 
-    /**
-     * @see GalleryModule::registerEventListeners
-     */
-    function registerEventListeners() {
-	$listener = new HttpAuthModule();
-	$ret = GalleryCoreApi::registerEventListener('Gallery::ActivatePlugin', $listener, true);
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryEventListener', 'HttpAuthModule', 'HttpAuthModule', 
+	    'modules/httpauth/module.inc', 'httpauth', 
+	    array('Gallery::ActivatePlugin', 'Gallery::Error', 'Gallery::Logout'));
 	if ($ret) {
 	    return $ret;
 	}
-
-	$ret = GalleryCoreApi::registerEventListener('Gallery::Error', $listener, true);
-	if ($ret) {
-	    return $ret;
-	}
-
-	$ret = GalleryCoreApi::registerEventListener('Gallery::Logout', $listener, true);
-	if ($ret) {
-	    return $ret;
-	}
-
-	return null;
     }
 
     /**
@@ -225,6 +210,8 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 
 	case '1.0.0':
 	    /* .mo file migration */
+	case '1.0.1':
+	    /* Refactored to new event registration from core API 7.34 */
 
 	case 'end of upgrade path':
 	    break;

@@ -36,11 +36,11 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('squarethumb');
 	$this->setName($gallery->i18n('Square Thumbnails'));
 	$this->setDescription($gallery->i18n('Build all thumbnails so they are square'));
-	$this->setVersion('1.0.7');
+	$this->setVersion('1.0.8');
 	$this->_templateVersion = 1;
 	$this->setGroup('display', $gallery->i18n('Display'));
-	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 20));
+	$this->setCallbacks('getSiteAdminViews');
+	$this->setRequiredCoreApi(array(7, 34));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
@@ -70,6 +70,13 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryEventListener', 'SquareThumbModule', 'SquareThumbModule', 
+	    'modules/squarethumb/module.inc', 'squarethumb', array('Gallery::DeactivatePlugin'));
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryToolkit', 'SquareThumbToolkit', 'SquareThumb',
 	    'modules/squarethumb/classes/SquareThumbToolkit.class', 'squarethumb', null);
 	if ($ret) {
@@ -77,14 +84,6 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 	}
 
 	return null;
-    }
-
-    /**
-     * @see GalleryModule::registerEventListeners
-     */
-    function registerEventListeners() {
-	GalleryCoreApi::registerEventListener('Gallery::DeactivatePlugin',
-					      new SquareThumbModule());
     }
 
     /**

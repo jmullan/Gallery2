@@ -332,6 +332,8 @@ class ThumbnailModuleExtras {
 	case '1.0.9.1':
 	    /* .mo file migration */
 	case '1.0.10':
+	case '1.0.11':
+	    /* Refactored to new event registration from core API 7.34 */
 
 	case 'end of upgrade path':
 	    /*

@@ -34,11 +34,10 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setName($gallery->i18n('Thumbnail Page'));
 	$this->setDescription(
 	    $gallery->i18n('Select page/frame from a multipage file or movie for the thumbnail'));
-	$this->setVersion('1.0.6');
+	$this->setVersion('1.0.7');
 	$this->_templateVersion = 1;
 	$this->setGroup('display', $gallery->i18n('Display'));
-	$this->setCallbacks('registerEventListeners');
-	$this->setRequiredCoreApi(array(7, 20));
+	$this->setRequiredCoreApi(array(7, 34));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
@@ -60,14 +59,14 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 	    return $ret;
 	}
 
-	return null;
-    }
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryEventListener', 'ThumbPageModule', 'ThumbPageModule', 
+	    'modules/thumbpage/module.inc', 'thumbpage', array('Gallery::DeactivatePlugin'));
+	if ($ret) {
+	    return $ret;
+	}
 
-    /**
-     * @see GalleryModule::registerEventListeners
-     */
-    function registerEventListeners() {
-	GalleryCoreApi::registerEventListener('Gallery::DeactivatePlugin', new ThumbPageModule());
+	return null;
     }
 
     /**

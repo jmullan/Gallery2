@@ -33,11 +33,11 @@ class QuotasModule extends GalleryModule {
 	$this->setId('quotas');
 	$this->setName($gallery->i18n('Quotas'));
 	$this->setDescription($gallery->i18n('User/Group Disk Quotas'));
-	$this->setVersion('1.1.2');
+	$this->setVersion('1.1.3');
 	$this->_templateVersion = 1;
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
-	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 27));
+	$this->setCallbacks('getSiteAdminViews');
+	$this->setRequiredCoreApi(array(7, 34));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
@@ -66,13 +66,6 @@ class QuotasModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::registerEventListeners
-     */
-    function registerEventListeners() {
-	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new QuotasModule());
-    }
-
-    /**
      * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
@@ -85,6 +78,13 @@ class QuotasModule extends GalleryModule {
      * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryEventListener', 'QuotasModule', 'QuotasModule', 
+	    'modules/quotas/module.inc', 'quotas', array('GalleryEntity::delete'));
+	if ($ret) {
+	    return $ret;
+	}
+
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemAddOption', 'DiskQuotaOption', 'DiskQuotaOption',
 	    'modules/quotas/DiskQuotaOption.inc', 'quotas', null, 9);

@@ -34,22 +34,25 @@ class AlbumSelectModule extends GalleryModule {
 	$this->setName($gallery->i18n('Album Select'));
 	$this->setDescription(
 	    $gallery->i18n('Jump directly to any album using a select box or tree view'));
-	$this->setVersion('1.0.8');
+	$this->setVersion('1.0.9');
 	$this->_templateVersion = 1;
 	$this->setGroup('blocks', $gallery->i18n('Blocks'));
-	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
-	$this->setRequiredCoreApi(array(7, 27));
+	$this->setCallbacks('getSiteAdminViews');
+	$this->setRequiredCoreApi(array(7, 34));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
     /**
-     * @see GalleryModule::registerEventListeners
+     * @see GalleryModule::performFactoryRegistrations
      */
-    function registerEventListeners() {
-	$listener = new AlbumSelectModule();
-	GalleryCoreApi::registerEventListener('Gallery::ViewableTreeChange', $listener, true);
-	GalleryCoreApi::registerEventListener('Gallery::ItemOrder', $listener, true);
-	GalleryCoreApi::registerEventListener('GalleryEntity::save', $listener, true);
+    function performFactoryRegistrations() {
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryEventListener', 'AlbumSelectModule', 'AlbumSelectModule', 
+	    'modules/albumselect/module.inc', 'albumselect', 
+	    array('Gallery::ViewableTreeChange', 'Gallery::ItemOrder', 'GalleryEntity::save'));
+	if ($ret) {
+	    return $ret;
+	}
     }
 
     /**

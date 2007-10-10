@@ -35,11 +35,11 @@ class RssModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('rss');
 	$this->setName($gallery->i18n('RSS'));
 	$this->setDescription($gallery->i18n('RSS'));
-	$this->setVersion('1.1.4');
+	$this->setVersion('1.1.5');
 	$this->_templateVersion = 1;
 	$this->setGroup('export', $gallery->i18n('Export'));
-	$this->setCallbacks('getSiteAdminViews|getItemLinks|registerEventListeners');
-	$this->setRequiredCoreApi(array(7, 27));
+	$this->setCallbacks('getSiteAdminViews|getItemLinks');
+	$this->setRequiredCoreApi(array(7, 34));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
@@ -136,6 +136,19 @@ class RssModule extends GalleryModule /* and GalleryEventListener */ {
      */
     function registerEventListeners() {
 	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new RssModule());
+    }
+    /**
+     * @see GalleryModule::performFactoryRegistrations
+     */
+    function performFactoryRegistrations() {
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryEventListener', 'RssModule', 'RssModule', 
+	    'modules/rss/module.inc', 'rss', array('GalleryEntity::delete'));
+	if ($ret) {
+	    return $ret;
+	}
+
+	return null;
     }
 
     /**
@@ -303,6 +316,9 @@ class RssModule extends GalleryModule /* and GalleryEventListener */ {
 			return $ret;
 		    }
 		}
+	    case '1.1.3':
+	    case '1.1.4':
+		/* Refactored to new event registration from core API 7.34 */
 	}
 
 	return null;

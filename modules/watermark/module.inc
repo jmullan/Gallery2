@@ -33,11 +33,11 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('watermark');
 	$this->setName($gallery->i18n('Watermark'));
 	$this->setDescription($gallery->i18n('Watermark your images'));
-	$this->setVersion('1.1.2'); /* Update upgrade() too */
+	$this->setVersion('1.1.3'); /* Update upgrade() too */
 	$this->_templateVersion = 1;
 	$this->setGroup('display', $gallery->i18n('Display'));
-	$this->setCallbacks('registerEventListeners|getSiteAdminViews|getUserAdminViews');
-	$this->setRequiredCoreApi(array(7, 27));
+	$this->setCallbacks('getSiteAdminViews|getUserAdminViews');
+	$this->setRequiredCoreApi(array(7, 34));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
@@ -176,6 +176,8 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	case '1.1.0':
 	    /* .mo file migration */
 	case '1.1.1':
+	case '1.1.2':
+	    /* Refactored to new event registration from core API 7.34 */
 
 	case 'end of upgrade path':
 	    /*
@@ -261,14 +263,14 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	    return $ret;
 	}
 
-	return null;
-    }
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryEventListener', 'WatermarkModule', 'WatermarkModule', 
+	    'modules/watermark/module.inc', 'watermark', array('GalleryEntity::delete'));
+	if ($ret) {
+	    return $ret;
+	}
 
-    /**
-     * @see GalleryModule::registerEventListeners
-     */
-    function registerEventListeners() {
-	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new WatermarkModule());
+	return null;
     }
 
     /**

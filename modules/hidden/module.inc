@@ -38,25 +38,24 @@ class HiddenModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setName($gallery->i18n('Hidden Items'));
 	$this->setDescription($gallery->i18n('Hide items/albums from guests until directly ' .
 					     'accessed with the right URL'));
-	$this->setVersion('1.0.6');
+	$this->setVersion('1.0.7');
 	$this->_templateVersion = 1;
 	$this->setGroup('display', $this->translate('Display'));
-	$this->setCallbacks('registerEventListeners');
-	$this->setRequiredCoreApi(array(7, 27));
+	$this->setRequiredCoreApi(array(7, 34));
 	$this->setRequiredModuleApi(array(3, 6));
-    }
-
-    /**
-     * @see GalleryModule::registerEventListeners
-     */
-    function registerEventListeners() {
-	GalleryCoreApi::registerEventListener('GalleryEntity::save', new HiddenModule());
     }
 
     /**
      * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryEventListener', 'HiddenModule', 'HiddenModule', 
+	    'modules/hidden/module.inc', 'hidden', array('GalleryEntity::save'));
+	if ($ret) {
+	    return $ret;
+	}
+
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryOnLoadHandler', 'HiddenModule', 'Hidden',
 	    'modules/hidden/module.inc', 'hidden', null);

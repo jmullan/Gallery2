@@ -33,26 +33,24 @@ class SizeLimitModule extends GalleryModule {
 	$this->setId('sizelimit');
 	$this->setName($gallery->i18n('Size Limit'));
 	$this->setDescription($gallery->i18n('Define picture size limit'));
-	$this->setVersion('1.0.7');
+	$this->setVersion('1.0.8');
 	$this->_templateVersion = 1;
 	$this->setGroup('display', $gallery->i18n('Display'));
-	$this->setCallbacks('registerEventListeners');
-	$this->setRequiredCoreApi(array(7, 27));
+	$this->setRequiredCoreApi(array(7, 34));
 	$this->setRequiredModuleApi(array(3, 6));
-    }
-
-    /**
-     * @see GalleryModule::registerEventListeners
-     */
-    function registerEventListeners() {
-	GalleryCoreApi::registerEventListener('GalleryEntity::save',
-	    new SizelimitModule(), true);   /* true=disableForUnitTest */
     }
 
     /**
      * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryEventListener', 'SizelimitModule', 'SizelimitModule', 
+	    'modules/sizelimit/module.inc', 'sizelimit', array('GalleryEntity::save'));
+	if ($ret) {
+	    return $ret;
+	}
+
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemEditOption', 'SizeLimitOption', 'SizeLimitOption',
 	    'modules/sizelimit/SizeLimitOption.inc', 'sizelimit', array('ItemEditAlbum'));

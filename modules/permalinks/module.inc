@@ -37,11 +37,11 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setName($gallery->i18n('Permalinks'));
 	$this->setDescription(
 		$gallery->i18n('Create simpler permanent aliases to your items space'));
-	$this->setVersion('1.0.10');
+	$this->setVersion('1.0.11');
 	$this->_templateVersion = 1;
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
-	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 27));
+	$this->setCallbacks('getSiteAdminViews');
+	$this->setRequiredCoreApi(array(7, 34));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
@@ -89,16 +89,15 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
 	    return $ret;
 	}
 
-	return null;
-    }
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryEventListener', 'PermalinksModule', 'PermalinksModule', 
+	    'modules/permalinks/module.inc', 'permalinks', 
+	    array('Gallery::DeactivatePlugin', 'GalleryEntity::delete', 'GalleryEntity::save'));
+	if ($ret) {
+	    return $ret;
+	}
 
-    /**
-     * @see GalleryModule::registerEventListeners
-     */
-    function registerEventListeners() {
-	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new PermalinksModule());
-	GalleryCoreApi::registerEventListener('Gallery::DeactivatePlugin', new PermalinksModule());
-	GalleryCoreApi::registerEventListener('GalleryEntity::save', new PermalinksModule(), true);
+	return null;
     }
 
     /**

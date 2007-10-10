@@ -30,11 +30,11 @@ class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('linkitem');
 	$this->setName($gallery->i18n('Link Items'));
 	$this->setDescription($gallery->i18n('Create links to other albums or external urls'));
-	$this->setVersion('1.1.4');
+	$this->setVersion('1.1.5');
 	$this->_templateVersion = 1;
 	$this->setGroup('display', $gallery->i18n('Display'));
-	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 27));
+	$this->setCallbacks('getSiteAdminViews');
+	$this->setRequiredCoreApi(array(7, 34));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
@@ -117,14 +117,14 @@ class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
 	    return $ret;
 	}
 
-	return null;
-    }
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryEventListener', 'LinkItemModule', 'LinkItemModule', 
+	    'modules/linkitem/module.inc', 'linkitem', array('GalleryEntity::delete'));
+	if ($ret) {
+	    return $ret;
+	}
 
-    /**
-     * @see GalleryModule::registerEventListeners
-     */
-    function registerEventListeners() {
-	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new LinkItemModule());
+	return null;
     }
 
     /**
