@@ -132,12 +132,6 @@ class RssModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::registerEventListeners
-     */
-    function registerEventListeners() {
-	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new RssModule());
-    }
-    /**
      * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
