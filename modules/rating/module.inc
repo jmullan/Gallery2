@@ -110,7 +110,10 @@ class RatingModule extends GalleryModule {
 	$template->javascript('modules/rating/rating.js');
 
 	$template->setVariable('l10Domain', $this->getL10Domain());
-	$RatingSummary = array('ratingValues' => array(1, 2, 3, 4, 5), 'firstCall' => true);
+	$session =& $gallery->getSession();
+	$authToken = $session->isPersistent() ? $session->getAuthToken() : '';
+	$RatingSummary = array('ratingValues' => array(1, 2, 3, 4, 5),
+			       'firstCall' => true, 'authToken' => $authToken);
 
 	/* Check to see if album rating is allowed */
 	list ($ret, $allowAlbumRating) = GalleryCoreApi::getPluginParameter('module', 'rating',

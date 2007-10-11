@@ -54,7 +54,7 @@ class RatingCallbackView extends GalleryView {
 	    header("Content-type: text/plain; charset=UTF-8");
 	}
 
-	switch($command) {
+	switch ($command) {
 	case 'rate':
 	    list ($ret, $permission) = GalleryCoreApi::hasItemPermission($itemId, 'rating.add');
 	    if ($ret) {
@@ -79,10 +79,17 @@ class RatingCallbackView extends GalleryView {
 					 'count' => $results['votes'], 
 					 'arg1' => $results['votes']));
 
+	    $session =& $gallery->getSession();
 	    print $results['itemId'] . "\n"
 		. $results['rating'] . "\n"
 		. $results['votesString'] . "\n"
-		. $results['userRating'];
+		. $results['userRating'] . "\n"
+		. $session->getAuthToken();
+	    /*
+	     * If this was the first rating from an anonymous user then their session just became
+	     * persistent (see RatingHelper::rateItem); return the authToken so it can be used
+	     * in future rating requests.
+	     */
 
 	    break;
 	}
