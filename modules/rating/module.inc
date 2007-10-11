@@ -217,6 +217,7 @@ class RatingModule extends GalleryModule {
 	case '1.0.7':
 	case '1.0.8':
 	case '1.0.8.1':
+	case '1.0.8.2':
 	    /* .mo file migration */
 	case '1.0.9':
 	case '1.0.10':
