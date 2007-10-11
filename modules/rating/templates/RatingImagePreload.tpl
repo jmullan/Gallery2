@@ -13,3 +13,8 @@
 	<div class="giRatingFullUserNo"></div>
 	<div class="giRatingFullUserYes"></div>
 </div>
+<script type="text/javascript">
+    // <![CDATA[
+    var galleryAuthToken = '{$RatingSummary.authToken}';
+    // ]]>
+</script>

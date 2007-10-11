@@ -17,6 +17,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 function rateItem(itemId, rating, url) {
+    url = url.replace('__AUTHTOKEN__', galleryAuthToken);
     YAHOO.util.Connect.asyncRequest(
 	'GET', url, {success: handleRatingResponse, failure: null, scope: null}, null);
 }
@@ -31,6 +32,7 @@ function updateItemRating(results) {
     var rating = results[1];
     var votes = results[2];
     var userRating = results[3];
+    galleryAuthToken = results[4];
 
     updateElementDisplay('rating.rating.' + itemId, rating);
     updateElementDisplay('rating.votes.' + itemId, votes);

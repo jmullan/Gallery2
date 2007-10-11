@@ -12,7 +12,8 @@
 	{foreach from=$RatingSummary.ratingValues item=ratingValue}{if $RatingData.canRate}<a
 		href="javascript:rateItem({$RatingData.itemId}, {$ratingValue}, '{g->url
 			arg1="view=rating.RatingCallback" arg2="command=rate"
-			arg3="itemId=`$RatingData.itemId`" arg4="rating=$ratingValue" useAuthToken=1}')"
+			arg3="itemId=`$RatingData.itemId`" arg4="rating=$ratingValue"
+			arg5="authToken=__AUTHTOKEN__"}')"
 		onmouseover="updateStarDisplay({$RatingData.itemId}, {$ratingValue}); return true"
 		onmouseout="resetStarDisplay({$RatingData.itemId}); return true">{/if}<img
 		src="{g->url href="modules/rating/images/transparent.gif"}"

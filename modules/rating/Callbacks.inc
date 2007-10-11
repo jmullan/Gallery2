@@ -26,6 +26,7 @@
 class RatingCallbacks {
 
     function callback($params, &$smarty, $callback, $userId) {
+	global $gallery;
 
 	switch ($callback) {
 	case 'LoadRating':
@@ -73,14 +74,17 @@ class RatingCallbacks {
 		return $ret;
 	    }
 
-	    list ($ret, $permission) = GalleryCoreApi::hasItemPermission($itemId,
-		    'rating.add',
-		    $userId);
+	    list ($ret, $permission) =
+		GalleryCoreApi::hasItemPermission($itemId, 'rating.add', $userId);
 	    if ($ret) {
 		return $ret;
 	    }
 	    $RatingData[$itemId]['canRate'] = ($permission ? true : false);
-	    $RatingSummary = array('ratingValues' => array(1, 2, 3, 4, 5), 'firstCall' => true);
+
+	    $session =& $gallery->getSession();
+	    $authToken = $session->isPersistent() ? $session->getAuthToken() : '';
+	    $RatingSummary = array('ratingValues' => array(1, 2, 3, 4, 5),
+				   'firstCall' => true, 'authToken' => $authToken);
 
 	    $block =& $smarty->_tpl_vars['block'];
 	    $block['rating']['RatingData'] = $RatingData[$itemId];

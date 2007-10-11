@@ -32,7 +32,7 @@ class RatingModule extends GalleryModule {
 	$this->setId('rating');
 	$this->setName($gallery->i18n('Rating'));
 	$this->setDescription($gallery->i18n('Item Rating Interface'));
-	$this->setVersion('1.0.8.1'); /* Update upgrade() too */
+	$this->setVersion('1.0.8.2'); /* Update upgrade() too */
 	$this->setCallbacks('getSiteAdminViews|getItemSummaries|registerEventListeners');
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
 	$this->setRequiredCoreApi(array(7, 10));
@@ -109,7 +109,10 @@ class RatingModule extends GalleryModule {
 	$template->javascript('modules/rating/rating.js');
 
 	$template->setVariable('l10Domain', $this->getL10Domain());
-	$RatingSummary = array('ratingValues' => array(1, 2, 3, 4, 5), 'firstCall' => true);
+	$session =& $gallery->getSession();
+	$authToken = $session->isPersistent() ? $session->getAuthToken() : '';
+	$RatingSummary = array('ratingValues' => array(1, 2, 3, 4, 5),
+			       'firstCall' => true, 'authToken' => $authToken);
 
 	/* Check to see if album rating is allowed */
 	list ($ret, $allowAlbumRating) = GalleryCoreApi::getPluginParameter('module', 'rating',
@@ -211,6 +214,7 @@ class RatingModule extends GalleryModule {
 	case '1.0.6':
 	case '1.0.7':
 	case '1.0.8':
+	case '1.0.8.1':
 
 	case 'end of upgrade path':
 	    break;
