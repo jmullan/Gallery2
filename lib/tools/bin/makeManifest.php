@@ -48,7 +48,7 @@ for ($i = 0; $i < count($argv); $i++) {
 }
 
 /* Just so we are consistent lets standardize on Unix path sepearators */
-$baseDir = dirname(dirname(dirname(dirname(__file__)))) . '/';
+$baseDir = dirname(dirname(dirname(dirname(__FILE__)))) . '/';
 $baseDir = str_replace("\\", '/', $baseDir);
 chdir($baseDir);
 
@@ -60,13 +60,14 @@ if (empty($path)) {
     die("The specified path ('$path') is not a directory");
 } else if (!preg_match('#^(modules|themes)(/\w+)?/?$#', $path)) {
     die("The path '$path' must be a relative path to a plugin (e.g. modules/core)");
+} else {
+    $path = $baseDir . $path;
 }
 
 quietprint("Finding all files...\n");
 $entries = listSvn($path);
 quietprint("\n");
 
-/* sort */
 quietprint("Sorting...");
 sort($entries);
 quietprint("\n");
@@ -97,11 +98,10 @@ foreach ($sections as $manifest => $entries) {
     preg_match('/Revision: (\d+\s*)\$/', $oldLines[0], $matches);
     $oldRevision = $matches[1];
 
-    $newContent = "# \$Revision$oldRevision\$$nl";
+    $newContent = "# \$Revi" . "sion: $oldRevision\$$nl";
     $newContent .= "# File crc32 crc32(crlf) size size(crlf)  or  R File$nl";
 
-    $deleted = array();
-    $seen = array();
+    $deleted = $seen = array();
     foreach ($entries as $entry) {
 	list ($file, $isBinary) = preg_split('/\@\@/', $entry);
 	
@@ -154,8 +154,7 @@ foreach ($sections as $manifest => $entries) {
 	    }
 	}
 
-	$deletedFiles = array_keys($deleted);
-	foreach ($deletedFiles as $file) {
+	foreach ($deleted as $file => $unused) {
 	    $file = substr($file, strlen($baseDir));
 	    $newContent .= "R\t$file$nl";
 	}
