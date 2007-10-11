@@ -23,6 +23,17 @@ if (!empty($_SERVER['SERVER_NAME'])) {
     die("You must run this from the command line\n");
 }
 
+if (!function_exists('file_put_contents')) {
+    /* Define file_put_contents if running PHP 4.x */
+    function file_put_contents($path, $data) {
+	if (false === ($file = fopen($path, 'w')) || false === fwrite($file, $data)) {
+	    return false;
+	}
+	fclose($file);
+	return true;
+    }
+}
+
 $startTime = time();
 $quiet = false;
 $path = null;
@@ -151,7 +162,6 @@ foreach ($sections as $manifest => $entries) {
     }
 
     if ($oldContent != $newContent) {
-	quietprint("Manifest: $manifest changed.\n");
 	file_put_contents($manifest, $newContent);
 	$changed++;
     }
@@ -210,7 +220,9 @@ function listSvn($path) {
 	    continue;
 	}
 
-	if (!in_array($matches[1], array(' ', 'D', 'M'))) {
+	if ($matches[1] == 'M') {
+	    quietprint("Warning: $matches[2] is locally modified\n");
+	} else if (!in_array($matches[1], array(' ', 'D', 'M'))) {
 	    die("Check {$matches[1]} status for {$matches[2]}");
 	}
 
