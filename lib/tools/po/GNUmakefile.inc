@@ -21,7 +21,7 @@ TYPE_DIR = $(shell dirname "$(MODULE_DIR)")
 APPLICATION ?= $(shell basename "$(TYPE_DIR)")_$(shell basename "$(MODULE_DIR)")
 
 # Let PHP parse the config.php file to get the g2data directory.
-G2DATA = $(shell echo '<?php include("$(GALLERYDIR)/lib/support/GallerySetupUtilities.class"); $$gallery = new GallerySetupUtilitiesStub(); include("$(GALLERYDIR)/config.php"); print $$gallery->getConfig("data.gallery.base"); ?>' | php -q 2>&1)
+G2DATA = $(shell echo '<?php include("$(GALLERYDIR)/lib/support/GallerySetupUtilities.class"); $$gallery = new GallerySetupUtilitiesStub(); @include("$(GALLERYDIR)/config.php"); print $$gallery->getConfig("data.gallery.base"); ?>' | php -q 2>&1)
 
 ifdef QUIET
     MSGFMT_FLAGS =
@@ -118,8 +118,10 @@ install: check-g2data update
 		MO_FILE=../../locale/$${LOCALE}/LC_MESSAGES/$(APPLICATION).mo; \
 	    else \
 		MO_FILE=$${LOCALE}.mo; \
-		INSTALL_DIR='$(G2DATA)'/locale/$${LOCALE}/LC_MESSAGES; \
-		INSTALL_FILE="$${INSTALL_DIR}/$(APPLICATION).mo"; \
+		if test -d '$(G2DATA)'; then \
+		    INSTALL_DIR='$(G2DATA)'/locale/$${LOCALE}/LC_MESSAGES; \
+		    INSTALL_FILE="$${INSTALL_DIR}/$(APPLICATION).mo"; \
+		fi; \
 	    fi; \
 	    php -f $(TOOLDIR)/po/trim-po.php `pwd`/$${LOCALE}.po > tmp.po; \
 	    if $${MSGFMT_CMD} $${MO_FILE} tmp.po; then \
