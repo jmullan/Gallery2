@@ -107,8 +107,7 @@ class GalleryRepositoryUtilities {
 	$revision1 = explode('.', $revision1);
 	$revision2 = explode('.', $revision2);
 
-	$subRevisions = count($revision1) > count($revision2) ? count($revision1)
-							      : count($revision2);
+	$subRevisions = max(count($revision1), count($revision2));
 	for ($i = 0; $i < $subRevisions; $i ++) {
 	    if (!isset($revision2[$i])) {
 		$relation = 'newer';
