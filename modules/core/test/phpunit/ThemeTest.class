@@ -343,6 +343,73 @@ class ThemeTest extends GalleryTestCase {
 		      'core.ThemeTestBlock4'),
 		array_keys($this->_theme->_preloadedBlocks));
     }
+
+    function testSplitHtml() {
+    	$html = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" ...>
+	    <html lang="de-DE" xmlns="...">
+	    <head>
+	    <foo>
+	    </head>
+	    <body some="foo">
+	    <p>Example</p>
+	    </body>
+	    </html>
+    	';
+	$extraHtml = array('sidebarBlocksHtml' => 'sidebar stuff', 'other' => 1);
+
+	$results = $this->_theme->splitHtml($html, $extraHtml);
+	$this->assertEquals(array(
+	    'headHtml' => '
+	    <foo>
+	    ',
+	    'bodyHtml' => '
+	    <p>Example</p>
+	    ',
+	    'sidebarBlocksHtml' => 'sidebar stuff'),
+	    $results);
+    }
+
+    function testSplitHtmlWorksWithDefaultBacktraceLimit() {
+    	/*
+    	 * Feed splitHtml with far over 100k characters to test whether it runs into
+    	 * PHP 5.2.0's default pcre.backtrack_limit.
+    	 */
+    	$backtraceLimit = ini_get('pcre.backtrack_limit');
+    	ini_set('pcre.backtrack_limit', 100000);
+
+    	/* Generate some random HTML that exceeds the backtrace limit in length */
+    	$randomHtml = '<meta foo="bar">body head </meta>';
+    	$randomHtml = str_repeat($randomHtml, 160000 / strlen($randomHtml));
+    	$html = '
+	    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" ...>
+    	
+	    <html lang="de-DE" xmlns="...">
+	    
+	    <head>
+	    ' . $randomHtml . 'for head
+	    </head>
+	    
+	    <body some="foo">
+	    ' . $randomHtml . 'for body
+	    </body>
+	    
+	    </html>
+	    
+    	';
+    	$extraHtml = array('sidebarBlocksHtml' => 'sidebar stuff', 'other' => 1);
+
+	$results = $this->_theme->splitHtml($html, $extraHtml);
+	$this->assertEquals(array(
+	    'headHtml' => '
+	    ' . $randomHtml . 'for head
+	    ',
+	    'bodyHtml' => '
+	    ' . $randomHtml . 'for body
+	    ',
+	    'sidebarBlocksHtml' => 'sidebar stuff'),
+	    $results);
+	ini_set('pcre.backtrack_limit', $backtraceLimit);
+    }
 }
 
 /**

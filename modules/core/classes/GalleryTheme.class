@@ -1968,9 +1968,30 @@ class GalleryTheme extends GalleryPlugin {
      * @return array('headHtml' => ..., 'bodyHtml' => ...)
      */
     function splitHtml($mainHtml, $extraHtml) {
-	if (preg_match('|<head>(.*)</head>.*?<body.*?>(.*)</body>|s', $mainHtml, $matches) == 1) {
-	    $results = array('headHtml' => $matches[1], 'bodyHtml' => $matches[2]);
-	} else {
+	/*
+	 * Avoid regular expressions on very large strings due to PHP's pcre.backtrack_limit.
+	 * It's faster (no excessive backtracking) and actually required due to PHP 5.2.0's
+	 * pcre.backtrack_limit which is reached with large pages like AdminPlugins.
+	 */
+	$results = array();
+	if (($headStart = strpos($mainHtml, '<head>')) !== false) {
+	    if (($headEnd = strpos($mainHtml, '</head>', $headStart)) !== false) {
+		$headStart += strlen('<head>');
+		$results['headHtml'] = substr($mainHtml, $headStart, $headEnd - $headStart);
+
+		if (($bodyStart = strpos($mainHtml, '<body', $headEnd)) !== false) {
+		    if (($bodyStart = strpos($mainHtml, '>', $bodyStart)) !== false) {
+			if (($bodyEnd = strpos($mainHtml, '</body>', $bodyStart)) !== false) {
+			    $results['bodyHtml'] =
+				substr($mainHtml, ++$bodyStart, $bodyEnd - $bodyStart);
+			    $mainHtml = null;
+			}
+		    }
+		}
+	    }
+	}
+
+	if (empty($results['bodyHtml'])) {
 	    $results = array('bodyHtml' => $mainHtml);
 	}
 
