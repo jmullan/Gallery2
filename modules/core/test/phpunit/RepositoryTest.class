@@ -1014,16 +1014,17 @@ class RepositoryTest extends GalleryTestCase {
 
 	$platform = new UnitTestPlatform();
 	/* moduleFile1 */
-	$platform->setReply('file_exists', array("$modules/testModule/moduleFile1"), true);
-	$platform->setReply('filesize', array("$modules/testModule/moduleFile1"), 1337);
 	$platform->setReply('file_get_contents',
 			    array("$modules/testModule/moduleFile1"), "moduleFile1");
+	$platform->setReply('file_exists', array("$modules/testModule/moduleFile1"), true);
+	$platform->setReply('filesize', array("$modules/testModule/moduleFile1"), 1337);
+	
 
 	/* moduleFile2 */
-	$platform->setReply('file_exists', array("$modules/testModule/moduleFile2"), true);
-	$platform->setReply('filesize', array("$modules/testModule/moduleFile2"), 31337);
 	$platform->setReply('file_get_contents',
 			    array("$modules/testModule/moduleFile2"), "moduleFile2");
+	$platform->setReply('file_exists', array("$modules/testModule/moduleFile2"), true);
+	$platform->setReply('filesize', array("$modules/testModule/moduleFile2"), 31337);
 	$gallery->setPlatform($platform);
 
 	$repository = new GalleryRepository();
