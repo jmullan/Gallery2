@@ -152,7 +152,8 @@ function extractStrings($filename) {
 			$buf .= is_array($tokens[$i]) ? $tokens[$i][1] : $tokens[$i];
 		    }
 		    if (is_array($tokens[$i]) && $tokens[$i][0] == T_DOUBLE_ARROW
-			    && substr($lastString, 1, 3) === 'arg') {
+			    && (substr($lastString, 1, 3) === 'arg'
+				|| substr($lastString, 1, 5) === 'count')) {
 			/*
 			 * Convert 'argN' => code to 'argN' => null so we don't eval that code.
 			 * Add 'null' to $buf now, then ignore content until next , or ) not in
