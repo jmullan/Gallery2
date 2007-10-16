@@ -984,33 +984,10 @@ class GalleryTestCase extends TestCase {
      */
     function _registerFactoryImplementationForTest($classType, $className, $implId, $implPath,
 						   $implModuleId, $hints=array()) {
-	GalleryCoreApi::requireOnce(
-	    'modules/core/classes/helpers/GalleryFactoryHelper_simple.class');
-	$registryData =& GalleryFactoryHelper_simple::_getFactoryData();
-	$registry =& $registryData[1];
-
-	/* Prepend the new implementation at the beginning of the arrays */
-	foreach (array('implementations', 'ids', 'pluginIds') as $key) {
-	    if (!isset($registry[$key][$classType]) || !is_array($registry[$key][$classType])) {
-		$registry[$key][$classType] = array();
-	    }
-	}
-
-	$this->_array_unshift_key_value($registry['implementations'][$classType],
-					$className, $implPath);
-	$this->_array_unshift_key_value($registry['ids'][$classType],
-					$implId, $className);
-	$this->_array_unshift_key_value($registry['pluginIds'][$classType],
-					$className, $implModuleId);
-
-	foreach ($hints as $hint) {
-	    $hint = GalleryUtilities::strToLower($hint);
-	    if (!isset($registry['hints'][$classType][$hint])
-		    || !is_array($registry['hints'][$classType][$hint])) {
-		$registry['hints'][$classType][$hint] = array();
-	    }
-	    $this->_array_unshift_key_value($registry['hints'][$classType][$hint],
-					    $implId, $className);
+	$ret = GalleryCoreApi::registerFactoryImplementationForRequest($classType, $className, 
+							 $implId, $implPath, $implModuleId, $hints);
+	if ($ret) {
+	    $this->failWithStatus($ret);
 	}
     }
 
