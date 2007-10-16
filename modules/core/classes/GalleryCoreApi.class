@@ -84,7 +84,7 @@ class GalleryCoreApi {
      *   (GalleryTranslator.class and Gallery.class)
      */
     function getApiVersion() {
-	return array(7, 38);
+	return array(7, 39);
     }
 
     /**
@@ -108,6 +108,27 @@ class GalleryCoreApi {
 	    $classType, $className, $implId, $implPath, $implModuleId, $hints, $orderWeight);
     }
 
+    /**
+     * Register a new implementation with the factory for this request only
+     *
+     * @param string $classType the class type (eg. 'GalleryToolkit')
+     * @param string $className the class name (eg. 'NetPbmToolkit')
+     * @param string $implId an implementation id (eg. 'NetPBM')
+     * @param string $implPath the relative path to the implementation file
+     *               (eg. 'modules/netpbm/classes/NetPbmToolkit.class')
+     * @param string $implModuleId the id of the module containing the implementation (eg. 'netpbm')
+     * @param array $hints optional hints that can be used to locate this
+     *              implementation (eg. array('image/jpeg', 'image/gif'))
+     * @return GalleryStatus
+     */
+    function registerFactoryImplementationForRequest($classType, $className, $implId, $implPath,
+					      $implModuleId, $hints) {
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryFactoryHelper_medium.class');
+	return GalleryFactoryHelper_medium::registerFactoryImplementationForRequest(
+		$classType, $className, $implId, $implPath, $implModuleId, $hints);
+    }
+    
     /**
      * Create a new instance of the given type based on the hint(s) provided
      *

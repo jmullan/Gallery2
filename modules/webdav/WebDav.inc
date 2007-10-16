@@ -43,7 +43,9 @@ class WebDavController extends GalleryController {
 	 * registered for this request.  Since this is the WebDAV controller, we know it is a WebDAV
 	 * request.
 	 */
-	$ret = GalleryCoreApi::registerEventListener('Gallery::Error', new WebDavModule(), true);
+	$ret = GalleryCoreApi::registerFactoryImplementationForRequest('GalleryEventListener',
+	    'WebDavModule', 'WebDavModule', 'modules/webdav/module.inc', 'webdav', 
+	    array('Gallery::Error'));
 	if ($ret) {
 	    return array($ret, null);
 	}

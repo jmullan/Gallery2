@@ -311,6 +311,83 @@ class FactoryTest extends GalleryTestCase {
 	}
 	$this->assertEquals(array('new hint'), $hints, 'Unexpected hints on update');
     }
+
+    function testRegisterFactoryImplementationForRequest() {
+	$handlerPath = dirname(__FILE__);
+	$ret = GalleryCoreApi::registerFactoryImplementationForRequest('GalleryEventListener',
+	    'TestErrorHandler', 'TestErrorHandler',
+	    $handlerPath, 'FactoryTestModule', array('Gallery::Error'));
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $registry) = GalleryFactoryHelper_simple::_getFactoryData();
+	if ($ret) {
+	    return $ret;
+	}
+	
+	if (!empty($registry['implementations']['GalleryEventListener']['TestErrorHandler'])) {
+	    $this->assert($handlerPath, 
+			  $registry['implementations']['GalleryEventListener']['TestErrorHandler'],
+			  'TestErrorHandler implementation was set, but has an unexpected value');
+	} else {
+	    $this->fail('TestErrorHandler implementation not set');
+	}
+
+	if (!empty($registry['ids']['GalleryEventListener']['TestErrorHandler'])) {
+	    $this->assert('TestErrorHandler', 
+			  $registry['ids']['GalleryEventListener']['TestErrorHandler'],
+			  'TestErrorHandler id was set, but has an unexpected value');
+	} else {
+	    $this->fail('TestErrorHandler id not set');
+	}
+			    
+	if (!empty($registry['pluginIds']['GalleryEventListener']['TestErrorHandler'])) {
+	    $this->assert('FactoryTestModule', 
+			  $registry['pluginIds']['GalleryEventListener']['TestErrorHandler'],
+			  'TestErrorHandler plugin id was set, but has an unexpected value');
+	} else {
+	    $this->fail('TestErrorHandler implementation not set');
+	}
+
+	$errorListeners = $registry['hints']['GalleryEventListener']['gallery::error'];
+	if (!empty($errorListeners['TestErrorHandler'])) {
+	    $this->assert($handlerPath,  $errorListeners['TestErrorHandler'],
+			  'TestErrorHandler gallery::error was set, but has unexpected value');
+	} else {
+	    $this->fail('TestErrorHandler error listener not set');
+	}
+    }
+
+    function testRegisterFactoryImplementationForRequestDeleteCache() {
+	$handlerPath = dirname(__FILE__);
+	$ret = GalleryCoreApi::registerFactoryImplementationForRequest('GalleryEventListener',
+	    'TestErrorHandler', 'TestErrorHandler',
+	    $handlerPath, 'FactoryTestModule', array('Gallery::Error'));
+	if ($ret) {
+	    return $ret;
+	}
+
+	GalleryFactoryHelper_simple::deleteCache();
+
+	list ($ret, $registry) = GalleryFactoryHelper_simple::_getFactoryData();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$result = empty($registry['implementations']['GalleryEventListener']['TestErrorHandler']);
+	$this->assert($result, 'TestErrorHandler implementation is set');
+
+	$result = empty($registry['ids']['GalleryEventListener']['TestErrorHandler']);
+	$this->assert($result, 'TestErrorHandler id is set');
+			    
+	$result = empty($registry['pluginIds']['GalleryEventListener']['TestErrorHandler']);
+	$this->assert($result, 'TestErrorHandler implementation not set');
+
+	$errorListeners = $registry['hints']['GalleryEventListener']['gallery::error'];
+	$result = empty($errorListeners['TestErrorHandler']);
+	$this->assert($result, 'TestErrorHandler error listener not set');
+    }
 }
 
 /**

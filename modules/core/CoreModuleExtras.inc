@@ -2448,6 +2448,8 @@ class CoreModuleExtras {
 	case '1.2.20':
 	case '1.2.21':
 	    /* Added GalleryStorage::validateConnection */
+	case '1.2.22':
+	    /* Added GalleryCoreApi::registerFactoryImplementationForRequest */
 
 	case 'end of upgrade path':
 	    /*
@@ -2783,6 +2785,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.19':
 	case '1.2.20':
 	case '1.2.21':
+	case '1.2.22':
 
 	case 'end of upgrade path':
 	    /*

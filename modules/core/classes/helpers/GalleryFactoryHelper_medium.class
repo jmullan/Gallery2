@@ -160,5 +160,56 @@ class GalleryFactoryHelper_medium {
 
 	return null;
     }
+
+    /**
+     * @see GalleryCoreApi::registerFactoryImplementation
+     */
+    function registerFactoryImplementationForRequest($classType, $className, $implId, $implPath,
+						     $implModuleId, $hints) {
+	$registryData =& GalleryFactoryHelper_simple::_getFactoryData();
+	if ($registryData[0]) {
+	    return $registryData[0];
+	}
+	$registry =& $registryData[1];
+
+	foreach (array('implementations', 'ids', 'pluginIds', 'keys') as $key) {
+	    if (!isset($registry[$key][$classType]) || !is_array($registry[$key][$classType])) {
+		$registry[$key][$classType] = array();
+	    }
+	}
+
+	GalleryFactoryHelper_medium::_array_unshift_key_value(
+		$registry['implementations'][$classType], $className, $implPath);
+	GalleryFactoryHelper_medium::_array_unshift_key_value($registry['ids'][$classType],
+					$implId, $className);
+	GalleryFactoryHelper_medium::_array_unshift_key_value($registry['pluginIds'][$classType],
+					$className, $implModuleId);
+
+	if (isset($hints)) {
+	    foreach ($hints as $hint) {
+		$hint = GalleryUtilities::strToLower($hint);
+		if (!isset($registry['hints'][$classType][$hint])
+			|| !is_array($registry['hints'][$classType][$hint])) {
+		    $registry['hints'][$classType][$hint] = array();
+		}
+		GalleryFactoryHelper_medium::_array_unshift_key_value(
+			$registry['hints'][$classType][$hint], $implId, $className);
+	    }
+	}
+	
+	return null;
+    }
+
+    /**
+     * Utility method to array_unshift a single key => value pair.
+     * @param array $array the array to alter
+     * @param string $key the key of the new entry
+     * @param string $value the value of the new entry
+     * @access private
+     */
+    function _array_unshift_key_value(&$array, $key, $value) {
+	unset($array[$key]);
+	$array = array_merge(array($key => $value), $array);
+    }
 }
 ?>
