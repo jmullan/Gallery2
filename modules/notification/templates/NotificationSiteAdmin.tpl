@@ -39,17 +39,17 @@
   {/literal}
 </script>
 <div class="gbBlock gcBackground1">
-  <div class="yui-g">
-    <div class="yui-g first">
-      <div class="yui-u first">{g->text text="Description"}</div>
-      <div class="yui-u">{g->text text="Handler"}</div>
+  <div class="yui-g"style="width:800px">
+    <div class="yui-g first" style="width:315px">
+      <div class="yui-u first" style="width:150px">{g->text text="Description"}</div>
+      <div class="yui-u" style="width:150px">{g->text text="Handler"}</div>
     </div>
-    <div class="yui-gd">
-      <div class="yui-u first">
-	  <div class="yui-u first" style="text-align:center">{g->text text="Enabled"}</div>
-	  <div class="yui-u" style="text-align:center">{g->text text="Public"}</div>
+    <div class="yui-gd" style="width:485px">
+      <div class="yui-u first" style="width:170px">
+	  <div class="yui-u first" style="width:80px; text-align:center">{g->text text="Enabled"}</div>
+	  <div class="yui-u" style="width:80px; text-align:center">{g->text text="Public"}</div>
       </div>
-      <div class="yui-u">&nbsp;</div>
+      <div class="yui-u" style="width:295px">&nbsp;</div>
     </div>
   </div>
 </div>
@@ -59,9 +59,9 @@
 {assign var="eventCount" value=$form.notificationMap|@count}
 {section name="events" loop=$form.totalRows}
   {assign var=iteration value=$smarty.section.events.iteration}
-  <div class="yui-g" id="row{$iteration}" {if $iteration>$form.displayRows} style="display:none"{/if}>
-    <div class="yui-g first">
-      <div class="yui-u first">
+  <div class="yui-g" id="row{$iteration}" style="width:800px{if $iteration>$form.displayRows}; display:none{/if}">
+    <div class="yui-g first" style="width:315px">
+      <div class="yui-u first" style="width:150px">
 	<input type="hidden" name="{g->formVar var="form[notificationMap][$iteration][currentName]"}" 
 		{if $iteration <= $eventCount}value="{$form.notificationMap[$iteration].currentName}"{/if} />
 	<select id="select{$iteration}" name="{g->formVar var="form[notificationMap][$iteration][notificationName]"}" 
@@ -74,7 +74,7 @@
 	  {/foreach}
 	</select>
       </div>
-      <div class="yui-u">
+      <div class="yui-u" style="width:150px">
 	<input type="hidden" name="{g->formVar var="form[notificationMap][$iteration][currentHandler]"}" 
 		{if $iteration <= $eventCount}value="{$form.notificationMap[$iteration].currentHandler}"{/if} />
 	<select id="handler{$iteration}" name="{g->formVar var="form[notificationMap][$iteration][handler]"}"
@@ -85,22 +85,22 @@
 	</select>
       </div>
     </div>
-    <div class="yui-gd">
-      <div class="yui-u first">
-	<div class="yui-u first" style="text-align:center">
+    <div class="yui-g" style="width:485px">
+      <div class="yui-u first" style="width:170px">
+	<div class="yui-u first" style="width:80px; text-align:center">
 	  <input type="checkbox" id="enable{$iteration}" name="{g->formVar var="form[notificationMap][$iteration][enabled]"}"
 		onclick="enablePublic({$iteration})"
 		{if $iteration >= $form.displayRows} disabled="disabled"{/if}
 		{if !empty($form.notificationMap[$iteration].enabled)}checked="checked"{/if}/>
 	</div>
-	<div class="yui-u"  style="text-align:center">
+	<div class="yui-u" style="width:80px; text-align:center">
 	  <input type="checkbox" id="public{$iteration}" name="{g->formVar var="form[notificationMap][$iteration][public]"}"
 		{if $iteration >= $form.displayRows || empty($form.notificationMap[$iteration].enabled)} disabled="disabled"{/if}
 		{if !empty($form.notificationMap[$iteration].public)}checked="checked"{/if}/>
 	  </div>
       </div>
       {if $iteration < count($form.notificationMap) && isset($form.error.notificationMap[$iteration].noEventHandler)}
-      <div class="yui-u giError">
+      <div class="yui-u giError" style="width:295px">
 	<span>
 	    {g->text text="Event Handler is required"}
 	</span>
