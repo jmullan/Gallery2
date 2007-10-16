@@ -53,8 +53,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryEventListener', 'WebDavModule', 'WebDavModule', 
-	    'modules/webdav/module.inc', 'WebDavModule', 
-	    array('Gallery::ActivatePlugin'));
+	    'modules/webdav/module.inc', 'webdav', array('Gallery::ActivatePlugin'));
 	if ($ret) {
 	    return $ret;
 	}
