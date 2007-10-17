@@ -1230,6 +1230,73 @@ class RepositoryTest extends GalleryTestCase {
 	    array('works' => new RepositoryTest_GalleryRepository()), $repositories);
 	$this->assertEquals(1, $repositoryErrors);
     }
+
+    function testGetPluginUpgradeInfoForBasePackageUpgrade() {
+	list ($repository, $languages) = $this->_prepareForGetPluginUpgradeInfo();
+
+	list ($ret, $info) =
+	    $repository->getPluginUpgradeInfo('module', 'testModule');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(
+	    array('upgradeable' => true,
+		  'base' => array('newVersion' => '1.0.0', 'newBuild' => '44444',
+				  'isCompatible' => true, 'relation' => 'newer',
+				  'currentVersion' => '1.1', 'currentBuild' => '1',
+				  'locked' => false),
+		  'languages' => $languages,
+		  'complete' => 0),
+	    $info);
+    }
+
+    function testGetPluginUpgradeInfoInstalledVersionNewer() {
+	list ($repository, $languages) = $this->_prepareForGetPluginUpgradeInfo();
+
+	list ($ret, $info) =
+	    $repository->getPluginUpgradeInfo('module', 'testModule', false);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(
+	    array('upgradeable' => false,
+		  'base' => array('newVersion' => '1.0.0', 'newBuild' => '44444',
+				  'isCompatible' => true, 'relation' => 'newer',
+				  'currentVersion' => '1.1', 'currentBuild' => '1',
+				  'locked' => false),
+		  'languages' => array(),
+		  'complete' => true),
+	    $info);
+    }
+
+    function _prepareForGetPluginUpgradeInfo() {
+    	$repository = new GalleryRepository();
+	$repository->_index = $this->_index;
+	$utilities = new RepositoryTestMockUtilities();
+	$installedPackages =
+	    array('base' => array('locked' => false, 'version' => '1.1', 'build' => '1'),
+		  'lang-en_GB' => array('locked' => 0, 'version' => '1.1', 'build' => '1'));
+	$utilities->setReply('getPluginPackages', array('module', 'testModule'),
+	    array(null, $installedPackages));
+	$utilities->setReply('isPluginCompatible',
+	    array('module', GalleryCoreApi::getApiVersion(), GalleryModule::getApiVersion()),
+	    true);
+	$utilities->setReply('compareVersions', array('1.1', '1.0.0', null, null),
+	    array(null, 'newer'));
+	$languages = array();
+	foreach (array('en_US', 'en_GB', 'pt_PT', 'pt_BR') as $lang) {
+	    $currentBuild = $lang == 'en_GB' ? '1' : null;
+	    $languages[$lang] = array('name' => $lang, 'currentBuild' => $currentBuild,
+				      'newBuild' => '33333', 'relation' => 'older', 'locked' => 0);
+	    $utilities->setReply('getLanguageDescription', array($lang), array(null, $lang));
+	    $utilities->setReply('compareRevisions', array($currentBuild, '33333'), 'older');
+	}
+	$repository->_utilities =& $utilities;
+
+	return array($repository, $languages);
+    }
 }
 
 class RepositoryTest_GalleryRepository {
@@ -1313,6 +1380,45 @@ class RepositoryTestUtilities {
 
     function downloadFile($url) {
 	return array(true, serialize(array($url)));
+    }
+}
+
+class RepositoryTestMockUtilities extends MockObject {
+    function getLanguageDescription($language) {
+	return $this->_makeReply('getLanguageDescription', array($language));
+    }
+
+    function compareRevisions($revision1, $revision2) {
+	return $this->_makeReply('compareRevisions', array($revision1, $revision2));
+    }
+
+    function compareVersions($version1, $version2, $revision1 = '', $revision2 = '') {
+	return $this->_makeReply('compareVersions',
+	    array($version1, $version2, $revision1 = '', $revision2 = ''));
+    }
+
+    function getProvidedApis($pluginType, $apis) {
+	return $this->_makeReply('getProvidedApis', array($pluginType, $apis));
+    }
+
+    function getPluginPackages($pluginId, $plugin) {
+	return $this->_makeReply('getPluginPackages', array($pluginId, $plugin));
+    }
+
+    function getLanguageBaseRevision() {
+	return $this->_makeReply('getLanguageBaseRevision', array());
+    }
+
+    function isPluginAvailable($pluginType, $pluginId) {
+	return $this->_makeReply('isPluginCompatible', array($pluginType, $pluginId));
+    }
+
+    function isPluginCompatible($pluginType, $version1, $version2) {
+	return $this->_makeReply('isPluginCompatible', array($pluginType, $version1, $version2));
+    }
+
+    function downloadFile($url) {
+	return $this->_makeReply('downloadFile', array($url));
     }
 }
 

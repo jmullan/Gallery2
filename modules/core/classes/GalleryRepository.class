@@ -166,10 +166,14 @@ class GalleryRepository {
     /**
      * Determines which packages of the specified plugin are newer in the repository.
      *
+     * @param string $pluginType A plugin type (module|theme)
+     * @param string $pluginId A plugin id
+     * @param bool $forBasePackageUpgrade (optional) Include all packages that are upgradeable once
+     *                                     the base package has been upgraded. Default true.
      * @return array GalleryStatus a status code
      *		     array package list
      */
-    function getPluginUpgradeInfo($pluginType, $pluginId) {
+    function getPluginUpgradeInfo($pluginType, $pluginId, $forBasePackageUpgrade=true) {
 	global $gallery;
 	$upgradeInfo = array('upgradeable' => false);
 
@@ -226,38 +230,41 @@ class GalleryRepository {
 
 	$upgradeInfo['languages'] = array();
 	$upgradeInfo['complete'] = isset($upgradeInfo['base']['currentVersion']);
-	foreach ($languages as $language => $revision) {
-	    list ($ret, $languageDescription) =
-		$this->_utilities->getLanguageDescription($language);
-	    if ($ret) {
-		if ($ret->getErrorCode() & ERROR_BAD_PARAMETER) {
-		    /* Unsupported language .. ignore it. */
-		    continue;
+
+	if ($forBasePackageUpgrade || $upgradeInfo['base']['relation'] == 'equal') {
+	    foreach ($languages as $language => $revision) {
+		list ($ret, $languageDescription) =
+		    $this->_utilities->getLanguageDescription($language);
+		if ($ret) {
+		    if ($ret->getErrorCode() & ERROR_BAD_PARAMETER) {
+			/* Unsupported language .. ignore it. */
+			continue;
+		    }
+		    return array($ret, null);
 		}
-		return array($ret, null);
+
+		if (isset($installedPackages['lang-' . $language])) {
+		    $currentBuild = $installedPackages['lang-' . $language]['build'];
+		    $locked = $installedPackages['lang-' . $language]['locked'];
+		} else {
+		    $currentBuild = null;
+		    $locked = 0;
+		}
+
+		$relation = $this->_utilities->compareRevisions($currentBuild, $revision);
+		$upgradeInfo['languages'][$language] = array(
+		    'name' => $languageDescription,
+		    'currentBuild' => $currentBuild,
+		    'newBuild' => $revision,
+		    'relation' => $relation,
+		    'locked' => $locked);
+
+		if ($relation == 'older' && $currentBuild) {
+		    $upgradeInfo['upgradeable'] = $upgradeInfo['base']['isCompatible'];
+		}
+
+		$upgradeInfo['complete'] &= !empty($currentBuild);
 	    }
-
-	    if (isset($installedPackages['lang-' . $language])) {
-		$currentBuild = $installedPackages['lang-' . $language]['build'];
-		$locked = $installedPackages['lang-' . $language]['locked'];
-	    } else {
-		$currentBuild = null;
-		$locked = 0;
-	    }
-
-	    $relation = $this->_utilities->compareRevisions($currentBuild, $revision);
-	    $upgradeInfo['languages'][$language] = array(
-		'name' => $languageDescription,
-		'currentBuild' => $currentBuild,
-		'newBuild' => $revision,
-		'relation' => $relation,
-		'locked' => $locked);
-
-	    if ($relation == 'older' && $currentBuild) {
-		$upgradeInfo['upgradeable'] = $upgradeInfo['base']['isCompatible'];
-	    }
-
-	    $upgradeInfo['complete'] &= !empty($currentBuild);
 	}
 
 	return array(null, $upgradeInfo);
@@ -316,7 +323,8 @@ class GalleryRepository {
 		 * an 'upgrade' action. Maybe we can show some additional info, such as
 		 * '3 languages updated' or 'base data upgrade available'.
 		 */
-		list ($ret, $upgradeInfo) = $this->getPluginUpgradeInfo($pluginType, $pluginId);
+		list ($ret, $upgradeInfo) =
+		    $this->getPluginUpgradeInfo($pluginType, $pluginId, false);
 		if ($ret) {
 		    return array($ret, null);
 		}
