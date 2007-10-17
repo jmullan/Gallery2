@@ -82,10 +82,10 @@
   function goto_next_photo() {
     index = move_index(1);
     if (bCanBlend) apply_filter();
-    document.images.slide.src =
+    document.images.slideshow_slide.src =
       document.getElementById('item_'+index+'_'+item_map[index][iSize]).href;
     linkStop.href = document.getElementById('href_'+index).href;
-    if (bCanBlend) document.images.slide.filters[0].Play();
+    if (bCanBlend) document.images.slideshow_slide.filters[0].Play();
   }
   function show_text() {
     spanTitle.innerHTML = document.getElementById('title_'+index).innerHTML;
@@ -116,10 +116,10 @@
     goto_next_photo();
   }
   function apply_filter() {
-    f = filters[document.getElementById('filter').selectedIndex];
+    f = filters[document.getElementById('slideshow_filter').selectedIndex];
     if (f == 'RANDOM') f = filters[random_int(filters.length-1)];
-    document.images.slide.style.filter = f;
-    document.images.slide.filters[0].Apply();
+    document.images.slideshow_slide.style.filter = f;
+    document.images.slideshow_slide.filters[0].Apply();
   }
   function new_size(size) {
     iSize = size;
@@ -144,21 +144,21 @@
 
 <div style="float:left">
   <a onclick="tools_onoff();return false">
-    <span id="tools" style="margin:0;padding:0">
+    <span id="slideshow_tools" style="margin:0;padding:0">
       {g->text text="[-]"}
     </span>
   </a>
 </div>
 
 <div id="gsContent" class="gcBorder1">
-  <div id="toolbar" class="gbBlock gcBackground1">
-    <a id="stop" href="{g->url arg1="view=core.ShowItem"
+  <div id="slideshow_toolbar" class="gbBlock gcBackground1">
+    <a id="slideshow_stop" href="{g->url arg1="view=core.ShowItem"
      arg2="itemId=`$SlideShow.itemList[$SlideShow.start].id`"}">
       {g->text text="Stop"}
     </a>
     &nbsp;
     <a href="#" onclick="start_stop();return false">
-      <span id="pause">{g->text text="Pause"}</span>
+      <span id="slideshow_pause">{g->text text="Pause"}</span>
     </a>
     &nbsp;
     <a href="#" onclick="jump(-2);return false">
@@ -166,7 +166,7 @@
     </a>
     &nbsp;
     <a href="#" onclick="text_onoff();return false">
-      <span id="moreInfo">{g->text text="Show More Info"}</span>
+      <span id="slideshow_moreInfo">{g->text text="Show More Info"}</span>
     </a>
     &nbsp;
 
@@ -204,7 +204,7 @@
       // <![CDATA[
       if (bCanBlend) {
 	document.write('&nbsp; {/literal}{g->text
-		 text="fade: " forJavascript="1"}{literal}<select id="filter">');
+		 text="fade: " forJavascript="1"}{literal}<select id="slideshow_filter">');
 	for (i = 0; i < filterNames.length; i++) {
 	  document.write('<option>'+filterNames[i]);
 	}
@@ -216,14 +216,14 @@
   </div>
 
   <div class="gbItemImage">
-    <img id="slide" alt="" src=""/>
+    <img id="slideshow_slide" alt="" src=""/>
   </div>
 
-  <div id="textBanner" class="gbBlock gcBackground1" style="display:none">
-    <div class="giTitle" id="title"></div>
-    <div class="giDescription" id="summary"></div>
-    <div class="giInfo summary" id="date"></div>
-    <div class="giInfo summary" id="description"></div>
+  <div id="slideshow_textBanner" class="gbBlock gcBackground1" style="display:none">
+    <div class="giTitle" id="item_title"></div>
+    <div class="giDescription" id="item_summary"></div>
+    <div class="giInfo summary" id="item_date"></div>
+    <div class="giInfo summary" id="item_description"></div>
   </div>
 </div>
 
@@ -231,20 +231,20 @@
 
 <script type="text/JavaScript">
   // <![CDATA[
-  linkStop = document.getElementById('stop');
-  spanPause = document.getElementById('pause');
-  spanText = document.getElementById('moreInfo');
-  toolText = document.getElementById('tools');
-  toolBar = document.getElementById('toolbar');
-  textBanner = document.getElementById('textBanner');
-  spanTitle = document.getElementById('title');
-  spanSummary = document.getElementById('summary');
-  spanDate = document.getElementById('date');
-  spanDescription = document.getElementById('description');
-  document.images.slide.onload = slide_view_start;
-  document.images.slide.onerror = goto_next_photo;
-  document.images.slide.src =
-  document.getElementById('item_{$SlideShow.start}_'+item_map[{$SlideShow.start}][iSize]).href;
+  linkStop = document.getElementById('slideshow_stop');
+  spanPause = document.getElementById('slideshow_pause');
+  spanText = document.getElementById('slideshow_moreInfo');
+  toolText = document.getElementById('slideshow_tools');
+  toolBar = document.getElementById('slideshow_toolbar');
+  textBanner = document.getElementById('slideshow_textBanner');
+  spanTitle = document.getElementById('item_title');
+  spanSummary = document.getElementById('item_summary');
+  spanDate = document.getElementById('item_date');
+  spanDescription = document.getElementById('item_description');
+  document.images.slideshow_slide.onload = slide_view_start;
+  document.images.slideshow_slide.onerror = goto_next_photo;
+  document.images.slideshow_slide.src =
+    document.getElementById('item_{$SlideShow.start}_'+item_map[{$SlideShow.start}][iSize]).href;
   // ]]>
 </script>
 {/if}
