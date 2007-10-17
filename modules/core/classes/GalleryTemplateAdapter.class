@@ -1182,8 +1182,12 @@ class GalleryTemplateAdapter {
 	    print $gallery->getDebugBuffer();
 	    print '</pre>';
 	} else if ($doRedirect) {
-	    printf('<script type="text/javascript">document.location.href = "%s";</script>',
-		   $continueUrl);
+	    /*
+	     * Redirect after a short delay giving the server time to store the session before
+	     * the next page is requested.
+	     */
+	    printf('<script type="text/javascript">'
+		 . 'setTimeout(\'document.location.href = "%s";\', 1000);</script>', $continueUrl);
 	}
     }
 }
