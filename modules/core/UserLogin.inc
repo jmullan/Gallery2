@@ -220,15 +220,6 @@ class UserLoginView extends GalleryView {
 	    $form['username'] = '';
 	}
 
-	if (!isset($form['returnUrl'])) {
-	    /*
-	     * When logging in we don't have a session yet, thus no navigation history / a place
-	     * to store the returnUrl. Thus store the returnUrl in the login form
-	     */
-	    $returnUrl = GalleryUtilities::getRequestVariables('return');
-	    $form['returnUrl'] = !empty($returnUrl) ? $returnUrl : '';
-	}
-
 	$template->setVariable('controller', 'core.UserLogin');
 	return array(null, array('body' => 'modules/core/templates/UserLogin.tpl'));
     }

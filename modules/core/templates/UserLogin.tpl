@@ -8,8 +8,6 @@
 
 {capture name="recoverUrl"}{g->url arg1="view=core.UserAdmin" arg2="subView=core.UserRecoverPassword" arg3="return=1"}{/capture}
 {if $user.isGuest}
-<input type="hidden" name="{g->formVar var="return"}" value="{$form.returnUrl}"/>
-<input type="hidden" name="{g->formVar var="form[returnUrl]"}" value="{$form.returnUrl}"/>
 <div class="gbBlock">
   {if isset($status.passwordRecovered)}
   <div class="gbBlock"><h2 class="giSuccess">
