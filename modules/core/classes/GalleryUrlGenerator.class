@@ -779,12 +779,9 @@ class GalleryUrlGenerator {
     }
 
     /**
-     * Initialize the navigation branch.
+     * Initialize the navigation.
      *
-     * If we came here with a 'return' set, we need to branch a new navigation.  If we are just
-     * navigating through options in the same navigation level, simply pass the navId along.  If we
-     * are coming back from a navigation, clean up our mess.  In other cases we simply have no
-     * navigation support
+     * If we came here with a 'return' set, validate the given return URL.
      *
      * Note: This should be called as soon as we have access to our session and the
      * requestVariables, but before we start generating URLs with generateUrl().  Currently it's
