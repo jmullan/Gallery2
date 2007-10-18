@@ -563,6 +563,7 @@ class GalleryUrlGenerator {
      */
     function generateUrl($params=array(), $options=array()) {
 	global $gallery;
+	$session =& $gallery->getSession();
 	$currentView = $gallery->getCurrentView();
 
 	/*
@@ -617,16 +618,13 @@ class GalleryUrlGenerator {
 
 	/* Swap in the actual URL for the 'return' placeholder */
 	if (isset($params['return'])) {
-	    /* Cache the return URL / name, they're quite expensive to generate */
+	    /* Cache the return URL */
 	    if (!isset($this->_returnUrlData[$currentView])) {
 		$this->_returnUrlData[$currentView]['return'] =
 			str_replace('&amp;', '&', $this->getNavigationReturnUrl());
 	    }
 	    $params['return'] = $this->_returnUrlData[$currentView]['return'];
 	}
-
-	/* Navigation */
-	$targetView = isset($params['view']) ? $params['view'] : '';
 
 	/* Replace any known tokens */
 	foreach (array_keys($params) as $key) {
@@ -650,23 +648,22 @@ class GalleryUrlGenerator {
 	    }
 	}
 
-	if ($session =& $gallery->getSession()) {
+	if ($session) {
 	    $sessionId = $session->getId();
+	}
 
-	    /* Add authToken to all controller URLs */
-	    if (!empty($sessionId) && $session->isPersistent()
+	/* Add authToken to all controller URLs */
+	if (!empty($sessionId) && $session->isPersistent()
 		&& (!empty($options['useAuthToken'])
 		    || (!isset($options['useAuthToken']) && !empty($params['controller'])))) {
-		$params['authToken'] = $session->getAuthToken();
-	    }
+	    $params['authToken'] = $session->getAuthToken();
 	}
 
 	/* Add session parameters to URL */
-	if (!empty($options['forceSessionId']) || (!isset($options['forceSessionId']) 
-	    && !empty($sessionId) && !$session->isUsingCookies())) {
+	if (!empty($options['forceSessionId']) || (!isset($options['forceSessionId'])
+		&& $session && !$session->isUsingCookies())) {
 	    if (!empty($this->_embedSessionString) && !empty($appSession)) {
-		list ($sessionKey, $sessionId) = explode(
-		    '=', $this->_embedSessionString, 2);
+		list ($sessionKey, $sessionId) = explode('=', $this->_embedSessionString, 2);
 		$embedSessionParams = array();
 		$embedSessionParams[$sessionKey] = $sessionId;
 	    } else if (!empty($sessionId)) {
