@@ -2,7 +2,7 @@
  * $Revision$
  * Read this before changing templates!  http://codex.gallery2.org/Gallery2:Editing_Templates
  *}
-var prompt = {ldelim}
+var prompts = {ldelim}
   "header" : '{g->text text="Warning!" forJavascript=true}',
   "body"   : '{g->text text="Do you really want to delete %s?" forJavascript=true}',
   "yes"    : '{g->text text="Yes" forJavascript=true}',
@@ -19,11 +19,11 @@ function core_confirmDelete(url, moreUrl, title) {
     modal: true,
     draggable: false });
     
-  dialog.setHeader(prompt['header']);
-  var bodyText = prompt['body'].replace('%s', title);
+  dialog.setHeader(prompts['header']);
+  var bodyText = prompts['body'].replace('%s', title);
   if (moreUrl) {
     bodyText += '<br /><br /><a href="" onclick="document.location.href=\''
-	     + moreUrl + '\';return false">' + prompt['more'] + '</a>';
+	     + moreUrl + '\';return false">' + prompts['more'] + '</a>';
   }
   dialog.setBody(bodyText);
   dialog.cfg.setProperty("icon", YAHOO.widget.SimpleDialog.ICON_WARN);
@@ -36,8 +36,8 @@ function core_confirmDelete(url, moreUrl, title) {
     this.hide();
   }
     
-  var myButtons = [ { text: prompt['yes'], handler:handleYes },
-        { text: prompt['no'], handler:handleNo, isDefault:true } ];
+  var myButtons = [ { text: prompts['yes'], handler:handleYes },
+        { text: prompts['no'], handler:handleNo, isDefault:true } ];
   dialog.cfg.queueProperty("buttons", myButtons);
   dialog.render(document.body);
 }
