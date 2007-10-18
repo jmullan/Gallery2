@@ -264,28 +264,18 @@ function _GalleryMain($embedded=false) {
 
 	/* Try to return if the controller instructs it */
 	if (!empty($results['return'])) {
-	    list ($ret, $navigationLinks) = $urlGenerator->getNavigationLinks(1);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-
-	    if (count($navigationLinks) > 0) {
-		/* Go back to the previous navigation point in our history */
-		$redirectUrl = $navigationLinks[0]['url'];
-	    } else {
-		$redirectUrl = GalleryUtilities::getRequestVariables('return');
-		if (empty($redirectUrl)) {
-		    $redirectUrl = GalleryUtilities::getRequestVariables('formUrl');
-		}
+	    $redirectUrl = GalleryUtilities::getRequestVariables('return');
+	    if (empty($redirectUrl)) {
+		$redirectUrl = GalleryUtilities::getRequestVariables('formUrl');
 	    }
 	}
 
 	/* Failing that, redirect if so instructed */
 	if (empty($redirectUrl) && !empty($results['redirect'])) {
-	    /* If we have a status, store its data in the session and attach it to the URL */
+	    /* If we have a status, store its data in the session */
 	    if (!empty($results['status'])) {
 		$session =& $gallery->getSession();
-		$results['redirect']['statusId'] = $session->putStatus($results['status']);
+		$session->putStatus($results['status']);
 	    }
 
 	    $urlToGenerate = $results['redirect'];
