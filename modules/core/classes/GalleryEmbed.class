@@ -38,7 +38,7 @@
  * @version $Revision$
  * @static
  */
-class GalleryEmbed {
+class GalleryEmbed /* implements GalleryEventListener */ {
 
     /**
      * Return the major and minor version of the Embedding API.
@@ -48,7 +48,7 @@ class GalleryEmbed {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(1, 2);
+	return array(1, 3);
     }
 
     /**
@@ -901,6 +901,40 @@ class GalleryEmbed {
 					"$externalId $entityType");
 	}
 	return null;
+    }
+
+    /**
+     * Override the theme for this request.
+     *
+     * If the specified theme is unavailable, incompatible or inactive, it is ignored.
+     *
+     * @param string $themeId A GalleryTheme id
+     * @param array $themeParams (optional) Theme parameters to be used.
+     * @return GalleryStatus
+     */
+    function setThemeForRequest($themeId, $themeParams=null) {
+    	global $gallery;
+
+    	$gallery->setConfig('embeddedTheme', array($themeId, $themeParams));
+
+	return GalleryCoreApi::registerFactoryImplementationForRequest('GalleryEventListener',
+	    'GalleryEmbed', 'GalleryEmbed', 'modules/core/classes/GalleryEmbed.class', 'core',
+	    array('Gallery::loadThemeAndParameters'));
+    }
+
+    /**
+     * @see GalleryEventListener::handleRequest
+     */
+    function handleEvent($event) {
+    	global $gallery;
+
+    	switch ($event->getEventName()) {
+	case 'Gallery::loadThemeAndParameters':
+	    list ($themeId, $params) = $gallery->getConfig('embeddedTheme');
+	    return array(null, array('themeId' => $themeId, 'params' => $params));
+	}
+
+	return array(null, null);
     }
 }
 ?>

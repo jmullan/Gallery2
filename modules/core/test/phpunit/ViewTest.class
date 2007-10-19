@@ -138,6 +138,292 @@ class ViewTest extends GalleryTestCase {
 	$this->assert($ret, 'getItem() should return an error if the itemId is the id of a user.');
 	$this->assert($ret->getErrorCode() & ERROR_MISSING_OBJECT, 'ERROR_MISSING_OBJECT');
     }
+
+    function testLoadThemeAndParametersDefaultTheme() {
+	list ($ret, $view, $itemId) = $this->_prepareForLoadThemeAndParameters();
+	if ($ret) {
+	    return $ret;
+	}
+	GalleryUtilities::removeRequestVariable('itemId');
+
+	list ($ret, $itemId) = GalleryCoreApi::getDefaultAlbumId();
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $defaultTheme) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $paramValue) =
+	    GalleryCoreApi::getPluginParameter('theme', $defaultTheme, 'dynamicLinks');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $theme, $params, $item) = $view->loadThemeAndParameters();
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (isset($theme)) {
+	    $this->assertEquals($defaultTheme, $theme->getId());
+	} else {
+	    $this->fail('No theme instance returned');
+	}
+
+	if (isset($item)) {
+	    $this->assertEquals($itemId, $item->getId(), 'item id');
+	} else {
+	    $this->fail('No item instance returned');
+	}
+
+	if (isset($params['dynamicLinks'])) {
+	    $this->assertEquals($paramValue, $params['dynamicLinks'], 'param value');
+	} else {
+	    $this->assertEquals(array('dynamicLinks' => $paramValue),
+		$params, 'missing test param');
+	}
+    }
+
+    function testLoadThemeAndParametersForAlbumItem() {
+	list ($ret, $view, $itemId) =
+	    $this->_prepareForLoadThemeAndParameters(false, 'viewtestthemeid1');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $theme, $params, $item) = $view->loadThemeAndParameters();
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (isset($theme)) {
+	    $this->assertEquals('viewtestthemeid1', $theme->getId());
+	} else {
+	    $this->fail('No theme instance returned');
+	}
+
+	if (isset($item)) {
+	    $this->assertEquals($itemId, $item->getId(), 'item id');
+	} else {
+	    $this->fail('No item instance returned');
+	}
+
+	$this->assertEquals(array('testParam' => 'per album value'), $params, 'theme params');
+    }
+
+    function testLoadThemeAndParametersForDataItem() {
+	list ($ret, $view, $itemId) =
+	    $this->_prepareForLoadThemeAndParameters(true, 'viewtestthemeid1');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $theme, $params, $item) = $view->loadThemeAndParameters();
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (isset($theme)) {
+	    $this->assertEquals('viewtestthemeid1', $theme->getId());
+	} else {
+	    $this->fail('No theme instance returned');
+	}
+
+	if (isset($item)) {
+	    $this->assertEquals($itemId, $item->getId(), 'item id');
+	} else {
+	    $this->fail('No item instance returned');
+	}
+
+	$this->assertEquals(array('testParam' => 'per album value'), $params, 'theme params');
+    }
+
+    function testLoadThemeAndParametersOverrideByEventListener() {
+	list ($ret, $view, $itemId) = $this->_prepareForLoadThemeAndParameters();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$listener = new ViewTestEventListener($this, 'viewtestthemeid1', null, $itemId);
+	$this->_registerTestEventListener('Gallery::loadThemeAndParameters', $listener);
+
+	list ($ret, $theme, $params, $item) = $view->loadThemeAndParameters();
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (isset($theme)) {
+	    $this->assertEquals('viewtestthemeid1', $theme->getId());
+	} else {
+	    $this->fail('No theme instance returned');
+	}
+
+	if (isset($item)) {
+	    $this->assertEquals($itemId, $item->getId(), 'item id');
+	} else {
+	    $this->fail('No item instance returned');
+	}
+
+	$this->assertEquals(array('testParam' => 'per album value'), $params, 'theme params');
+    }
+
+    function testLoadThemeAndParametersOverrideByEventListenerIncludingParams() {
+	list ($ret, $view, $itemId) = $this->_prepareForLoadThemeAndParameters(true);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$themeParams = array('foo' => 1, 'bar' => 2);
+	$listener = new ViewTestEventListener($this, 'viewtestthemeid1', $themeParams, $itemId);
+	$this->_registerTestEventListener('Gallery::loadThemeAndParameters', $listener);
+
+	list ($ret, $theme, $params, $item) = $view->loadThemeAndParameters();
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (isset($theme)) {
+	    $this->assertEquals('viewtestthemeid1', $theme->getId());
+	} else {
+	    $this->fail('No theme instance returned');
+	}
+
+	if (isset($item)) {
+	    $this->assertEquals($itemId, $item->getId(), 'item id');
+	} else {
+	    $this->fail('No item instance returned');
+	}
+
+	$this->assertEquals($themeParams, $params, 'theme params');
+    }
+
+    function testLoadThemeAndParametersOverrideByEventListenerWithInactiveTheme() {
+	list ($ret, $view, $itemId) =
+	    $this->_prepareForLoadThemeAndParameters(true, 'viewtestthemeid1');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$themeParams = array('foo' => 1, 'bar' => 2);
+	$listener = new ViewTestEventListener($this, 'viewtestthemeid2', $themeParams, $itemId);
+	$this->_registerTestEventListener('Gallery::loadThemeAndParameters', $listener);
+
+	list ($ret, $theme, $params, $item) = $view->loadThemeAndParameters();
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (isset($theme)) {
+	    $this->assertEquals('viewtestthemeid1', $theme->getId());
+	} else {
+	    $this->fail('No theme instance returned');
+	}
+
+	if (isset($item)) {
+	    $this->assertEquals($itemId, $item->getId(), 'item id');
+	} else {
+	    $this->fail('No item instance returned');
+	}
+
+	$this->assertEquals(array('testParam' => 'per album value'), $params, 'theme params');
+    }
+
+    function testLoadThemeAndParametersOverrideByEventListenerWithBogusTheme() {
+	list ($ret, $view, $itemId) =
+	    $this->_prepareForLoadThemeAndParameters(true, 'viewtestthemeid1');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$themeParams = array('foo' => 1, 'bar' => 2);
+	$listener = new ViewTestEventListener($this, 'bogustesttheme', $themeParams, $itemId);
+	$this->_registerTestEventListener('Gallery::loadThemeAndParameters', $listener);
+
+	list ($ret, $theme, $params, $item) = $view->loadThemeAndParameters();
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (isset($theme)) {
+	    $this->assertEquals('viewtestthemeid1', $theme->getId());
+	} else {
+	    $this->fail('No theme instance returned');
+	}
+
+	if (isset($item)) {
+	    $this->assertEquals($itemId, $item->getId(), 'item id');
+	} else {
+	    $this->fail('No item instance returned');
+	}
+
+	$this->assertEquals(array('testParam' => 'per album value'), $params, 'theme params');
+    }
+
+    function _prepareForLoadThemeAndParameters($forDataItem=false, $themeId=null) {
+	global $gallery;
+
+    	GalleryPluginHelper_medium::setPluginInstance('theme', 'Viewtestthemeid1',
+						      new ViewTestThemeId1Theme());
+	GalleryPluginHelper_medium::setPluginInstance('theme', 'viewtestthemeid2',
+						      new ViewTestThemeId2Theme());
+
+	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId(),
+							array('theme' => $themeId));
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+	$this->_markForCleanup($album);
+
+	$itemId = $album->getId();
+	if ($forDataItem) {
+	    list ($ret, $dataItem) = $this->_createRandomDataItem($album->getId());
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+	    $itemId = $dataItem->getId();
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $itemId);
+
+	list ($ret, $view) = GalleryView::loadView('core.ShowItem');
+	if ($ret) {
+	    return $ret;
+	}
+	$gallery->setCurrentView('test.test');
+
+	return array(null, $view, $itemId);
+    }
+
+    function testLoadThemeForItemPostsEvent() {
+	/*
+	 * loadThemeForItem is a public method used e.g. in GalleryTemplate.
+	 * Verify that the loadThemeAndParameters is posted here.
+	 */
+	$listener = new NullEventListener();
+	$this->_registerTestEventListener('Gallery::loadThemeAndParameters', $listener);
+
+	list ($ret, $view, $itemId) = $this->_prepareForLoadThemeAndParameters();
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $theme) = $view->loadThemeForItem();
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (isset($listener->_event)) {
+	    $data = $listener->_event->getData();
+	    $this->assertEquals(array('viewType' => VIEW_TYPE_SHOW_ITEM, 'viewName' => 'test.test'),
+				$data, 'event data');
+	} else {
+	    $this->fail('Missing loadThemeAndParameters event');
+	}
+    }
 }
 
 class ViewTestModule {
@@ -152,4 +438,55 @@ class ViewTestModule {
 
 class ViewTestConfigView extends GalleryView { }
 
+class ViewTestThemeId1Theme {
+    function isActive() {
+	return array(null, true);
+    }
+
+    function getId() {
+	return 'viewtestthemeid1';
+    }
+
+    function fetchParameters($itemId=0) {
+    	return array(null, array('testParam' => $itemId ? 'per album value' : 'default value'));
+    }
+}
+
+class ViewTestThemeId2Theme {
+    function isActive() {
+	return array(null, false);
+    }
+
+    function getId() {
+	return 'viewtestthemeid2';
+    }
+
+    function fetchParameters($itemId=0) {
+    	return array(null, array());
+    }
+}
+
+class ViewTestEventListener {
+    function ViewTestEventListener($testCase, $themeId, $params, $itemId) {
+    	$this->_themeId = $themeId;
+    	$this->_params = $params;
+    	$this->_testCase = $testCase;
+    	$this->_itemId = $itemId;
+    }
+
+    function handleEvent($event) {
+    	$data = $event->getData();
+	$this->_testCase->assertEquals(
+	    array('viewType' => VIEW_TYPE_SHOW_ITEM, 'viewName' => 'test.test'),
+	    $data, 'event data');
+	$entity = $event->getEntity();
+	if (isset($entity)) {
+	    $this->_testCase->assertEquals($this->_itemId, $entity->getId(), 'item id in event');
+	} else {
+	    $this->_testCase->fail('event is missing an item reference');
+	}
+
+	return array(null, array('themeId' => $this->_themeId, 'params' => $this->_params));
+    }
+}
 ?>

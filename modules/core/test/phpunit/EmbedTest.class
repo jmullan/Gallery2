@@ -430,5 +430,21 @@ class EmbedTest extends GalleryTestCase {
 
 	$GLOBALS['ADODB_FETCH_MODE'] = $save;
     }
+
+    function testSetThemeForRequest() {
+	$ret = GalleryEmbed::setThemeForRequest('foobar', array('foo' => 'bar'));
+	if ($ret) {
+	    return $ret;
+	}
+
+	$event = GalleryCoreApi::newEvent('Gallery::loadThemeAndParameters');
+	list ($ret, $eventResults) = GalleryCoreApi::postEvent($event);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(array(array('themeId' => 'foobar', 'params' => array('foo' => 'bar'))),
+			    $eventResults);
+    }
 }
 ?>

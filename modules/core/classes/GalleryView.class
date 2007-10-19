@@ -377,7 +377,7 @@ class GalleryView {
      * @return array GalleryStatus a status code
      *               GalleryTheme a theme instance, or null on loadPlugin failure
      *               array theme parameters
-     *               GalleryEntity item context
+     *               GalleryItem item context
      */
     function loadThemeAndParameters() {
 	list ($ret, $item, $wasSpecified) = $this->getItem();
@@ -395,21 +395,23 @@ class GalleryView {
 	    }
 	}
 
-	list ($ret, $theme) = $this->loadThemeForItem($wasSpecified ? $item : null);
+	list ($ret, $theme, $params) = $this->loadThemeForItem($wasSpecified ? $item : null);
 	if ($ret || !isset($theme)) {
 	    /* Ignore errors here so fallback theme can be used */
 	    return array(null, null, array(), $item);
 	}
 
-	/* Albums have their own settings.  Items use their parent album's settings */
-	if (GalleryUtilities::isA($item, 'GalleryItem') && !$item->getCanContainChildren()) {
-	    $targetId = $item->getParentId();
-	} else {
-	    $targetId = $item->getId();
-	}
-	list ($ret, $params) = $theme->fetchParameters($wasSpecified ? $targetId : null);
-	if ($ret) {
-	    return array($ret, null, null, null);
+	if (empty($params)) {
+	    /* Albums have their own settings.  Items use their parent album's settings */
+	    if (GalleryUtilities::isA($item, 'GalleryItem') && !$item->getCanContainChildren()) {
+		$targetId = $item->getParentId();
+	    } else {
+		$targetId = $item->getId();
+	    }
+	    list ($ret, $params) = $theme->fetchParameters($wasSpecified ? $targetId : null);
+	    if ($ret) {
+		return array($ret, null, null, null);
+	    }
 	}
 
 	return array(null, $theme, $params, $item);
@@ -421,6 +423,7 @@ class GalleryView {
      * @param GalleryItem $item (optional) omit or pass null to load default theme
      * @return array GalleryStatus a status code
      *               GalleryTheme a theme instance
+     *               array theme parameters (only set if loaded via event)
      */
     function loadThemeForItem($item=null) {
 	if (!isset($item)) {
@@ -431,29 +434,92 @@ class GalleryView {
 	    list ($ret, $nearestAlbum) =
 		GalleryCoreApi::loadEntitiesById($item->getParentId(), 'GalleryItem');
 	    if ($ret) {
-		return array($ret, null);
+		return array($ret, null, null);
 	    }
 	}
 
-	/* Load the theme, fallback to the default theme if none is specified */
-	if (isset($nearestAlbum)) {
-	    list ($ret, $themeId) = GalleryCoreApi::fetchThemeId($nearestAlbum);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	} else {
-	    list ($ret, $themeId) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	}
-
-	list ($ret, $theme) = GalleryView::_loadTheme($themeId);
+	/* Give non-core code a chance to override the theme for this request */
+    	list ($ret, $theme, $params) = $this->_getThemeAndParametersByEvent($item);
 	if ($ret) {
-	    return array($ret, null);
+	    return array($ret, null, null);
 	}
-	return array(null, $theme);
+
+	if (!isset($theme)) {
+	    /* Load the theme, fallback to the default theme if none is specified */
+	    if (isset($nearestAlbum)) {
+		list ($ret, $themeId) = GalleryCoreApi::fetchThemeId($nearestAlbum);
+		if ($ret) {
+		    return array($ret, null, null);
+		}
+	    } else {
+		list ($ret, $themeId) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
+		if ($ret) {
+		    return array($ret, null, null);
+		}
+	    }
+
+	    list ($ret, $theme) = GalleryView::_loadTheme($themeId);
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+	}
+
+	return array(null, $theme, $params);
+    }
+
+    /**
+     * Let non-core code override the theme and its parameters for this request.
+     *
+     * @param GalleryItem $item The item defining the context of the request.
+     * @return array GalleryStatus A status code,
+     *               GalleryTheme|null The theme to be used for this request,
+     *               array Theme parameters, see GalleryTheme::fetchParameters()
+     * @access private
+     */
+    function _getThemeAndParametersByEvent($item) {
+	global $gallery;
+
+	$event = GalleryCoreApi::newEvent('Gallery::loadThemeAndParameters');
+	$event->setEntity($item);
+	$event->setData(array('viewType' => $this->getViewType(),
+			      'viewName' => $gallery->getCurrentView()));
+	list ($ret, $eventResults) = GalleryCoreApi::postEvent($event);
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+
+	$themeId = $theme = $params = null;
+	foreach ($eventResults as $eventResult) {
+	    if (!empty($eventResult['themeId'])) {
+		$themeId = $eventResult['themeId'];
+		if (!empty($eventResult['params'])) {
+		    $params = $eventResult['params'];
+		}
+		break;
+	    }
+	}
+
+	if (!empty($themeId)) {
+	    list ($ret, $theme) = $this->_loadTheme($themeId);
+	    if ($ret) {
+		/* Handle bad event results gracefully by ignoring it. */
+		if ($ret->getErrorCode() & (ERROR_BAD_PARAMETER | ERROR_PLUGIN_VERSION_MISMATCH)) {
+		    global $gallery;
+		    $gallery->debug(sprintf('Error: The theme [%s] specified by a [%s] event '
+			. 'handler could not be loaded', $themeId, 'Gallery::loadTheme'));
+		    $theme = $params = null;
+		} else {
+		    return array($ret, null, null);
+		}
+	    }
+	}
+
+	if (!isset($theme)) {
+	    $params = null;
+	}
+
+	return array(null, $theme, $params);
     }
 
     /**
