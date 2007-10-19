@@ -31,6 +31,7 @@ require_once('phpunit.inc');
 require_once('GalleryTestCase.class');
 require_once('GalleryImmediateViewTestCase.class');
 require_once('GalleryControllerTestCase.class');
+require_once('GalleryViewTestCase.class');
 require_once('ItemAddPluginTestCase.class');
 require_once('ItemEditPluginTestCase.class');
 require_once('ItemEditOptionTestCase.class');
@@ -41,6 +42,7 @@ require_once('UnitTestStorage.class');
 require_once('UnitTestPhpVm.class');
 require_once('UnitTestUrlGenerator.class');
 require_once('MockTemplateAdapter.class');
+require_once('UnitTestTemplate.class');
 
 @ini_set('output_buffering', 0);
 
