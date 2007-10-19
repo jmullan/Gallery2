@@ -919,7 +919,7 @@ class GalleryEmbed /* implements GalleryEventListener */ {
 
 	return GalleryCoreApi::registerFactoryImplementationForRequest('GalleryEventListener',
 	    'GalleryEmbed', 'GalleryEmbed', 'modules/core/classes/GalleryEmbed.class', 'core',
-	    array('Gallery::loadThemeAndParameters'));
+	    array('Gallery::LoadThemeAndParameters'));
     }
 
     /**
@@ -929,7 +929,7 @@ class GalleryEmbed /* implements GalleryEventListener */ {
     	global $gallery;
 
     	switch ($event->getEventName()) {
-	case 'Gallery::loadThemeAndParameters':
+	case 'Gallery::LoadThemeAndParameters':
 	    list ($themeId, $params) = $gallery->getConfig('embeddedTheme');
 	    return array(null, array('themeId' => $themeId, 'params' => $params));
 	}

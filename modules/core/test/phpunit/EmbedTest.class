@@ -437,7 +437,7 @@ class EmbedTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$event = GalleryCoreApi::newEvent('Gallery::loadThemeAndParameters');
+	$event = GalleryCoreApi::newEvent('Gallery::LoadThemeAndParameters');
 	list ($ret, $eventResults) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
 	    return $ret;
