@@ -23,11 +23,11 @@ require_once(dirname(__FILE__) . '/../../../modules/core/classes/GalleryTemplate
 /**
  * Unit test GalleryTemplate.  This is a fake GalleryTemplate that just serves as a container for
  * template data to be used in GalleryView tests, free of dependencies to Smarty.
- *
+ * 
  * @package Gallery
  * @subpackage PHPUnit
  * @author Andy Staudacher <ast@gmx.ch>
- * @version $Revision: 16860 $
+ * @version $Revision$
  */
 class UnitTestTemplate extends GalleryTemplate {
 
@@ -74,7 +74,7 @@ class UnitTestTemplate extends GalleryTemplate {
      * Not implemented. Use a real GalleryTemplate to test compiled templates.
      */
     function fetch($templateName) {
-    	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
     }
 
     /**
