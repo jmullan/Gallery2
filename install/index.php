@@ -278,10 +278,8 @@ function secureStorageFolder($dataBase) {
 			    "<IfModule mod_rewrite.c>\n" .
 			    "RewriteEngine off\n" .
 			    "</IfModule>\n" .
-			    "<IfModule mod_access.c>\n" .
 			    "Order allow,deny\n" .
-			    "Deny from all\n" .
-			    "</IfModule>\n";
+			    "Deny from all\n";
 	fwrite($fh, $htaccessContents);
 	fclose($fh);
     }

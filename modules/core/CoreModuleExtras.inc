@@ -2105,22 +2105,8 @@ class CoreModuleExtras {
 	    /*
 	     * Add a .htaccess file in the storage folder to protect it against direct access
 	     * in case it is accessible from the web.
+	     * Moved to case 1.2.23 to make a small change.
 	     */
-	    $fh = @fopen($gallery->getConfig('data.gallery.base') . '.htaccess', 'w');
-	    if ($fh) {
-		$htaccessContents = "DirectoryIndex .htaccess\n" .
-				    "SetHandler Gallery_Security_Do_Not_Remove\n" .
-				    "Options None\n" .
-				    "<IfModule mod_rewrite.c>\n" .
-				    "RewriteEngine off\n" .
-				    "</IfModule>\n" .
-				    "<IfModule mod_access.c>\n" .
-				    "Order allow,deny\n" .
-				    "Deny from all\n" .
-				    "</IfModule>\n";
-		fwrite($fh, $htaccessContents);
-		fclose($fh);
-	    }
 	case '1.1.15':
 	    /* Locked Users */
 	    $ret = $storage->configureStore($module->getId(), array('GalleryUser:1.1'));
@@ -2450,6 +2436,21 @@ class CoreModuleExtras {
 	    /* Added GalleryStorage::validateConnection */
 	case '1.2.22':
 	    /* Added GalleryCoreApi::registerFactoryImplementationForRequest */
+	case '1.2.23':
+	    /* Prevent web-access to files in the storage folder */
+	    $fh = @fopen($gallery->getConfig('data.gallery.base') . '.htaccess', 'w');
+	    if ($fh) {
+		$htaccessContents = "DirectoryIndex .htaccess\n" .
+				    "SetHandler Gallery_Security_Do_Not_Remove\n" .
+				    "Options None\n" .
+				    "<IfModule mod_rewrite.c>\n" .
+				    "RewriteEngine off\n" .
+				    "</IfModule>\n" .
+				    "Order allow,deny\n" .
+				    "Deny from all\n";
+		fwrite($fh, $htaccessContents);
+		fclose($fh);
+	    }
 
 	case 'end of upgrade path':
 	    /*
@@ -2786,6 +2787,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.20':
 	case '1.2.21':
 	case '1.2.22':
+	case '1.2.23':
 
 	case 'end of upgrade path':
 	    /*
