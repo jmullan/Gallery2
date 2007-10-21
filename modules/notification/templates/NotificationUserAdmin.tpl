@@ -3,6 +3,19 @@
  * Read this before changing templates!  http://codex.gallery2.org/Gallery2:Editing_Templates
  *}
 
+<script type="text/javascript">
+  // <![CDATA[
+  {literal}
+  function enableRecursive(iteration) {
+    var oldChecked = document.getElementById('old' + iteration).value == '1';
+    var newChecked = document.getElementById('new' + iteration).checked;
+    var disabled = !(oldChecked ^ newChecked);
+    document.getElementById('recursive' + iteration).disabled = disabled;
+  }
+  {/literal}
+  // ]]>
+</script>
+
 <div class="gbBlock gcBackground1">
     <h2> {g->text text="User Notification Administration"} </h2>
 </div>
@@ -17,7 +30,7 @@
     <table class="gbDataTable">
 {* Events *}
 	<tr>
-	    <th colspan="4"> {g->text text="Events"} </th>
+	    <th colspan="5"> {g->text text="Events"} </th>
 	</tr>
 {foreach from=$form.notifications item=notification name=notifications}
     {assign var=i value=$smarty.foreach.notifications.iteration}
@@ -27,6 +40,7 @@
 	    <th> {g->text text="Description"} </th>
 	    <th> {g->text text="Method"} </th>
 	    <th> {g->text text="Subscribe"} </th>
+	    <th style="text-align: center;width:60px"> {g->text text="Apply to sub items"} </th>
 	</tr>
     {/if}
     {assign var="subscriptionCount" value=$notification.items|@count}
@@ -57,11 +71,14 @@
 	      <input type="hidden" name="{g->formVar var="form[notifications][$i][handler]"}" value="{$notification.handler}">
 	      <input type="hidden" name="{g->formVar var="form[notifications][$i][handlerDescription]"}" value="{$notification.handlerDescription}">
 	    </td>
-	    <td align="center">
-	      <input type="hidden" name="{g->formVar var="form[notifications][$i][items][$j][oldSubscribed]"}" value="{$item.subscribed}">
-	      <input type="checkbox" 
+	    <td style="text-align: center">
+	      <input id="old{$i}"type="hidden" name="{g->formVar var="form[notifications][$i][items][$j][oldSubscribed]"}" value="{$item.subscribed}" />
+	      <input id="new{$i}"type="checkbox" onchange="enableRecursive({$i})"
 		name="{g->formVar var="form[notifications][$i][items][$j][subscribed]"}" 
 		{if !empty($item.subscribed)} checked="checked"{/if}/>
+	    </td>
+	    <td style="text-align: center">
+	      <input id="recursive{$i}" type="checkbox" name="{g->formVar var="form[notifications][$i][items][$j][recursive]"}" checked="checked" disabled="disabled"/>
 	    </td>
 	    {if isset($form.error.notifications[$i].notAuthorized)}
 	    <td>

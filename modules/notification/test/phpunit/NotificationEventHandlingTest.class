@@ -47,6 +47,15 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 
 	$this->_unregisterFactoryImplementationForTest('NotificationEvent_1_0');
 	$this->_unregisterFactoryImplementationForTest('NotificationHandler_1_0');
+	$this->_unregisterFactoryImplementationForTest('GalleryEventListener');
+
+	$ret = $this->_registerFactoryImplementationForTest('GalleryEventListener', 
+	    'NotificationHelperTestEventHandler', 'NotificationRouter',
+	    'modules/notification/test/phpunit/NotificationHelperTest.class', 
+	    'notification', array('eventName' => 'Test::Event'));
+	if ($ret) {
+	    return $ret;
+	}
 
 	$ret = $this->_registerFactoryImplementationForTest('NotificationEvent_1_0', 
 	    'NotificationRouterTest1', 'Test::Event1',
@@ -96,6 +105,17 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 	}
 	$this->_groupRegistered = $group->getId();
 
+	list ($ret, $parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($parentAlbum);
+	list ($ret, $this->_childAlbum) = $this->_createRandomAlbum($parentAlbum->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	$entities = array($this->_getRootId(), $this->_childAlbum->getId());
 	foreach (array('User1', 'User2', 'User3') as $userName) {
 	    $fields = array('userName' => $userName, 'fullName' => 'Test ' . $userName);
 	    if ('User2' !== $userName) {
@@ -113,45 +133,35 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 	    $this->_userIds[] = $userId;
 	    $this->_markForCleanup($user);
 
-	    $cacheKey = "GalleryUserGroupHelper::fetchGroupsForUser($userId,,)";
-	    $groupData = array($this->_groupRegistered => 'Test Group Name');
-	    GalleryDataCache::put($cacheKey, $groupData);
+	    list ($ret) = GalleryCoreApi::fetchPermissionsForItems($entities, $userId);
+	    if ($ret) {
+		return $ret;
+	    }
 	}
 
 	$userId = $gallery->getActiveUserId();
-	$cacheKey = "GalleryUserGroupHelper::fetchGroupsForUser($userId,,)";
-	$groupData = array($this->_groupRegistered => 'Test Group Name');
-	GalleryDataCache::put($cacheKey, $groupData);
-
-	list ($ret, $parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	list ($ret) = GalleryCoreApi::fetchPermissionsForItems($entities, $userId);
 	if ($ret) {
 	    return $ret;
 	}
-	$this->_markForCleanup($parentAlbum);
-	list ($ret, $this->_childAlbum) = $this->_createRandomAlbum($parentAlbum->getId());
+
+	list ($ret) = 
+	    GalleryCoreApi::loadEntitiesById($this->_childAlbum->getId(), 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
+	}
+	list ($ret, $childItems) = GalleryCoreApi::fetchChildItemIds($this->_childAlbum);
+	if ($ret) {
+		return $ret;
 	}
 
 	list ($ret, $this->_rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId(), 
-									  'GalleryEntity');
+									  'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}
 
 	list ($ret, $users) = GalleryCoreApi::loadEntitiesById($this->_userIds, 'GalleryUser');
-	if ($ret) {
-	    return $ret;
-	}
-
-	list ($ret , $this->_coreEditBits) = 
-	    GalleryCoreApi::convertPermissionIdsToBits('core.edit');
-	if ($ret) {
-	    return $ret;
-	}
-
-	list ($ret , $this->_coreViewBits) = 
-	    GalleryCoreApi::convertPermissionIdsToBits('core.view');
 	if ($ret) {
 	    return $ret;
 	}
@@ -201,12 +211,6 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 		    array('notificationName' => 'Test::Event1', 'itemId' => $itemId), array()),
 	      array(null, new UnitTestStorageSearchResults(array(array($userId), 
 							array($this->_users['User1']->getId())))));
-
-	$this->_setResponsesForPermission($itemId, $gallery->getActiveUserId(), 
-					  $this->_groupRegistered, $this->_coreViewBits);
-
-	$this->_setResponsesForPermission($itemId, $this->_users['User1']->getId(), 
-					  $this->_groupRegistered, $this->_coreViewBits);
 
 	$handler = new NotificationRouter();
 	list ($ret, $data) = $handler->handleEvent($event);
@@ -387,11 +391,6 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 			  'Test::Event2'),
 		    array('Test::Event1', $this->_users['User3']->getId(), 'Test:EventHandler', 
 			  'test::event')))));
-	$this->_setResponsesForPermission($itemId, $this->_users['User1']->getId(), 
-					  $this->_groupRegistered, $this->_coreEditBits);
-
-	$this->_setResponsesForPermission($itemId, $this->_users['User3']->getId(), 
-					  $this->_groupRegistered, $this->_coreViewBits);
 
 	list ($ret, $hintLockId) = GalleryCoreApi::getPluginParameter('module', 'notification',
 								      'id.hintsLock');
@@ -409,14 +408,6 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$hints[] = 'test::event';
-	$storage->setReply('updateMapEntry',
-	      array('GalleryFactoryMap', 
-		    array('classType' => 'GalleryEventListener', 
-			  'implId' => 'NotificationRouter'),
-		    array('hints' => serialize($hints)), null),
-	      null);
-
 	$storage->setReply('isTransactional', array(), false);
 	$storage->setReply('releaseLocks', array(array(42)), null);
 
@@ -426,6 +417,7 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 			  'itemId' => $itemId, 'notificationName' => 'Test::Event1',
 			  'handlerName' => 'Test:EventHandler'), null),
 	      null);
+	$storage->setReply('search', '*', array(null, new UnitTestStorageSearchResults(array())));
 	$storage->setReply('checkPoint', array(), null);
 
 	$event = GalleryCoreApi::newEvent('GalleryEntity::save');
@@ -460,36 +452,6 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(null, $data, 'Unexpected result, handler was called');
-    }
-    
-    function _setResponsesForPermission($itemId, $userId, $groupId, $bits) {
-	global $gallery;
-	$storage =& $gallery->getStorage();
-	
-	$storage->setReply('getFunctionSql',
-	      array('BIT_OR', 
-		   array('[GalleryAccessMap::permission]', '[GalleryAccessSubscriberMap::itemId]')),
-	      array(null, 'BIT_OR([GalleryAccessMap::permission])'));
-
-	$storage->setReply('search',
-	      array('
-	SELECT
-	    [GalleryAccessSubscriberMap::itemId],
-	    BIT_OR([GalleryAccessMap::permission])
-	FROM
-	    [GalleryAccessMap], [GalleryAccessSubscriberMap]
-	WHERE
-	    [GalleryAccessSubscriberMap::itemId] IN (?)
-	    AND
-	    [GalleryAccessSubscriberMap::accessListId] = [GalleryAccessMap::accessListId]
-	    AND
-	    [GalleryAccessMap::userOrGroupId] IN (?,?)
-	GROUP BY [GalleryAccessSubscriberMap::itemId]',
-		    array($itemId, $userId, $groupId),
-		    array()),
-	      array(null, new UnitTestStorageSearchResults(array(array($itemId, $bits)))));
-
-	$storage->setReply('convertBitsToInt', array($bits), array($bits));
     }
 }
 

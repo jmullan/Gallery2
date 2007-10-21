@@ -16,27 +16,27 @@
 <script type="text/javascript">
   // <![CDATA[
   {literal}
-	function enableInput(iteration) {
-	    var eventValue = document.getElementById('select' + iteration).value;
-	    var disabled = '' == eventValue;
-	    document.getElementById('handler' + iteration).disabled = disabled;
-	    document.getElementById('enable' + iteration).disabled = disabled;
-	    
-	    if (!disabled) {
-		var nextRow = document.getElementById('row' + (iteration + 1));
-		if (nextRow != null) {
-		    nextRow.style.display = 'block';
-		}
-	    }
-	}
+  function enableInput(iteration) {
+    var eventValue = document.getElementById('select' + iteration).value;
+    var disabled = '' == eventValue;
+    document.getElementById('handler' + iteration).disabled = disabled;
+    document.getElementById('enable' + iteration).disabled = disabled;
+    
+    if (!disabled) {
+      var nextRow = document.getElementById('row' + (iteration + 1));
+      if (nextRow != null) {
+	nextRow.style.display = 'block';
+      }
+    }
+  }
 
-	function enablePublic(iteration) {
-	    var checked = document.getElementById('enable' + iteration).checked;
-	    var disabled = !checked;
-	    document.getElementById('public' + iteration).disabled = disabled;
-	}
-  // ]]>
+  function enablePublic(iteration) {
+    var checked = document.getElementById('enable' + iteration).checked;
+    var disabled = !checked;
+    document.getElementById('public' + iteration).disabled = disabled;
+  }
   {/literal}
+  // ]]>
 </script>
 <div class="gbBlock gcBackground1">
   <div class="yui-g"style="width:800px">

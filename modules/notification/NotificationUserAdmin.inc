@@ -73,8 +73,8 @@ class NotificationUserAdminController extends GalleryController {
 			}
 			if (empty($formItem['subscribed'])) {
 			    $ret = NotificationHelper::unsubscribe($userId, $formItem['itemId'],
-							       $hints[0], $notificationName,
-							       $notification['handler']);
+					     $hints[0], $notificationName, $notification['handler'],
+					     !empty($notification['recursive']));
 			} else {
 			    $itemId = (int)$formItem['itemId'];
 			    $authorized = $isAdminGroup;
@@ -87,8 +87,8 @@ class NotificationUserAdminController extends GalleryController {
 			    }
 			    if ($authorized) {
 				$ret = NotificationHelper::subscribe($userId, $formItem['itemId'],
-								 $hints[0], $notificationName,
-								 $notification['handler']);
+					     $hints[0], $notificationName, $notification['handler'],
+					     !empty($notification['recursive']));
 			    } else {
 				$error[] = 'form[error][notifications][' . $i . '][notAuthorized]';
 			    }

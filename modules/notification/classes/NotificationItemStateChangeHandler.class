@@ -105,7 +105,7 @@ class NotificationItemStateChangeHandler /* extends GalleryEventListener */ {
 		}
 
 		$ret = NotificationHelper::subscribe($data[0], $entityId, $eventName,
-						     $notificationName, $data[1]);
+						     $notificationName, $data[1], true);
 		if ($ret) {
 		    return $ret;
 		}

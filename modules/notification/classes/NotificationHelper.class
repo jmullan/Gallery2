@@ -160,7 +160,7 @@ class NotificationHelper {
     /**
      * Get the subscriptions for a user and optionally an itemId.
      * @param int $userId User id to retrieve the subscription for
-     * @param int $itemId (optional) Item id to filter the subscriptions for
+     * @param mixed $itemId (optional) array of itemids or single id to filter the subscriptions for
      * @return array GalleryStatus a status code
      *               array (event name => 1)
      */
@@ -309,18 +309,17 @@ class NotificationHelper {
     /**
      * Unsubscribe the user from the item/event combination.
      * 
-     * @param $userId The user id
-     * @param $itemId The item id
-     * @param $eventName The name of the event that is being unsubscribed from.
-     * @param $notificationName The notification definiftion name
-     * @param $handler The notification handler name
+     * @param int $userId The user id
+     * @param int $itemId The item id
+     * @param string $eventName The name of the event that is being unsubscribed from.
+     * @param string $notificationName The notification definiftion name
+     * @param string $handler The notification handler name
+     * @param boolean $recursive If not empty apply subscription removal to descendent items
      * @return GalleryStatus
      */
-    function unsubscribe($userId, $itemId, $eventName, $notificationName, $handler) {
-	$ret = GalleryCoreApi::removeMapEntry('SubscriptionMap', 
-			    array('userId' => $userId, 'itemId' => $itemId, 
-				  'notificationName' => $notificationName,
-				  'handlerId' => $handler));
+    function unsubscribe($userId, $itemId, $eventName, $notificationName, $handler, $recursive) {
+	$ret = NotificationHelper::_applyUnsubscribe($userId, $itemId, $eventName, 
+						     $notificationName, $handler, $recursive);
 	if ($ret) {
 	    return $ret;
 	}
@@ -329,9 +328,53 @@ class NotificationHelper {
     }
 
     /**
+     * Unubscribe the user to item/event combination with the specified handler and optioanlly 
+     * propagate the subscription removal to any existing descendents.
+     * @param int $userId The user id
+     * @param int $itemId The item id
+     * @param string $name The name of the notification to be subscribed to.
+     * @param string $notification The notification being subscribed to
+     * @param string $handler The notification handler to be invoked
+     * @param boolean $recursive If not empty apply subscription to child items
+     * @return GalleryStatus
+     */
+    function _applyUnsubscribe($userId, $itemId, $eventName, $name, $handler, $recursive) {
+	$ret = GalleryCoreApi::removeMapEntry('SubscriptionMap', 
+			    array('userId' => $userId, 'itemId' => $itemId, 
+				  'notificationName' => $name, 'handlerId' => $handler));
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
+	if ($ret) {
+	    return $ret;
+	}
+
+	if ($recursive && $item->getCanContainChildren()) {
+	    list ($ret, $childItems) = GalleryCoreApi::fetchChildItemIds($item);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    if (count($childItems) > 0) {
+		foreach ($childItems as $childId) {
+		    $ret = NotificationHelper::_applyUnsubscribe($userId, $childId, $eventName, 
+								 $name, $handler, $recursive);
+		    if ($ret) {
+			return $ret;
+		    }
+		}
+	    }
+	}
+
+	return null;
+    }
+
+    /**
      * When a subscription is removed, check that that the event listener is no longer required.
      * 
-     * @param $event The id of the event to be unsubscribed from
+     * @param int $event The id of the event to be unsubscribed from
      * @return GalleryStatus
      */
     function removeHintFromListener($event) {
@@ -386,14 +429,15 @@ class NotificationHelper {
 
     /**
      * Subscribe the user to item/event combination with the specified handler.
-     * @param $userId The user id
-     * @param $itemId The item id
-     * @param $eventName The name of the event that is being subscribed to.
-     * @param $notificationName The notification definiftion name
-     * @param $handler The notification handler to be invoked
+     * @param int $userId The user id
+     * @param int $itemId The item id
+     * @param string $eventName The name of the event that is being subscribed to.
+     * @param string $notificationName The name of the notification to be subscribed to.
+     * @param string $handler The notification handler to be invoked
+     * @param boolean $recursive If not empty apply subscription to descendent items
      * @return GalleryStatus
      */
-    function subscribe($userId, $itemId, $eventName, $notificationName, $handler) {
+    function subscribe($userId, $itemId, $eventName, $notificationName, $handler, $recursive) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
@@ -410,21 +454,26 @@ class NotificationHelper {
 	}
 
 	$hint = GalleryUtilities::strToLower($eventName);
+	$updateHints = false;
 	if (!empty($hints)) {
 	    $key = array_search($hint, $hints);
 	    /* Only add if it is not in the hint list already */
 	    if ($key === false) {
 		$hints[] = $hint;
+		$updateHints = true;
 	    }
 	} else {
 	    $hints = array($hint);
+	    $updateHints = true;
 	}
 
-	$ret = GalleryCoreApi::updateFactoryDefinitionHints('GalleryEventListener',
-							    'NotificationRouter', $hints);
-	if ($ret) {
-	    GalleryCoreApi::releaseLocks($hintsLockId);
-	    return $ret;
+	if ($updateHints) {
+	    $ret = GalleryCoreApi::updateFactoryDefinitionHints('GalleryEventListener',
+								'NotificationRouter', $hints);
+	    if ($ret) {
+		GalleryCoreApi::releaseLocks($hintsLockId);
+		return $ret;
+	    }
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($hintsLockId);
@@ -432,15 +481,87 @@ class NotificationHelper {
 	    return $ret;
 	}
 
-	$ret = GalleryCoreApi::addMapEntry('SubscriptionMap', array('userId' => $userId, 
-			    'itemId' => $itemId, 
-			    'notificationName' => $notificationName, 'handlerName' => $handler));
+	list ($ret, $notification) = GalleryCoreApi::newFactoryInstanceById(
+						     'NotificationEvent_1_0', $notificationName);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = NotificationHelper::_applySubscription($userId, $itemId, $notificationName, 
+						      $notification, $handler, $recursive);
 	if ($ret) {
 	    return $ret;
 	}
 
 	$ret = $storage->checkPoint();
 	return $ret;
+    }
+
+    /**
+     * Subscribe the user to item/event combination with the specified handler and optionally 
+     * propagate the subscriptions to any existing children.
+     * @param int $userId The user id
+     * @param int $itemId The item id
+     * @param string $name The name of the notification to be subscribed to.
+     * @param string $notification The notification being subscribed to
+     * @param string $handler The notification handler to be invoked
+     * @param boolean $recursive If not empty apply subscription to descendent items
+     * @return GalleryStatus
+     */
+    function _applySubscription($userId, $itemId, $name, $notification, $handler, $recursive) {
+	$ret = GalleryCoreApi::addMapEntry('SubscriptionMap', array('userId' => $userId, 
+			    'itemId' => $itemId, 'notificationName' => $name, 
+			    'handlerName' => $handler));
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
+	if ($ret) {
+	    return $ret;
+	}
+
+	if ($recursive && $item->getCanContainChildren()) {
+	    list ($ret, $childItems) = GalleryCoreApi::fetchChildItemIds($item);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    if (count($childItems) > 0) {
+		list ($ret, $all) = NotificationHelper::getSubscriptions($userId, $childItems);
+		if ($ret) {
+		    return $ret;
+		}
+
+		$subscriptions = array();
+		if (!empty($all[$name])) {
+		    $subscriptions = $all[$name];
+		}
+
+		$requiredPermission = $notification->getPermission();
+		foreach ($childItems as $childId) {
+		    if (in_array($childId, $subscriptions)) {
+			continue;
+		    }
+		    list ($ret, $permissions) = GalleryCoreApi::getPermissions($childId, $userId);
+		    if ($ret) {
+			return $ret;
+		    }
+
+		    if (empty($requiredPermission) || empty($permissions[$requiredPermission])) {
+			continue;
+		    }
+
+		    $ret = NotificationHelper::_applySubscription($userId, $childId, 
+							$name, $notification, $handler, true);
+		    if ($ret) {
+			return $ret;
+		    }
+		}
+	    }
+	}
+
+	return null;
     }
 
     /**
