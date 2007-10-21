@@ -391,7 +391,7 @@ class ViewTest extends GalleryTestCase {
 
 	list ($ret, $view) = GalleryView::loadView('core.ShowItem');
 	if ($ret) {
-	    return $ret;
+	    return array($ret, null, null);
 	}
 	$gallery->setCurrentView('test.test');
 
