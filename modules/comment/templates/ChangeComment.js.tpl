@@ -11,7 +11,7 @@ var prompts = {ldelim}
 	undo: null,
 	title : '{g->text text="Delete this comment?" forJavascript=true}',
 	body : '{g->text text="Are you sure you want to delete this comment?" forJavascript=true}',
-	confirm: '{g->text text="This comment has been deleted." forJavscript=true}'
+	confirm: '{g->text text="This comment has been deleted." forJavascript=true}'
     {rdelim},
 
     'despam' : {ldelim}
