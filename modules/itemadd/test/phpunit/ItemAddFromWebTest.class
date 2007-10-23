@@ -221,7 +221,7 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
     }
 
     function testParserHtml() {
-	$template = new ItemAddFromWebTestTemplate();
+	$template = new UnitTestTemplate();
 	$form = array('formName' => 'ItemAddFromWeb',
 		      'action' => array('findFilesFromWebPage' => true),
 		      'webPage' => 'http://www.test.com/t/index.php?foo=bar');
@@ -267,7 +267,7 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
     function testParserNoUrls() {
 	$this->_session->put('itemadd.view.ItemAddFromWeb.recentUrls',
 		array('http://www.test.com/page.php' => 1, 'http://blah.com/other.html' => 1));
-	$template = new ItemAddFromWebTestTemplate();
+	$template = new UnitTestTemplate();
 	$form = array('formName' => 'ItemAddFromWeb',
 		      'action' => array('findFilesFromWebPage' => true),
 		      'webPage' => 'http://www.test.com/page.php');
@@ -296,7 +296,7 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
     }
 
     function testParserDirectToImage() {
-	$template = new ItemAddFromWebTestTemplate();
+	$template = new UnitTestTemplate();
 	$form = array('formName' => 'ItemAddFromWeb',
 		      'action' => array('findFilesFromWebPage' => true),
 		      'webPage' => 'http://www.test.com/img.jpg');
@@ -323,7 +323,7 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
     }
 
     function testParserDirectToImageMalformedContentTypeHeader() {
-	$template = new ItemAddFromWebTestTemplate();
+	$template = new UnitTestTemplate();
 	$form = array('formName' => 'ItemAddFromWeb',
 		      'action' => array('findFilesFromWebPage' => true),
 		      'webPage' => 'http://www.test.com/img2.jpg');
@@ -352,7 +352,7 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
     function testParserRedirectToImage() {
 	$this->_session->put('itemadd.view.ItemAddFromWeb.recentUrls',
 			     array('http://blah.com/other.html' => 1));
-	$template = new ItemAddFromWebTestTemplate();
+	$template = new UnitTestTemplate();
 	$form = array('formName' => 'ItemAddFromWeb',
 		      'action' => array('findFilesFromWebPage' => true),
 		      'webPage' => 'http://www.test.com/redirect.php');
@@ -382,7 +382,7 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
     }
 
     function testParserMissingUrl() {
-	$template = new ItemAddFromWebTestTemplate();
+	$template = new UnitTestTemplate();
 	$form = array('formName' => 'ItemAddFromWeb',
 		      'action' => array('findFilesFromWebPage' => true));
 	list ($ret) = $this->_plugin->loadTemplate($template, $form, $this->_album);
@@ -398,7 +398,7 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
     }
 
     function testParserInvalidUrl() {
-	$template = new ItemAddFromWebTestTemplate();
+	$template = new UnitTestTemplate();
 	$form = array('formName' => 'ItemAddFromWeb',
 		      'action' => array('findFilesFromWebPage' => true),
 		      'webPage' => 'bogus:url.html');
@@ -416,7 +416,7 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
     }
 
     function testParserUnavailable() {
-	$template = new ItemAddFromWebTestTemplate();
+	$template = new UnitTestTemplate();
 	$form = array('formName' => 'ItemAddFromWeb',
 		      'action' => array('findFilesFromWebPage' => true),
 		      'webPage' => 'http://www.test.com/404.jpg');
@@ -431,6 +431,40 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 				  'error' => array('webPage' => array('unavailable' => 1)),
 				  'set' => array('title' => 1, 'summary' => 0, 'description' => 0)),
 			    $form);
+    }
+
+    function testParserBaseElement() {
+	$template = new UnitTestTemplate();
+	$form = array('formName' => 'ItemAddFromWeb',
+		      'action' => array('findFilesFromWebPage' => true),
+		      'webPage' => 'http://www.test.com/t/index.php?base=abs');
+	list ($ret) = $this->_plugin->loadTemplate($template, $form, $this->_album);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(array('ItemAddFromWeb' =>
+		    array('webPageUrlCount' => 4,
+			  'recentUrls' => array('http://www.test.com/t/index.php?base=abs'))),
+		    $template->_data, 'template');
+	$this->assertEquals(
+		array('http://www.test.com/t/index.php?base=abs' => 1),
+		$this->_session->get('itemadd.view.ItemAddFromWeb.recentUrls'), 'session urls');
+	$this->assertEquals(
+		array('formName' => 'ItemAddFromWeb',
+		      'action' => array('findFilesFromWebPage' => true),
+		      'webPage' => 'http://www.test.com/t/index.php?base=abs',
+		      'webPageUrls' => array(
+			  array('url' => 'http://gallery.test.com/img.jpg',
+				'itemType' => $this->_photo),
+			  array('url' => 'http://other.com/blah.png',
+				'itemType' => $this->_photo),
+			  array('url' => 'http://other.com/images/test.gif',
+				'itemType' => $this->_photo),
+			  array('url' => 'http://other.com/images/test.mov',
+				'itemType' => $this->_movie)),
+		      'set' => array('title' => 1, 'summary' => 0, 'description' => 0)),
+		$form, 'form data');
     }
 }
 
@@ -537,6 +571,25 @@ class ItemAddFromWebTestPlatform  {
 		$buffer[] = '<input type=text value="http://blah.com/blah.jpg"/>';
 		$buffer[] = '<input type=text value=\'https://blah.com/blah.jpg\'/>';
 		$buffer[] = '</body></html>';
+		$this->_readBuffer[$handle] = $buffer;
+		return strlen($string);
+
+	    case "GET /t/index.php?base=abs HTTP/1.0\r\nHost: www.test.com\r\n\r\n":
+		/*
+		 * Not testing relative base URLs, since they're not well supported in modern
+		 * browsers (Opera 9 handles them correctly, but IE7 and FF2 not).
+		 */
+		$buffer = array();
+		$buffer[] = 'HTTP/1.1 200 OK';
+		$buffer[] = 'Connection: close';
+		$buffer[] = 'Date: Mon, 13 Feb 2006 21:10:03 GMT';
+		$buffer[] = 'Content-type: text/html';
+		$buffer[] = '';
+		$buffer[] = '<html><head><base href="http://other.com/images/"/></head><body>';
+		$buffer[] = '<img src="http://gallery.test.com/img.jpg"/>';
+		$buffer[] = 'abc <img src=\'/blah.png\' alt=test/> def';
+		$buffer[] = 'test <img';
+		$buffer[] = 'src=test.gif> <a href="test.mov">hi</a></body></html>';
 		$this->_readBuffer[$handle] = $buffer;
 		return strlen($string);
 
@@ -794,22 +847,6 @@ class ItemAddFromWebTestPlatform  {
     function exec($cmd) {
 	/* In case add of jpeg tries to get 'colorspace' property */
 	return array(true, array(''), array());
-    }
-}
-
-/**
- * Test template
- *
- * @package ItemAdd
- * @subpackage PHPUnit
- */
-class ItemAddFromWebTestTemplate {
-    function ItemAddFromWebTestTemplate() {
-	$this->_data = array();
-    }
-
-    function setVariable($key, $value) {
-	$this->_data[$key] = $value;
     }
 }
 ?>

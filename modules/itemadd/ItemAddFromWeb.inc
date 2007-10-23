@@ -211,6 +211,28 @@ class ItemAddFromWeb extends ItemAddPlugin {
 						       'itemType' => $typeName);
 		    }
 		} else {
+		    /* Check for <base href="..."/> element */
+		    if (preg_match('#<base(?:\W|\W[^>]*?\W)href\s*=\s*'
+			    . '(?:"(.*?)"|\'(.*?)\'|([^\'"> ]*)).*?>#si', $buffer, $matches)) {
+			/**
+			 * @todo Use real HTML parser to avoid parsing HTML comments etc.
+			 */
+			for ($i = 1; $i <= 3; $i++) {
+			    $specifiedBaseUrl = isset($matches[$i]) ? $matches[$i] : '';
+			    if (!empty($specifiedBaseUrl)) {
+				break;
+			    }
+			}
+			$specifiedComponents = parse_url($specifiedBaseUrl);
+			if (!empty($specifiedComponents['scheme'])
+				&& !empty($specifiedComponents['host'])) {
+			    $baseUrlComponents = $specifiedComponents;
+			} else {
+			    foreach ($specifiedComponents as $key => $value) {
+				$baseUrlComponents[$key] = $value;
+			    }
+			}
+		    }
 		    /*
 		     * Parse the buffer.  We match:
 		     *  href="foo bar"    href='foo bar'   href=foo
