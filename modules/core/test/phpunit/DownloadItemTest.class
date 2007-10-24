@@ -57,6 +57,7 @@ class DownloadItemTest extends GalleryTestCase {
     }
 
     function _download() {
+	set_error_handler('DownloadItemTest_error_handler');
 	ob_start();
 	$ret = $this->_view->renderImmediate(array(), array());
 	$output = ob_get_contents();
@@ -232,5 +233,18 @@ class DownloadItemTest extends GalleryTestCase {
 class DownloadItemTestPhpVm extends GalleryPhpVm {
     function header($string, $replace=null) {
     }
+}
+
+function DownloadItemTest_error_handler($errorNumber, $errorString, $file, $line, $context) {
+    if ($errorNumber == 2048) {
+    	return; /* E_STRICT */
+    }
+
+    if (error_reporting() == 0 && strpos($errorString, 'apacheSetenvBroken') !== false) {
+	return;
+    }
+
+    /* Else call our default error_handler */
+    return PHPUnit_error_handler($errorNumber, $errorString, $file, $line, $context);
 }
 ?>
