@@ -76,7 +76,7 @@ class GalleryFactoryHelper_medium {
 	    $hints[$i] = GalleryUtilities::strToLower($hint);
 	}
 	
-	$data = empty($hints) ? null : serialize($hints);
+	$data = empty($hints) ? serialize(null) : serialize($hints);
 	$ret = GalleryCoreApi::updateMapEntry('GalleryFactoryMap',
 					      array('classType' => $classType, 'implId' => $implId),
 					      array('hints' => $data));
