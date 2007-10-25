@@ -43,7 +43,8 @@ class GalleryDataCache {
     function &_getCache() {
 	static $cache;
 	if (!isset($cache)) {
-	    $cache['maxKeys'] = 300;
+	    $cache['maxKeys'] = 800;
+	    $cache['minKeys'] = 400;
 	    $cache['positions'] = array();
 	    $cache['latestPosition'] = 0;
 	    $cache['keys'] = array();
@@ -86,15 +87,15 @@ class GalleryDataCache {
 	    return;
 	}
 
+	if (count($cache['positions']) >= $cache['maxKeys']) {
+	    GalleryDataCache::_performMaintenance();
+	}
+
 	$cache['keys'][$key] = $data;
 	if ($protected) {
 	    $cache['protected'][$key] = 1;
 	} else {
 	    $cache['positions'][$key] = $cache['latestPosition']++;
-	}
-
-	if ($cache['latestPosition'] % 150 == 0) {
-	    GalleryDataCache::_performMaintenance();
 	}
     }
 
@@ -145,15 +146,15 @@ class GalleryDataCache {
 	    return;
 	}
 
+	if (count($cache['positions']) >= $cache['maxKeys']) {
+	    GalleryDataCache::_performMaintenance();
+	}
+
 	$cache['keys'][$key] =& $data;
 	if ($protected) {
 	    $cache['protected'][$key] = 1;
 	} else {
 	    $cache['positions'][$key] = $cache['latestPosition']++;
-	}
-
-	if ($cache['latestPosition'] % 150 == 0) {
-	    GalleryDataCache::_performMaintenance();
 	}
     }
 
@@ -165,15 +166,13 @@ class GalleryDataCache {
      */
     function _performMaintenance() {
 	$cache =& GalleryDataCache::_getCache();
-	$numToExpire = sizeof($cache['positions']) - $cache['maxKeys'];
-	if ($numToExpire > 0) {
-	    asort($cache['positions']);
-	    foreach ($cache['positions'] as $key => $position) {
-		unset($cache['keys'][$key]);
-		unset($cache['positions'][$key]);
-		if ($numToExpire-- == 0) {
-		    break;
-		}
+	$numToExpire = count($cache['positions']) - $cache['minKeys'];
+	asort($cache['positions']);
+	foreach ($cache['positions'] as $key => $position) {
+	    unset($cache['keys'][$key]);
+	    unset($cache['positions'][$key]);
+	    if ($numToExpire-- == 0) {
+		break;
 	    }
 	}
     }
