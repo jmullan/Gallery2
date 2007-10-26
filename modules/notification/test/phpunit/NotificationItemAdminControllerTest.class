@@ -203,7 +203,7 @@ class NotificationItemAdminControllerTest extends GalleryControllerTestCase {
 	$storage->setReply('removeMapEntry',
 			   array('SubscriptionMap', 
 				 array('userId' => $gallery->getActiveUserId(), 'itemId' => $itemId,
-				       'notificationName' => 'test::event',
+				       'notificationName' => 'Test::Event',
 				       'handlerId' => 'Test::EventHandler')),
 			   null);
 
@@ -226,7 +226,7 @@ class NotificationItemAdminControllerTest extends GalleryControllerTestCase {
 			   array('GalleryFactoryMap', 
 				 array('classType' => 'GalleryEventListener', 
 				       'implId' => 'NotificationRouter'),
-				 array('hints' => null), null),
+				 array('hints' => serialize(null)), null),
 			   null);
 	$storage->setReply('isTransactional', array(), false);
 	$storage->setReply('releaseLocks', array(array(42)), null);
@@ -324,6 +324,9 @@ class NotificationItemEventTest {
     }
     function getPermission() {
 	return 'core.view';
+    }
+    function isAppropriateForItem($item) {
+	return true;
     }
 }
 

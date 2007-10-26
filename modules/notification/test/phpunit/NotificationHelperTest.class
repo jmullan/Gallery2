@@ -459,7 +459,7 @@ class NotificationHelperTest extends GalleryTestCase {
 			   array('GalleryFactoryMap', 
 				 array('classType' => 'GalleryEventListener', 
 				       'implId' => 'NotificationRouter'),
-				 array('hints' => null), null),
+				 array('hints' => serialize(null)), null),
 			   null);
 	$storage->setReply('isTransactional', array(), false);
 	$storage->setReply('releaseLocks', array(array(42)), null);
@@ -524,7 +524,7 @@ class NotificationHelperTest extends GalleryTestCase {
 			   array('GalleryFactoryMap', 
 				 array('classType' => 'GalleryEventListener', 
 				       'implId' => 'NotificationRouter'),
-				 array('hints' => null), null),
+				 array('hints' => serialize(null)), null),
 			   null);
 	$storage->setReply('isTransactional', array(), false);
 	$storage->setReply('releaseLocks', array(array(42)), null);
@@ -655,7 +655,11 @@ class NotificationHelperEventTest extends NotificationEvent_1_0 {
     function getEventSpecs() {
 	return array('eventName' => 'Test::Event');
     }
+    function isAppropriateForItem($item) {
+	return true;
+    }
 }
+
 class NotificationHelperEventTest2 extends NotificationEvent_1_0 {
     function getDescription() {
 	global $gallery;
@@ -667,6 +671,9 @@ class NotificationHelperEventTest2 extends NotificationEvent_1_0 {
     }
     function getEventSpecs() {
 	return array('eventName' => 'Test::Event2');
+    }
+    function isAppropriateForItem($item) {
+	return true;
     }
 }
 

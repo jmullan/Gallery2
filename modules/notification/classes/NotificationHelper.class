@@ -487,7 +487,12 @@ class NotificationHelper {
 	    return $ret;
 	}
 
-	$ret = NotificationHelper::_applySubscription($userId, $itemId, $notificationName, 
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = NotificationHelper::_applySubscription($userId, $item, $notificationName, 
 						      $notification, $handler, $recursive);
 	if ($ret) {
 	    return $ret;
@@ -501,34 +506,35 @@ class NotificationHelper {
      * Subscribe the user to item/event combination with the specified handler and optionally 
      * propagate the subscriptions to any existing children.
      * @param int $userId The user id
-     * @param int $itemId The item id
+     * @param GalleryItem $item The item
      * @param string $name The name of the notification to be subscribed to.
      * @param string $notification The notification being subscribed to
      * @param string $handler The notification handler to be invoked
      * @param boolean $recursive If not empty apply subscription to descendent items
      * @return GalleryStatus
      */
-    function _applySubscription($userId, $itemId, $name, $notification, $handler, $recursive) {
+    function _applySubscription($userId, $item, $name, $notification, $handler, $recursive) {
 	$ret = GalleryCoreApi::addMapEntry('SubscriptionMap', array('userId' => $userId, 
-			    'itemId' => $itemId, 'notificationName' => $name, 
+			    'itemId' => $item->getId(), 'notificationName' => $name, 
 			    'handlerName' => $handler));
 	if ($ret) {
 	    return $ret;
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
-	if ($ret) {
-	    return $ret;
-	}
-
 	if ($recursive && $item->getCanContainChildren()) {
-	    list ($ret, $childItems) = GalleryCoreApi::fetchChildItemIds($item);
+	    list ($ret, $childItemIds) = GalleryCoreApi::fetchChildItemIds($item);
 	    if ($ret) {
 		return $ret;
 	    }
 
-	    if (count($childItems) > 0) {
-		list ($ret, $all) = NotificationHelper::getSubscriptions($userId, $childItems);
+	    if (count($childItemIds) > 0) {
+		list ($ret, $all) = NotificationHelper::getSubscriptions($userId, $childItemIds);
+		if ($ret) {
+		    return $ret;
+		}
+
+		list ($ret, $childItems) = 
+		    GalleryCoreApi::loadEntitiesById($childItemIds, 'GalleryItem');
 		if ($ret) {
 		    return $ret;
 		}
@@ -539,10 +545,17 @@ class NotificationHelper {
 		}
 
 		$requiredPermission = $notification->getPermission();
-		foreach ($childItems as $childId) {
+		foreach ($childItems as $child) {
+		    $childId = $child->getId();
 		    if (in_array($childId, $subscriptions)) {
 			continue;
 		    }
+
+		    if (!$notification->isAppropriateForItem($child)) {
+			continue;
+		    }
+
+		    
 		    list ($ret, $permissions) = GalleryCoreApi::getPermissions($childId, $userId);
 		    if ($ret) {
 			return $ret;
@@ -552,7 +565,7 @@ class NotificationHelper {
 			continue;
 		    }
 
-		    $ret = NotificationHelper::_applySubscription($userId, $childId, 
+		    $ret = NotificationHelper::_applySubscription($userId, $child, 
 							$name, $notification, $handler, true);
 		    if ($ret) {
 			return $ret;

@@ -477,6 +477,10 @@ class NotificationRouterTest1 extends NotificationEvent_1_0{
     function getEventSpecs() {
 	return array('eventName' => 'Test::Event', 'entityType' => 'GalleryEntity');
     }
+
+    function isAppropriateForItem($item) {
+	return true;
+    }
 }
 
 class NotificationRouterTest2 extends NotificationEvent_1_0{
@@ -491,6 +495,10 @@ class NotificationRouterTest2 extends NotificationEvent_1_0{
 
     function getItemId() {
 	return (int)$this->_event->_data;
+    }
+
+    function isAppropriateForItem($item) {
+	return true;
     }
 }
 
