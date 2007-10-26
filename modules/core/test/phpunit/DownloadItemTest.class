@@ -256,34 +256,12 @@ class DownloadItemTest extends GalleryTestCase {
 	$this->assert(!$ret, 'expected success');
     }
 
-    function testDownloadChildEntityFailsWithErrorMissingObject() {
-	list ($ret, $entity) =
-	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryChildEntity');
-	if ($ret) {
-	    return $ret;
-	}
-	$ret = $entity->create($this->_item->getId());
-	if ($ret) {
-	    return $ret;
-	}
-	$ret = $entity->save();
-	if ($ret) {
-	    return $ret;
-	}
-
-	$ret = GalleryCoreApi::addUserPermission($this->_item->getId(), $this->_userId,
-						 'core.view');
-	if ($ret) {
-	    return $ret;
-	}
-	GalleryUtilities::putRequestVariable('itemId', $entity->getId());
+    function testDownloadBogusEntityFailsWithErrorMissingObject() {
+    	/* GalleryUser doesn't implement the required interface (fetchPath, getMimeType) */
+	GalleryUtilities::putRequestVariable('itemId', $this->_userId);
 
 	list ($ret, $output) = $this->_download();
 	if ($ret) {
-	    /*
-	     * We don't know what permission to check for arbitrary entities. Avoid information
-	     * disclosure by treating such bogus requests as if the entity didn't exist.
-	     */
 	    $this->assert($ret->getErrorCode() & ERROR_MISSING_OBJECT, 'expected error');
 	    if (!($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		return $ret;
@@ -293,41 +271,29 @@ class DownloadItemTest extends GalleryTestCase {
 	}
     }
 
-    function testDownloadNonItemRelatedEntityFailsWithErrorMissingObject() {
+    function testDownloadEntityWithAssociatedPermission() {
 	/*
-	 * Create an entity that has no GalleryItem as parent (like WatermarkImage or
-	 * ThumbnailImage).
+	 * Create a GalleryEntity that has permissions associated with it directly instead of
+	 * through an association with an item (like WatermarkImage or ThumbnailImage).
 	 */
-	list ($ret, $parent) =
-	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryChildEntity');
-	if ($ret) {
-	    return $ret;
-	}
-	$ret = $parent->create($this->_getRootId());
-	if ($ret) {
-	    return $ret;
-	}
-	$this->_markForCleanup($parent);
-	$ret = $parent->save();
-	if ($ret) {
-	    return $ret;
-	}
-
 	$entity = new DownloadItemTestEntity();
-	$entity->create($parent->getId());
+	$entity->className = 'DownloadItemTestEntity';
+	$ret = $entity->create();
 	if ($ret) {
 	    return $ret;
 	}
+	$entity->className = 'GalleryEntity';
 	$ret = $entity->save();
 	if ($ret) {
 	    return $ret;
 	}
+	$this->_markForCleanup($entity);
 	$cacheKey = 'GalleryEntityHelper::loadEntitiesById(' . $entity->getId() . ')';
 	GalleryDataCache::put($cacheKey, $entity);
 
 	GalleryUtilities::putRequestVariable('itemId', $entity->getId());
 
-	/* Execute the test and verify that it fail */
+	/* Execute the test and verify that we fail */
 	list ($ret, $output) = $this->_download();
 	if ($ret) {
 	    /*
@@ -340,6 +306,18 @@ class DownloadItemTest extends GalleryTestCase {
 	    }
 	} else {
 	    $this->fail('expected error, got none');
+	}
+
+	/* Now associate the entity directly with a permission */
+	$ret = GalleryCoreApi::addUserPermission($entity->getId(), $this->_userId, 'core.all');
+	if ($ret) {
+	    return $ret;
+	}
+
+	/* Execute the test and verify that we succeed */
+	list ($ret, $output) = $this->_download();
+	if ($ret) {
+	    return $ret;
 	}
     }
 }
@@ -352,13 +330,29 @@ class DownloadItemTestPhpVm extends GalleryPhpVm {
     }
 }
 
-class DownloadItemTestEntity extends GalleryChildEntity {
+class DownloadItemTestChildEntity extends GalleryChildEntity {
     function getMimeType() {
 	return 'image/jpeg';
     }
 
     function fetchPath() {
 	return array(null, __FILE__);
+    }
+}
+
+class DownloadItemTestEntity extends GalleryEntity {
+    var $className;
+
+    function getMimeType() {
+	return 'image/jpeg';
+    }
+
+    function fetchPath() {
+	return array(null, __FILE__);
+    }
+
+    function getClassName() {
+	return $this->className;
     }
 }
 
