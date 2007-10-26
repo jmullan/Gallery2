@@ -134,6 +134,7 @@ class ThumbnailImage extends GalleryFileSystemEntity {
      * @param string $inputFileName the path to a data file to be contained
      * @param string $mimeType the mime type of the new item
      * @param string $targetName (optional) the desired name of the new item.
+     * @param int $parentId (optional) Id of the parent entity or null. Defaults to null.
      * @return GalleryStatus a status code
      */
     function create($inputFileName, $mimeType, $targetName=null, $parentId=null) {
