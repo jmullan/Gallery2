@@ -64,6 +64,21 @@ class DownloadItemView extends GalleryView {
 	    return $ret;
 	}
 
+	if (!method_exists($item, 'fetchPath') || !method_exists($item, 'getMimeType')) {
+	    /* Avoid information disclosure for bogus entities by acting as if it didn't exist */
+	    return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
+	}
+
+	$derivativeType = null;
+	if (GalleryUtilities::isA($item, 'GalleryDerivative')) {
+	    $derivativeType = $item->getDerivativeType();
+	}
+
+	$ret = $this->_assertPermissions($item, $derivativeType);
+	if ($ret) {
+	    return $ret;
+	}
+
 	/* Figure out the filename */
 	list ($ret, $pseudoFileName) = GalleryUtilities::getPseudoFileName($item);
 	if ($ret) {
@@ -73,37 +88,26 @@ class DownloadItemView extends GalleryView {
 	/* Don't allow malicious URLs */
 	$fileName = GalleryUtilities::getRequestVariables('fileName');
 	if (!empty($fileName) && $fileName != $pseudoFileName) {
-	    return GalleryCoreApi::error(GALLERY_ERROR, __FILE__, __LINE__, 'malicious url');
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__, 'malicious url');
 	}
-
+	
 	/* Get the path to the file */
-	if (!method_exists($item, 'fetchPath')) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
-	}
 	list ($ret, $path) = $item->fetchPath();
 	if ($ret) {
 	    return $ret;
 	}
 
 	/* Rebuild derivative cache, if necessary */
-	$itemForPermission = $itemId;
-	$derivativeType = null;
-	if (GalleryUtilities::isA($item, 'GalleryDerivative')) {
+	if (!empty($derivativeType)) {
 	    list ($ret, $item) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($itemId);
 	    if ($ret) {
 		return $ret;
 	    }
-
-	    $itemForPermission = $item->getParentId();
-	    $derivativeType = $item->getDerivativeType();
 	}
 
 	$ret = $this->_sendFile(array('derivativePath' => $path,
-				      'derivativeType' => $derivativeType,
 				      'mimeType' => $item->getMimeType(),
-				      'pseudoFileName' => $pseudoFileName,
-				      'parentId' => $itemForPermission,
-				      'id' => $itemId));
+				      'pseudoFileName' => $pseudoFileName));
 	if ($ret) {
 	    return $ret;
 	}
@@ -117,7 +121,6 @@ class DownloadItemView extends GalleryView {
     function _sendFile($data) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
-	$session =& $gallery->getSession();
 	$phpVm = $gallery->getPhpVm();
 
 	/**
@@ -126,29 +129,6 @@ class DownloadItemView extends GalleryView {
 	 */
 	if (function_exists('apache_setenv') && !@$gallery->getConfig('apacheSetenvBroken')) {
 	    @apache_setenv('no-gzip', '1');
-	}
-
-	/* Make sure we have permission */
-	if (($ids = $session->get('core.isPrintService')) && in_array($data['id'], $ids)) {
-	    /* Print services only need core.view to get access to full size version of photos */
-	    $permission = 'core.view';
-	} else {
-	    $permission = 'core.viewSource';
-	    switch ($data['derivativeType']) {
-	    case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
-		$permission = 'core.view';
-		break;
-
-	    case DERIVATIVE_TYPE_IMAGE_RESIZE:
-		$permission = 'core.viewResizes';
-		break;
-
-		/* DERIVATIVE_TYPE_IMAGE_PREFERRED uses core.viewSource */
-	    }
-	}
-	$ret = GalleryCoreApi::assertHasItemPermission($data['parentId'], $permission);
-	if ($ret) {
-	    return $ret;
 	}
 
 	$requestMethod = strtolower(GalleryUtilities::getServerVar('REQUEST_METHOD'));
@@ -193,6 +173,62 @@ class DownloadItemView extends GalleryView {
 		}
 		$platform->fclose($fd);
 	    }
+	}
+
+	return null;
+    }
+
+    /**
+     * Assert the required permissions for the given item.
+     * @param GalleryChildEntity $item GalleryDataItem or GalleryChildEntity with a data item as
+     *        parent. Throws ERROR_MISSING_OBJECT if a non-item has no item as parent.
+     * @param mixed $derivativeType
+     * @return GalleryStatus
+     */
+    function _assertPermissions($item, $derivativeType) {
+    	global $gallery;
+    	$session =& $gallery->getSession();
+
+    	$itemIdForPermission = $item->getId();
+	if (!empty($derivativeType)) {
+	    $itemIdForPermission = $item->getParentId();
+	}
+
+	/* Make sure we have permission */
+	if (($ids = $session->get('core.isPrintService')) && in_array($item->getId(), $ids)) {
+	    /* Print services only need core.view to get access to full size version of photos */
+	    $permission = 'core.view';
+	} else {
+	    $permission = 'core.viewSource';
+	    switch ($derivativeType) {
+	    case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
+		$permission = 'core.view';
+		break;
+
+	    case DERIVATIVE_TYPE_IMAGE_RESIZE:
+		$permission = 'core.viewResizes';
+		break;
+
+		/* DERIVATIVE_TYPE_IMAGE_PREFERRED uses core.viewSource */
+	    }
+	}
+	$ret = GalleryCoreApi::assertHasItemPermission($itemIdForPermission, $permission);
+	if ($ret) {
+	    /* Avoid information disclosure */
+	    if ($ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
+	    	if ($permission != 'core.view') {
+		    list ($ret2, $hasPermission) =
+			GalleryCoreApi::hasItemPermission($item->getId(), 'core.view');
+		    if ($ret2) {
+			return $ret2;
+		    }
+	    	}
+	    	if ($permission == 'core.view' || empty($hasPermission)) {
+		    $ret->addErrorCode(ERROR_MISSING_OBJECT);
+		    return $ret;
+	    	}
+	    }
+	    return $ret;
 	}
 
 	return null;
