@@ -39,11 +39,11 @@ class NotificationHelperTest extends GalleryTestCase {
 	global $gallery;
 	parent::setUp();
 
-	list ($ret, $group) = GalleryCoreApi::fetchGroupByGroupName('Registered Users');
+	list ($ret, $this->_groupRegistered) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret) {
 	    return $ret;
 	}
-	$this->_groupRegistered = $group->getId();
 
 	$this->_unregisterFactoryImplementationForTest('NotificationEvent_1_0');
 	$this->_unregisterFactoryImplementationForTest('NotificationHandler_1_0');
@@ -567,7 +567,7 @@ class NotificationHelperTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$msg = $module->translate(array('arg1' => 'album', 'arg2' => $url, 
+	$msg = $module->translate(array('arg1' => $module->translate('album'), 'arg2' => $url, 
 				 'text' =>"A new %s has been added. To view it, click here: \n%s"));
 	$this->assertEquals($msg, $testMsg, 'Single item not formatted propery');
 				  
@@ -577,7 +577,7 @@ class NotificationHelperTest extends GalleryTestCase {
 	$notifier = new ItemAddedNotification();
 	$notifier->setEvent($event);
 
-	$msg = $module->translate(array('arg1' => 'file', 'arg2' => $url, 
+	$msg = $module->translate(array('arg1' => $module->translate('file'), 'arg2' => $url, 
 				 'text' =>"A new %s has been added. To view it, click here: \n%s"));
 	list ($ret, $testMsg) = $notifier->getNotificationMessage();
 	if ($ret) {

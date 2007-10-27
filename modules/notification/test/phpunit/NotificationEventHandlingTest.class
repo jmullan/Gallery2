@@ -99,11 +99,11 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 	$this->_users = array();
 	$this->_userIds = array();
 	
-	list ($ret, $group) = GalleryCoreApi::fetchGroupByGroupName('Registered Users');
+	list ($ret, $this->_groupRegistered) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret) {
 	    return $ret;
 	}
-	$this->_groupRegistered = $group->getId();
 
 	list ($ret, $parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
