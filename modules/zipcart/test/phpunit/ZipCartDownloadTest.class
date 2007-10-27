@@ -64,6 +64,7 @@ class ZipCartDownloadTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('file', 'test');
 	$_SERVER['HTTP_USER_AGENT'] = 'This is MSIE 6 browser';
 
+	set_error_handler('ZipCartDownloadTest_error_handler');
 	ob_start();
 	$ret = $this->_view->renderImmediate(array(), array());
 	if ($ret) {
@@ -95,6 +96,7 @@ class ZipCartDownloadTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('file', 'test');
 	$_SERVER['HTTP_USER_AGENT'] = 'This is some Gecko browser';
 
+	set_error_handler('ZipCartDownloadTest_error_handler');
 	ob_start();
 	$ret = $this->_view->renderImmediate(array(), array());
 	if ($ret) {
@@ -171,5 +173,18 @@ class ZipCartDownloadPhpVm extends GalleryPhpVm {
 
     function ini_set($varname, $newvalue) {
     }
+}
+
+function ZipCartDownloadTest_error_handler($errorNumber, $errorString, $file, $line, $context) {
+    if ($errorNumber == 2048) {
+    	return; /* E_STRICT */
+    }
+
+    if (error_reporting() == 0 && strpos($errorString, 'apacheSetenvBroken') !== false) {
+	return;
+    }
+
+    /* Else call our default error_handler */
+    return PHPUnit_error_handler($errorNumber, $errorString, $file, $line, $context);
 }
 ?>
