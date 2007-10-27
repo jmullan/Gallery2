@@ -39,6 +39,7 @@ class ModuleTest extends GalleryTestCase {
 
 	/* Register a new module */
 	GalleryDataCache::reset(true);
+	$_REQUEST['testCase'] = $this;
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'moduletest');
 	if ($ret) {
 	    return $ret;
@@ -668,6 +669,13 @@ class ModuleTestModule extends GalleryModule {
 	if ($ret) {
 	    return $ret;
 	}
+
+	/*
+	 * registerFactoryImplementation() clears the factory cache. Prevent it from reading the
+	 * data from the storage again.
+	 */
+	$_REQUEST['testCase']->_unregisterFactoryImplementationForTest('GalleryEventListener');
+
 	return null;
     }
 
