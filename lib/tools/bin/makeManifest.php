@@ -28,34 +28,20 @@ if (!function_exists('file_put_contents')) {
     }
 }
     
-function makeManifest($path = null) {
-    ini_set('error_reporting', 2047);
-    
+function makeManifest() {
+    global $SRCDIR;
     $startTime = time();
     
     /* Just so we are consistent lets standardize on Unix path sepearators */
-    $baseDir = dirname(dirname(dirname(dirname(__FILE__)))) . '/';
-    $baseDir = str_replace("\\", '/', $baseDir);
+    $baseDir = $SRCDIR . '/gallery2/';
     chdir($baseDir);
     
-    if (empty($path)) {
-	$path = $baseDir;
-    } else if (!file_exists($path)) {
-	die("The directory '$path' does not exist");
-    } else if (!is_dir($path)) {
-	die("The specified path ('$path') is not a directory");
-    } else if (!preg_match('#^(modules|themes)(/\w+)?/?$#', $path)) {
-	die("The path '$path' must be a relative path to a plugin (e.g. modules/core)");
-    } else {
-	$path = $baseDir . $path;
-    }
-    
     quiet_print("Finding all files...");
-    $entries = listSvn($path);
-    
+    $entries = listSvn($baseDir);
+
     quiet_print("Sorting...");
     sort($entries);
-    
+
     /* Split into sections */
     $sections = array();
     quiet_print("Separating into sections...");
