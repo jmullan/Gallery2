@@ -1,4 +1,3 @@
-#!php -q
 <?php
 /*
  * Gallery - a web based photo album viewer and editor
@@ -18,11 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-ini_set('error_reporting', 2047);
-if (!empty($_SERVER['SERVER_NAME'])) {
-    die("You must run this from the command line\n");
-}
-
 if (!function_exists('file_put_contents')) {
     /* Define file_put_contents if running PHP 4.x */
     function file_put_contents($path, $data) {
@@ -33,155 +27,131 @@ if (!function_exists('file_put_contents')) {
 	return true;
     }
 }
-
-$startTime = time();
-$quiet = false;
-$path = null;
-array_shift($argv);
-
-for ($i = 0; $i < count($argv); $i++) {
-    if ($argv[$i] === '-q') {
-	$quiet = true;
-    } else if ($argv[$i] === '-p') {
-	$path = $argv[++$i];
-    }
-}
-
-/* Just so we are consistent lets standardize on Unix path sepearators */
-$baseDir = dirname(dirname(dirname(dirname(__FILE__)))) . '/';
-$baseDir = str_replace("\\", '/', $baseDir);
-chdir($baseDir);
-
-if (empty($path)) {
-    $path = $baseDir;
-} else if (!file_exists($path)) {
-    die("The directory '$path' does not exist");
-} else if (!is_dir($path)) {
-    die("The specified path ('$path') is not a directory");
-} else if (!preg_match('#^(modules|themes)(/\w+)?/?$#', $path)) {
-    die("The path '$path' must be a relative path to a plugin (e.g. modules/core)");
-} else {
-    $path = $baseDir . $path;
-}
-
-quietprint("Finding all files...\n");
-$entries = listSvn($path);
-quietprint("\n");
-
-quietprint("Sorting...");
-sort($entries);
-quietprint("\n");
-
-/* Split into sections */
-$sections = array();
-quietprint("Separating into sections...");
-foreach ($entries as $file) {
-    $matches = array();
-    if (preg_match('#(^.*)((modules|layouts|themes)[\\/].*?)[\\/]#', $file, $matches) !== 0) {
-    	$sections["{$matches[2]}/MANIFEST"][] = $file;
+    
+function makeManifest($path = null) {
+    ini_set('error_reporting', 2047);
+    
+    $startTime = time();
+    
+    /* Just so we are consistent lets standardize on Unix path sepearators */
+    $baseDir = dirname(dirname(dirname(dirname(__FILE__)))) . '/';
+    $baseDir = str_replace("\\", '/', $baseDir);
+    chdir($baseDir);
+    
+    if (empty($path)) {
+	$path = $baseDir;
+    } else if (!file_exists($path)) {
+	die("The directory '$path' does not exist");
+    } else if (!is_dir($path)) {
+	die("The specified path ('$path') is not a directory");
+    } else if (!preg_match('#^(modules|themes)(/\w+)?/?$#', $path)) {
+	die("The path '$path' must be a relative path to a plugin (e.g. modules/core)");
     } else {
-    	$sections['MANIFEST'][] = $file;
+	$path = $baseDir . $path;
     }
-}
-quietprint("\n");
-
-/* Now generate the checksum files */
-quietprint("Generating checksums...\n");
-$changed = 0;
-$total = 0;
-
-foreach ($sections as $manifest => $entries) {
-    $oldLines = file($manifest);
-    $oldContent = implode('', $oldLines);
-    $nl = preg_match('/\r\n/', $oldContent) ? "\r\n" : "\n";
-    $matches = array();
-    preg_match('/Revision: (\d+\s*)\$/', $oldLines[0], $matches);
-    $oldRevision = $matches[1];
-
-    $newContent = "# \$Revi" . "sion: $oldRevision\$$nl";
-    $newContent .= "# File crc32 crc32(crlf) size size(crlf)  or  R File$nl";
-
-    $deleted = $seen = array();
-    foreach ($entries as $entry) {
-	list ($file, $isBinary) = preg_split('/\@\@/', $entry);
-	
-	if (preg_match('/deleted:(.*)/', $file, $matches)) {
-	    $deleted[$matches[1]] = true;
+    
+    quiet_print("Finding all files...");
+    $entries = listSvn($path);
+    
+    quiet_print("Sorting...");
+    sort($entries);
+    
+    /* Split into sections */
+    $sections = array();
+    quiet_print("Separating into sections...");
+    foreach ($entries as $file) {
+	$matches = array();
+	if (preg_match('#(^.*)((modules|layouts|themes)[\\/].*?)[\\/]#', $file, $matches) !== 0) {
+	    $sections["{$matches[2]}/MANIFEST"][] = $file;
 	} else {
-	    $seen[$file] = true;
-	    $fileHandle = fopen($file, 'rb');
-	    $fileSize = filesize($file);
-	    $data = fread($fileHandle, $fileSize);
-	    fclose($fileHandle);
-
-	    $data_crlf = $data;
-	    if ($isBinary) {
-		$size = $size_crlf = filesize($file);
-	    } else {
-		if (preg_match("/\r\n/", $data)) {
-		    $data = str_replace("\r\n", "\n", $data);
-		} else {
-		    $data_crlf = str_replace("\n", "\r\n", $data_crlf);
-		}
-		$size = strlen($data);
-		$size_crlf = strlen($data_crlf);
-	    }
+	    $sections['MANIFEST'][] = $file;
+	}
+    }
+    
+    /* Now generate the checksum files */
+    quiet_print("Generating checksums...");
+    $changed = 0;
+    $total = 0;
+    
+    foreach ($sections as $manifest => $entries) {
+	$oldLines = file($manifest);
+	$oldContent = implode('', $oldLines);
+	$nl = preg_match('/\r\n/', $oldContent) ? "\r\n" : "\n";
+	$matches = array();
+	preg_match('/Revision: (\d+\s*)\$/', $oldLines[0], $matches);
+	$oldRevision = $matches[1];
+    
+	$newContent = "# \$Revi" . "sion: $oldRevision\$$nl";
+	$newContent .= "# File crc32 crc32(crlf) size size(crlf)  or  R File$nl";
+    
+	$deleted = $seen = array();
+	foreach ($entries as $entry) {
+	    list ($file, $isBinary) = preg_split('/\@\@/', $entry);
 	    
-	    $cksum = crc32($data);
-	    $cksum_crlf = crc32($data_crlf);
-	    $file = substr($file, strlen($baseDir));
-	    $newContent .= 
-		sprintf("$file\t%u\t%u\t%d\t%d$nl", $cksum, $cksum_crlf, $size, $size_crlf);
-	}
-    }
-
-    if (!empty($oldLines)) {
-	foreach ($oldLines as $line) {
-	    if ($line[0] == '#') {
-		continue;
-	    }
-	    if (preg_match('/^R\t(.*)$/', $line, $matches)) {
-		$file = $baseDir . trim($matches[1]);
-		if (empty($seen[$file])) {
-		    $deleted[$file] = true;
-		}
+	    if (preg_match('/deleted:(.*)/', $file, $matches)) {
+		$deleted[$matches[1]] = true;
 	    } else {
-		preg_match('/^(.+?)\t/', $line, $matches);
-		$file = $baseDir . trim($matches[1]);
-		if (empty($seen[$file])) {
-		    $deleted[$file] = true;
+		$seen[$file] = true;
+		$fileHandle = fopen($file, 'rb');
+		$fileSize = filesize($file);
+		$data = fread($fileHandle, $fileSize);
+		fclose($fileHandle);
+    
+		$data_crlf = $data;
+		if ($isBinary) {
+		    $size = $size_crlf = filesize($file);
+		} else {
+		    if (preg_match("/\r\n/", $data)) {
+			$data = str_replace("\r\n", "\n", $data);
+		    } else {
+			$data_crlf = str_replace("\n", "\r\n", $data_crlf);
+		    }
+		    $size = strlen($data);
+		    $size_crlf = strlen($data_crlf);
 		}
+		
+		$cksum = crc32($data);
+		$cksum_crlf = crc32($data_crlf);
+		$file = substr($file, strlen($baseDir));
+		$newContent .= 
+		    sprintf("$file\t%u\t%u\t%d\t%d$nl", $cksum, $cksum_crlf, $size, $size_crlf);
 	    }
 	}
-
-	foreach ($deleted as $file => $unused) {
-	    $file = substr($file, strlen($baseDir));
-	    $newContent .= "R\t$file$nl";
+    
+	if (!empty($oldLines)) {
+	    foreach ($oldLines as $line) {
+		if ($line[0] == '#') {
+		    continue;
+		}
+		if (preg_match('/^R\t(.*)$/', $line, $matches)) {
+		    $file = $baseDir . trim($matches[1]);
+		    if (empty($seen[$file])) {
+			$deleted[$file] = true;
+		    }
+		} else {
+		    preg_match('/^(.+?)\t/', $line, $matches);
+		    $file = $baseDir . trim($matches[1]);
+		    if (empty($seen[$file])) {
+			$deleted[$file] = true;
+		    }
+		}
+	    }
+    
+	    foreach ($deleted as $file => $unused) {
+		$file = substr($file, strlen($baseDir));
+		$newContent .= "R\t$file$nl";
+	    }
 	}
+    
+	if ($oldContent != $newContent) {
+	    file_put_contents($manifest, $newContent);
+	    $changed++;
+	}
+	$total++;    
     }
-
-    if ($oldContent != $newContent) {
-	file_put_contents($manifest, $newContent);
-	$changed++;
-    }
-    $total++;
-
-    quietprint(".");
-}
-
-quietprint("\n");
-quietprint(sprintf("Completed in %d seconds\n", time() - $startTime));
-quietprint(sprintf("Manifests changed: $changed (total: $total)\n"));
-
-/**
- * If quiet mode is not enabled, display the message on standard out.
- * @param string $message Message to display.
- */
-function quietPrint($message) {
-    global $quiet;
-    if (!$quiet) {
-	print "$message";
-    }
+    
+    quiet_print(sprintf("Completed in %d seconds", time() - $startTime));
+    quiet_print(sprintf("Manifests changed: $changed (total: $total)"));
 }
 
 /**
@@ -220,7 +190,7 @@ function listSvn($path) {
 	}
 
 	if ($matches[1] == 'M') {
-	    quietprint("Warning: $matches[2] is locally modified\n");
+	    quiet_print("Warning: $matches[2] is locally modified");
 	} else if (!in_array($matches[1], array(' ', 'D', 'M'))) {
 	    die("Check {$matches[1]} status for {$matches[2]}");
 	}
