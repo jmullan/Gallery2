@@ -143,6 +143,8 @@ class ModifyCartController extends GalleryController {
 	if (!isset($results['redirect'])) {
 	    $results['redirect']['view'] = 'cart.ViewCart';
 	}
+	
+	$results['redirect']['itemId'] = GalleryUtilities::getRequestVariables('itemId');
 	$results['status'] = $status;
 	$results['error'] = $error;
 

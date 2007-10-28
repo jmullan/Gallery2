@@ -82,10 +82,12 @@ class ModifyCartControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[counts][2]', 5);
 	GalleryUtilities::putRequestVariable('form[action][modify]', 1);
 	GalleryUtilities::putRequestVariable('form[pluginId]', 'updateCart');
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'cart.ViewCart'),
+	$this->assertEquals(array('redirect' => array('view' => 'cart.ViewCart',
+						      'itemId'=> $this->_album->getId()),
 				  'status' => array('cartModified' => 1),
 				  'error' => array()),
 			    $results);
@@ -102,10 +104,12 @@ class ModifyCartControllerTest extends GalleryControllerTestCase {
     function testEmptyCart() {
 	GalleryUtilities::putRequestVariable('form[action][modify]', 1);
 	GalleryUtilities::putRequestVariable('form[pluginId]', 'emptyCart');
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'cart.ViewCart'),
+	$this->assertEquals(array('redirect' => array('view' => 'cart.ViewCart',
+						      'itemId'=> $this->_album->getId()),
 				  'status' => array('cartModified' => 1),
 				  'error' => array()),
 			    $results);

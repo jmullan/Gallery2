@@ -47,6 +47,15 @@ class CartCallbacks {
 	    $block['cart']['ShowCart']['unique'] = $unique;
 	    $block['cart']['ShowCart']['total'] = $total;
 
+	    $urlParams = array('view' => 'cart.ViewCart');
+	    $itemId = GalleryUtilities::getRequestVariables('itemId');
+	    if (!empty($itemId)) {
+		$urlParams['itemId'] = $itemId;
+	    }
+
+	    $urlGenerator =& $gallery->getUrlGenerator();
+	    $block['cart']['ShowCart']['url'] = $urlGenerator->generateUrl($urlParams, array());
+
 	    return null;
 	}
 

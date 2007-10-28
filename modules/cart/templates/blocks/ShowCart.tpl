@@ -9,5 +9,5 @@
     {g->text one="You have %d item in your cart" many="You have %d items in your cart"
 	     count=$block.cart.ShowCart.total arg1=$block.cart.ShowCart.total}
   </p>
-  <a class="{g->linkId view="cart.ViewCart"}" href="{g->url arg1="view=cart.ViewCart" arg2="return=true"}">{g->text text="View Cart"}</a>
+  <a class="{g->linkId view="cart.ViewCart"}" href="{$block.cart.ShowCart.url}">{g->text text="View Cart"}</a>
 </div>

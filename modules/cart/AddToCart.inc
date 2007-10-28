@@ -63,6 +63,7 @@ class AddToCartController extends GalleryController {
 
 	/* Prepare our results */
 	$results['redirect']['view'] = 'cart.ViewCart';
+	$results['redirect']['itemId'] = $itemId;
 	$results['status'] = array();
 	$results['error'] = array();
 

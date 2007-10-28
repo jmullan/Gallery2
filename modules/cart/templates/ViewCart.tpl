@@ -12,6 +12,7 @@
     {g->hiddenFormVars}
     <input type="hidden" name="{g->formVar var="controller"}" value="{$ViewCart.controller}"/>
     <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
+    <input type="hidden" name="{g->formVar var="itemId"}" value="{$itemId}"/>
   </div>
   <div class="gbBlock gcBackground2" style="text-align: right; white-space: nowrap">
     <select name="{g->formVar var="form[pluginId]"}">
