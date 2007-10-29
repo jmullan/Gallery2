@@ -1,3 +1,4 @@
+#!/usr/bin/php -q
 <?php
 /*
  * Gallery - a web based photo album viewer and editor
@@ -27,13 +28,64 @@ if (!function_exists('file_put_contents')) {
 	return true;
     }
 }
+
+/*
+ * Prepare the environment if the script was run directly from command line
+ */
+if (empty($SRCDIR)) {
+    ini_set('error_reporting', 2047);
+    if (!empty($_SERVER['SERVER_NAME'])) {
+	die("You must run this from the command line\n");
+    }
     
-function makeManifest() {
+    $quiet = false;
+    $path = null;
+    array_shift($argv);
+    
+    for ($i = 0; $i < count($argv); $i++) {
+	if ($argv[$i] === '-q') {
+	    $quiet = true;
+	} else if ($argv[$i] === '-p') {
+	    $path = $argv[++$i];
+	}
+    }
+    
+    /* Just so we are consistent lets standardize on Unix path sepearators */
+    $baseDir = dirname(dirname(dirname(dirname(__FILE__)))) . '/';
+    $baseDir = str_replace("\\", '/', $baseDir);
+    chdir($baseDir);
+    
+    if (empty($path)) {
+	$path = $baseDir;
+    } else if (!file_exists($path)) {
+	die("The directory '$path' does not exist");
+    } else if (!is_dir($path)) {
+	die("The specified path ('$path') is not a directory");
+    } else if (!preg_match('#^(modules|themes)(/\w+)?/?$#', $path)) {
+	die("The path '$path' must be a relative path to a plugin (e.g. modules/core)");
+    } else {
+	$path = $baseDir . $path;
+    }
+    
+    /**
+     * If quiet mode is not enabled, display the message on standard out.
+     * @param string $message Message to display.
+     */
+    function quiet_print($message) {
+	global $quiet;
+	if (!$quiet) {
+	    print "$message\n";
+	}
+    }
+    makeManifest($path);
+}
+
+function makeManifest($path=null) {
     global $SRCDIR;
     $startTime = time();
     
     /* Just so we are consistent lets standardize on Unix path sepearators */
-    $baseDir = $SRCDIR . '/gallery2/';
+    $baseDir = empty($path) ? $SRCDIR . '/gallery2/' : $path;
     chdir($baseDir);
     
     quiet_print("Finding all files...");
