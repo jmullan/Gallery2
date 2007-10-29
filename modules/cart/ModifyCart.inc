@@ -81,13 +81,17 @@ class ModifyCartController extends GalleryController {
 
 	    default:
 		/* Expect it to be one of our plugins */
-		GalleryCoreApi::requireOnce(
-		    'modules/cart/classes/CartPluginInterface_1_0.class');
-		list ($ret, $cartPlugin) =
-		    GalleryCoreApi::newFactoryInstanceById('CartPluginInterface_1_0',
-							   $form['pluginId']);
-		if ($ret) {
-		    return array($ret, null);
+		foreach (array('CartPluginInterface_1_1', 'CartPluginInterface_1_0')
+			as $interface) {
+		    GalleryCoreApi::requireOnce("modules/cart/classes/$interface.class");
+		    list ($ret, $cartPlugin) =
+			GalleryCoreApi::newFactoryInstanceById($interface, $form['pluginId']);
+		    if ($ret) {
+			return array($ret, null);
+		    }
+		    if (isset($cartPlugin)) {
+			break;
+		    }
 		}
 
 		if (!isset($cartPlugin)) {

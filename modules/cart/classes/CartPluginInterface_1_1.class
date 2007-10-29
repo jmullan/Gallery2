@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/cart/classes/CartPluginInterface_1_0.class');
+
 /**
  * This is an interface for plugins to the Cart module.  Modules that wish to
  * be able to do fulfillment on items in the cart (like eCommerce, photo printing,
@@ -29,36 +31,16 @@
  * @version $Revision$
  * @abstract
  */
-class CartPluginInterface_1_0 {
-
+class CartPluginInterface_1_1 extends CartPluginInterface_1_0 {
     /**
-     * Return the item types that this cart plugin can fulfill, e.g.
-     * array('GalleryPhotoItem', 'GalleryMovieItem')
+     * Return the permission ids required to fulfill the cart action, e.g.
+     * array('someprintmodule.print').
      *
-     * @return array item types
+     * @return array permission ids
+     * @since 1.1
      */
-    function getSupportedItemTypes() {
+    function getRequiredPermissions() {
 	return array();
-    }
-
-    /**
-     * Get the localized name of the action (eg. "Print with Shutterfly") to show to users.
-     *
-     * @return array GalleryStatus a status code
-     *               string the action display name
-     */
-    function getActionDisplayName() {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
-    }
-
-    /**
-     * Do whatever magic this plugin wants to do with the cart
-     *
-     * @return array GalleryStatus a status code
-     *               array url components that can be passed to the UrlGenerator
-     */
-    function fulfillCart($cartItemIds) {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
     }
 }
 ?>

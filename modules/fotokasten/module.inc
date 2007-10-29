@@ -36,7 +36,7 @@ class FotokastenModule extends GalleryModule {
 	$this->setId('fotokasten');
 	$this->setName($gallery->i18n('Fotokasten'));
 	$this->setDescription($gallery->i18n('Fotokasten Photo Printing Module'));
-	$this->setVersion('1.0.8');
+	$this->setVersion('1.0.9');
 	$this->_templateVersion = 1;
 	$this->setGroup('commerce', $this->translate('Commerce'));
 	$this->setCallbacks('getSiteAdminViews|getItemLinks');
@@ -95,11 +95,13 @@ class FotokastenModule extends GalleryModule {
      * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
-	$ret = GalleryCoreApi::registerFactoryImplementation(
-	    'CartPluginInterface_1_0', 'FotokastenCartPlugin', 'fotokasten',
-	    'modules/fotokasten/classes/FotokastenCartPlugin.class', 'fotokasten', null);
-	if ($ret) {
-	    return $ret;
+	foreach (array('1_0', '1_1') as $version) {
+	    $ret = GalleryCoreApi::registerFactoryImplementation(
+		'CartPluginInterface_' . $version, 'FotokastenCartPlugin', 'fotokasten',
+		'modules/fotokasten/classes/FotokastenCartPlugin.class', 'fotokasten', null);
+	    if ($ret) {
+		return $ret;
+	    }
 	}
 
 	return null;

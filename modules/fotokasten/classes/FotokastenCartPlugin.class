@@ -19,18 +19,25 @@
  */
 
 /**
- * This is an implementation of the cart module's CartPluginInterface_1_0
+ * This is an implementation of the cart module's CartPluginInterface_1_1
  * @package Fotokasten
  * @subpackage Classes
  * @author Ioana Ciocanescu <service@fotokasten.de>
  * @version $Revision$
  */
-class FotokastenCartPlugin extends CartPluginInterface_1_0 {
+class FotokastenCartPlugin /* implements CartPluginInterface_1_0 and CartPluginInterface_1_1 */ {
     /**
      * @see CartPluginInterface_1_0::getSupportedItemTypes
      */
     function getSupportedItemTypes() {
 	return array('GalleryPhotoItem');
+    }
+
+    /**
+     * @see CartPluginInterface_1_1::getRequiredPermissions
+     */
+    function getRequiredPermissions() {
+	return array('fotokasten.print');
     }
 
     /**

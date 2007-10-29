@@ -19,18 +19,25 @@
  */
 
 /**
- * This is an implementation of the cart module's CartPluginInterface_1_0
+ * This is an implementation of the cart module's CartPluginInterface_1_1
  * @package PhotoAccess
  * @subpackage Classes
  * @author Bharat Mediratta <bharat@menalto.com>
  * @version $Revision$
  */
-class PhotoAccessCartPlugin extends CartPluginInterface_1_0 {
+class PhotoAccessCartPlugin /* implements CartPluginInterface_1_0 and CartPluginInterface_1_1 */ {
     /**
      * @see CartPluginInterface_1_0::getSupportedItemTypes
      */
     function getSupportedItemTypes() {
 	return array('GalleryPhotoItem');
+    }
+
+    /**
+     * @see CartPluginInterface_1_1::getRequiredPermissions
+     */
+    function getRequiredPermissions() {
+	return array('photoaccess.print');
     }
 
     /**

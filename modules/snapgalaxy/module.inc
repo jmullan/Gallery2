@@ -35,7 +35,7 @@ class SnapGalaxyModule extends GalleryModule {
 	$this->setId('snapgalaxy');
 	$this->setName($gallery->i18n('SnapGalaxy'));
 	$this->setDescription($gallery->i18n('SnapGalaxy Photo Printing Module'));
-	$this->setVersion('0.9.1'); /* Update upgrade() too */
+	$this->setVersion('0.9.2'); /* Update upgrade() too */
 	$this->_templateVersion = 1;
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getSiteAdminViews|getItemLinks');
@@ -80,6 +80,8 @@ class SnapGalaxyModule extends GalleryModule {
 	    break;
 
 	case '0.9.0':
+	case '0.9.1':
+	    /* Implementing new version of the cart plugin interface */
 
 	case 'end of upgrade path':
 	    break;
@@ -95,11 +97,13 @@ class SnapGalaxyModule extends GalleryModule {
      * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
-	$ret = GalleryCoreApi::registerFactoryImplementation(
-	    'CartPluginInterface_1_0', 'SnapGalaxyCartPlugin', 'snapgalaxy',
-	    'modules/snapgalaxy/classes/SnapGalaxyCartPlugin.class', 'snapgalaxy', null);
-	if ($ret) {
-	    return $ret;
+	foreach (array('1_0', '1_1') as $version) {
+	    $ret = GalleryCoreApi::registerFactoryImplementation(
+		'CartPluginInterface_' . $version, 'SnapGalaxyCartPlugin', 'snapgalaxy',
+		'modules/snapgalaxy/classes/SnapGalaxyCartPlugin.class', 'snapgalaxy', null);
+	    if ($ret) {
+		return $ret;
+	    }
 	}
 	return null;
     }

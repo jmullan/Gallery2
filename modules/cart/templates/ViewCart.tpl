@@ -24,8 +24,10 @@
        value="emptyCart"> {g->text text="Empty Cart"} </option>
 
       {foreach from=$ViewCart.plugins key=pluginId item=pluginData}
+      {if $pluginData.isAvailable}
       <option label="{$pluginData.actionDisplayName}"
        value="{$pluginId}"> {$pluginData.actionDisplayName} </option>
+      {/if}
       {/foreach}
     </select>
     <input type="submit" class="inputTypeSubmit"

@@ -33,7 +33,7 @@ class ShutterflyModule extends GalleryModule {
 	$this->setId('shutterfly');
 	$this->setName($gallery->i18n('Shutterfly'));
 	$this->setDescription($gallery->i18n('Shutterfly Photo Printing Module'));
-	$this->setVersion('1.0.10'); /* Update upgrade() too */
+	$this->setVersion('1.0.11'); /* Update upgrade() too */
 	$this->_templateVersion = 1;
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getItemLinks');
@@ -100,6 +100,8 @@ class ShutterflyModule extends GalleryModule {
 	    /* .mo file migration */
 	case '1.0.8':
 	case '1.0.9':
+	case '1.0.10':
+	    /* Implementing new version of the cart plugin interface */
 
 	case 'end of upgrade path':
 	    break;
@@ -116,11 +118,13 @@ class ShutterflyModule extends GalleryModule {
      * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
-	$ret = GalleryCoreApi::registerFactoryImplementation(
-	    'CartPluginInterface_1_0', 'ShutterflyCartPlugin', 'shutterfly',
-	    'modules/shutterfly/classes/ShutterflyCartPlugin.class', 'shutterfly', null);
-	if ($ret) {
-	    return $ret;
+	foreach (array('1_0', '1_1') as $version) {
+	    $ret = GalleryCoreApi::registerFactoryImplementation(
+		'CartPluginInterface_' . $version, 'ShutterflyCartPlugin', 'shutterfly',
+		'modules/shutterfly/classes/ShutterflyCartPlugin.class', 'shutterfly', null);
+	    if ($ret) {
+		return $ret;
+	    }
 	}
 
 	return null;
