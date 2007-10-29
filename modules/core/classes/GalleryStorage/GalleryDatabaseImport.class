@@ -771,23 +771,6 @@ class _GalleryFieldDefinitionTag extends GalleryImportElement {
 		    		$attributes['not-null-empty-allowed'];
 	}
     }
-
-    /**
-     * @see GalleryXmlHandler::_processStartElement
-     * @access protected
-     */
-    function _processStartElement($tag, $attributes) {
-	global $gallery;
-	/* Start with 2 minutes and we will increase it later. */
-	$gallery->guaranteeTimeLimit(120);
-	if ($tag == 'definition') {
-	    return new _GalleryTableDefinitionTag($this, $this->_name, $attributes);
-    	} else if ($tag == 'data') {
-	    return new _GalleryDataTag($this, $attributes);
-    	} else {
-	    return null;
-    	}
-    }
 }
 
 /**
