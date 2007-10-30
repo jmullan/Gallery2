@@ -1651,57 +1651,59 @@ class CoreModuleExtras {
 	    /* GallerySession change: Store sessions in the database and no longer on disk */
 	    $sessionsDir = $gallery->getConfig('data.gallery.base') . 'sessions' .
 		$platform->getDirectorySeparator();
-	    $stepSize = 100;
-	    $count = 0;
-	    $iterationSize = 5000;
-	    $iteration = 1;
-	    /* Show a progress bar while removing the files */
-	    $ret = $statusMonitor->renderStatusMessage(
-		$module->translate(array('text' => 'Deleting old session files (iteration %d)',
-					 'arg1' => $iteration)),
-		'', 0);
-	    if ($ret) {
-		return $ret;
-	    }
-	    $dir = $platform->opendir($sessionsDir, 'r');
-	    if (!$dir) {
-		return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-					     "Can't access session dir");
-	    }
-	    $gallery->guaranteeTimeLimit(60);
-	    while (($filename = $platform->readdir($dir)) !== false) {
-		if ($filename == '.' || $filename == '..') {
-		    continue;
+	    if ($platform->file_exists($sessionsDir)) {
+		$stepSize = 100;
+		$count = 0;
+		$iterationSize = 5000;
+		$iteration = 1;
+		/* Show a progress bar while removing the files */
+		$ret = $statusMonitor->renderStatusMessage(
+		    $module->translate(array('text' => 'Deleting old session files (iteration %d)',
+					     'arg1' => $iteration)),
+		    '', 0);
+		if ($ret) {
+		    return $ret;
 		}
-		$count++;
-		$platform->unlink($sessionsDir . $filename);
+		$dir = $platform->opendir($sessionsDir, 'r');
+		if (!$dir) {
+		    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					     "Can't access session dir");
+		}
+		$gallery->guaranteeTimeLimit(60);
+		while (($filename = $platform->readdir($dir)) !== false) {
+		    if ($filename == '.' || $filename == '..') {
+			continue;
+		    }
+		    $count++;
+		    $platform->unlink($sessionsDir . $filename);
 
-		/* Update the progress bar / prevent timouts */
-		if ($count % $stepSize == 0) {
-		    $gallery->guaranteeTimeLimit(60);
-		    $ret = $statusMonitor->renderStatusMessage(
-			$module->translate(
-			    array('text' => 'Deleting old session files (iteration %d)',
-				  'arg1' => $iteration)),
-			'', $count / $iterationSize);
-		    if ($ret) {
-			return $ret;
+		    /* Update the progress bar / prevent timouts */
+		    if ($count % $stepSize == 0) {
+			$gallery->guaranteeTimeLimit(60);
+			$ret = $statusMonitor->renderStatusMessage(
+			    $module->translate(
+				array('text' => 'Deleting old session files (iteration %d)',
+				      'arg1' => $iteration)),
+			    '', $count / $iterationSize);
+			if ($ret) {
+			    return $ret;
+			}
+		    }
+
+		    if ($count > $iterationSize) {
+			$iteration++;
+			$count = 0;
 		    }
 		}
-
-		if ($count > $iterationSize) {
-		    $iteration++;
-		    $count = 0;
+		$platform->closedir($dir);
+		$platform->rmdir($sessionsDir);
+		$ret = $statusMonitor->renderStatusMessage(
+		    $module->translate(array('text' => 'Deleting old session files (iteration %d)',
+					     'arg1' => $iteration)),
+		    '', 1);
+		if ($ret) {
+		    return $ret;
 		}
-	    }
-	    $platform->closedir($dir);
-	    $platform->rmdir($sessionsDir);
-	    $ret = $statusMonitor->renderStatusMessage(
-		$module->translate(array('text' => 'Deleting old session files (iteration %d)',
-					 'arg1' => $iteration)),
-		'', 1);
-	    if ($ret) {
-		return $ret;
 	    }
 
 	case '1.0.22':
