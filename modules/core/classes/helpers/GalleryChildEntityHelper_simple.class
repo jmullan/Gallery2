@@ -520,8 +520,12 @@ class GalleryChildEntityHelper_simple {
 		if ($ret) {
 		    return array($ret, null, null, null, null);
 		}
+		list ($ret, $as) = $storage->getFunctionSql('AS', array());
+		if ($ret) {
+		    return array($ret, null, null, null, null);
+		}
 		$order[] = 2 + count($order);
-		$select[] = $case;
+		$select[] = "$case $as albumsFirst";
 		$join[] = 'LEFT JOIN [GalleryAlbumItem=1] ON [BASE::ID] = [GalleryAlbumItem=1::id]';
 		break;
 
