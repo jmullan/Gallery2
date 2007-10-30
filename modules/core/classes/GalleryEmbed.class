@@ -48,7 +48,7 @@ class GalleryEmbed /* implements GalleryEventListener */ {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(1, 3);
+	return array(1, 4);
     }
 
     /**
@@ -706,16 +706,18 @@ class GalleryEmbed /* implements GalleryEventListener */ {
     }
 
     /**
-     * Parse html (headHtml) for css links, javascript and page title
+     * Parse html (headHtml) for css links, javascript, meta tags and page title
+     *
+     * Note: meta are parsed for since Embed API version 1.4
      *
      * @param string $headhtml
      * @return array string title, array (string css1, string css2, ...),
-     *               array (string javascript1, string javascript2, ...)
+     *               array (string javascript1, string javascript2, ...),
+     *               array (string meta1, string meta2, ...)
      */
     function parseHead($headhtml) {
 	$title = '';
-	$css = array();
-	$javascript = array();
+	$css = $javascript = $meta = array();
 
 	/* Only one title allowed */
 	if (preg_match("|<title(?:\s[^>]*)?>(.*)</title>|Usi", $headhtml, $regs)) {
@@ -739,7 +741,14 @@ class GalleryEmbed /* implements GalleryEventListener */ {
 	    }
 	}
 
-	return array($title, $css, $javascript);
+	/* More than one meta tag allowed */
+	if (preg_match_all('/<meta .*\/>/Usi', $headhtml, $regs, PREG_PATTERN_ORDER)) {
+	    foreach ($regs[0] as $metaTag) {
+		$meta[] = $metaTag;
+	    }
+	}
+
+	return array($title, $css, $javascript, $meta);
     }
 
     /**
@@ -762,67 +771,10 @@ class GalleryEmbed /* implements GalleryEventListener */ {
      * @return array GalleryStatus,
      *               string html content,
      *               string head content or null if none required
+     * @deprecated Use getBlock() instead
      */
     function getImageBlock($params) {
-	global $gallery;
-	$moduleId = 'imageblock';
-	$blockHtml = $headHtml = null;
-
-	$session =& $gallery->getSession();
-	$ret = $session->start();
-	if ($ret) {
-	    return array($ret, null, null);
-	}
-	$session->doNotUseTempId();
-
-	/* Load the module list */
-	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
-	if ($ret) {
-	    return array($ret, null, null);
-	}
-
-	if (isset($moduleStatus[$moduleId]) && !empty($moduleStatus[$moduleId]['active'])
-		&& $moduleStatus[$moduleId]['active']) {
-	    /* Load the G2 templating engine */
-	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
-	    $template = new GalleryTemplate(dirname(__FILE__) . '/../../..');
-	    $template->setVariable('l10Domain', 'modules_' . $moduleId);
-
-	    if (!isset($params['maxSize'])) {
-		$params['maxSize'] = null;
-	    }
-
-	    /* Generate the imageblock */
-	    GalleryCoreApi::requireOnce(
-		'modules/imageblock/classes/ImageBlockHelper.class');
-	    $ret = ImageBlockHelper::loadImageBlocks($template, $params);
-	    if ($ret) {
-		return array($ret, null, null);
-	    }
-
-	    if ($template->hasVariable('ImageBlockData')) {
-		$ImageBlockData =& $template->getVariableByReference('ImageBlockData');
-		$ImageBlockData['forceFullUrl'] = 1;
-		$tpl = 'modules/imageblock/templates/ImageBlock.tpl';
-		/* Render and get the imageblock html */
-		list ($ret, $blockHtml) = $template->fetch("gallery:$tpl");
-		if ($ret) {
-		    return array($ret, null, null);
-		}
-		/* Check for any css required for imageframes */
-		$head = $template->getVariable('head');
-		if (!empty($head['tpl'])) {
-		    list ($tpl) = each($head['tpl']);
-		    list ($ret, $headHtml) = $template->fetch("gallery:$tpl");
-		    if ($ret) {
-			return array($ret, null, null);
-		    }
-		}
-	    }
-	} else {
-	    return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED), null, null);
-	}
-	return array(null, $blockHtml, $headHtml);
+	return GalleryEmbed::getBlock('imageblock', 'ImageBlock', $params);
     }
 
     /**
@@ -913,9 +865,9 @@ class GalleryEmbed /* implements GalleryEventListener */ {
      * @return GalleryStatus
      */
     function setThemeForRequest($themeId, $themeParams=null) {
-    	global $gallery;
+	global $gallery;
 
-    	$gallery->setConfig('embeddedTheme', array($themeId, $themeParams));
+	$gallery->setConfig('embeddedTheme', array($themeId, $themeParams));
 
 	return GalleryCoreApi::registerFactoryImplementationForRequest('GalleryEventListener',
 	    'GalleryEmbed', 'GalleryEmbed', 'modules/core/classes/GalleryEmbed.class', 'core',
@@ -926,15 +878,121 @@ class GalleryEmbed /* implements GalleryEventListener */ {
      * @see GalleryEventListener::handleRequest
      */
     function handleEvent($event) {
-    	global $gallery;
+	global $gallery;
 
-    	switch ($event->getEventName()) {
+	switch ($event->getEventName()) {
 	case 'Gallery::LoadThemeAndParameters':
 	    list ($themeId, $params) = $gallery->getConfig('embeddedTheme');
 	    return array(null, array('themeId' => $themeId, 'params' => $params));
 	}
 
 	return array(null, null);
+    }
+
+    /**
+     * Get a module block
+     *
+     * @param string $moduleId A Gallery module id
+     * @param string $blockName The name of the requested block
+     * @param array $params (optional) Block parameters
+     * @return array GalleryStatus A status code,
+     *               string HTML content: the block HTML, 
+     *               string head HTML to be inserted into the <head> section
+     * @since 1.4
+     */
+    function getBlock($moduleId, $blockName, $params=array()) {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+	$session =& $gallery->getSession();
+	$urlGenerator =& $gallery->getUrlGenerator();
+
+	$blockHtml = $headHtml = null;
+	$css = $javascript = array();
+
+	$ret = $session->start();
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+	$session->doNotUseTempId();
+
+	/* Load the module list */
+	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+
+	$blockTpl = "modules/$moduleId/templates/blocks/$blockName.tpl";
+	if (!$platform->file_exists(GalleryCoreApi::getCodeBasePath($blockTpl))) {
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null, null);
+	} else if (!isset($moduleStatus[$moduleId]) || empty($moduleStatus[$moduleId]['active'])) {
+	    return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED), null, null);
+	} else {
+	    /* Load the G2 templating engine */
+	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
+	    $template = new GalleryTemplate(dirname(__FILE__) . '/../../..');
+	    $template->setVariable('l10Domain', 'modules_' . $moduleId);
+
+	    /* Invoke the preload, if available */
+	    $blockId = $moduleId . '.' . $blockName;
+	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryTheme.class');
+	    $theme = new GalleryTheme();
+	    $ret = $theme->preloadBlock($template, $blockId, $params);
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+
+	    /* Default theme variables */	    
+	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryView.class');
+	    $ret = GalleryView::setStandardTemplateVariables($template);
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+
+	    /* Assign template variables */
+	    $domClass = empty($params['class']) ? '' : ' ' . $params['class'];
+	    $params['class'] = "block-$moduleId-$blockName$domClass";
+	    foreach ($params as $key => $value) {
+		$template->setVariable($key, $value);
+	    }
+
+	    /* Render the block */
+	    list ($ret, $blockHtml) = $template->fetch("gallery:$blockTpl");
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+
+	    /* Check for any required CSS / JavaScript */
+	    if ($template->hasVariable('head')) {
+		$head = $template->getVariable('head');
+		if (!empty($head['tpl'])) {
+		    list ($tpl) = each($head['tpl']);
+		    list ($ret, $headHtml) = $template->fetch("gallery:$tpl");
+		    if ($ret) {
+			return array($ret, null, null);
+		    }
+		}
+		if (isset($head['style'])) {
+		    foreach ($head['style'] as $style => $ignored) {
+		    	$cssUrl = $urlGenerator->generateUrl(
+			    array('href' => $style), array('forceFullUrl' => true));
+			$css[] = '<link rel="stylesheet" type="text/css" href="' . $cssUrl . '"/>';
+		    }
+		}
+		if (isset($head['javascript'])) {
+		    foreach ($head['javascript'] as $script => $ignored) {
+		    	$jsUrl = $urlGenerator->generateUrl(
+			    array('href' => $script), array('forceFullUrl' => true));
+			$javascript[] =
+			    '<script type="text/javascript" src="' . $jsUrl . '"></script>';
+		    }
+		}
+	    }
+	}
+
+	$headHtml .= empty($css) ? '' : "\n" . implode("\n", $css);
+	$headHtml .= empty($javascript) ? '' : "\n" . implode("\n", $javascript);
+
+	return array(null, $blockHtml, $headHtml);
     }
 }
 ?>

@@ -127,7 +127,7 @@ class EmbedTest extends GalleryTestCase {
  <!-- A javascript src link -->
       '.$refJs[2].'</head>';
 
-	list ($title, $css, $javascript) = GalleryEmbed::parseHead($headHtml);
+	list ($title, $css, $javascript, $meta) = GalleryEmbed::parseHead($headHtml);
 	$this->assertEquals($title, $refTitle, 'the title does not match the reference title');
 	$this->assert(is_array($css), '$css should be an array!');
 	if (is_array($css)) {
@@ -146,6 +146,8 @@ class EmbedTest extends GalleryTestCase {
 				    'javascript not captured correctly or out of order!');
 	    }
 	}
+	$this->assertEquals(
+	    array('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>'), $meta);
     }
 
     /*
@@ -445,6 +447,23 @@ class EmbedTest extends GalleryTestCase {
 
 	$this->assertEquals(array(array('themeId' => 'foobar', 'params' => array('foo' => 'bar'))),
 			    $eventResults);
+    }
+
+    function testGetBlock() {
+    	global $gallery;
+    	$user = $gallery->getActiveUser();
+
+	list ($ret, $blockHtml, $headHtml) = GalleryEmbed::getBlock('core', 'GuestPreview');
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (empty($blockHtml)) {
+	    $this->fail('Missing block HTML');
+	} else {
+	    $this->assert(strpos($blockHtml, $user->getUserName()) !== false,
+			  'Unexpected HTML data: ' . $blockHtml);
+	}
     }
 }
 ?>

@@ -235,27 +235,10 @@ class GalleryView {
 
 	/* -------------------------------------------------- */
 	/* Standard user info available for every view */
-	$user = (array)$gallery->getActiveUser();
-	list ($ret, $user['isGuest']) = GalleryCoreApi::isAnonymousUser($user['id']);
+	$ret = GalleryView::setStandardTemplateVariables($template);
 	if ($ret) {
 	    return array($ret, null, null);
 	}
-	$user['isRegisteredUser'] = !$user['isGuest'];
-	list ($ret, $user['isAdmin']) = GalleryCoreApi::isUserInSiteAdminGroup();
-	if ($ret) {
-	    $user['isAdmin'] = false;
-	}
-	$template->setVariable('user', $user);
-	$themeVars = array('guestPreviewMode' => $session->get('theme.guestPreviewMode') ? 1 : 0);
-	if (!$themeVars['guestPreviewMode']) {
-	    $themeVars['actingUserId'] = $gallery->getActiveUserId();
-	} else {
-	    list ($ret, $themeVars['actingUserId']) = GalleryCoreApi::getAnonymousUserId();
-	    if ($ret) {
-		return array($ret, null, null);
-	    }
-	}
-	$template->setVariable('theme', $themeVars);
 
 	/* -------------------------------------------------- */
 	/* Load up the theme */
@@ -550,6 +533,41 @@ class GalleryView {
 	}
 
 	return array(null, $theme);
+    }
+
+    /**
+     * Set standard user information available for every view.
+     * @param GalleryTemplate $template
+     * @return GalleryStatus
+     * @static
+     */
+    function setStandardTemplateVariables(&$template) {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	$user = (array)$gallery->getActiveUser();
+	list ($ret, $user['isGuest']) = GalleryCoreApi::isAnonymousUser($user['id']);
+	if ($ret) {
+	    return $ret;
+	}
+	$user['isRegisteredUser'] = !$user['isGuest'];
+	list ($ret, $user['isAdmin']) = GalleryCoreApi::isUserInSiteAdminGroup();
+	if ($ret) {
+	    $user['isAdmin'] = false;
+	}
+	$template->setVariable('user', $user);
+	$themeVars = array('guestPreviewMode' => $session->get('theme.guestPreviewMode') ? 1 : 0);
+	if (!$themeVars['guestPreviewMode']) {
+	    $themeVars['actingUserId'] = $gallery->getActiveUserId();
+	} else {
+	    list ($ret, $themeVars['actingUserId']) = GalleryCoreApi::getAnonymousUserId();
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+	$template->setVariable('theme', $themeVars);
+
+	return null;
     }
 
     /**
