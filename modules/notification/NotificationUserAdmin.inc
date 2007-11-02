@@ -86,7 +86,12 @@ class NotificationUserAdminController extends GalleryController {
 				}
 			    }
 			    if ($authorized) {
-				$ret = NotificationHelper::subscribe($userId, $formItem['itemId'],
+				list ($ret, $item) = 
+				    GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
+				if ($ret) {
+				    return array($ret, null);
+				}
+				$ret = NotificationHelper::subscribe($userId, $item,
 					     $hints[0], $notificationName, $notification['handler'],
 					     !empty($notification['recursive']));
 			    } else {

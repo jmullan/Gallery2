@@ -53,7 +53,7 @@ class NotificationItemStateChangeHandler /* extends GalleryEventListener */ {
 		return array($ret, null);
 	    }
 
-	    $ret = $this->_propagateSubscriptions($entity->getId(), $eventMap);
+	    $ret = $this->_propagateSubscriptions($entity, $eventMap);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -73,17 +73,21 @@ class NotificationItemStateChangeHandler /* extends GalleryEventListener */ {
      * subscribed to. If the user has permission to the new item, the subscription will be applied 
      * to the new item.
      * 
-     * @param $entityId The entityId of the entity which triggered the save or delete event.
-     * @param $eventMap Associative array: eventId => array(userId, handlerName)
+     * @param GalleryItem $entity The entity which triggered the save or delete event.
+     * @param array $eventMap Associative array: eventId => array(userId, handlerName)
      * @return GalleryStatus
      * @access private
      */
-    function _propagateSubscriptions($entityId, $eventMap) {
+    function _propagateSubscriptions($entity, $eventMap) {
 	foreach ($eventMap as $notificationName => $subscribers) {
 	    list ($ret, $notification) = GalleryCoreApi::newFactoryInstanceById(
 						     'NotificationEvent_1_0', $notificationName);
 	    if ($ret) {
 		return $ret;
+	    }
+
+	    if (!$notification->isAppropriateForItem($entity)) {
+		continue;
 	    }
 
 	    list ($ret, $hints) = GalleryCoreApi::getFactoryDefinitionHints('NotificationEvent_1_0',
@@ -95,7 +99,8 @@ class NotificationItemStateChangeHandler /* extends GalleryEventListener */ {
 
 	    $requiredPermission = $notification->getPermission();
 	    foreach ($subscribers as $data) {
-		list ($ret, $permissions) = GalleryCoreApi::getPermissions($entityId, $data[0]);
+		list ($ret, $permissions) = 
+		    GalleryCoreApi::getPermissions($entity->getId(), $data[0]);
 		if ($ret) {
 		    return $ret;
 		}
@@ -104,7 +109,7 @@ class NotificationItemStateChangeHandler /* extends GalleryEventListener */ {
 		    continue;
 		}
 
-		$ret = NotificationHelper::subscribe($data[0], $entityId, $eventName,
+		$ret = NotificationHelper::subscribe($data[0], $entity, $eventName,
 						     $notificationName, $data[1], true);
 		if ($ret) {
 		    return $ret;

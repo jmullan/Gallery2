@@ -354,7 +354,7 @@ class NotificationHelperTest extends GalleryTestCase {
 	$storage->setReply('search', '*', array(null, new UnitTestStorageSearchResults(array())));
 	$storage->setReply('checkPoint', array(), null);
 
-	$ret = NotificationHelper::subscribe($userId, $itemId, $eventId, 'Test::Event1', 
+	$ret = NotificationHelper::subscribe($userId, $this->_album, $eventId, 'Test::Event1', 
 					     $handlerName, true);
 	if ($ret) {
 	    return $ret;
@@ -399,7 +399,7 @@ class NotificationHelperTest extends GalleryTestCase {
 			   null);
 	$storage->setReply('checkPoint', array(), null);
 
-	$ret = NotificationHelper::subscribe($userId, $itemId, $eventId, 'Test::Event1', 
+	$ret = NotificationHelper::subscribe($userId, $this->_album, $eventId, 'Test::Event1', 
 					     $handlerName, false);
 	if ($ret) {
 	    return $ret;

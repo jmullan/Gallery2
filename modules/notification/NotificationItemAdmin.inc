@@ -89,7 +89,7 @@ class NotificationItemAdminController extends GalleryController {
 			    }
 			}
 			if ($authorized) {
-			    $ret = NotificationHelper::subscribe($userId, $itemId, $hints[0], 
+			    $ret = NotificationHelper::subscribe($userId, $item, $hints[0], 
 						    $notification['name'], $notification['handler'],
 						    !empty($notification['recursive']));
 			} else {

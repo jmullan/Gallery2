@@ -430,14 +430,14 @@ class NotificationHelper {
     /**
      * Subscribe the user to item/event combination with the specified handler.
      * @param int $userId The user id
-     * @param int $itemId The item id
+     * @param GalleryItem $item
      * @param string $eventName The name of the event that is being subscribed to.
      * @param string $notificationName The name of the notification to be subscribed to.
      * @param string $handler The notification handler to be invoked
      * @param boolean $recursive If not empty apply subscription to descendent items
      * @return GalleryStatus
      */
-    function subscribe($userId, $itemId, $eventName, $notificationName, $handler, $recursive) {
+    function subscribe($userId, $item, $eventName, $notificationName, $handler, $recursive) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
@@ -483,11 +483,6 @@ class NotificationHelper {
 
 	list ($ret, $notification) = GalleryCoreApi::newFactoryInstanceById(
 						     'NotificationEvent_1_0', $notificationName);
-	if ($ret) {
-	    return $ret;
-	}
-
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}
