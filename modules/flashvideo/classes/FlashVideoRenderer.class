@@ -60,6 +60,13 @@ class FlashVideoRenderer extends GalleryRenderer {
 	$title = smarty_modifier_markup($title, 'strip');
 
 	/* Default player: G2flv.swf */
+	/* Including SWFObject<http://blog.deconcept.com/swfobject/> to defeat the "Click to activate..." in IE */
+	$SWFObjectUrl = $urlGenerator->generateUrl(
+		array('href' => 'modules/flashvideo/lib/swfobject.js'),
+		array('forceFullUrl' => true));
+	$expressInstallUrl = $urlGenerator->generateUrl(
+		array('href' => 'modules/flashvideo/lib/expressinstall.swf'),
+		array('forceFullUrl' => true));
 	$playerUrl = $urlGenerator->generateUrl(
 		array('href' => 'modules/flashvideo/lib/G2flv.swf'),
 		array('forceFullUrl' => true));
@@ -67,8 +74,17 @@ class FlashVideoRenderer extends GalleryRenderer {
 		   . '&title=' . urlencode($title);
 	$extraAttr = '';
 
-	/* Set allowDL=false to omit download button in upper right of player */
-	$flashVars .= '&allowDl=true';
+	/* Uncomment the next line to allow download button. default: false */
+	//$flashVars .= '&allowDownload=true';
+	
+	/* Uncomment the next line to allow the share button also the swfUrl below. default: false */
+	//$flashVars .= '&share=true';
+	
+	/* Uncomment the next line to disallow fullscreen button. default: true */
+	//$flashVars .= '&allowFullscreen=false';
+	
+	/* To allow for sharing we must also pass the playerUrl */
+	//$flashVars .= '&swfUrl=' . urlencode($playerUrl);
 
 	$itemId = $item->getId();
 	list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds(array($itemId));
@@ -84,24 +100,33 @@ class FlashVideoRenderer extends GalleryRenderer {
 	    return null;
 	}
 	foreach (array('langDownload' => $module->translate('Download'),
-		       'langLarge' => $module->translate('Large'),
+		       'langFullscreen' => $module->translate('Fullscreen'),
 			   'langNormal' => $module->translate('Normal'),
-		    ) as $key => $value) {
+			   'langPlay' => $module->translate('Play'),
+			   'langPause' => $module->translate('Pause'),
+			   'langForward' => $module->translate('Forward'),
+			   'langRewind' => $module->translate('Rewind'),
+			   'langMute' => $module->translate('Mute'),
+			   'langUnmute' => $module->translate('Unmute'),
+			   'langShare' => $module->translate('Share'),
+		) as $key => $value) {
 	    $flashVars .= '&' . $key . '=' . urlencode($value);
 	}
+	$jsWarning = $module->translate('JavaScript required to view this content.');
 
 	/*
 	 * To use FlowPlayer ( http://flowplayer.sourceforge.net )
 	 * place FlowPlayer.swf in the flashvideo/lib directory and uncomment the lines below:
-	 */
+	 */  
 	/*
 	$playerUrl = $urlGenerator->generateUrl(
 		array('href' => 'modules/flashvideo/lib/FlowPlayer.swf'),
 		array('forceFullUrl' => true));
-	$flashVars = sprintf('baseURL=%s&videoFile=%s%%26x=&autoPlay=true&loop=false',
-			     urlencode(dirname($src)), urlencode(basename($src)));
+	$flashVars = sprintf('config={videoFile:\'%s\'}&autoPlay=true&loop=false',
+		urlencode($src));
 	$extraAttr = ' wmode="transparent"';
 	*/
+
 
 	/*
 	 * To use FLVPlayer ( http://www.peldi.com/fmswiki/index.php?title=FLVPlayer )
@@ -119,7 +144,8 @@ class FlashVideoRenderer extends GalleryRenderer {
 	*/
 
 	return sprintf(
-		'<script type="text/javascript">
+		'<script type="text/javascript" src="%s"></script>
+		<script type="text/javascript">
 		// <![CDATA[
 		function divResize(id, nw, nh) {
 			var obj = document.getElementById(id);
@@ -128,27 +154,22 @@ class FlashVideoRenderer extends GalleryRenderer {
 		}
 		// ]]>
 		</script>
-		 <div id="flashvideo" style="align:left;width:525px;height:292px">
-		 <object classid="clsid:D27CDB6E-AE6D-11CF-96B8-444553540000"
-    codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0"
-			 width="100%%" height="100%%" id="%s"%s%s>
-		    <param name="movie" value="%s"/>
-		    <param name="FlashVars" value="%s"/>
-		    <param name="quality" value="high"/>
-		    <param name="scale" value="noscale"/>
-		    <param name="salign" value="lt"/>
-		    <param name="wmode" value="transparent"/>
-		    <param name="allowScriptAccess" value="always"/>
-		    <embed src="%s" flashvars="%s" type="application/x-shockwave-flash"
-			   width="100%%" height="100%%" quality="high" scale="noscale" salign="lt"
-			   wmode="transparent" allowScriptAccess="always"
-			   pluginspage="http://www.macromedia.com/go/getflashplayer"/>
-		    <noembed>%s</noembed>
-		 </object></div>',
+		<div id="flashvideo" style="align:left;width:496px;height:250px">
+		<div id="soContent" style="width: 100%%; height: 100%%">%s</div>
+		</div>
+		<script type="text/javascript">
+		// <![CDATA[
+		var so = new SWFObject("%s", "%s", "100%%", "100%%", "9.0.28.0", "ffffff");
+		so.addParam("flashVars","%s");
+		so.useExpressInstall("%s");
+		so.addParam("allowScriptAccess","always");
+		so.addParam("allowFullScreen","true");
+		so.write("soContent");
+		// ]]>
+		</script>',
 
-		!empty($params['id']) ? $params['id'] : 'movie',
-		!empty($params['class']) ? ' class="' . $params['class'] . '"' : '', $extraAttr,
-		$playerUrl, $flashVars, $playerUrl, $flashVars, $fallback);
+		$SWFObjectUrl, $jsWarning, $playerUrl, !empty($params['id']) ? $params['id'] : 'movie',
+		 $flashVars, $expressInstallUrl);
     }
 }
 ?>
