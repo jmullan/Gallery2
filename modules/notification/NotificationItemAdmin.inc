@@ -194,6 +194,10 @@ class NotificationItemAdminView extends GalleryView {
 		continue;
 	    }
 
+	    if (!$instance->isAppropriateForItem($item)) {
+		continue;
+	    }
+
 	    if (!$isAdminGroup) {
 		$permission = $instance->getPermission();
 		if (empty($permission)) {
