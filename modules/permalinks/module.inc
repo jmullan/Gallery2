@@ -74,8 +74,23 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
 	    return array($ret, null);
 	}
 
-	return array(null, array('view' => 'core.SiteAdmin',
-						     'subView' => 'permalinks.ActivationWarning'));
+	/* Automatically activate the rewrite rules, if the rewrite module is active */
+	$success = false;
+	list ($ret, $rewriteApi) = GalleryCoreApi::newFactoryInstance('RewriteApi');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	if (isset($rewriteApi)) {
+	    list($ret, $success) = $rewriteApi->activateRewriteRulesForModule('permalinks');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
+
+	if (!$success) {
+	    return array(null, array('view' => 'core.SiteAdmin',
+				     'subView' => 'permalinks.ActivationWarning'));
+	}
     }
 
     /**
@@ -90,8 +105,8 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-	    'GalleryEventListener', 'PermalinksModule', 'PermalinksModule', 
-	    'modules/permalinks/module.inc', 'permalinks', 
+	    'GalleryEventListener', 'PermalinksModule', 'PermalinksModule',
+	    'modules/permalinks/module.inc', 'permalinks',
 	    array('Gallery::DeactivatePlugin', 'GalleryEntity::delete', 'GalleryEntity::save'));
 	if ($ret) {
 	    return $ret;
