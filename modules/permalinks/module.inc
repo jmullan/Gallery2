@@ -81,7 +81,7 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
 	    return array($ret, null);
 	}
 	if (isset($rewriteApi)) {
-	    list($ret, $success) = $rewriteApi->activateRewriteRulesForModule('permalinks');
+	    list ($ret, $success) = $rewriteApi->activateRewriteRulesForModule('permalinks');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -91,6 +91,7 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
 	    return array(null, array('view' => 'core.SiteAdmin',
 				     'subView' => 'permalinks.ActivationWarning'));
 	}
+	return array(null, array());
     }
 
     /**
