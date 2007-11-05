@@ -10,13 +10,8 @@
  *}
 <div class="{$class}">
   {foreach name=parent from=$theme.parents item=parent}
-  {if !$smarty.foreach.parent.last}
   <a href="{g->url params=$parent.urlParams}" class="BreadCrumb-{counter name="BreadCrumb"}">
     {$parent.title|markup:strip|default:$parent.pathComponent}</a>
-  {else}
-  <a href="{g->url params=$parent.urlParams}" class="BreadCrumb-{counter name="BreadCrumb"}">
-    {$parent.title|markup:strip|default:$parent.pathComponent}</a>
-  {/if}
   {if isset($separator)} {$separator} {/if}
   {/foreach}
 
