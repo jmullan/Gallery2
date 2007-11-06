@@ -34,8 +34,7 @@ class FlashVideoRenderer extends GalleryRenderer {
      */
     function canBeViewedInline($item) {
 	return GalleryUtilities::isA($item, 'GalleryMovieItem')
-	    && $item->getMimeType() == 'video/x-flv'
-	    && $item->getWidth() > 0 && $item->getHeight() > 0;
+	    && $item->getMimeType() == 'video/x-flv';
     }
 
     /**
