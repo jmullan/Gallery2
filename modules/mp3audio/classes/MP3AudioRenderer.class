@@ -53,27 +53,33 @@ class MP3AudioRenderer extends GalleryRenderer {
 		      'serialNumber' => $entity->getSerialNumber()),
 		array('forceFullUrl' => true, 'forceSessionId' => true, 'htmlEntities' => false));
 	$flashVars = 'mp3Url=' . urlencode($src);
-	/* Including SWFObject<http://blog.deconcept.com/swfobject/> to defeat the "Click to activate..." in IE */
+	/*
+	 * Including SWFObject<http://blog.deconcept.com/swfobject/> to defeat the
+	 * "Click to activate..." in IE
+	 */
 	$SWFObjectUrl = $urlGenerator->generateUrl(
-		array('href' => 'modules/mp3audio/lib/swfobject.js'),
-		array('forceFullUrl' => true));
+	    array('href' => 'modules/mp3audio/lib/swfobject.js'),
+	    array('forceFullUrl' => true));
 	$expressInstallUrl = $urlGenerator->generateUrl(
-		array('href' => 'modules/mp3audio/lib/expressinstall.swf'),
-		array('forceFullUrl' => true));
+	    array('href' => 'modules/mp3audio/lib/expressinstall.swf'),
+	    array('forceFullUrl' => true));
 	$playerUrl = $urlGenerator->generateUrl(
-		array('href' => 'modules/mp3audio/lib/G2mp3.swf'),
-		array('forceFullUrl' => true));
+	    array('href' => 'modules/mp3audio/lib/G2mp3.swf'),
+	    array('forceFullUrl' => true));
 
 	GalleryCoreApi::requireOnce('lib/smarty_plugins/modifier.markup.php');
 	$title = smarty_modifier_markup($item->getTitle(), 'strip');
 	$flashVars .= '&title=' . urlencode($title);
-	
-	/* Uncomment the next line to allow download button. default: false */
+
+	/* Uncomment the next line to allow download button. Default: false */
 	//$flashVars .= '&allowDownload=true';
-	
-	/* Uncomment the next line to allow the share button also the swfUrl below. default: false */
+
+	/*
+	 * Uncomment the next line to allow the share button (also the swfUrl below).
+	 * Default: false
+	 */
 	//$flashVars .= '&share=true';
-	
+
 	/* To allow for sharing we must also pass the playerUrl */
 	//$flashVars .= '&swfUrl=' . urlencode($playerUrl);
 
@@ -106,27 +112,26 @@ class MP3AudioRenderer extends GalleryRenderer {
 		       'langMute' => $module->translate('Mute'),
 		       'langUnmute' => $module->translate('Unmute'),
 		       'langShare' => $module->translate('Share'),
-		    ) as $key => $value) {
+		) as $key => $value) {
 	    $flashVars .= '&' . $key . '=' . urlencode($value);
 	}
 	$jsWarning = $module->translate('JavaScript required to view this content.');
 
 	return sprintf(
-		'<script type="text/javascript" src="%s"></script>
-		<div id="soContent">%s</div>
-		<script type="text/javascript">
-		// <![CDATA[
-		var so = new SWFObject("%s", "%s", "496", "250", "9.0.28.0", "ffffff");
-		so.addParam("flashVars","%s");
-		so.useExpressInstall("%s");
-		so.addParam("allowScriptAccess","always");
-		so.addParam("wmode","transparent");
-		so.write("soContent");
-		// ]]>
-		</script>',
-
-		$SWFObjectUrl, $jsWarning, $playerUrl, !empty($params['id']) ? $params['id'] : 'audio',
-		 $flashVars, $expressInstallUrl);
+	    '<script type="text/javascript" src="%s"></script>
+	    <div id="soContent">%s</div>
+	    <script type="text/javascript">
+	    // <![CDATA[
+	    var so = new SWFObject("%s", "%s", "496", "250", "9.0.28.0", "ffffff");
+	    so.addParam("flashVars","%s");
+	    so.useExpressInstall("%s");
+	    so.addParam("allowScriptAccess","always");
+	    so.addParam("wmode","transparent");
+	    so.write("soContent");
+	    // ]]>
+	    </script>',
+	    $SWFObjectUrl, $jsWarning, $playerUrl, !empty($params['id']) ? $params['id'] : 'audio',
+	    $flashVars, $expressInstallUrl);
     }
 }
 ?>
