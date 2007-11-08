@@ -59,29 +59,35 @@ class FlashVideoRenderer extends GalleryRenderer {
 	$title = smarty_modifier_markup($title, 'strip');
 
 	/* Default player: G2flv.swf */
-	/* Including SWFObject<http://blog.deconcept.com/swfobject/> to defeat the "Click to activate..." in IE */
+	/*
+	 * Including SWFObject<http://blog.deconcept.com/swfobject/> to defeat the
+	 * "Click to activate..." in IE
+	 */
 	$SWFObjectUrl = $urlGenerator->generateUrl(
-		array('href' => 'modules/flashvideo/lib/swfobject.js'),
-		array('forceFullUrl' => true));
+	    array('href' => 'modules/flashvideo/lib/swfobject.js'),
+	    array('forceFullUrl' => true));
 	$expressInstallUrl = $urlGenerator->generateUrl(
-		array('href' => 'modules/flashvideo/lib/expressinstall.swf'),
-		array('forceFullUrl' => true));
+	    array('href' => 'modules/flashvideo/lib/expressinstall.swf'),
+	    array('forceFullUrl' => true));
 	$playerUrl = $urlGenerator->generateUrl(
-		array('href' => 'modules/flashvideo/lib/G2flv.swf'),
-		array('forceFullUrl' => true));
+	    array('href' => 'modules/flashvideo/lib/G2flv.swf'),
+	    array('forceFullUrl' => true));
 	$flashVars = 'flvUrl=' . urlencode($src) . '&Width=' . $width . '&Height=' . $height
 		   . '&title=' . urlencode($title);
 	$extraAttr = '';
 
-	/* Uncomment the next line to allow download button. default: false */
+	/* Uncomment the next line to allow download button. Default: false */
 	//$flashVars .= '&allowDownload=true';
 	
-	/* Uncomment the next line to allow the share button also the swfUrl below. default: false */
-	//$flashVars .= '&share=true';
-	
-	/* Uncomment the next line to disallow fullscreen button. default: true */
+	/* Uncomment the next line to disallow fullscreen button. Default: true */
 	//$flashVars .= '&allowFullscreen=false';
-	
+
+	/*
+	 * Uncomment the next line to allow the share button also the swfUrl below.
+	 * Default: false
+	 */
+	//$flashVars .= '&share=true';
+
 	/* To allow for sharing we must also pass the playerUrl */
 	//$flashVars .= '&swfUrl=' . urlencode($playerUrl);
 
@@ -100,14 +106,14 @@ class FlashVideoRenderer extends GalleryRenderer {
 	}
 	foreach (array('langDownload' => $module->translate('Download'),
 		       'langFullscreen' => $module->translate('Fullscreen'),
-			   'langNormal' => $module->translate('Normal'),
-			   'langPlay' => $module->translate('Play'),
-			   'langPause' => $module->translate('Pause'),
-			   'langForward' => $module->translate('Forward'),
-			   'langRewind' => $module->translate('Rewind'),
-			   'langMute' => $module->translate('Mute'),
-			   'langUnmute' => $module->translate('Unmute'),
-			   'langShare' => $module->translate('Share'),
+		       'langNormal' => $module->translate('Normal'),
+		       'langPlay' => $module->translate('Play'),
+		       'langPause' => $module->translate('Pause'),
+		       'langForward' => $module->translate('Forward'),
+		       'langRewind' => $module->translate('Rewind'),
+		       'langMute' => $module->translate('Mute'),
+		       'langUnmute' => $module->translate('Unmute'),
+		       'langShare' => $module->translate('Share'),
 		) as $key => $value) {
 	    $flashVars .= '&' . $key . '=' . urlencode($value);
 	}
@@ -143,32 +149,31 @@ class FlashVideoRenderer extends GalleryRenderer {
 	*/
 
 	return sprintf(
-		'<script type="text/javascript" src="%s"></script>
-		<script type="text/javascript">
-		// <![CDATA[
-		function divResize(id, nw, nh) {
-			var obj = document.getElementById(id);
-			obj.style.width = nw + "px";
-			obj.style.height = nh + "px";
-		}
-		// ]]>
-		</script>
-		<div id="flashvideo" style="align:left;width:496px;height:250px">
-		<div id="soContent" style="width: 100%%; height: 100%%">%s</div>
-		</div>
-		<script type="text/javascript">
-		// <![CDATA[
-		var so = new SWFObject("%s", "%s", "100%%", "100%%", "9.0.28.0", "ffffff");
-		so.addParam("flashVars","%s");
-		so.useExpressInstall("%s");
-		so.addParam("allowScriptAccess","always");
-		so.addParam("allowFullScreen","true");
-		so.write("soContent");
-		// ]]>
-		</script>',
-
-		$SWFObjectUrl, $jsWarning, $playerUrl, !empty($params['id']) ? $params['id'] : 'movie',
-		 $flashVars, $expressInstallUrl);
+	    '<script type="text/javascript" src="%s"></script>
+	     <script type="text/javascript">
+	     // <![CDATA[
+	     function divResize(id, nw, nh) {
+		var obj = document.getElementById(id);
+		obj.style.width = nw + "px";
+		obj.style.height = nh + "px";
+	     }
+	     // ]]>
+	     </script>
+	     <div id="flashvideo" style="align:left;width:496px;height:250px">
+	     <div id="soContent" style="width: 100%%; height: 100%%">%s</div>
+	     </div>
+	     <script type="text/javascript">
+	     // <![CDATA[
+	     var so = new SWFObject("%s", "%s", "100%%", "100%%", "9.0.28.0", "ffffff");
+	     so.addParam("flashVars","%s");
+	     so.useExpressInstall("%s");
+	     so.addParam("allowScriptAccess","always");
+	     so.addParam("allowFullScreen","true");
+	     so.write("soContent");
+	     // ]]>
+	     </script>',
+	    $SWFObjectUrl, $jsWarning, $playerUrl,
+	    !empty($params['id']) ? $params['id'] : 'movie', $flashVars, $expressInstallUrl);
     }
 }
 ?>
