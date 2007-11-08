@@ -53,7 +53,7 @@
     <td>
       {g->text text="Check Browser Preference"}
     </td><td>
-      <input type="checkbox"{if $form.language.useBrowserPref} checked="checked"{/if}
+      <input type="checkbox"{if $form.language.useBrowserPref} checked="checked"{/if} 
 	     name="{g->formVar var="form[language][useBrowserPref]"}"/>
     </td>
   </tr></table>
