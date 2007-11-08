@@ -52,12 +52,30 @@ class MP3AudioRenderer extends GalleryRenderer {
 		array('view' => 'core.DownloadItem', 'itemId' => $entity->getId(),
 		      'serialNumber' => $entity->getSerialNumber()),
 		array('forceFullUrl' => true, 'forceSessionId' => true, 'htmlEntities' => false));
-	/* Set allowDL=false to omit download button in lower right of player */
-	$flashVars = 'mp3Url=' . urlencode($src) . '&allowDl=true';
+	$flashVars = 'mp3Url=' . urlencode($src);
+	/* Including SWFObject<http://blog.deconcept.com/swfobject/> to defeat the "Click to activate..." in IE */
+	$SWFObjectUrl = $urlGenerator->generateUrl(
+		array('href' => 'modules/mp3audio/lib/swfobject.js'),
+		array('forceFullUrl' => true));
+	$expressInstallUrl = $urlGenerator->generateUrl(
+		array('href' => 'modules/mp3audio/lib/expressinstall.swf'),
+		array('forceFullUrl' => true));
+	$playerUrl = $urlGenerator->generateUrl(
+		array('href' => 'modules/mp3audio/lib/G2mp3.swf'),
+		array('forceFullUrl' => true));
 
 	GalleryCoreApi::requireOnce('lib/smarty_plugins/modifier.markup.php');
 	$title = smarty_modifier_markup($item->getTitle(), 'strip');
 	$flashVars .= '&title=' . urlencode($title);
+	
+	/* Uncomment the next line to allow download button. default: false */
+	//$flashVars .= '&allowDownload=true';
+	
+	/* Uncomment the next line to allow the share button also the swfUrl below. default: false */
+	//$flashVars .= '&share=true';
+	
+	/* To allow for sharing we must also pass the playerUrl */
+	//$flashVars .= '&swfUrl=' . urlencode($playerUrl);
 
 	$itemId = $item->getId();
 	list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds(array($itemId));
@@ -81,34 +99,34 @@ class MP3AudioRenderer extends GalleryRenderer {
 		       'langYear' => $module->translate('Year'),
 		       'langDownload' => $module->translate('Download'),
 		       'langInfo' => $module->translate('Info'),
+		       'langPlay' => $module->translate('Play'),
+		       'langPause' => $module->translate('Pause'),
+		       'langForward' => $module->translate('Forward'),
+		       'langRewind' => $module->translate('Rewind'),
+		       'langMute' => $module->translate('Mute'),
+		       'langUnmute' => $module->translate('Unmute'),
+		       'langShare' => $module->translate('Share'),
 		    ) as $key => $value) {
 	    $flashVars .= '&' . $key . '=' . urlencode($value);
 	}
+	$jsWarning = $module->translate('JavaScript required to view this content.');
 
-	$playerUrl = $urlGenerator->generateUrl(
-		array('href' => 'modules/mp3audio/lib/G2mp3.swf'),
-		array('forceFullUrl' => true));
+	return sprintf(
+		'<script type="text/javascript" src="%s"></script>
+		<div id="soContent">%s</div>
+		<script type="text/javascript">
+		// <![CDATA[
+		var so = new SWFObject("%s", "%s", "496", "250", "9.0.28.0", "ffffff");
+		so.addParam("flashVars","%s");
+		so.useExpressInstall("%s");
+		so.addParam("allowScriptAccess","always");
+		so.addParam("wmode","transparent");
+		so.write("soContent");
+		// ]]>
+		</script>',
 
-	return sprintf('<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
-    codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0"
-			 width="525" height="292" id="%s"%s>
-		    <param name="movie" value="%s"/>
-		    <param name="FlashVars" value="%s"/>
-		    <param name="quality" value="high"/>
-		    <param name="wmode" value="transparent"/>
-		    <param name="scale" value="noscale"/>
-		    <param name="salign" value="lt"/>
-		    <param name="allowScriptAccess" value="always"/>
-		    <embed src="%s" flashvars="%s" type="application/x-shockwave-flash"
-			   width="525" height="292" quality="high" wmode="transparent"
-			   scale="noscale" allowScriptAccess="always" salign="lt"
-			   pluginspage="http://www.macromedia.com/go/getflashplayer"/>
-		    <noembed>%s</noembed>
-		</object>',
-
-		!empty($params['id']) ? $params['id'] : 'audio',
-		!empty($params['class']) ? ' class="' . $params['class'] . '"' : '',
-		$playerUrl, $flashVars, $playerUrl, $flashVars, $fallback);
+		$SWFObjectUrl, $jsWarning, $playerUrl, !empty($params['id']) ? $params['id'] : 'audio',
+		 $flashVars, $expressInstallUrl);
     }
 }
 ?>
