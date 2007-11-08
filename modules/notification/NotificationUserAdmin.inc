@@ -78,19 +78,20 @@ class NotificationUserAdminController extends GalleryController {
 			} else {
 			    $itemId = (int)$formItem['itemId'];
 			    $authorized = $isAdminGroup;
-			    if ($itemId != 0) {
+			    $item = null;
+			    if (!empty($itemId)) {
 				list ($ret, $authorized) = GalleryCoreApi::hasItemPermission(
 									      $itemId, $permission);
 				if ($ret) {
 				    return array($ret, null);
 				}
-			    }
-			    if ($authorized) {
 				list ($ret, $item) = 
 				    GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 				if ($ret) {
 				    return array($ret, null);
 				}
+			    }
+			    if ($authorized) {
 				$ret = NotificationHelper::subscribe($userId, $item,
 					     $hints[0], $notificationName, $notification['handler'],
 					     !empty($notification['recursive']));
@@ -246,23 +247,31 @@ class NotificationUserAdminView extends GalleryView {
 					  'description' => $description,
 					  'handler' => $handlerName,
 					  'handlerDescription' => $handlerName);
-		    if (isset($subscriptions[$notificationName])) {
-			list ($ret, $entities) = GalleryCoreApi::loadEntitiesById(
-						  $subscriptions[$notificationName], 'GalleryItem');
+		    $itemIds = array();
+		    /* Do the global subscriptions first */
+		    foreach ($subscriptions[$notificationName] as $itemId) {
+			if (empty($itemId)) {
+			    $form['notifications'][$i]['items'][1] = 
+				array('itemId' => 0, 'subscribed' => true, 'title' => '');
+			} else {
+			    $itemIds[] = $itemId;
+			}
+		    }
+
+		    if (count($itemIds) > 0) {
+			list ($ret, $items) = 
+			    GalleryCoreApi::loadEntitiesById($itemIds, 'GalleryItem');
 			if ($ret) {
 			    return $ret;
 			}
 			$j = 0;
-			foreach ($entities as $entity) {
+			foreach ($items as $item) {
 			    $itemUrl = $urlGenerator->generateUrl(array('view' => 'core.ShowItem', 
-								    'itemId' => $entity->getId()));
+								    'itemId' => $item->getId()));
 			    $form['notifications'][$i]['items'][++$j] = 
-					array('itemId' => $entity->getId(), 'subscribed' => true, 
-					      'url' => $itemUrl, 'title' => $entity->getTitle());
+					array('itemId' => $item->getId(), 'subscribed' => true, 
+					      'url' => $itemUrl, 'title' => $item->getTitle());
 			}
-		    } else {
-			$form['notifications'][$i]['items'][1] = 
-				    array('itemId' => 0, 'subscribed' => true, 'title' => '');
 		    }
 		}
 	    }

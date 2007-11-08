@@ -288,6 +288,116 @@ class NotificationUserAdminControllerTest extends GalleryControllerTestCase {
 				  'status' => array('saved' => 1), 'error' => array()), $results,
 			    'Unexpected results array');
     }
+
+    function testSaveGlobalSubscribe() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$activeUser = $gallery->getActiveUser();
+	$activeUserId = $gallery->getActiveUserId();
+
+	$storage->setReply('getMapEntry',
+			   array('GalleryUserGroupMap', array('userId'), 
+			   	 array('userId' => $activeUserId, 
+			   	       'groupId' => $this->_adminGroupId), 
+				 array('limit' => array('count' => 1))),
+			   array(null, 
+				 new UnitTestStorageSearchResults(array(array($activeUserId)))));
+
+	list ($ret, $hintLockId) = 
+	    GalleryCoreApi::getPluginParameter('module', 'notification', 'id.hintsLock');
+	if ($ret) {
+	    return $ret;
+	}
+	$storage->setReply('acquireWriteLock', array(array($hintLockId), 10), 
+			array(null,
+			      array('lockId' => 42, 'type' => LOCK_WRITE, 
+				    'ids' => array($hintLockId => true))));
+	$storage->setReply('isTransactional', array(), false);
+	$storage->setReply('releaseLocks', array(array(42)), null);
+	$storage->setReply('addMapEntry',
+			   array('SubscriptionMap', 
+				 array('userId' => $gallery->getActiveUserId(), 'itemId' => 0,
+				       'notificationName' => 'Test::Event', 
+				       'handlerName' => 'Test::EventHandler'),
+				 array()),
+			   null);
+	$storage->setReply('checkPoint', array(), null);
+
+	GalleryUtilities::putRequestVariable('form[formName]', 'NotificationItem');
+	GalleryUtilities::putRequestVariable('form[itemId]', 0);
+	GalleryUtilities::putRequestVariable('form[action][save]', 'save');
+	GalleryUtilities::putRequestVariable('form[notifications][1]',
+			 array('name' => 'Test::Event', 'handler' => 'Test::EventHandler'));
+	GalleryUtilities::putRequestVariable('form[notifications][1][items][1]',
+					     array('itemId' => 0, 'oldSubscribed' => '', 
+						   'subscribed' => 'on', 'recursive' => 'on'));
+		
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin', 
+						'subView' => 'notification.NotificationUserAdmin'),
+				  'status' => array('saved' => 1), 'error' => array()), $results,
+			    'Unexpected results array');
+    }
+
+    function testSaveGlobalUnsubscribe() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$activeUser = $gallery->getActiveUser();
+	$activeUserId = $gallery->getActiveUserId();
+
+	$storage->setReply('getMapEntry',
+			   array('GalleryUserGroupMap', array('userId'), 
+			   	 array('userId' => $activeUserId, 
+			   	       'groupId' => $this->_adminGroupId), 
+				 array('limit' => array('count' => 1))),
+			   array(null, 
+				 new UnitTestStorageSearchResults(array(array($activeUserId)))));
+
+	$storage->setReply('removeMapEntry',
+			   array('SubscriptionMap', 
+				 array('userId' => $activeUserId, 'itemId' => 0,
+				       'notificationName' => 'Test::Event', 
+				       'handlerId' => 'Test::EventHandler')),
+			   null);
+
+	list ($ret, $hintLockId) = GalleryCoreApi::getPluginParameter('module', 'notification',
+								      'id.hintsLock');
+	if ($ret) {
+	    return $ret;
+	}
+	$storage->setReply('acquireWriteLock', array(array($hintLockId), 10), 
+			array(null,
+			      array('lockId' => 42, 'type' => LOCK_WRITE, 
+				    'ids' => array($hintLockId => true))));
+	$storage->setReply('search',
+			 array('SELECT COUNT(*) FROM [SubscriptionMap] 
+		 WHERE [SubscriptionMap::notificationName] = ?', array('Test::Event'), 
+			 array()), array(null, new UnitTestStorageSearchResults(array(array(0)))));
+	$storage->setReply('updateMapEntry',
+			   array('GalleryFactoryMap', 
+				 array('classType' => 'GalleryEventListener', 
+				       'implId' => 'NotificationRouter'),
+				 array('hints' => serialize(null)), null),
+			   null);
+	$storage->setReply('isTransactional', array(), false);
+	$storage->setReply('releaseLocks', array(array(42)), null);
+	$storage->setReply('checkPoint', array(), null);
+
+	GalleryUtilities::putRequestVariable('form[formName]', 'NotificationUserAdmin');
+	GalleryUtilities::putRequestVariable('form[action][save]', 'save');
+	GalleryUtilities::putRequestVariable('form[notifications][1]',
+			 array('name' => 'Test::Event', 'handler' => 'Test::EventHandler'));
+	GalleryUtilities::putRequestVariable('form[notifications][1][items][1]',
+					     array('itemId' => 0, 'oldSubscribed' => '1'));
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin', 
+						'subView' => 'notification.NotificationUserAdmin'),
+				  'status' => array('saved' => 1), 'error' => array()), $results,
+			    'Unexpected results array');
+    }
 }
 
 class NotificationUserTestEvent {

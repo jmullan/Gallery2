@@ -346,23 +346,25 @@ class NotificationHelper {
 	    return $ret;
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
-	if ($ret) {
-	    return $ret;
-	}
-
-	if ($recursive && $item->getCanContainChildren()) {
-	    list ($ret, $childItems) = GalleryCoreApi::fetchChildItemIds($item);
+	if ($itemId > 0) {
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	    if ($ret) {
 		return $ret;
 	    }
 
-	    if (count($childItems) > 0) {
-		foreach ($childItems as $childId) {
-		    $ret = NotificationHelper::_applyUnsubscribe($userId, $childId, $eventName, 
-								 $name, $handler, $recursive);
-		    if ($ret) {
-			return $ret;
+	    if ($recursive && $item->getCanContainChildren()) {
+		list ($ret, $childItems) = GalleryCoreApi::fetchChildItemIds($item);
+		if ($ret) {
+		    return $ret;
+		}
+
+		if (count($childItems) > 0) {
+		    foreach ($childItems as $childId) {
+			$ret = NotificationHelper::_applyUnsubscribe($userId, $childId, $eventName,
+								     $name, $handler, $recursive);
+			if ($ret) {
+			    return $ret;
+			}
 		    }
 		}
 	    }
@@ -509,14 +511,21 @@ class NotificationHelper {
      * @return GalleryStatus
      */
     function _applySubscription($userId, $item, $name, $notification, $handler, $recursive) {
+	if (!empty($item)) {
+	    $itemId = $item->getId();
+	    $canContainChildren = $item->getCanContainChildren();
+	} else {
+	    $itemId = 0;
+	    $canContainChildren = false;
+	}
 	$ret = GalleryCoreApi::addMapEntry('SubscriptionMap', array('userId' => $userId, 
-			    'itemId' => $item->getId(), 'notificationName' => $name, 
+			    'itemId' => $itemId, 'notificationName' => $name, 
 			    'handlerName' => $handler));
 	if ($ret) {
 	    return $ret;
 	}
 
-	if ($recursive && $item->getCanContainChildren()) {
+	if ($recursive && $canContainChildren) {
 	    list ($ret, $childItemIds) = GalleryCoreApi::fetchChildItemIds($item);
 	    if ($ret) {
 		return $ret;
