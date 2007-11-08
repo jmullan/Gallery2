@@ -7,7 +7,7 @@
 </div>
 
 {if isset($form.action.preview)}
-<div class="gbBlock">
+<div class="gcBorder2" style="padding: 0.7em;">
   <h3> {g->text text="Comment Preview"} </h3>
 
   <div class="one-comment gcBorder2">
