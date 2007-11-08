@@ -33,9 +33,13 @@ class DeleteCommentController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	list ($itemId, $commentId) = GalleryUtilities::getRequestVariables('itemId', 'commentId');
-	$itemId = (int) $itemId;
-	$commentId = (int) $commentId;
+	list ($ret, $item) = $this->getItem();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$itemId = $item->getId();
+
+	$commentId = (int)GalleryUtilities::getRequestVariables('commentId');
 
 	/* Make sure we have permission to delete a comment */
 	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'comment.delete');

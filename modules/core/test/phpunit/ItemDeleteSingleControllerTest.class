@@ -154,6 +154,11 @@ class ItemDeleteSingleControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $item->getId(), $gallery->getActiveUserId(), 'core.view');
+	if ($ret) {
+	    return $ret;
+	}
 
 	GalleryUtilities::putRequestVariable('itemId', $item->getId());
 
@@ -190,7 +195,7 @@ class ItemDeleteSingleControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('itemId', 1234567890);
 
 	/* Perform the request and verify that we failed */
-	$results = $this->handleRequest(ERROR_PERMISSION_DENIED | GALLERY_ERROR);
+	$results = $this->handleRequest(ERROR_MISSING_OBJECT);
     }
 }
 ?>

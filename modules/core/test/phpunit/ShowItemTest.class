@@ -94,57 +94,6 @@ class ShowItemTest extends GalleryTestCase {
 	$this->_testViewCount($this->_item->getId());
     }
 
-    function testGuestNoPermission() {
-	/* Verify guest is redirected to login page if no core.view permission */
-	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
-	if ($ret) {
-	    return $ret;
-	}
-	$this->_becomeGuestUser();
-
-	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	list ($ret, $result, $theme) = $this->_view->doLoadTemplate($this->_template);
-	if ($ret) {
-	    return $ret;
-	}
-
-	$this->assertEquals(
-	    array('redirect' => array('view' => 'core.UserAdmin', 'subView' => 'core.UserLogin',
-				      'return' => true)), $result);
-    }
-
-    function testAlternateGuestNoPermission() {
-	global $gallery;
-	$gallery->setConfig('anonymousUserId', $gallery->getActiveUserId());
-
-	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
-	if ($ret) {
-	    return $ret;
-	}
-
-	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	list ($ret, $result, $theme) = $this->_view->doLoadTemplate($this->_template);
-	if ($ret) {
-	    return $ret;
-	}
-
-	$this->assertEquals(
-	    array('redirect' => array('view' => 'core.UserAdmin', 'subView' => 'core.UserLogin',
-				      'return' => true)), $result);
-    }
-
-    function testUserNoPermission() {
-	/* Verify registered user gets error page (used to redirect to root album) */
-	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
-	if ($ret) {
-	    return $ret;
-	}
-
-	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	list ($ret, $result, $theme) = $this->_view->doLoadTemplate($this->_template);
-	$this->assert($ret && $ret->getErrorCode() & ERROR_PERMISSION_DENIED, 'expect error');
-    }
-
     function testAlbumSourcePermission() {
 	/* Verify viewing album contents requires ?? permission */
 	/*

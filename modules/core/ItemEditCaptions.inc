@@ -32,7 +32,13 @@ class ItemEditCaptionsController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	list ($itemId, $page) = GalleryUtilities::getRequestVariables('itemId', 'page');
+	$page = (int)GalleryUtilities::getRequestVariables('page');
+
+	list ($ret, $item) = $this->getItem();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$itemId = $item->getId();
 
 	$status = $error = array();
 	if (isset($form['action']['save'])) {
@@ -153,17 +159,18 @@ class ItemEditCaptionsView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	list ($itemId, $page, $selectedId, $albumPage) =
-	    GalleryUtilities::getRequestVariables('itemId', 'page', 'selectedId', 'albumPage');
+	list ($page, $selectedId, $albumPage) =
+	    GalleryUtilities::getRequestVariables('page', 'selectedId', 'albumPage');
+
+	list ($ret, $item) = $this->getItem();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$itemId = $item->getId();
 
 	if ($form['formName'] != 'ItemEditCaption') {
 	    $form['formName'] = 'ItemEditCaption';
 	    $form['numPerPage'] = 9;
-
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
-	    if ($ret) {
-		return array($ret, null);
-	    }
 
 	    list ($ret, $childIds) =
 		GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.edit');

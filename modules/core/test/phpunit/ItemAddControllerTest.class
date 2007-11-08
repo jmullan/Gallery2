@@ -134,10 +134,17 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
     }
 
     function testHandleRequestRequiresAddPermission() {
+    	global $gallery;
+
     	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddControllerTestPluginContinue');
 
 	$ret = GalleryCoreApi::removeItemPermissions($this->_album->getId());
+	if ($ret) {
+	    return $ret;
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_album->getId(), $gallery->getActiveUserId(), 'core.view');
 	if ($ret) {
 	    return $ret;
 	}

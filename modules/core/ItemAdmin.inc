@@ -34,11 +34,11 @@ class ItemAdminView extends GalleryView {
 	global $gallery;
 
 	/* Figure out the item we're referring to */
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
+	list ($ret, $item) = $this->getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}
+	$itemId = $item->getId();
 
 	/* Find its thumbnail */
 	list ($ret, $thumbnailTable) = GalleryCoreApi::fetchThumbnailsByItemIds(array($itemId));

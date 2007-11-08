@@ -35,7 +35,11 @@ class ItemMoveController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	list ($ret, $item) = $this->getItem();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$itemId = $item->getId();
 
 	$status = $error = array();
 	if (isset($form['action']['move'])) {
@@ -254,8 +258,13 @@ class ItemMoveView extends GalleryView {
 	global $gallery;
 
 	/* itemId is the album where we want to move items from */
-	list ($itemId, $selectedId, $page) =
-	    GalleryUtilities::getRequestVariables('itemId', 'selectedId', 'page');
+	list ($ret, $item) = $this->getItem();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$itemId = $item->getId();
+
+	list ($selectedId, $page) = GalleryUtilities::getRequestVariables('selectedId', 'page');
 	if ($form['formName'] != 'ItemMove') {
 	    /* First time around, load the form with item data */
 	    if ($selectedId) {
@@ -264,11 +273,6 @@ class ItemMoveView extends GalleryView {
 	    $form['destination'] = '';
 	    $form['formName'] = 'ItemMove';
 	    $form['numPerPage'] = 15;
-	}
-
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
-	if ($ret) {
-	    return array($ret, null);
 	}
 
 	/* Get all peers that we can delete */

@@ -240,5 +240,41 @@ class GalleryController {
 	    }
 	}
     }
+
+    /**
+     * Return the current item, as specified in the itemId request variable.
+     *
+     * @param bool $checkPermissions (optional) Default true. Whether to enfore the required (view)
+     *                                          permission.
+     * @return array GalleryStatus a status code,
+     *               GalleryItem an item
+     * @throws ERROR_MISSING_VALUE if there is no itemId in the request parameters.
+     */
+    function getItem($checkPermissions=true) {
+	$itemId = (int)GalleryUtilities::getRequestVariables('itemId');
+
+	if (empty($itemId)) {
+	    return array(GalleryCoreApi::error(ERROR_MISSING_VALUE), null);
+	}
+
+	/* Load the item */
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	if ($checkPermissions) {
+	    list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission($itemId, 'core.view');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    if (!$hasPermission) {
+		/* Avoid information disclosure by treating this as if the item didn't exist. */
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+	    }
+	}
+
+	return array(null, $item);
+    }
 }
 ?>

@@ -33,11 +33,11 @@ class ItemAddConfirmationView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
+	list ($ret, $item) = $this->getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}
+	$itemId = $item->getId();
 
 	/*
 	 * We know what kind of operation happened, but for now let's compress

@@ -33,11 +33,11 @@ class ItemMoveSingleController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
+	list ($ret, $item) = $this->getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}
+	$itemId = $item->getId();
 
 	$status = $error = array();
 
@@ -207,16 +207,16 @@ class ItemMoveSingleView extends GalleryView {
 	global $gallery;
 
 	/* itemId is the album where we want to move items from */
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	list ($ret, $item) = $this->getItem();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$itemId = $item->getId();
+
 	if ($form['formName'] != 'ItemMoveSingle') {
 	    /* First time around, load the form with item data */
 	    $form['destination'] = '';
 	    $form['formName'] = 'ItemMoveSingle';
-	}
-
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
-	if ($ret) {
-	    return array($ret, null);
 	}
 
 	if (GalleryUtilities::isA($item, 'GalleryDataItem')) {

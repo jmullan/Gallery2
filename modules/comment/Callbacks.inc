@@ -39,7 +39,10 @@ class CommentCallbacks {
 	    if ($ret) {
 		return $ret;
 	    }
-	    if (!isset($permissions['comment.view'])) {
+	    if (empty($permissions['core.view'])) {
+		/* Avoid information disclosure, act as if the item didn't exist. */
+		return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
+	    } else if (empty($permissions['comment.view'])) { 
 		return null;
 	    }
 

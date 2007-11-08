@@ -60,8 +60,7 @@ class ShowItemView extends GalleryView {
 	global $gallery;
 	list ($ret, $item, $wasSpecified) = $this->getItem(true);
 	if ($ret) {
-	    $ret = $this->_permissionCheck($ret);
-	    return array($ret[0], $ret[1]);
+	    return array($ret, null);
 	}
 
 	if (isset($_GET[GalleryUtilities::prefixFormVariable('path')]) && !$wasSpecified) {
@@ -72,13 +71,6 @@ class ShowItemView extends GalleryView {
 	    $urlGenerator =& $gallery->getUrlGenerator();
 	    $redirect = dirname($urlGenerator->getCurrentUrlDir()) . '/' . GALLERY_MAIN_PHP;
 	    return array(null, array('redirectUrl' => $redirect));
-	}
-
-	/* Make sure we have permission to view this item */
-	$ret = $this->_permissionCheck(
-		GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.view'));
-	if ($ret) {
-	    return array($ret[0], $ret[1]);
 	}
 
 	/*

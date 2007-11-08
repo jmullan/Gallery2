@@ -94,9 +94,15 @@ class CommentCallbackView extends GalleryView {
 	    return $ret;
 	}
 
-	$ret = GalleryCoreApi::assertHasItemPermission($comment->getParentId(), 'comment.delete');
+	list ($ret, $permissions) = GalleryCoreApi::getPermissions($comment->getParentId());
 	if ($ret) {
 	    return $ret;
+	}
+	if (empty($permissions['core.view'])) {
+	    /* Avoid information disclosure, act as if the item didn't exist. */
+	    return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
+	} else if (empty($permissions['comment.delete'])) {
+	    return GalleryCoreApi::error(ERROR_PERMISSION_DENIED);
 	}
 
 	$ret = GalleryCoreApi::deleteEntityById($commentId, 'GalleryComment');
@@ -126,10 +132,18 @@ class CommentCallbackView extends GalleryView {
 	    return $ret;
 	}
 
-	$ret = GalleryCoreApi::assertHasItemPermission($comment->getParentId(), 'comment.edit');
+	list ($ret, $permissions) = GalleryCoreApi::getPermissions($comment->getParentId());
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
 	    return $ret;
+	}
+	if (empty($permissions['core.view'])) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    /* Avoid information disclosure, act as if the item didn't exist. */
+	    return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
+	} else if (empty($permissions['comment.edit'])) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return GalleryCoreApi::error(ERROR_PERMISSION_DENIED);
 	}
 
 	$comment->setPublishStatus($newPublishStatus);

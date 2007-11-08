@@ -85,11 +85,12 @@ class GalleryModule extends GalleryPlugin {
      * - Remove rewrite v1.1.8 version checks in webdav, watermark, httpauth, ... (look for todo)
      * - Change ->_templateVersion = x to ->setTemplateVersion(x) in module constructors
      * - Remove navId and statusId related functions in GalleryUrlGenerator and GallerySession
+     * - Remove webdav related backwards-compatibility code in ItemAddController.
      *
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(3, 8);
+	return array(3, 9);
     }
 
     /**

@@ -315,11 +315,15 @@ class GalleryView {
     /**
      * Return the current item, as specified in the itemId request variable.
      *
+     * If not itemId is specified as request variable the default album is returned.
+     *
+     * @param bool $checkPermissions (optional) Default true. Whether to enfore the required (view)
+     *                                          permission.
      * @return array GalleryStatus a status code
      *               GalleryItem an item
      *               boolean true if item was specified, false if default was used
      */
-    function getItem() {
+    function getItem($checkPermissions=true) {
 	global $gallery;
 	$itemId = (int)GalleryUtilities::getRequestVariables('itemId');
 	$wasSpecified = true;
@@ -339,9 +343,20 @@ class GalleryView {
 	    return array($ret, null, null);
 	}
 
+	if ($checkPermissions) {
+	    list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission($itemId, 'core.view');
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+	    if (!$hasPermission) {
+		/* Avoid information disclosure by treating this as if the item didn't exist. */
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null, null);
+	    }
+	}
+
 	return array(null, $item, $wasSpecified);
     }
-    
+
     /**
      * Return the current item, as specified in the itemId request variable.
      *

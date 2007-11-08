@@ -178,7 +178,14 @@ class RatingAlbumTest extends GalleryTestCase {
 
 	/* ShowItem handling used to redirect to root album; now returns permission error */
 	list ($ret, $result) = $this->_view->loadTemplate($this->_template, $form = array());
-	$this->assert($ret && $ret->getErrorCode() & ERROR_PERMISSION_DENIED, 'expected error');
+	if ($ret) {
+	    $this->assert($ret->getErrorCode() & ERROR_MISSING_OBJECT, 'wrong error code');
+	    if (!($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+		return $ret;
+	    }
+	} else {
+	    $this->fail('expected error');
+	}
     }
 
     function testLimitTooLow() {

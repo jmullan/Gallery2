@@ -32,7 +32,12 @@ class ItemPermissionsController extends GalleryController {
      */
     function handleRequest($form) {
 	global $gallery;
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
+
+	list ($ret, $item) = $this->getItem();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$itemId = $item->getId();
 
 	/* Make sure we have permission to change permissions of this item */
 	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.changePermissions');
@@ -225,11 +230,6 @@ class ItemPermissionsController extends GalleryController {
 	    }
 
 	    if (empty($error)) {
-		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
-		if ($ret) {
-		    return array($ret, null);
-		}
-
 		list ($ret, $permissions) =
 		    GalleryCoreApi::fetchPermissionsForItems(array($itemId), $item->getOwnerId());
 		if ($ret) {
@@ -382,7 +382,12 @@ class ItemPermissionsView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
+
+	list ($ret, $item) = $this->getItem();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$itemId = $item->getId();
 
 	/* Make sure we have permission to edit this item */
 	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
@@ -395,10 +400,6 @@ class ItemPermissionsView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
-	if ($ret) {
-	    return array($ret, null);
-	}
 	$form['serialNumber'] = $item->getSerialNumber();
 
 	if ($form['formName'] == 'ItemPermissions') {

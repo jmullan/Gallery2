@@ -131,7 +131,7 @@ class CommentTest extends GalleryTestCase {
 	$comment->setCommenterId($gallery->getActiveUserId());
 	$comment->setHost('127.0.0.1');
 	$comment->setComment('this is a test comment');
-	$comment->setDate(time()+5);
+	$comment->setDate(time() + 5);
 	$ret = $comment->save();
 	if ($ret) {
 	    return $ret;
@@ -187,6 +187,7 @@ class CommentTest extends GalleryTestCase {
 	$itemId = $this->_item->getId();
 	/* Verify we get a non empty item summary for the item */
 	$permissions[$itemId]['comment.view'] = 1;
+	$permissions[$itemId]['core.view'] = 1;
 	$unused = null;
 	list ($ret, $content) =
 	    $module->getItemSummaries(array($this->_item), $permissions, $unused);

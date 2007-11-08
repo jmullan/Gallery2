@@ -33,8 +33,13 @@ class ItemDeleteController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	$status = $error = array();
+
+	list ($ret, $item) = $this->getItem();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$itemId = $item->getId();
 
 	if (isset($form['action']['delete'])) {
 	    $status['deleted']['count'] = 0;
@@ -144,12 +149,18 @@ class ItemDeleteView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	$variables = GalleryUtilities::getRequestVariables('itemId', 'selectedId', 
-							    'anchorId', 'page');
+	list ($ret, $item) = $this->getItem();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$itemId = $item->getId();
+
+	$variables = GalleryUtilities::getRequestVariables('selectedId', 'anchorId', 'page');
+
 	foreach ($variables as $key => $value) {
 	    $variables[$key] = is_numeric($value) ? (int) $value : null;
 	}
-	list ($itemId, $selectedId, $anchorId, $page) = $variables;
+	list ($selectedId, $anchorId, $page) = $variables;
 
 	if ($form['formName'] != 'ItemDelete') {
 	    if ($selectedId) {
@@ -160,11 +171,6 @@ class ItemDeleteView extends GalleryView {
 	    $form['destination'] = '';
 	    $form['formName'] = 'ItemDelete';
 	    $form['numPerPage'] = 30;
-	}
-
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
-	if ($ret) {
-	    return array($ret, null);
 	}
 
 	list ($ret, $peerIds) =

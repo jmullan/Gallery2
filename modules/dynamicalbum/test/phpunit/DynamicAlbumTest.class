@@ -259,13 +259,13 @@ class DynamicAlbumTest extends GalleryTestCase {
 
 	list ($ret, $result) = $this->_randomView->loadTemplate($this->_template, $form = array());
 	if ($ret) {
-	    return $ret;
+	    $this->assert($ret->getErrorCode() & ERROR_MISSING_OBJECT, 'wrong error code');
+	    if (!($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+		return $ret;
+	    }
+	} else {
+	    $this->fail('expected error');
 	}
-
-	$this->assertEquals(
-	    array('redirect' => array('view' => 'core.UserAdmin', 'subView' => 'core.UserLogin',
-		  'return' => true)),
-	    $result, 'redirect');
     }
 
     function testItemLinks() {

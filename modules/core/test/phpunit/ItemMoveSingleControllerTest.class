@@ -302,12 +302,19 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
      * Test moving an item that we can't delete
      */
     function testMoveItemWithNoDeletePermissions() {
+	global $gallery;
+
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	GalleryUtilities::putRequestVariable('form[action][move]', 1);
 	GalleryUtilities::putRequestVariable('form[destination]',
 					     $this->_destinationAlbum->getId());
 
 	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
+	if ($ret) {
+	    return $ret;
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $gallery->getActiveUserId(), 'core.view');
 	if ($ret) {
 	    return $ret;
 	}

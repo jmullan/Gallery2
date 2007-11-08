@@ -436,6 +436,10 @@ function _GalleryMain($embedded=false) {
 	    $error = isset($results['error']) ? $results['error'] : array();
 	    $ret = $view->renderImmediate($status, $error);
 	    if ($ret) {
+		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		    /* Normalize error to GalleryView::_permissionCheck() */
+		    $ret->addErrorCode(ERROR_PERMISSION_DENIED);
+		}
 		return array($ret, null);
 	    }
 	    $data['isDone'] = true;
@@ -444,7 +448,10 @@ function _GalleryMain($embedded=false) {
 	    $template = new GalleryTemplate(dirname(__FILE__));
 	    list ($ret, $results, $theme) = $view->doLoadTemplate($template);
 	    if ($ret) {
-		return array($ret, null);
+		list ($ret, $results) = $view->_permissionCheck($ret);
+		if ($ret) {
+		    return array($ret, null);
+		}
 	    }
 
 	    if (isset($results['redirect']) || isset($results['redirectUrl'])) {

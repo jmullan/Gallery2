@@ -85,6 +85,10 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 		    return $ret;
 		}
 
+		$ret = GalleryCoreApi::addUserPermission($itemId, $userId, 'core.view');
+		if ($ret) {
+		    return $ret;
+		}
 		$ret = GalleryCoreApi::addUserPermission($itemId, $userId, 'core.delete');
 		if ($ret) {
 		    return $ret;
@@ -103,6 +107,10 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 		    return $ret;
 		}
 
+		$ret = GalleryCoreApi::addUserPermission($itemId, $userId, 'core.view');
+		if ($ret) {
+		    return $ret;
+		}
 		$ret = GalleryCoreApi::addUserPermission($itemId, $userId, 'core.delete');
 		if ($ret) {
 		    return $ret;
@@ -121,6 +129,10 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 		    return $ret;
 		}
 
+		$ret = GalleryCoreApi::addUserPermission($itemId, $userId, 'core.view');
+		if ($ret) {
+		    return $ret;
+		}
 		$ret = GalleryCoreApi::addUserPermission($itemId, $userId, 'core.delete');
 		if ($ret) {
 		    return $ret;

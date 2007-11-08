@@ -35,16 +35,17 @@ class ItemDeleteSingleController extends GalleryController {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 	
-	list ($itemId, $pageItemId, $page) = 
-	    GalleryUtilities::getRequestVariables('itemId', 'pageId', 'page');
+	list ($pageItemId, $page) = 
+	    GalleryUtilities::getRequestVariables('pageId', 'page');
 
-	/* The framework shouldn't let us get this far if we don't have delete permission */
-	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.delete');
+	list ($ret, $item) = $this->getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}
+	$itemId = $item->getId();
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
+	/* The framework shouldn't let us get this far if we don't have delete permission */
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.delete');
 	if ($ret) {
 	    return array($ret, null);
 	}

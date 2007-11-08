@@ -888,7 +888,7 @@ class WebDavTest extends GalleryTestCase {
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
-	$ret = $this->_becomeGuestUserWithPermission(array('core.addDataItem'));
+	$ret = $this->_becomeGuestUserWithPermission(array('core.view', 'core.addDataItem'));
 	if ($ret) {
 	    return $ret;
 	}
@@ -1073,7 +1073,8 @@ class WebDavTest extends GalleryTestCase {
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
 	/** @todo Don't require core.addDataItem permission */
-	$ret = $this->_becomeGuestUserWithPermission(array('core.edit', 'core.addDataItem'));
+	$ret = $this->_becomeGuestUserWithPermission(
+	    array('core.view', 'core.edit', 'core.addDataItem'));
 	if ($ret) {
 	    return $ret;
 	}
@@ -1126,7 +1127,7 @@ class WebDavTest extends GalleryTestCase {
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
 	/** @todo Don't require core.addDataItem permission */
-	$ret = $this->_becomeGuestUserWithPermission(array('core.addDataItem'));
+	$ret = $this->_becomeGuestUserWithPermission(array('core.view', 'core.addDataItem'));
 	if ($ret) {
 	    return $ret;
 	}
@@ -1174,7 +1175,8 @@ class WebDavTest extends GalleryTestCase {
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
 	/** @todo Don't require core.addDataItem permission */
-	$ret = $this->_becomeGuestUserWithPermission(array('core.edit', 'core.addDataItem'));
+	$ret = $this->_becomeGuestUserWithPermission(
+	    array('core.view', 'core.edit', 'core.addDataItem'));
 	if ($ret) {
 	    return $ret;
 	}

@@ -33,7 +33,11 @@ class ItemReorderController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	list ($ret, $item) = $this->getItem();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$itemId = $item->getId();
 
 	/* Check permissions */
 	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
@@ -172,18 +176,17 @@ class ItemReorderView extends GalleryView {
 	global $gallery;
 
 	/* itemId is the album where we want to move items from */
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	list ($ret, $item) = $this->getItem();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$itemId = $item->getId();
 
 	if ($form['formName'] == 'ItemReorder') {
 	    /* No validation at the moment */
 	} else {
 	    /* First time around, load the form with item data */
 	    $form['formName'] = 'ItemReorder';
-	}
-
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
-	if ($ret) {
-	    return array($ret, null);
 	}
 
 	$show = array();

@@ -521,6 +521,38 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 			  $comments[0]->getDate() <= time(), 'date');
 	}
     }
+
+    function testAddCommentRequiresViewPermission() {
+	global $gallery;
+
+	/* Use valid inputs */
+	$itemId = $this->_item->getId();
+	GalleryUtilities::putRequestVariable('itemId', $itemId);
+	GalleryUtilities::putRequestVariable('form[action][add]', 1);
+	GalleryUtilities::putRequestVariable('form[subject]', 'this is a subject');
+	GalleryUtilities::putRequestVariable('form[comment]', 'this is a comment');
+
+	$ret = GalleryCoreApi::removeItemPermissions($itemId);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret =
+	    GalleryCoreApi::addUserPermission($itemId, $gallery->getActiveUserId(), 'comment.add');
+	if ($ret) {
+	    return $ret;
+	}
+
+	/* Perform the request and verify that we fail */
+	$results = $this->handleRequest(ERROR_MISSING_OBJECT);
+	$this->assertEquals(null, $results, 'controller results');
+
+	list ($ret, $comments) = GalleryCommentHelper::fetchComments($this->_item->getId());
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(array(), $comments, 'no comments');
+    }
 }
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryValidationPlugin.class');

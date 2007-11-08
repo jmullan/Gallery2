@@ -33,13 +33,14 @@ class ItemMakeHighlightController extends GalleryController {
     function handleRequest($form) {
 	$status = array();
 	$error = array();
-	if (isset($form['action']['makeHighlight'])) {
-	    $itemId = GalleryUtilities::getRequestVariables('itemId');
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
-	    if ($ret) {
-		return array($ret, null);
-	    }
 
+	list ($ret, $item) = $this->getItem();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$itemId = $item->getId();
+
+	if (isset($form['action']['makeHighlight'])) {
 	    /* Make sure we have permission to edit this item */
 	    $ret = GalleryCoreApi::assertHasItemPermission($form['parentId'], 'core.edit');
 	    if ($ret) {
@@ -71,12 +72,11 @@ class ItemMakeHighlightView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
-
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
+	list ($ret, $item) = $this->getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}
+	$itemId = $item->getId();
 	$parentId = $item->getParentId();
 
 	/* Make sure we have permission do edit the parent of this item */

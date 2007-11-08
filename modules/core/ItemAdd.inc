@@ -52,15 +52,27 @@ class ItemAddController extends GalleryController {
 	global $gallery;
 	$templateAdapter =& $gallery->getTemplateAdapter();
 
-	list ($itemId, $addPluginId) = GalleryUtilities::getRequestVariables('itemId', 'addPlugin');
+	$addPluginId = GalleryUtilities::getRequestVariables('addPlugin');
 
-	/* Make sure we have permission to add to this item */
-	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.addDataItem');
+	/**
+	 * Special case for backwards-compatibility with the webdav module
+	 * @todo Remove on next major API change
+	 */
+	if ($addPluginId == 'ItemAddWebDav') {
+	    /* WebDAV used to do a static ::handleRequest() call. We need an instance. */
+	    $controller = new ItemAddController();
+	} else {
+	    $controller = $this;
+	}
+
+	list ($ret, $item) = $controller->getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}
+	$itemId = $item->getId();
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
+	/* Make sure we have permission to add to this item */
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.addDataItem');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -85,8 +97,6 @@ class ItemAddController extends GalleryController {
 	 * @todo Remove on next major API change
 	 */
 	if ($addPluginId == 'ItemAddWebDav') {
-	    /* WebDAV used to do a static ::handleRequest() call. We need an instance. */
-	    $controller = new ItemAddController();
 	    /* Don't output any HTML (progress-bar) */
 	    ob_start();
 	    $ret = $controller->handleRequestWithProgressBar($form, $item, $addPlugin);
@@ -537,7 +547,13 @@ class ItemAddView extends GalleryView {
 	global $gallery;
 	$session =& $gallery->getSession();
 
-	list ($itemId, $addPlugin) = GalleryUtilities::getRequestVariables('itemId', 'addPlugin');
+	$addPlugin = GalleryUtilities::getRequestVariables('addPlugin');
+
+	list ($ret, $item) = $this->getItem();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$itemId = $item->getId();
 
 	/* Make sure we have permission to add to this item */
 	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.addDataItem');
@@ -546,11 +562,6 @@ class ItemAddView extends GalleryView {
 	}
 
 	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return array($ret, null);
 	}

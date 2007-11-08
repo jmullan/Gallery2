@@ -34,18 +34,12 @@ class ItemEditController extends GalleryController {
 	global $gallery;
 
 	$editPlugin = GalleryUtilities::getRequestVariables('editPlugin');
-	$itemId = (int)GalleryUtilities::getRequestVariables('itemId');
-	
-	/* Load the item */
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
+
+	list ($ret, $item) = $this->getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}
-
-	if (!GalleryUtilities::isA($item, 'GalleryItem')) {
-	    /* Invalid itemId given, return MISSING_OBJECT to get standard error page */
-	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
-	}
+	$itemId = $item->getId();
 
 	/* Make sure we have permission to edit this item */
 	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.edit');
