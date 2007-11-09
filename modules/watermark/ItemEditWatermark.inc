@@ -330,10 +330,7 @@ class ItemEditWatermark extends ItemEditPlugin {
 				   'image' => isset($displayImage) ? (array)$displayImage : null,
 				   'isAlbum' => GalleryUtilities::isA($item, 'GalleryAlbumItem'));
 
-	$template->javascript('lib/yui/yahoo-min.js');
-	$template->javascript('lib/yui/dom-min.js');
-	$template->javascript('lib/yui/event-min.js');
-	$template->javascript('lib/yui/dragdrop-min.js');
+	$template->javascript('lib/yui/utilities.js');
 	$template->javascript('modules/watermark/watermark.js');
 
 	$template->setVariable('ItemEditWatermark', $ItemEditWatermark);

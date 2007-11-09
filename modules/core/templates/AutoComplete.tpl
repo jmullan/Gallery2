@@ -3,11 +3,7 @@
  * Read this before changing templates!  http://codex.gallery2.org/Gallery2:Editing_Templates
  *}
 {if $callCount == 1}
-<script type="text/javascript" src="{g->url href="lib/yui/yahoo-min.js"}"></script>
-<script type="text/javascript" src="{g->url href="lib/yui/dom-min.js"}"></script>
-<script type="text/javascript" src="{g->url href="lib/yui/event-min.js"}"></script>
-<script type="text/javascript" src="{g->url href="lib/yui/connection-min.js"}"></script>
-<script type="text/javascript" src="{g->url href="lib/yui/animation-min.js"}"></script>
+<script type="text/javascript" src="{g->url href="lib/yui/utilities.js"}"></script>
 <script type="text/javascript" src="{g->url href="lib/yui/autocomplete-min.js"}"></script>
 <script type="text/javascript" src="{g->url href="lib/javascript/AutoComplete.js"}"></script>
 {/if}

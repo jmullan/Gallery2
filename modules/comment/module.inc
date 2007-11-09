@@ -40,12 +40,12 @@ class CommentModule extends GalleryModule {
 	$this->setId('comment');
 	$this->setName($gallery->i18n('Comments'));
 	$this->setDescription($gallery->i18n('User commenting system'));
-	$this->setVersion('1.1.9'); /* Update upgrade() function below too */
+	$this->setVersion('1.1.10'); /* Update upgrade() function below too */
 	$this->_templateVersion = 1;
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
 	$this->setCallbacks('getItemLinks|getItemSummaries|' .
 			    'getSiteAdminViews|getItemAdminViews');
-	$this->setRequiredCoreApi(array(7, 34));
+	$this->setRequiredCoreApi(array(7, 41));
 	$this->setRequiredModuleApi(array(3, 9));
     }
 
@@ -167,6 +167,8 @@ class CommentModule extends GalleryModule {
 	case '1.1.7':
 	    /* Refactored to new event registration from core API 7.34 */
 	case '1.1.8':
+	case '1.1.9':
+	    /* Combined YUI libraries into a single utilities.js file */ 
 
 	case 'end of upgrade path':
 	    /*

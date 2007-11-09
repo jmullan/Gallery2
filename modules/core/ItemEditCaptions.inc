@@ -251,9 +251,7 @@ class ItemEditCaptionsView extends GalleryView {
 
 	$template->setVariable('ItemEditCaptions', $ItemEditCaptions);
 	$template->setVariable('controller', 'core.ItemEditCaptions');
-	$template->javascript('lib/yui/yahoo-min.js');
-	$template->javascript('lib/yui/dom-min.js');
-	$template->javascript('lib/yui/event-min.js');
+	$template->javascript('lib/yui/yahoo-dom-event.js');
 	$template->javascript('lib/yui/container-min.js');
 	return array(null, array('body' => 'modules/core/templates/ItemEditCaptions.tpl'));
 

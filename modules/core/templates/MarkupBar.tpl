@@ -82,11 +82,7 @@
   {rdelim}
   // ]]>
 </script>
-<script type="text/javascript" src="{g->url href="lib/yui/yahoo-min.js"}"></script>
-<script type="text/javascript" src="{g->url href="lib/yui/event-min.js"}"></script>
-<script type="text/javascript" src="{g->url href="lib/yui/dom-min.js"}"></script>
-<script type="text/javascript" src="{g->url href="lib/yui/animation-min.js"}"></script>
-<script type="text/javascript" src="{g->url href="lib/yui/dragdrop-min.js"}"></script>
+<script type="text/javascript" src="{g->url href="lib/yui/utilities.js"}"></script>
 <script type="text/javascript" src="{g->url href="lib/yui/color.js"}"></script>
 <script type="text/javascript" src="{g->url href="lib/yui/slider-min.js"}"></script>
 <script type="text/javascript" src="{g->url href="lib/javascript/ColorChooser.js"}"></script>

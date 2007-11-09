@@ -360,9 +360,7 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 		$aspectRatioList[$selectedAspect]['height'];
 	}
 
-	$template->javascript('lib/yui/yahoo-min.js');
-	$template->javascript('lib/yui/dom-min.js');
-	$template->javascript('lib/yui/event-min.js');
+	$template->javascript('lib/yui/yahoo-dom-event.js');
 	$template->javascript('lib/yui/dragdrop-min.js');
 	$template->javascript('lib/javascript/Cropper.js');
 	$template->style('modules/core/templates/ItemEditPhotoThumbnail.css');

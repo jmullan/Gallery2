@@ -157,11 +157,7 @@ class AdminPluginsView extends GalleryView {
 
 	$template->setVariable('AdminPlugins', $AdminPlugins);
 	$template->setVariable('controller', 'core.AdminPlugins');
-	$template->javascript('lib/yui/yahoo-min.js');
-	$template->javascript('lib/yui/dom-min.js');
-	$template->javascript('lib/yui/event-min.js');
-	$template->javascript('lib/yui/connection-min.js');
-	$template->javascript('lib/yui/animation-min.js');
+	$template->javascript('lib/yui/utilities.js');
 	$template->javascript('lib/yui/container-min.js');
 	$template->javascript('modules/core/templates/AdminPlugins.js');
 

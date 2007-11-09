@@ -194,9 +194,7 @@ class ItemCreateReplicaSingleView extends GalleryView {
 
 	$template->setVariable('ItemCreateReplicaSingle', $ItemCreateReplicaSingle);
 	$template->setVariable('controller', 'replica.ItemCreateReplicaSingle');
-	$template->javascript('lib/yui/yahoo-min.js');
-	$template->javascript('lib/yui/dom-min.js');
-	$template->javascript('lib/yui/event-min.js');
+	$template->javascript('lib/yui/yahoo-dom-event.js');
 	$template->javascript('lib/yui/container-min.js');
 	$template->javascript('lib/yui/treeview-min.js');
 	$template->style('modules/core/data/tree.css');
