@@ -2453,6 +2453,8 @@ class CoreModuleExtras {
 		fwrite($fh, $htaccessContents);
 		fclose($fh);
 	    }
+	case '1.2.24':
+	    /* Combined YUI libraries into a single file */ 
 
 	case 'end of upgrade path':
 	    /*
