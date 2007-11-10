@@ -42,7 +42,7 @@ class FloatrixTheme extends GalleryTheme {
 		  'showImageOwner' => 0, 'showAlbumOwner' => 1,
 		  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => '',
 		  'colorpack' => '',
-		  'showMicroThumbs' => 0,
+		  'showMicroThumbs' => 0, 'dynamicLinks' => 'browse',
 		  'sidebarBlocks' => serialize(array(
 			array('core.ItemLinks', array('useDropdown' => false)),
 			array('core.PeerList', array()),
