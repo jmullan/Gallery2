@@ -441,6 +441,21 @@ class GalleryTemplateAdapter {
 		      'itemId' => 'CombinedJavascript_' . $key,
 		      'id' => '_all'));
 	    if (!$platform->file_exists($cacheFile)) {
+		/*
+		 * Special case utilities.js is superset of yahoo-dom-event.js
+		 */
+		$yde = array_search('lib/yui/yahoo-dom-event.js', $filteredFiles);
+		if ($yde !== false) {
+		    $util = array_search('lib/yui/utilities.js', $filteredFiles);
+		    if ($util !== false) {
+			if ($yde < $util) {
+			    $filteredFiles[$yde] = $filteredFiles[$util];
+			    unset($filteredFiles[$util]);
+			} else {
+			    unset($filteredFiles[$yde]);
+			}
+		    }
+		}
 		$contents = '';
 		foreach ($filteredFiles as $file) {
 		    $contents .= $platform->file_get_contents($codeBase . $file);

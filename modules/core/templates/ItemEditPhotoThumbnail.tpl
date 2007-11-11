@@ -23,6 +23,15 @@
     </div>
   </div>
 
+  {* 
+   * A bug in YUI prevents us from using utilities.js in this case
+   * https://sourceforge.net/tracker/?func=detail&atid=836476&aid=1814066&group_id=165715
+   * After YUI upgrade consider moving this back to .inc and replacing
+   * yahoo-dom-event.js and dragdrop-min.js with a single utilities.js file
+   *}
+  <script type="text/javascript" src="{g->url href="lib/yui/yahoo-dom-event.js"}"></script>
+  <script type="text/javascript" src="{g->url href="lib/yui/dragdrop-min.js"}"></script>
+  <script type="text/javascript" src="{g->url href="lib/javascript/Cropper.js"}"></script>
   <script type="text/javascript">
     // <![CDATA[
     var cropper;
