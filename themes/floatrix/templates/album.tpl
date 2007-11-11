@@ -57,12 +57,17 @@
 
             {if ($child.canContainChildren || $child.entityType == 'GalleryLinkItem')}
 		{assign var=frameType value="albumFrame"}
-		{capture assign=linkUrl}{g->url arg1="view=core.ShowItem"
-						arg2="itemId=`$child.id`"}{/capture}
+		{capture assign=linkUrl}{g->url arg1="view=core.ShowItem" 
+			                        arg2="itemId=`$child.id`"}{/capture}
 	    {else}
 		{assign var=frameType value="itemFrame"}
-		{capture assign=linkUrl}{g->url params=$theme.pageUrl
-						arg1="itemId=`$child.id`"}{/capture}
+		{capture assign=linkUrl}{strip}
+		  {if $theme.params.dynamicLinks == 'jump'}
+		    {g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}
+		  {else}
+		    {g->url params=$theme.pageUrl arg1="itemId=`$child.id`"}
+		  {/if}
+		{/strip}{/capture}
 	    {/if}
 
             {strip}
