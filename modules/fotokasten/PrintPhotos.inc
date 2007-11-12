@@ -68,6 +68,17 @@ class PrintPhotosController extends GalleryController {
 	    return array($ret, null);
 	}
 
+	list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems($itemIds);
+	if ($ret) {
+	    return array($ret, null);
+	}
+	foreach ($itemIds as $id) {
+	    if (empty($permissions[$id]['core.view'])) {
+		/* Avoid information disclosure, act as if the item didn't exist. */
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+	    }
+	}
+
 	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
 	if ($ret) {
 	    return array($ret, null);
@@ -83,18 +94,14 @@ class PrintPhotosController extends GalleryController {
 	    return array($ret, null);
 	}
 
-	$ret = GalleryCoreApi::studyPermissions($itemIds);
-	if ($ret) {
-	    return array($ret, null);
-	}
-
 	/* We want to know which are viewable to guests */
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
 	    return array($ret, null);
 	}
-	$ret = GalleryCoreApi::studyPermissions($itemIds, $anonymousUserId);
+	list ($ret, $publicPermissions) =
+	    GalleryCoreApi::fetchPermissionsForItems($itemIds, $anonymousUserId, false);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -103,23 +110,14 @@ class PrintPhotosController extends GalleryController {
 	$entries = $protectedIds = array();
 	foreach ($items as $item) {
 	    $itemId = $item->getId();
-	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($itemId);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	    list ($ret, $publicPermissions) =
-		GalleryCoreApi::getPermissions($itemId, $anonymousUserId);
-	    if ($ret) {
-		return array($ret, null);
-	    }
 
-	    if (!isset($permissions['fotokasten.print'])) {
+	    if (!isset($permissions[$itemId]['fotokasten.print'])) {
 		/* Skip any cart items for which we don't have print permission */
 		continue;
 	    }
 
 	    $source = isset($preferreds[$itemId]) ? $preferreds[$itemId] : $item;
-	    $needSession = !isset($publicPermissions['core.viewSource']);
+	    $needSession = !isset($publicPermissions[$itemId]['core.viewSource']);
 
 	    if ($needSession && !isset($foSession)) {
 		/*

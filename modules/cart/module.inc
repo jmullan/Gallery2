@@ -33,12 +33,12 @@ class CartModule extends GalleryModule {
 	$this->setId('cart');
 	$this->setName($gallery->i18n('Cart'));
 	$this->setDescription($gallery->i18n('Shopping Cart Module'));
-	$this->setVersion('1.0.9'); /* Update upgrade() function below too */
+	$this->setVersion('1.0.10'); /* Update upgrade() function below too */
 	$this->_templateVersion = 1;
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getItemLinks');
 	$this->setRequiredCoreApi(array(7, 27));
-	$this->setRequiredModuleApi(array(3, 6));
+	$this->setRequiredModuleApi(array(3, 9));
     }
 
     /**
@@ -130,6 +130,7 @@ class CartModule extends GalleryModule {
 	case '1.0.7':
 	case '1.0.8':
 	    /* Added CartPluginInterface_1_1 */
+	case '1.0.9':
 
 	case 'end of upgrade path':
 	    break;

@@ -33,12 +33,12 @@ class PhotoAccessModule extends GalleryModule {
 	$this->setId('photoaccess');
 	$this->setName($gallery->i18n('PhotoWorks'));
 	$this->setDescription($gallery->i18n('PhotoWorks Photo Printing Module'));
-	$this->setVersion('1.0.10'); /* Update upgrade() too */
+	$this->setVersion('1.0.11'); /* Update upgrade() too */
 	$this->_templateVersion = 1;
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getItemLinks');
-	$this->setRequiredCoreApi(array(7, 27));
-	$this->setRequiredModuleApi(array(3, 6));
+	$this->setRequiredCoreApi(array(7, 30));
+	$this->setRequiredModuleApi(array(3, 9));
     }
 
     /**
@@ -100,6 +100,7 @@ class PhotoAccessModule extends GalleryModule {
 	case '1.0.8':
 	case '1.0.9':
 	    /* Implementing new version of the cart plugin interface */
+	case '1.0.10':
 
 	case 'end of upgrade path':
 	    break;

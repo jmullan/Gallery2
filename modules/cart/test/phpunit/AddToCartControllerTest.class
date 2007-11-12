@@ -220,7 +220,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 
 	GalleryUtilities::putRequestVariable('itemId', $item->getId());
 	/* Perform the request and verify that we failed */
-	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
+	$results = $this->handleRequest(ERROR_MISSING_OBJECT);
 
 	/* Verify our cart */
 	list ($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();

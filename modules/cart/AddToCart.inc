@@ -35,9 +35,7 @@ class AddToCartController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
-
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
+	list ($ret, $item) = $this->getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -49,10 +47,6 @@ class AddToCartController extends GalleryController {
 		return array($ret, null);
 	    }
 	} else {
-	    $ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.view');
-	    if ($ret) {
-		return array($ret, null);
-	    }
 	    $ids = array($item->getId());
 	}
 
@@ -63,7 +57,7 @@ class AddToCartController extends GalleryController {
 
 	/* Prepare our results */
 	$results['redirect']['view'] = 'cart.ViewCart';
-	$results['redirect']['itemId'] = $itemId;
+	$results['redirect']['itemId'] = $item->getId();
 	$results['status'] = array();
 	$results['error'] = array();
 

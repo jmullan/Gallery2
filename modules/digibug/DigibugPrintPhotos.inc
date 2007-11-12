@@ -67,6 +67,17 @@ class DigibugPrintPhotosView extends GalleryView {
 	    return $ret;
 	}
 
+	list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems($itemIds);
+	if ($ret) {
+	    return $ret;
+	}
+	foreach ($itemIds as $id) {
+	    if (empty($permissions[$id]['core.view'])) {
+		/* Avoid information disclosure, act as if the item didn't exist. */
+		return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
+	    }
+	}
+
 	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
 	if ($ret) {
 	    return $ret;
@@ -82,18 +93,14 @@ class DigibugPrintPhotosView extends GalleryView {
 	    return $ret;
 	}
 
-	$ret = GalleryCoreApi::studyPermissions($itemIds);
-	if ($ret) {
-	    return $ret;
-	}
-
 	/* We want to know which are viewable to guests */
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
 	    return $ret;
 	}
-	$ret = GalleryCoreApi::studyPermissions($itemIds, $anonymousUserId, false);
+	list ($ret, $publicPermissions) =
+	    GalleryCoreApi::fetchPermissionsForItems($itemIds, $anonymousUserId, false);
 	if ($ret) {
 	    return $ret;
 	}
@@ -103,23 +110,13 @@ class DigibugPrintPhotosView extends GalleryView {
 	$entries = $protectedIds = array();
 	foreach ($items as $item) {
 	    $itemId = $item->getId();
-	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($itemId);
-	    if ($ret) {
-		return $ret;
-	    }
-	    list ($ret, $publicPermissions) =
-		GalleryCoreApi::getPermissions($itemId, $anonymousUserId, false);
-	    if ($ret) {
-		return $ret;
-	    }
-
-	    if (!isset($permissions['digibug.print'])) {
+	    if (!isset($permissions[$itemId]['digibug.print'])) {
 		/* Skip any cart items for which we don't have print permission */
 		continue;
 	    }
 
 	    $source = isset($preferreds[$itemId]) ? $preferreds[$itemId] : $item;
-	    $needSession = !isset($publicPermissions['core.viewSource']);
+	    $needSession = !isset($publicPermissions[$itemId]['core.viewSource']);
 
 	    if ($needSession && !isset($dgSession)) {
 		/*
