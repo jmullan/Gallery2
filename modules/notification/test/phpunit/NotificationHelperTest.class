@@ -643,6 +643,8 @@ class NotificationHelperTest extends GalleryTestCase {
     }
 }
 
+GalleryCoreApi::requireOnce('modules/notification/classes/NotificationEvent_1_0.class');
+
 class NotificationHelperEventTest extends NotificationEvent_1_0 {
     function getDescription() {
 	global $gallery;
@@ -676,6 +678,8 @@ class NotificationHelperEventTest2 extends NotificationEvent_1_0 {
 	return true;
     }
 }
+
+GalleryCoreApi::requireOnce('modules/notification/classes/NotificationHandler_1_0.class');
 
 class NotificationHelperNotification extends NotificationHandler_1_0 {
     function getDescription() {
