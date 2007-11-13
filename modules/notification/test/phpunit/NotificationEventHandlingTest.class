@@ -417,6 +417,10 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 			  'itemId' => $itemId, 'notificationName' => 'Test::Event1',
 			  'handlerName' => 'Test:EventHandler'), null),
 	      null);
+	/* The album might use some presort */
+	$storage->setReply('getFunctionSql', '*', array(null, ''), true);
+	$storage->setReply('getFunctionSql', '*', array(null, ''), true);
+	/* The fetchChildItemIds() query */
 	$storage->setReply('search', '*', array(null, new UnitTestStorageSearchResults(array())));
 	$storage->setReply('checkPoint', array(), null);
 
