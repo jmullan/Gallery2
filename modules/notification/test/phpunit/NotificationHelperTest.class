@@ -351,6 +351,10 @@ class NotificationHelperTest extends GalleryTestCase {
 				       'notificationName' => 'Test::Event1'),
 				 array()),
 			   null);
+	/* The album might use some presort */
+	$storage->setReply('getFunctionSql', '*', array(null, ''), true);
+	$storage->setReply('getFunctionSql', '*', array(null, ''), true);
+	/* The fetchChildItemIds() query */
 	$storage->setReply('search', '*', array(null, new UnitTestStorageSearchResults(array())));
 	$storage->setReply('checkPoint', array(), null);
 
@@ -439,6 +443,10 @@ class NotificationHelperTest extends GalleryTestCase {
 				       'handlerId' => $handlerName)),
 			   null);
 
+	/* The album might use some presort */
+	$storage->setReply('getFunctionSql', '*', array(null, ''), true);
+	$storage->setReply('getFunctionSql', '*', array(null, ''), true);
+	/* The fetchChildItemIds() query */
 	$storage->setReply('search', '*', array(null, new UnitTestStorageSearchResults(array())));
 	list ($ret, $hintLockId) = GalleryCoreApi::getPluginParameter('module', 'notification',
 								      'id.hintsLock');
