@@ -191,7 +191,7 @@ class NotificationUserAdminControllerTest extends GalleryControllerTestCase {
 			   array(null, 
 				 new UnitTestStorageSearchResults(array(array($activeUserId)))));
 
-	$itemId = "{$this->_testAlbum->getId()}";
+	$itemId = (string)$this->_testAlbum->getId();
 	$storage->setReply('removeMapEntry',
 			   array('SubscriptionMap', 
 				 array('userId' => $activeUserId, 'itemId' => $itemId,
@@ -251,7 +251,7 @@ class NotificationUserAdminControllerTest extends GalleryControllerTestCase {
 			   array(null, 
 				 new UnitTestStorageSearchResults(array(array($activeUserId)))));
 
-	$itemId = "{$this->_testAlbum->getId()}";
+	$itemId = (string)$this->_testAlbum->getId();
 
 	list ($ret, $hintLockId) = GalleryCoreApi::getPluginParameter('module', 'notification',
 								      'id.hintsLock');

@@ -163,7 +163,7 @@ class NotificationItemAdminControllerTest extends GalleryControllerTestCase {
 				 array('limit' => array('count' => 1))),
 			   array(null, 
 				 new UnitTestStorageSearchResults(array(array($activeUserId)))));
-	$itemId = "{$this->_testAlbum->getId()}";
+	$itemId = (string)$this->_testAlbum->getId();
 	GalleryUtilities::putRequestVariable('form[formName]', 'NotificationItem');
 	GalleryUtilities::putRequestVariable('itemId', $itemId);
 	GalleryUtilities::putRequestVariable('form[action][save]', 'save');
@@ -186,7 +186,7 @@ class NotificationItemAdminControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	$itemId = "{$this->_testAlbum->getId()}";
+	$itemId = (string)$this->_testAlbum->getId();
 
 	$activeUser = $gallery->getActiveUser();
 	$activeUserId = $gallery->getActiveUserId();
@@ -249,7 +249,7 @@ class NotificationItemAdminControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	$itemId = "{$this->_testAlbum->getId()}";
+	$itemId = (string)$this->_testAlbum->getId();
 
 	$activeUser =& $gallery->getActiveUser();
 	$activeUserId = $gallery->getActiveUserId();
