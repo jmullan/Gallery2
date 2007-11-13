@@ -280,6 +280,10 @@ class NotificationItemAdminControllerTest extends GalleryControllerTestCase {
 				 	  array()), null);
 	$results = array(null, new UnitTestStorageSearchResults(array(
 							   array($this->_childAlbum->getId(), 8))));
+	/* The album might use some presort */
+	$storage->setReply('getFunctionSql', '*', array(null, ''), true);
+	$storage->setReply('getFunctionSql', '*', array(null, ''), true);
+	/* The fetchChildItemIds() query */
 	$storage->setReply('search', '*', $results);
 
 	$storage->setReply('getMapEntry',
@@ -295,6 +299,10 @@ class NotificationItemAdminControllerTest extends GalleryControllerTestCase {
 						'notificationName' => 'Test::Event',
 						'handlerName' => 'Test::EventHandler'),
 				 	  array()), null);
+	/* The album might use some presort */
+	$storage->setReply('getFunctionSql', '*', array(null, ''), true);
+	$storage->setReply('getFunctionSql', '*', array(null, ''), true);
+	/* The fetchChildItemIds() query */
 	$storage->setReply('search', '*', $results);
 	$storage->setReply('checkPoint', array(), null);
 
