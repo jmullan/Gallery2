@@ -127,7 +127,8 @@ class GalleryChildEntityHelper_simple {
      * @param int $offset an offset into the child item list (null for no offset)
      * @param int $count a count of how many child items to return (null for unlimited)
      * @param string $class a class to restrict children to (eg. 'GalleryAlbumItem')
-     * @param string $requiredPermission a required permission (can be null)
+     * @param string|array $requiredPermission a single required permission-id (can be null)
+     *                                         or an array or permission-ids
      * @param boolean $linkableOnly whether to restrict to linkable items only
      * @param int $userId the userid we're doing this for (defaults to active user id)
      * @return array GalleryStatus a status code
@@ -251,17 +252,19 @@ class GalleryChildEntityHelper_simple {
 	}
 
 	if (isset($permission)) {
-	    $ret = GalleryCoreApi::studyPermissions($parentIds);
+	    if (!is_array($permission)) {
+		$permission = array($permission);
+	    }
+	    list ($ret, $permissionMap) = GalleryCoreApi::fetchPermissionsForItems($parentIds);
 	    if ($ret) {
 		return array($ret, null);
 	    }
 	    foreach ($parentIds as $i => $id) {
-		list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission($id, $permission);
-		if ($ret) {
-		    return array($ret, null);
-		}
-		if (!$hasPermission) {
-		    unset($parentIds[$i]);
+		foreach ($permission as $permissionId) {
+		    if (!isset($permissionMap[$id][$permissionId])) {
+			unset($parentIds[$i]);
+			break;
+		    }
 		}
 	    }
 	    if (empty($parentIds)) {

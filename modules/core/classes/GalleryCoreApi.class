@@ -85,7 +85,7 @@ class GalleryCoreApi {
      * - delete modules/core/templates/blocks/NavigationLinks.tpl
      */
     function getApiVersion() {
-	return array(7, 41);
+	return array(7, 42);
     }
 
     /**
@@ -484,7 +484,8 @@ class GalleryCoreApi {
      * Fetch all the access list ids that grant the given permission to the given user
      * (either directly or via a group).
      *
-     * @param string $permission the permission id (eg. 'core.view')
+     * @param string|array $permission a single permission id (eg. 'core.view')
+     *                                 or an array of permission ids
      * @param int $userId
      * @param boolean $sessionPermissions (optional) false to ignore session based permissions
      * @return array GalleryStatus a status code
@@ -1540,7 +1541,7 @@ class GalleryCoreApi {
      * 'core.changePermissions' permission bit set.  This allows us to cascade permission updates.
      *
      * @param int $itemId
-     * @param string $permissionId
+     * @param array|string $permissionId Either a single permission-id or an array of permission-ids
      * @return array GalleryStatus a status code
      *               array a list of ids
      */
@@ -1558,7 +1559,8 @@ class GalleryCoreApi {
      * cascade permission updates.
      *
      * @param array $itemId
-     * @param string $permissionId
+     * @param array|string $permission (default is core.view). Either a single permission-id
+     *                     or an array of permission-ids.
      * @return array GalleryStatus a status code
      *               array a list of ids
      */
@@ -1573,7 +1575,8 @@ class GalleryCoreApi {
      * Return the ids of all items that match the given type and have the given permission.
      *
      * @param string $itemType an item type (eg. GalleryAlbumItem)
-     * @param string $permission (default is core.view)
+     * @param array|string $permission (default is core.view). Either a single permission-id
+     *                     or an array of permission-ids.
      * @return array GalleryStatus a status code
      *               array(id, id, id, ...)
      */
@@ -2504,7 +2507,8 @@ class GalleryCoreApi {
      * Load all the ancestors of this item
      *
      * @param GalleryItem $item
-     * @param string $permission (optional) only return ancestors with this permission
+     * @param string|array $permission (optional) only return ancestors with a specific permission
+     *                                            or an array of required permissions
      * @param bool $filterBreadcrumb (optional) whether to filter results with breadcrumbRootId
      * @return array GalleryStatus a status code
      *               array of GalleryItem, from top level to parent item
@@ -2524,7 +2528,8 @@ class GalleryCoreApi {
      * @param string $orderBy order for results
      * @param string $orderDirection order direction for results
      * @param string $class a class to restrict children to (eg. 'GalleryAlbumItem'; can be null)
-     * @param string $requiredPermission a required permission (can be null)
+     * @param string|array $requiredPermission a single required permission (can be null)
+     *                                         or an array of required permission-ids
      * @param boolean $linkableOnly whether to restrict to linkable items only
      * @param int $userId the user we're doing this for
      * @return array GalleryStatus a status code

@@ -236,7 +236,7 @@ class ChildTest extends GalleryTestCase {
 			    $childIds, 'root sub-albums');
     }
 
-    function testChildItemIdsWithPermission() {
+    function testFetchChildItemIdsWithPermission() {
 	global $gallery;
 
 	$permission = array('core.view', 'core.all', 'core.edit');
@@ -269,6 +269,38 @@ class ChildTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(array($this->_child[1]->getId()), $childIds, 'match all bits failed');
+    }
+
+    function testFetchChildItemIdsWithPermissionArray() {
+	global $gallery;
+
+	$permission = array('core.view', 'core.all', 'core.edit');
+	for ($i = 0; $i < 3; $i++) {
+	    $ret = GalleryCoreApi::removeItemPermissions($this->_child[$i]->getId());
+	    if ($ret) {
+		return $ret;
+	    }
+	    $ret = GalleryCoreApi::addUserPermission(
+		    $this->_child[$i]->getId(), $gallery->getActiveUserId(), $permission[$i]);
+	    if ($ret) {
+		return $ret;
+	    }
+	    if ($i == 0) {
+		$ret = GalleryCoreApi::addUserPermission(
+		    $this->_child[$i]->getId(), $gallery->getActiveUserId(), 'core.edit');
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+	}
+
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIdsWithPermission(
+	    $this->_root->getId(), array('core.edit', 'core.view'));
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(array($this->_child[1]->getId(), $this->_child[0]->getId()), $childIds);
     }
 
     function testFetchLinkableChildItemIdsWithPermission() {

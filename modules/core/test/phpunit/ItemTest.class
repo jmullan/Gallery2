@@ -412,6 +412,28 @@ class ItemTest extends GalleryTestCase {
 
 	/* Make sure there's no duplication */
 	$this->assertEquals(sizeof($ids), sizeof(array_flip(array_flip($ids))));
+    }
+
+    function testFetchAllItemIdsWithSpecificPermission() {
+	for ($i = 0; $i < 3; $i++) {
+	    list ($ret, $child[$i]) = $this->_createRandomAlbum($this->_album->getId());
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    if ($i == 1) {
+		$ret = GalleryCoreApi::removeItemPermissions($child[$i]->getId());
+		if ($ret) {
+		    return $ret;
+		}
+
+		$ret = GalleryCoreApi::addUserPermission(
+		    $child[$i]->getId(), $this->_userId, 'core.addDataItem', false);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+	}
 
 	list ($ret, $ids) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
 	if ($ret) {
@@ -421,6 +443,50 @@ class ItemTest extends GalleryTestCase {
 	/* We should see them all */
 	$this->assert(in_array($child[0]->getId(), $ids), 'child 0');
 	$this->assert(in_array($child[1]->getId(), $ids), 'child 1');
+	$this->assert(in_array($child[2]->getId(), $ids), 'child 2');
+
+	/* Make sure there's no duplication */
+	$this->assertEquals(sizeof($ids), sizeof(array_flip(array_flip($ids))));
+    }
+
+    function testFetchAllItemIdsWithMultiplePermissions() {
+	for ($i = 0; $i < 3; $i++) {
+	    list ($ret, $child[$i]) = $this->_createRandomAlbum($this->_album->getId());
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    if ($i > 0) {
+		$ret = GalleryCoreApi::removeItemPermissions($child[$i]->getId());
+		if ($ret) {
+		    return $ret;
+		}
+
+		$ret = GalleryCoreApi::addUserPermission(
+		    $child[$i]->getId(), $this->_userId, 'core.addDataItem', false);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+	    if ($i == 2) {
+		$ret = GalleryCoreApi::addUserPermission(
+		    $child[$i]->getId(), $this->_userId, 'core.view', false);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+	}
+
+	list ($ret, $ids) = GalleryCoreApi::fetchAllItemIds(
+	    'GalleryAlbumItem', array('core.addDataItem', 'core.view'));
+	if ($ret) {
+	    return $ret;
+	}
+
+	/* We should see children 0 & 2 */
+	$this->assert(in_array($this->_album->getId(), $ids), 'parent');
+	$this->assert(in_array($child[0]->getId(), $ids), 'child 0');
+	$this->assert(!in_array($child[1]->getId(), $ids), 'child 1');
 	$this->assert(in_array($child[2]->getId(), $ids), 'child 2');
 
 	/* Make sure there's no duplication */

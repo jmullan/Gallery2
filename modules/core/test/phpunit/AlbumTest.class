@@ -400,6 +400,54 @@ class AlbumTest extends GalleryTestCase {
 	$this->assertEquals(array(), $actual);
     }
 
+    function testFetchParentsWithMultiplePermissions() {
+	global $gallery;
+
+	$ret = GalleryCoreApi::removeItemPermissions($this->_parentAlbum->getId());
+	if ($ret) {
+	    return $ret;
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_parentAlbum->getId(), $gallery->getActiveUserId(), 'core.view');
+	if ($ret) {
+	    return $ret;
+	}
+	list ($ret, $album) = $this->_createRandomAlbum($this->_parentAlbum->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $subalbum) = $this->_createRandomAlbum($album->getId());
+	if ($ret) {
+	    return $ret;
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $album->getId(), $gallery->getActiveUserId(), 'core.addDataItem');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $root) =
+	    GalleryCoreApi::loadEntitiesById($this->_getRootId(), 'GalleryAlbumItem');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $actual) = GalleryCoreApi::fetchParents($subalbum, array('core.view'));
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(array($root, $this->_parentAlbum, $album), $actual,
+			    'albums with core.view');
+
+	list ($ret, $actual) =
+	    GalleryCoreApi::fetchParents($subalbum, array('core.view', 'core.addDataItem'));
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(array($root, $album), $actual, 'albums with both permissions');
+    }
+
     /**
      * Create a parent, a child, verify that fetchChildren on the parent
      * returns the child, delete both.

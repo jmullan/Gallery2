@@ -32,6 +32,29 @@ class GalleryPermissionHelper_simple {
      * @see GalleryCoreApi::fetchAccessListIds
      */
     function fetchAccessListIds($permission, $userId, $sessionPermissions=true) {
+	$permission = is_array($permission) ? $permission : array($permission);
+	$aclIds = false;
+	foreach ($permission as $permissionId) {
+	    list ($ret, $requiredAclIds) = GalleryPermissionHelper_simple::_fetchAccessListIds(
+		$permissionId, $userId, $sessionPermissions);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    if ($aclIds === false) {
+		$aclIds = $requiredAclIds;
+	    } else {
+		$aclIds = array_intersect($aclIds, $requiredAclIds);
+	    }
+	}
+
+	return array(null, $aclIds);
+    }
+
+    /**
+     * Like GalleryCoreApi::fetchAccessListIds but only processes a single permission id
+     * @access private
+     */
+    function _fetchAccessListIds($permission, $userId, $sessionPermissions=true) {
 	global $gallery;
 
 	$sessionPermissions = (int)$sessionPermissions;

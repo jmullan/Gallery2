@@ -845,6 +845,183 @@ class PermissionTest extends GalleryTestCase {
 	}
     }
 
+    function testFetchAccessListIdsForArrayWithSinglePermission() {
+	global $gallery;
+
+	list ($ret, $newAclId) = $this->_prepareForFetchAccessListIds();
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $aclIds) =
+	    GalleryCoreApi::fetchAccessListIds(array('core.view'), $gallery->getActiveUserId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert(in_array($newAclId[0], $aclIds), 'should see acl 0');
+	$this->assert(in_array($newAclId[1], $aclIds), 'should see acl 1');
+	$this->assert(!in_array($newAclId[2], $aclIds), 'shouldn\'t see this acl');
+    }
+
+    function testFetchAccessListIdsForArrayWithTwoPermissions() {
+	global $gallery;
+
+	list ($ret, $newAclId) = $this->_prepareForFetchAccessListIds();
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds(
+	    array('core.addDataItem', 'core.delete'), $gallery->getActiveUserId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert(in_array($newAclId[0], $aclIds), 'should see acl 0');
+	$this->assert(!in_array($newAclId[1], $aclIds), 'shouldn\'t see this acl');
+	$this->assert(in_array($newAclId[2], $aclIds), 'should see acl 2');
+    }
+
+    function testFetchAccessListIdsForArrayMiss() {
+	global $gallery;
+
+	list ($ret, $newAclId) = $this->_prepareForFetchAccessListIds();
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $aclIds) =
+	    GalleryCoreApi::fetchAccessListIds(array('core.viewAll'), $gallery->getActiveUserId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert(!in_array($newAclId[0], $aclIds), 'shouldn\'t see acl 0');
+	$this->assert(!in_array($newAclId[1], $aclIds), 'shouldn\'t see acl 1');
+	$this->assert(!in_array($newAclId[2], $aclIds), 'shouldn\'t see acl 2');
+    }
+
+    function testFetchAccessListIdsForArrayWithFourPermissions() {
+	global $gallery;
+
+	list ($ret, $newAclId) = $this->_prepareForFetchAccessListIds();
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds(
+	    array('core.addDataItem', 'core.delete', 'core.view', 'core.viewResizes'),
+	    $gallery->getActiveUserId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert(in_array($newAclId[0], $aclIds), 'should see acl 0');
+	$this->assert(!in_array($newAclId[1], $aclIds), 'shouldn\'t see acl 1');
+	$this->assert(!in_array($newAclId[2], $aclIds), 'shouldn\'t see acl 2');
+    }
+
+    function _prepareForFetchAccessListIds() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	for ($i = 0; $i < 3; $i++) {
+	    list ($ret, $newAclId[$i]) = $storage->getUniqueId();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
+
+	list ($ret, $viewBits) = GalleryCoreApi::convertPermissionIdsToBits('core.view');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	list ($ret, $addBits) = GalleryCoreApi::convertPermissionIdsToBits('core.addDataItem');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	list ($ret, $deleteBits) = GalleryCoreApi::convertPermissionIdsToBits('core.delete');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	list ($ret, $view2Bits) = GalleryCoreApi::convertPermissionIdsToBits('core.viewResizes');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	list ($ret, $myGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	list ($ret, $allUserGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	/* ACL 0 has all permission bits*/
+	$ret = GalleryCoreApi::addMapEntry(
+	    'GalleryAccessMap',
+	    array('accessListId' => $newAclId[0],
+		  'userOrGroupId' => $gallery->getActiveUserId(),
+		  'permission' => $viewBits));
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$ret = GalleryCoreApi::addMapEntry(
+	    'GalleryAccessMap',
+	    array('accessListId' => $newAclId[0],
+		  'userOrGroupId' => $myGroupId,
+		  'permission' => $deleteBits | $addBits));
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$ret = GalleryCoreApi::addMapEntry(
+	    'GalleryAccessMap',
+	    array('accessListId' => $newAclId[0],
+		  'userOrGroupId' => $allUserGroupId,
+		  'permission' => $view2Bits));
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	/* ACL 1 has view and delete permissions */
+	$ret = GalleryCoreApi::addMapEntry(
+	    'GalleryAccessMap',
+	    array('accessListId' => $newAclId[1],
+		  'userOrGroupId' => $gallery->getActiveUserId(),
+		  'permission' => $viewBits));
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$ret = GalleryCoreApi::addMapEntry(
+	    'GalleryAccessMap',
+	    array('accessListId' => $newAclId[1],
+		  'userOrGroupId' => $allUserGroupId,
+		  'permission' => $deleteBits));
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	/* ACL 2 has add and delete permissions */
+	$ret = GalleryCoreApi::addMapEntry(
+	    'GalleryAccessMap',
+	    array('accessListId' => $newAclId[2],
+		  'userOrGroupId' => $gallery->getActiveUserId(),
+		  'permission' => $addBits | $deleteBits));
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	return array(null, $newAclId);
+    }
+
     /*
      * Make sure it doesn't put the results for another userId into the session
      * of the activeUser
