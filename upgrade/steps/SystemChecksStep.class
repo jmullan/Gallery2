@@ -407,7 +407,7 @@ class SystemChecksStep extends UpgradeStep {
 	    }
 	}
 
-	$template->renderStatusMessage(_('Performing system checks'), '', 0.09);
+	$template->renderStatusMessage(_('Performing system checks'), '', 0.07);
 
 	/* Check all files against MANIFEST */
 	$title = _('Gallery file integrity');
@@ -485,6 +485,22 @@ class SystemChecksStep extends UpgradeStep {
 		    (empty($manifest['missing']) && empty($manifest['modified']))
 		     ? 'There are some old files' : 'There are missing/modified files!';
 	    }
+	}
+
+	/* Check if the db user has (all?) required db privileges to finish the upgrader */
+	$title = _('Database permissions');
+	list ($ret, $error) = $this->_testPrivileges();
+	if ($ret === false) {
+		$message = _('Error: The configured database user does not have the required '
+				    . ' database priviledges to perform the upgrade.') . '<br/>'
+				    . $error;
+		$templateData['check'][] = 
+		    array('title' => $title,
+			  'error' => true,
+			  'notice' => $message);
+		$failCount++;
+	} else {
+	    $templateData['check'][] = array('title' => $title, 'success' => true);
 	}
 
 	$template->renderStatusMessage(_('Performing system checks'), '', 1);
@@ -657,6 +673,127 @@ class SystemChecksStep extends UpgradeStep {
 	ob_end_clean();
 
 	return $html;
+    }
+
+    /**
+     * Check if the user has the most basic database privileges required to finish the upgrade
+     * steps successfully. Check:
+     *      - CREATE TABLE, ALTER TABLE, DROP TABLE
+     *      - CREATE INDEX, DROP INDEX
+     *      - CREATE SEQUENCE, DROP SEQUENCE
+     *
+     * @return array (boolean success, string errors)
+     */
+    function _testPrivileges() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	$storageExtras = $storage->_getExtras();
+
+	$metatables = $storageExtras->_metaTables();
+	/*
+	 * Execute T_InstallerTest_1.sql through T_InstallerTest_4.sql.  These create, alter and
+	 * drop a table, and create and drop index.  Because our .xml transforms (MySQL.xsl,...)
+	 * always updates the Schema table for all table create, alter, drops, we use here a test
+	 * table which also has the name and the structure of the Schema table, just with another
+	 * tablePrefix.
+	 *
+	 * Set an unused tablePrefix such that we can play with create/drop table in an
+	 * unused database "namespace". Try a few prefices, don't try to drop!
+	 */
+	$ok = false;
+	for ($i = 0; $i < 10; $i++) {
+	    $tablePrefix = 'gtst' . $i;
+	    if (empty($metatables[$tablePrefix . 'Schema'])) {
+		$ok = true;
+		break;
+	    }
+	}
+	if (!$ok) {
+	    return array(false,
+		sprintf(_('Could not find an unused table prefix similar to "%s".'),
+			$tablePrefix));
+	}
+
+	$moduleSql = $storageExtras->getModuleSql('core');
+	if (empty($moduleSql['test'])) {
+	    return array(false, 
+		_('Database permission test failed due to corrupted file integrity.'));
+	}
+
+	for ($i = 1; $i <= 4; $i++) {
+	    list ($success, $error) = 
+		$this->_executeSql($moduleSql['test']['InstallerTest'][$i], $tablePrefix);
+	    if (!$success) {
+		return array(false, 
+		    _('Failed to create, alter or drop a database test table. ') . $error);
+	    }
+	}
+
+	/* Check CREATE and DROP SEQUENCE privileges */
+	$storage->_traceStart();
+	$sequenceId = 'g2privtestseq';
+	$ret = $storage->_db->CreateSequence($tablePrefix . $sequenceId);
+	$storage->_traceStop();
+	if (!$ret) {
+	    return array(false, _('Failed to create a database test sequence. ' .
+			 'Check the returned error message and README.html ' .
+			 'for missing privileges and clean up the database.'));
+	}
+	$storage->_traceStart();
+	$ret = $storage->_db->DropSequence($tablePrefix . $sequenceId);
+	$storage->_traceStop();
+	if (!$ret) {
+	    return array(false, _('Test failed to drop a database test sequence. ' .
+			 'Check the returned error message and README.html ' .
+			 'for missing privileges and clean up the database.'));
+	}
+
+	return array(true, null);
+    }
+
+    /**
+     * Execute a series of SQL statements.
+     * @param string $buffer the SQL statements
+     * @param string $tablePrefix prefix for table names
+     * @return array(boolean success, string error message)
+     */
+    function _executeSql($buffer, $tablePrefix) {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	if (empty($buffer)) {
+	    return array(false, _('Missing SQL statements'));
+	}
+	/*
+	 * Split the file where semicolons are followed by a blank line..
+	 * PL/SQL blocks will have other semicolons, so we can't split on every one.
+	 * But first, remove that last semicolon such that all statements have no semicolon
+	 * (required for oracle)
+	 */
+	if ($pos = strrpos($buffer, ';')) {
+	    $buffer = substr($buffer, 0, $pos);
+	}
+	$statements = preg_split('/; *\r?\n *\r?\n/s', $buffer);
+	$storageConfig = $gallery->getConfig('storage.config');
+	$columnPrefix = $storageConfig['columnPrefix'];
+
+	foreach ($statements as $query) {
+	    $query = trim($query);
+	    if (!empty($query)) {
+		$query = str_replace('DB_TABLE_PREFIX', $tablePrefix, $query);
+		$query = str_replace('DB_COLUMN_PREFIX', $columnPrefix, $query);
+		/* For mysql, another replacement is required */
+		$query = str_replace('DB_TABLE_TYPE', '', $query);
+
+		$ret = $storage->execute($query, array());
+		if ($ret) {
+		    return array(false, _('Check the returned error message and README.html ' .
+				 'for missing privileges and clean up the database.'));
+		}
+	    }
+	}
+
+	return array(true, null);
     }
 }
 ?>

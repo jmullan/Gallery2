@@ -229,7 +229,7 @@ class DatabaseSetupStep extends InstallStep {
 		    /* Advance to next step */
 		    $confirmRequired = 0;
 		} else if (!empty($dbVersion) && empty($datVersion)) {
-		    /* DB tables exist, but g2data seems to be not ok. */
+		    /* Database tables exist, but g2data seems to be not ok. */
 		    /* Explain and offer clean install. */
 		    $confirmRequired = 1;
 		    $templateData['showConfirmCleanInstall'] = 1;
@@ -242,7 +242,7 @@ class DatabaseSetupStep extends InstallStep {
 			  'storage directory.');
 
 		} else if (empty($dbVersion) && !empty($datVersion)) {
-		    /* DB tables don't exist, but g2data has versions.dat */
+		    /* Database tables don't exist, but g2data has versions.dat */
 		    /* Explain and offer clean install.  */
 		    $confirmRequired = 1;
 		    $templateData['showConfirmCleanInstall'] = 1;
@@ -404,7 +404,7 @@ class DatabaseSetupStep extends InstallStep {
 	global $gallery;
 
 	if (!is_array($metatables) || empty($dbType)) {
-	    return array(false, _('Unknown DB type or no known tables information.'));
+	    return array(false, _('Unknown database type or no known tables information.'));
 	}
 
 	/*
@@ -453,13 +453,13 @@ class DatabaseSetupStep extends InstallStep {
 	$sequenceId = 'g2privtestseq';
 	$result = $this->_db->CreateSequence($tablePrefix . $sequenceId);
 	if (empty($result)) {
-	    return array(false, _('Failed to create a DB test sequence.' .
+	    return array(false, _('Failed to create a database test sequence.' .
 			 'Check the returned error message and README.html ' .
 			 'for missing privileges and clean up the database.'));
 	}
 	$result = $this->_db->DropSequence($tablePrefix . $sequenceId);
 	if (empty($result)) {
-	    return array(false, _('Test failed to drop a DB test sequence.' .
+	    return array(false, _('Test failed to drop a database test sequence.' .
 			 'Check the returned error message and README.html ' .
 			 'for missing privileges and clean up the database.'));
 	}
