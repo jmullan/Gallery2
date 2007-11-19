@@ -80,10 +80,21 @@ class NotificationUserAdminController extends GalleryController {
 			    $authorized = $isAdminGroup;
 			    $item = null;
 			    if (!empty($itemId)) {
-				list ($ret, $authorized) = GalleryCoreApi::hasItemPermission(
-									      $itemId, $permission);
+				list ($ret, $authorized) =
+				    GalleryCoreApi::hasItemPermission($itemId, 'core.view');
 				if ($ret) {
 				    return array($ret, null);
+				}
+				/* Avoid information disclosure, act as if the item didn't exist. */
+				if (!$authorized) {
+				    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+				}
+				if ($permission != 'core.view') {
+				    list ($ret, $authorized) =
+					GalleryCoreApi::hasItemPermission($itemId, $permission);
+				    if ($ret) {
+					return array($ret, null);
+				    }
 				}
 				list ($ret, $item) = 
 				    GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
@@ -215,24 +226,9 @@ class NotificationUserAdminView extends GalleryView {
 		 * subscribe to this event.
 		 */
 		if (!isset($subscriptions[$notificationName])) {
-		    if (!$instance->isGlobal()) {
+		    if (!$instance->isGlobal() || !$isAdminGroup) {
 			/* If it is an item related event then we don't display it here */
 			continue;
-		    }
-
-		    if (!$isAdminGroup) {
-			$permission = $instance->getPermission();
-			if (empty($permission)) {
-			    continue;
-			}
-			list ($ret, $authorized) = 
-			    GalleryCoreApi::hasItemPermission($itemId, $permission);
-			if ($ret) {
-			    return $ret;
-			}
-			if (!$authorized) {
-			    continue;
-			}
 		    }
 
 		    $form['notifications'][++$i] = array('name' => $notificationName,
@@ -259,18 +255,37 @@ class NotificationUserAdminView extends GalleryView {
 		    }
 
 		    if (count($itemIds) > 0) {
-			list ($ret, $items) = 
-			    GalleryCoreApi::loadEntitiesById($itemIds, 'GalleryItem');
+		    	/* Filter out items that we (no longer) have access to */
+			$permission = $instance->getPermission();
+			list ($ret, $itemPermissions) =
+			    GalleryCoreApi::fetchPermissionsForItems($itemIds);
 			if ($ret) {
 			    return $ret;
 			}
-			$j = 0;
-			foreach ($items as $item) {
-			    $itemUrl = $urlGenerator->generateUrl(array('view' => 'core.ShowItem', 
-								    'itemId' => $item->getId()));
-			    $form['notifications'][$i]['items'][++$j] = 
-					array('itemId' => $item->getId(), 'subscribed' => true, 
-					      'url' => $itemUrl, 'title' => $item->getTitle());
+			$filteredItemIds = array();
+			foreach ($itemIds as $itemId) {
+			    if (!(empty($permission)
+				    || empty($itemPermissions[$itemId]['core.view'])
+				    || empty($itemPermissions[$itemId][$permission]))) {
+				$filteredItemIds[] = $itemId;
+			    }
+			}
+			$itemIds = $filteredItemIds;
+
+			if (!empty($itemIds)) {
+			    list ($ret, $items) = 
+				GalleryCoreApi::loadEntitiesById($itemIds, 'GalleryItem');
+			    if ($ret) {
+				return $ret;
+			    }
+			    $j = 0;
+			    foreach ($items as $item) {
+				$itemUrl = $urlGenerator->generateUrl(
+				    array('view' => 'core.ShowItem', 'itemId' => $item->getId()));
+				$form['notifications'][$i]['items'][++$j] = 
+				    array('itemId' => $item->getId(), 'subscribed' => true, 
+					  'url' => $itemUrl, 'title' => $item->getTitle());
+			    }
 			}
 		    }
 		}

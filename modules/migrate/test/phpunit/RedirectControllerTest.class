@@ -38,6 +38,13 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 	   return $ret;
 	}
 
+    	$this->_registerFactoryImplementationForTest(
+	    'GalleryEventListener', 'MigrateModule', 'MigrateModule', 
+	    'modules/migrate/module.inc', 'migrate', array('GalleryEntity::delete'));
+	if ($ret) {
+	    return $ret;
+	}
+
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId());
 	if ($ret) {
 	    return $ret;
@@ -55,7 +62,13 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 	    return $ret;
 	}
 
-	$this->_albumId = 12345;
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($this->_album);
+
+	$this->_albumId = $this->_album->getId();
 	$this->_albumName = 'testalbum-' . rand();
 	$this->_itemId = $this->_item->getId();
 	$this->_itemName = 'testitem-' . rand();
@@ -79,19 +92,6 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 	$this->_phpVm = new MockPhpVm($this);
 	$gallery->_phpVm = $this->_phpVm;
 	$this->_headers = array();
-    }
-
-    function tearDown() {
-	$ret = GalleryCoreApi::removeMapEntry(
-	    'G1MigrateMap', array('g1album' => $this->_albumName));
-	if ($ret) {
-	    return $ret;
-	}
-
-	$ret = parent::tearDown();
-	if ($ret) {
-	   $this->failWithStatus($ret);
-	}
     }
 
     function testRedirect() {
@@ -262,6 +262,10 @@ class MockPhpVm extends GalleryPhpVm {
 
     function header($header) {
 	$this->_test->_headers[] = $header;
+    }
+
+    function exit_($status=null) {
+	$this->_test->_exitCalls[] = $status;
     }
 }
 ?>

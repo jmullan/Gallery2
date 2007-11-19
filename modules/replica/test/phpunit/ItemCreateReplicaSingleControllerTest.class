@@ -105,7 +105,7 @@ class ItemCreateReplicaSingleControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[destination]',
 					     $this->_destinationAlbum->getId());
 
-	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
+	$results = $this->handleRequest(ERROR_MISSING_OBJECT);
     }
 
     /**
@@ -135,6 +135,11 @@ class ItemCreateReplicaSingleControllerTest extends GalleryControllerTestCase {
 					     $this->_destinationAlbum->getId());
 
 	$ret = GalleryCoreApi::removeItemPermissions($this->_destinationAlbum->getId());
+	if ($ret) {
+	    return $ret;
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_destinationAlbum->getId(), $gallery->getActiveUserId(), 'core.view');
 	if ($ret) {
 	    return $ret;
 	}

@@ -33,7 +33,11 @@ class ItemCreateReplicaSingleController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	list ($ret, $item) = $this->getItem();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$itemId = $item->getId();
 
 	$status = $error = array();
 	if (isset($form['action']['link'])) {
@@ -51,18 +55,17 @@ class ItemCreateReplicaSingleController extends GalleryController {
 		    return array($ret, null);
 		}
 
+		if (!isset($permissions[$destinationId])) {
+		    /* Avoid information disclosure, act as if the item didn't exist. */
+		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+		}
+
 		if (!isset($permissions[$destinationId]['core.addDataItem'])) {
 		    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 		}
 
 		if (!isset($permissions[$itemId]['core.viewSource'])) {
 		    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
-		}
-
-		/* Load the item */
-		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
-		if ($ret) {
-		    return array($ret, null);
 		}
 
 		/* Look out for monkey business */
@@ -163,21 +166,20 @@ class ItemCreateReplicaSingleView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	list ($ret, $item) = $this->getItem();
+	if ($ret) {
+	    return array($ret, null);
+	}
+
 	if ($form['formName'] != 'ItemCreateReplicaSingle') {
 	    /* First time around, load the form with item data */
 	    $form['destination'] = '';
 	    $form['formName'] = 'ItemCreateReplicaSingle';
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
-	if ($ret) {
-	    return array($ret, null);
-	}
-
 	/* Find all the possible locations where this item can be linked. */
-	list ($ret, $albumIds) =
-	    GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
+	list ($ret, $albumIds) = GalleryCoreApi::fetchAllItemIds(
+	    'GalleryAlbumItem', array('core.addDataItem', 'core.view'));
 	if ($ret) {
 	    return array($ret, null);
 	}

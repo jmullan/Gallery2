@@ -54,6 +54,11 @@ class ItemMoveController extends GalleryController {
 		    return array($ret, null);
 		}
 
+		if (!isset($permissions['core.view'])) {
+		    /* Avoid information disclosure, act as if the item didn't exist. */
+		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+		}
+
 		$canAddItem = isset($permissions['core.addDataItem']);
 		$canAddAlbum = isset($permissions['core.addAlbumItem']);
 		if (!$canAddAlbum && !$canAddItem) {
@@ -276,8 +281,8 @@ class ItemMoveView extends GalleryView {
 	}
 
 	/* Get all peers that we can delete */
-	list ($ret, $peerIds) =
-	    GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.delete');
+	list ($ret, $peerIds) = GalleryCoreApi::fetchChildItemIdsWithPermission(
+	    $itemId, array('core.delete', 'core.view'));
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -366,15 +371,15 @@ class ItemMoveView extends GalleryView {
 	    }
 
 	    /* Get ids of all albums where we can add new data items */
-	    list ($ret, $albumIds['addDataItem']) =
-		GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
+	    list ($ret, $albumIds['addDataItem']) = GalleryCoreApi::fetchAllItemIds(
+		'GalleryAlbumItem', array('core.addDataItem', 'core.view'));
 	    if ($ret) {
 		return array($ret, null);
 	    }
 
 	    /* Get ids of all all albums where we can add new album items */
-	    list ($ret, $albumIds['addAlbumItem']) =
-		GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addAlbumItem');
+	    list ($ret, $albumIds['addAlbumItem']) = GalleryCoreApi::fetchAllItemIds(
+		'GalleryAlbumItem', array('core.addAlbumItem', 'core.view'));
 	    if ($ret) {
 		return array($ret, null);
 	    }

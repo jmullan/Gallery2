@@ -42,14 +42,6 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 
 	$this->_registerTestEventListener('GalleryEntity::delete', new WatermarkModule());
 
-	list ($ret, $this->_user) = $this->_createUser();
-	if ($ret) {
-	    return $ret;
-	}
-
-	$this->_markForCleanup($this->_user);
-	$gallery->setActiveUser($this->_user);
-
 	/* Create a watermark */
 	$watermark = new WatermarkImage();
 	$ret = $watermark->create(__FILE__, 'test/file', 'phpunit_' . rand() . '.gif');
@@ -61,9 +53,10 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$this->_markForCleanup($watermark);
 
 	$ret = GalleryCoreApi::addUserPermission(
-	    $watermark->getId(), $this->_user->getId(), 'core.all');
+	    $watermark->getId(), $gallery->getActiveUserId(), 'core.all');
 	if ($ret) {
 	    return $ret;
 	}

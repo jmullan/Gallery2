@@ -58,6 +58,15 @@ class ItemMoveSingleController extends GalleryController {
 		 * Assert that our permissions are correct.  The view should never try to make a
 		 * move that isn't legal so we can just bail if there's an inconsistency.
 		 */
+		list ($ret, $canView) =
+		    GalleryCoreApi::hasItemPermission($newParentId, 'core.view');
+		if ($ret) {
+		    return array($ret, null);
+		}
+		if (!$canView) {
+		    /* Avoid information disclosure, act as if the item didn't exist. */
+		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+		}
 		if (GalleryUtilities::isA($item, 'GalleryDataItem')) {
 		    $ret = GalleryCoreApi::assertHasItemPermission($newParentId,
 								   'core.addDataItem');
@@ -220,15 +229,16 @@ class ItemMoveSingleView extends GalleryView {
 	}
 
 	if (GalleryUtilities::isA($item, 'GalleryDataItem')) {
-	    $permission = 'core.addDataItem';
+	    $permissions = 'core.addDataItem';
 	} else if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
-	    $permission = 'core.addAlbumItem';
+	    $permissions = 'core.addAlbumItem';
 	} else {
 	    return array(GalleryCoreApi::error(ERROR_BAD_DATA_TYPE), null);
 	}
+	$permissions = array($permissions, 'core.view');
 
 	/* Get ids of all all albums where we can add this items */
-	list ($ret, $albumIds) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', $permission);
+	list ($ret, $albumIds) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', $permissions);
 	if ($ret) {
 	    return array($ret, null);
 	}

@@ -48,11 +48,11 @@ class NotificationItemAdminController extends GalleryController {
 	    return array($ret, null);
 	}
 
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
+	list ($ret, $item) = $this->getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}
+	$itemId = $item->getId();
 
 	$returnOption = 'redirect';
 
@@ -168,11 +168,11 @@ class NotificationItemAdminView extends GalleryView {
 	    return $ret;
 	}
 
-	$itemId = (int)GalleryUtilities::getRequestVariables('itemId');
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
+	list ($ret, $item) = $this->getItem();
 	if ($ret) {
 	    return $ret;
 	}
+	$itemId = $item->getId();
 
 	/* Subscriptions */
 	list ($ret, $subscriptions) = NotificationHelper::getSubscriptions($userId, $itemId);
@@ -200,14 +200,12 @@ class NotificationItemAdminView extends GalleryView {
 
 	    if (!$isAdminGroup) {
 		$permission = $instance->getPermission();
-		if (empty($permission)) {
-		    continue;
-		}
-		list ($ret, $authorized) = GalleryCoreApi::hasItemPermission($itemId, $permission);
+		list ($ret, $itemPermissions) = GalleryCoreApi::getPermissions($itemId);
 		if ($ret) {
 		    return $ret;
 		}
-		if (!$authorized) {
+		if (empty($permission) || empty($itemPermissions['core.view'])
+			|| empty($itemPermissions[$permission])) {
 		    continue;
 		}
 	    }

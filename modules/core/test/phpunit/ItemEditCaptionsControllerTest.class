@@ -220,6 +220,8 @@ class ItemEditCaptionsControllerTest extends GalleryControllerTestCase {
     }
 
     function testSaveWithErrors() {
+	global $gallery;
+
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	GalleryUtilities::putRequestVariable('page', 2);
 	foreach ($this->_items as $item) {
@@ -236,6 +238,11 @@ class ItemEditCaptionsControllerTest extends GalleryControllerTestCase {
 
 	/* Remove permissions from one item */
 	$ret = GalleryCoreApi::removeItemPermissions($this->_items[0]->getId());
+	if ($ret) {
+	    return $ret;
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_items[0]->getId(), $gallery->getActiveUserId(), 'core.view');
 	if ($ret) {
 	    return $ret;
 	}

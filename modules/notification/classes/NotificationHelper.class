@@ -273,7 +273,8 @@ class NotificationHelper {
 		return array($ret, null);
 	    }
 
-	    if (empty($requiredPermission) || empty($permissions[$requiredPermission])) {
+	    if (empty($requiredPermission) || empty($permissions['core.view'])
+		    || empty($permissions[$requiredPermission])) {
 		continue;
 	    }
 

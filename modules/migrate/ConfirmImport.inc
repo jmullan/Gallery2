@@ -1544,6 +1544,12 @@ class ConfirmImportView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
+
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret, null);
+	}
+
 	$illegalAlbumNames = $existingAlbums = $titles = array();
 	$albumValidOwner = $albumOwnerUserName = $albumOwnerUid = $albumfields = array();
 	if (!isset($form['sourceAlbums'])) {

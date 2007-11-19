@@ -41,15 +41,29 @@ class ItemMakeHighlightController extends GalleryController {
 	$itemId = $item->getId();
 
 	if (isset($form['action']['makeHighlight'])) {
+	    if (empty($form['parentId'])) {
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
+	    }
+	    $parentId = (int)$form['parentId'];
+
+	    list ($ret, $canView) = GalleryCoreApi::hasItemPermission($parentId, 'core.view');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    if (!$canView) {
+		/* Avoid information disclosure, act as if the item didn't exist. */
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+	    }
+
 	    /* Make sure we have permission to edit this item */
-	    $ret = GalleryCoreApi::assertHasItemPermission($form['parentId'], 'core.edit');
+	    $ret = GalleryCoreApi::assertHasItemPermission($parentId, 'core.edit');
 	    if ($ret) {
 		return array($ret, null);
 	    }
 
 	    /* XXX: What should we do if this fails? */
 	    list ($ret, $success) =
-		GalleryCoreApi::setThumbnailFromItem($form['parentId'], $itemId);
+		GalleryCoreApi::setThumbnailFromItem($parentId, $itemId);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -89,7 +103,8 @@ class ItemMakeHighlightView extends GalleryView {
 	    $form['formName'] = 'ItemMakeHighlight';
 	}
 
-	list ($ret, $parents) = GalleryCoreApi::fetchParents($item, 'core.edit', true);
+	list ($ret, $parents) =
+	    GalleryCoreApi::fetchParents($item, array('core.edit', 'core.view'), true);
 	if ($ret) {
 	    return array($ret, null);
 	}

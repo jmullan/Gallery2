@@ -205,13 +205,13 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
 	GalleryUtilities::putRequestVariable('form[delete][watermarkId]', 1);
 
-	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
+	$results = $this->handleRequest(ERROR_MISSING_OBJECT);
 
 	/* invalid and illegal */
 	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
 	GalleryUtilities::putRequestVariable('form[delete][watermarkId]', 123456789);
 
-	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
+	$results = $this->handleRequest(ERROR_MISSING_OBJECT);
     }
 
     function testAddMaliciousFile() {

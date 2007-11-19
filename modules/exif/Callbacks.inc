@@ -38,6 +38,16 @@ class ExifCallbacks {
 		return $ret;
 	    }
 
+	    list ($ret, $hasPermission) =
+		GalleryCoreApi::hasItemPermission($item->getId(), 'core.view');
+	    if ($ret) {
+		return $ret;
+	    }
+	    if (!$hasPermission) {
+		/* Avoid information disclosure, act as if the item didn't exist. */
+		return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
+	    }
+
 	    /* We only work on JPEG/raw data items */
 	    if (!GalleryUtilities::isA($item, 'GalleryDataItem') ||
 		!preg_match('{^image/(p?jpeg(-cmyk)?|x-dcraw)$}', $item->getMimeType())) {

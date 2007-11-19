@@ -47,6 +47,15 @@ class EditFeedController extends GalleryController {
 	if ($ret) {
 	    return array($ret, null);
 	}
+	list ($ret, $canView) = GalleryCoreApi::hasItemPermission($item->getId(), 'core.view');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	if (!$canView) {
+	    /* Avoid information disclosure, act as if the item didn't exist. */
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+	}
+
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'rss');
 	if ($ret) {
 	    return array($ret, null);
@@ -221,7 +230,7 @@ class EditFeedView extends GalleryView {
 	}
 
 	$EditFeed = array();
-	$EditFeed['itemId'] = GalleryUtilities::getRequestVariables('itemId');
+	$EditFeed['itemId'] = $item->getId();
 
 	/* Fetch all feed definitions */
 	list ($ret, $feeds) = RssMapHelper::fetchFeedsForItem($EditFeed['itemId']);

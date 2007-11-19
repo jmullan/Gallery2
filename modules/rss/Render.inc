@@ -97,8 +97,8 @@ class RenderView extends GalleryView {
 	}
 
 	if (!$perm) {
-	    $this->handleError($gallery->i18n('Not permitted to view this item'));
-	    return null;
+	    /* Avoid information disclosure, act as if the item didn't exist. */
+	    return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
 	}
 
 	/* check render type */

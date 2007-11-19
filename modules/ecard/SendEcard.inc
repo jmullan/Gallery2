@@ -44,8 +44,13 @@ class SendEcardController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 	$session =& $gallery->getSession();
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	$redirect = $status = $error = array();
+
+	list ($ret, $item) = $this->getItem();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$itemId = $item->getId();
 
 	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'ecard.send');
 	if ($ret) {
@@ -108,12 +113,6 @@ class SendEcardController extends GalleryController {
 	    GalleryCoreApi::requireOnce('lib/pear/mime.php');
 
 	    list ($ret, $config) = GalleryCoreApi::fetchAllPluginParameters('module', 'ecard');
-	    if ($ret) {
-		return array($ret, null);
-	    }
-
-	    /* Get current item */
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }

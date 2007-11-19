@@ -138,6 +138,11 @@ class RatingCallbackViewTest extends GalleryTestCase {
 	    return $ret;
 	}
 	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.view');
+	if ($ret) {
+	    return $ret;
+	}
+	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_item->getId(), $this->_userId, 'rating.view');
 	if ($ret) {
 	    return $ret;
@@ -199,6 +204,11 @@ class RatingCallbackViewTest extends GalleryTestCase {
 
 	/* Remove all permissions */
 	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
+	if ($ret) {
+	    return $ret;
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.view');
 	if ($ret) {
 	    return $ret;
 	}

@@ -79,11 +79,7 @@ class SwitchDetailModeView extends GalleryView {
 	global $gallery;
 	$session =& $gallery->getSession();
 
-	list ($ret, $item) = $this->_getItem();
-	if ($ret) {
-	    return $ret;
-	}
-	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.view');
+	list ($ret, $item) = $this->getItem();
 	if ($ret) {
 	    return $ret;
 	}

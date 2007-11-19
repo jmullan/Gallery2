@@ -50,7 +50,7 @@ class ItemEditCaptionsController extends GalleryController {
 	    }
 
 	    /* We'll check permissions one at a time below, but precache them now */
-	    $ret = GalleryCoreApi::studyPermissions($ids);
+	    list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems($ids);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -70,13 +70,12 @@ class ItemEditCaptionsController extends GalleryController {
 	    $status['errorCount'] = 0;
 	    foreach ($items as $item) {
 		/* Make sure we have permission to edit this item */
-		list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
-		if ($ret) {
-		    return array($ret, null);
-		}
-
 		$id = $item->getId();
-		if (isset($permissions['core.edit'])) {
+		if (!isset($permissions[$id]['core.view'])) {
+		    /* Avoid information disclosure, act as if the item didn't exist. */
+		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+		}
+		if (isset($permissions[$id]['core.edit'])) {
 		    if ($item->getSerialNumber() == $form['items'][$id]['serialNumber']) {
 			if ($markup == 'html') {
 			    /* Strip malicious content if html markup allowed */
@@ -172,8 +171,8 @@ class ItemEditCaptionsView extends GalleryView {
 	    $form['formName'] = 'ItemEditCaption';
 	    $form['numPerPage'] = 9;
 
-	    list ($ret, $childIds) =
-		GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.edit');
+	    list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIdsWithPermission(
+		$itemId, array('core.edit', 'core.view'));
 	    if ($ret) {
 		return array($ret, null);
 	    }

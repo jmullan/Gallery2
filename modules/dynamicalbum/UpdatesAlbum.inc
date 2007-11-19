@@ -77,6 +77,14 @@ class UpdatesAlbumView extends GalleryView {
 	    if ($ret) {
 		return array($ret, null, null, null);
 	    }
+	    list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission($itemId, 'core.view');
+	    if ($ret) {
+		return array($ret, null, null, null);
+	    }
+	    if (!$hasPermission) {
+		/* Avoid information disclosure, act as if the item didn't exist. */
+		return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
+	    }
 
 	    /* Provide parent, parent URL and get-children function to Theme API */
 	    $item->urlParams = array('view' => $this->_view, 'highlightId' => $itemId);
@@ -191,6 +199,15 @@ class UpdatesAlbumView extends GalleryView {
 
 	$query = '[' . $table . '::' . $id . '] IS NOT NULL';
 	if (!empty($albumId)) {
+	    list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission($albumId, 'core.view');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    if (!$hasPermission) {
+		/* Avoid information disclosure, act as if the item didn't exist. */
+		return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
+	    }
+
 	    list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($albumId);
 	    if ($ret) {
 		return array($ret, null);

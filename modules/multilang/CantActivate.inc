@@ -31,6 +31,11 @@ class CantActivateController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret, null);
+	}
+
 	/* Figure out where to redirect upon success */
 	$results['redirect']['view'] = 'core.SiteAdmin';
 	$results['redirect']['subView'] = 'core.AdminPlugins';
@@ -50,6 +55,11 @@ class CantActivateView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret, null);
+	}
+
 	if ($form['formName'] != 'CantActivate') {
 	    $form['formName'] = 'CantActivate';
 	}

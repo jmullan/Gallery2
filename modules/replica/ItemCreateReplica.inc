@@ -33,7 +33,11 @@ class ItemCreateReplicaController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	list ($ret, $item) = $this->getItem();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$itemId = $item->getId();
 
 	$status = $error = array();
 	if (isset($form['action']['link'])) {
@@ -52,6 +56,11 @@ class ItemCreateReplicaController extends GalleryController {
 		list ($ret, $permissions) = GalleryCoreApi::getPermissions($destinationId);
 		if ($ret) {
 		    return array($ret, null);
+		}
+
+		if (!isset($permissions['core.view'])) {
+		    /* Avoid information disclosure, act as if the item didn't exist. */
+		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 		}
 
 		if (!isset($permissions['core.addDataItem'])) {
@@ -73,6 +82,11 @@ class ItemCreateReplicaController extends GalleryController {
 
 		/* Look out for monkey business */
 		foreach ($selectedItems as $selectedItem) {
+		    if (!isset($permissions[$selectedItem->getId()]['core.view'])) {
+			/* Avoid information disclosure, act as if the item didn't exist. */
+			return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+		    }
+
 		    if (!isset($permissions[$selectedItem->getId()]['core.viewSource'])) {
 			return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 		    }
@@ -203,8 +217,14 @@ class ItemCreateReplicaView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	list ($itemId, $selectedId, $page) =
-	    GalleryUtilities::getRequestVariables('itemId', 'selectedId', 'page');
+	list ($ret, $item) = $this->getItem();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$itemId = $item->getId();
+
+	list ($selectedId, $page) =
+	    GalleryUtilities::getRequestVariables('selectedId', 'page');
 	if ($form['formName'] != 'ItemCreateReplica') {
 	    /* First time around, load the form with item data */
 	    if ($selectedId) {
@@ -215,14 +235,9 @@ class ItemCreateReplicaView extends GalleryView {
 	    $form['numPerPage'] = 15;
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
-	if ($ret) {
-	    return array($ret, null);
-	}
-
 	/* Get all peers that we can link */
 	list ($ret, $peerIds) = GalleryCoreApi::fetchLinkableChildItemIdsWithPermission(
-						$item->getId(), 'core.viewSource');
+	    $item->getId(), array('core.viewSource', 'core.view'));
 	if ($ret) {
 	    return array($ret, null);
 	}

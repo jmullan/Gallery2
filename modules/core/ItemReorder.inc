@@ -66,12 +66,23 @@ class ItemReorderController extends GalleryController {
 	     * Make sure that the selectedId and targetId are children of the album
 	     */
 	    if (empty($error)) {
-		$selectedId = $form['selectedId'];
-		$targetId = $form['targetId'];
+		$selectedId = (int)$form['selectedId'];
+		$targetId = (int)$form['targetId'];
 		list ($ret, $entities) =
 		    GalleryCoreApi::loadEntitiesById(array($selectedId, $targetId), 'GalleryItem');
 		if ($ret) {
 		    return array($ret, null);
+		}
+
+		list ($ret, $permissions) =
+		    GalleryCoreApi::fetchPermissionsForItems(array($selectedId, $targetId));
+		if ($ret) {
+		    return array($ret, null);
+		}
+		if (!isset($permissions[$selectedId]['core.view'])
+			|| !isset($permissions[$selectedId]['core.view'])) {
+		    /* Avoid information disclosure, act as if the items didn't exist. */
+		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 		}
 
 		if ($entities[0]->getParentId() != $itemId ||

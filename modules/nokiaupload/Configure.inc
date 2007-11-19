@@ -103,6 +103,11 @@ class ConfigureView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret, null);
+	}
+
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'nokiaupload');
 	if ($ret) {
 	    return array($ret, null);

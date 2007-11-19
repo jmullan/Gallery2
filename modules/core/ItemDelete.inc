@@ -53,19 +53,18 @@ class ItemDeleteController extends GalleryController {
 		    return array($ret, null);
 		}
 
-		$ret = GalleryCoreApi::studyPermissions($selectedIds);
+		list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems($selectedIds);
 		if ($ret) {
 		    return array($ret, null);
 		}
 
 		foreach ($selectedIds as $selectedId) {
-		    /* Make sure we have permission to delete this item */
-		    list ($ret, $permissions) = GalleryCoreApi::getPermissions($selectedId);
-		    if ($ret) {
-			return array($ret, null);
+		    if (!isset($permissions[$selectedId]['core.view'])) {
+			/* Avoid information disclosure, act as if the item didn't exist. */
+			return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 		    }
-
-		    if ( !isset($permissions['core.delete'])) {
+		    /* Make sure we have permission to delete this item */
+		    if (!isset($permissions[$selectedId]['core.delete'])) {
 			return array(
 			    GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__,
 				"Don't have permission to delete this item"), null);
@@ -109,8 +108,8 @@ class ItemDeleteController extends GalleryController {
 					 'itemId' => $itemId);
 	} else if (isset($form['action']['next'])) {
 	    $page = GalleryUtilities::getRequestVariables('page');
-	    list ($ret, $peerIds) =
-		GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.delete');
+	    list ($ret, $peerIds) = GalleryCoreApi::fetchChildItemIdsWithPermission(
+		$itemId, array('core.delete', 'core.view'));
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -173,8 +172,8 @@ class ItemDeleteView extends GalleryView {
 	    $form['numPerPage'] = 30;
 	}
 
-	list ($ret, $peerIds) =
-	    GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.delete');
+	list ($ret, $peerIds) = GalleryCoreApi::fetchChildItemIdsWithPermission(
+	    $itemId, array('core.delete', 'core.view'));
 	if ($ret) {
 	    return array($ret, null);
 	}

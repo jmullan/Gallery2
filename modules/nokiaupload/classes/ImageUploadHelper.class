@@ -230,6 +230,15 @@ class ImageUploadHelper {
 	$gallery->debug("Using parent id $parentId");
 
 	/* Make sure we have right permissions */
+	list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission($parentId, 'core.view');
+	if ($ret) {
+	    $gallery->debug('ERROR: Failed to query view permissions.');
+	    return $status;
+	}
+	if (!$hasPermission) {
+	    $gallery->debug("ERROR: User has no view permission for item with $parentId.");
+	    return $status;
+	}
 	$ret = GalleryCoreApi::assertHasItemPermission($parentId, 'core.addAlbumItem');
 	if ($ret) {
 	    $gallery->debug("ERROR: No permission to add subalbum to album with id $parentId.");
@@ -360,6 +369,16 @@ class ImageUploadHelper {
 	    return $status;
 	}
 
+	list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission($albumId, 'core.view');
+	if ($ret) {
+	    $gallery->debug('ERROR: Failed to query view permissions.');
+	    return $status;
+	}
+	if (!$hasPermission) {
+	    $gallery->debug("ERROR: User has no view permission for item with $albumId.");
+	    return $status;
+	}
+
 	/* Do we have permission to add pictures to this album? */
 	$ret = GalleryCoreApi::assertHasItemPermission($albumId, 'core.addDataItem');
 	if (!$ret) {
@@ -417,8 +436,8 @@ class ImageUploadHelper {
 	$status['success'] = NOKIAUPLOAD_ERR_DIRLIST;
 
 	/* Get all album ids where we have addDataItem permission */
-	list ($ret, $albumIds) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem',
-								'core.addDataItem');
+	list ($ret, $albumIds) = GalleryCoreApi::fetchAllItemIds(
+	    'GalleryAlbumItem', array('core.addDataItem', 'core.view'));
 	if ($ret || count($albumIds) < 1) {
 	    $gallery->debug("ERROR: No albums with addDataItem permission.\n"
 	    	    . ($ret ? $ret->getAsText() : ''));

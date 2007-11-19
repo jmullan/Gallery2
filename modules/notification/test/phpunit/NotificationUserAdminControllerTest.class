@@ -88,7 +88,7 @@ class NotificationUserAdminControllerTest extends GalleryControllerTestCase {
 	    return $ret;
 	}
 
-	$permissions = array('core.edit' => 1);
+	$permissions = array('core.edit' => 1, 'core.view' => 1);
 	$itemId = $this->_testAlbum->getId();
 	$userId = $testUser->getId();
 	$sessionPermissions = (int)true;

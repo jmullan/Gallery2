@@ -31,6 +31,15 @@ class ConfirmDeleteController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
+	list ($ret, $canView) =
+	    GalleryCoreApi::hasItemPermission($form['watermarkId'], 'core.view');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	if (!$canView) {
+	    /* Avoid information disclosure, act as if the item didn't exist. */
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+	}
 	/* Make sure we have permission to edit this item */
 	$ret = GalleryCoreApi::assertHasItemPermission($form['watermarkId'], 'core.edit');
 	if ($ret) {
@@ -77,6 +86,21 @@ class ConfirmDeleteView extends GalleryView {
 
 	list ($ret, $item) =
 	    GalleryCoreApi::loadEntitiesById($form['watermarkId'], 'WatermarkImage');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	list ($ret, $canView) =
+	    GalleryCoreApi::hasItemPermission($form['watermarkId'], 'core.view');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	if (!$canView) {
+	    /* Avoid information disclosure, act as if the item didn't exist. */
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+	}
+
+	/* Make sure we have permission to edit this item */
+	$ret = GalleryCoreApi::assertHasItemPermission($form['watermarkId'], 'core.edit');
 	if ($ret) {
 	    return array($ret, null);
 	}

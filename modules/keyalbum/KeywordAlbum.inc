@@ -69,6 +69,14 @@ class KeywordAlbumView extends GalleryView {
 	    if ($ret) {
 		return array($ret, null, null, null);
 	    }
+	    list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission($itemId, 'core.view');
+	    if ($ret) {
+		return array($ret, null, null, null);
+	    }
+	    if (!$hasPermission) {
+		/* Avoid information disclosure, act as if the item didn't exist. */
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null, null, null);
+	    }
 
 	    /* Provide parent, parent URL and get-children function to Theme API */
 	    $item->urlParams = array('view' => 'keyalbum.KeywordAlbum', 'keyword' => $keyword,

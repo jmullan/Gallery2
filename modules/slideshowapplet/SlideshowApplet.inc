@@ -59,6 +59,14 @@ class SlideshowAppletView extends GalleryView {
 	    if ($ret) {
 		return array($ret, null);
 	    }
+	    list ($ret, $canView) = GalleryCoreApi::hasItemPermission($item->getId(), 'core.view');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    if (!$canView) {
+		/* Avoid information disclosure, act as if the item didn't exist. */
+		return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
+	    }
 	}
 
 	$SlideshowApplet = array();

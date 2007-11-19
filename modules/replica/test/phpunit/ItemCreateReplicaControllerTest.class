@@ -32,6 +32,8 @@ class ItemCreateReplicaControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
+    	global $gallery;
+
 	$ret = parent::setUp();
 	if ($ret) {
 	   return $ret;
@@ -121,7 +123,7 @@ class ItemCreateReplicaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][link]', 1);
 	GalleryUtilities::putRequestVariable('form[destination]', $this->_album->getId());
 
-	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
+	$results = $this->handleRequest(ERROR_MISSING_OBJECT);
     }
 
     /**
@@ -156,6 +158,8 @@ class ItemCreateReplicaControllerTest extends GalleryControllerTestCase {
      * Test moving an item into a container where we have no add permissions
      */
     function testReplicaIntoAlbumWithNoAddPermissions() {
+    	global $gallery;
+
 	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
 	    return $ret;
@@ -171,8 +175,12 @@ class ItemCreateReplicaControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_album->getId(), $gallery->getActiveUserId(), 'core.view');
+	if ($ret) {
+	    return $ret;
+	}
 
-	global $gallery;
 	GalleryUtilities::putRequestVariable('itemId', $childAlbum->getId());
 	GalleryUtilities::putRequestVariable('form[selectedIds]',
 					     array($childItem->getId() => 1));

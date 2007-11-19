@@ -166,6 +166,10 @@ class EcardControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$ret = GalleryCoreApi::addUserPermission($itemId, $gallery->getActiveUserId(), 'core.view');
+	if ($ret) {
+	    return $ret;
+	}
 
 	GalleryUtilities::putRequestVariable('form[to]', 'example2@example.com');
 	GalleryUtilities::putRequestVariable('form[from]', 'example@example.com');
