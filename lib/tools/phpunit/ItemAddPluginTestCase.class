@@ -63,11 +63,11 @@ class ItemAddPluginTestCase extends GalleryTestCase {
 	list ($ret, $error, $status) =
 	    $this->_plugin->handleRequest($form, $item, $this->_addController);
 	if (isset($errorCode)) {
-	    if (($ret->getErrorCode() & $errorCode) != $errorCode) {
+	    if ($ret && ($ret->getErrorCode() & $errorCode) != $errorCode) {
 		$this->assert(false,
 			sprintf('Expected error code (%s) but received (%s)',
 			    implode(' | ', GalleryStatus::getErrorCodeConstants($errorCode)),
-			    implode(' | ', GalleryStatus::getErrorCodeConstants(
+			    implode(' | ', $ret ? '' : GalleryStatus::getErrorCodeConstants(
 							  $ret->getErrorCode()))));
 	    }
 	} else if ($ret) {
