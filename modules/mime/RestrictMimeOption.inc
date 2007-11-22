@@ -63,10 +63,11 @@ class RestrictMimeOption extends ItemAddOption {
 		continue;
 	    }
 
+	    $warnings[$i] = array();
 	    $mimeType = $items[$i]->getMimeType();
 	    if (($allowMime == 'block' && isset($mimeList[$mimeType]))
 		    || ($allowMime == 'allow' && !isset($mimeList[$mimeType]))) {
-		$warnings[$i] = $module->translate(
+		$warnings[$i][] = $module->translate(
 			'This type of file not allowed; item will not be added.');
 		$gallery->addShutdownAction(array('GalleryCoreApi', 'deleteEntityById'),
 					    array($items[$i]->getId()));

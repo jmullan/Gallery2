@@ -102,11 +102,11 @@ class RestrictMimeOptionTest extends ItemAddOptionTestCase {
 
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($item));
 	$this->assertEquals(array(), $errors, 'no errors');
-	$this->assertEquals(array(), $warnings, 'no warnings');
+	$this->assertEquals(array(array()), $warnings, 'no warnings');
 
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($badItem));
 	$this->assertEquals(array(), $errors, 'errors');
-	$this->assertEquals(array($this->_rejectMessage), $warnings, 'warnings');
+	$this->assertEquals(array(array($this->_rejectMessage)), $warnings, 'warnings');
 
 	$gallery->performShutdownActions();
 
@@ -139,11 +139,11 @@ class RestrictMimeOptionTest extends ItemAddOptionTestCase {
 
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($item));
 	$this->assertEquals(array(), $errors, 'no errors');
-	$this->assertEquals(array(), $warnings, 'no warnings');
+	$this->assertEquals(array(array()), $warnings, 'no warnings');
 
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($badItem));
 	$this->assertEquals(array(), $errors, 'errors');
-	$this->assertEquals(array($this->_rejectMessage), $warnings, 'warnings');
+	$this->assertEquals(array(array($this->_rejectMessage)), $warnings, 'warnings');
 
 	$gallery->performShutdownActions();
 
