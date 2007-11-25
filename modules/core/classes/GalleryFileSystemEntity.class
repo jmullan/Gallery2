@@ -24,7 +24,7 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryChildEntity.class');
  * A GalleryChildEntity that also has data stored in the filesystem.
  * This class understands how to manage data on the filesystem in parallel to
  * the data in the persistent store.
- * 
+ *
  * Treat this class as abstract class, it is not registered in the factory.
  *
  * @g2 <class-name>GalleryFileSystemEntity</class-name>
@@ -147,10 +147,7 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
      * @return GalleryStatus a status code
      */
     function rename($newPathComponent) {
-	if (!$this->getParentId()) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
-	}
-	if (empty($newPathComponent)) {
+	if (!$this->getParentId() || empty($newPathComponent)) {
 	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
