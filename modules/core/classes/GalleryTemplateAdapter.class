@@ -890,6 +890,7 @@ class GalleryTemplateAdapter {
      * @param Smarty $smarty the smarty instance
      */
     function block($params, &$smarty) {
+	global $gallery;
 	list ($module, $file) = explode('.', $params['type']);
 	$class = empty($params['class']) ? '' : ' ' . $params['class'];
 
@@ -905,6 +906,20 @@ class GalleryTemplateAdapter {
 
 	if (isset($params['params'])) {
 	    $params = $params['params'];
+	}
+	
+	/* Verify that the requested block actually exists */
+	$tplPath = "gallery:modules/$module/templates/blocks/$file.tpl";
+	$compileCheck = GalleryTemplate::shouldDoCompileCheck();
+	if (!$compileCheck) {
+            $platform =& $gallery->getPlatform();
+            $smartyCompilePath = $smarty->_get_compile_path($tplPath);
+            $tplCompiled = $platform->file_exists($smartyCompilePath);
+        }
+        if (($compileCheck || empty($tplCompiled)) && !$smarty->template_exists($tplPath)) {
+	    /* Fall back to "missing template" block */
+	    $module = 'core';
+	    $file = 'Missing';
 	}
 
 	$params['class'] = "block-$module-$file$class";

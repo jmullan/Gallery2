@@ -334,6 +334,87 @@ class TemplateAdapterTest extends GalleryTestCase {
 			    $this->_mockUrlGenerator->_calls, 3);
 	$this->_mockUrlGenerator->_calls = array();
     }
+    
+    /* With compile check, i.e., just checking tpl file */
+    function testMissingBlockWithCompileCheck() {
+	$this->_setupAdapterWithMocks();
+	$ret = $this->_markPluginParametersForCleanup('module', 'core');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_mockSmarty->_tpl_vars['l10Domain'] = 'modules_foo';
+	$params = array('type' => 'core.Bogus');
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smarty.compile_check', true);
+	if ($ret) {
+	    return $ret;
+	}
+	
+	$this->_templateAdapter->block($params, $this->_mockSmarty);
+	$this->assertEquals(
+	    array('smarty_include_tpl_file' => 'gallery:modules/core/templates/blocks/Missing.tpl',
+		  'smarty_include_vars' => array('type' => 'core.Bogus',
+						 'class' => 'block-core-Missing',
+						 'l10Domain' => 'modules_core')),
+	    $this->_mockSmarty->_includes[0]);
+    }
+    
+    /* Without compile check, i.e., happy if compiled template exists */
+    function testMissingBlockNoCompileCheckTplCached() {
+        global $gallery;
+	$this->_setupAdapterWithMocks();
+	$mockPlatform = new UnitTestPlatform();
+	$mockPlatform->setReply('file_exists', 
+				array('gallery:modules/core/templates/blocks/Bogus.tpl'), 1);
+	$gallery->_platform =& $mockPlatform;
+	$ret = $this->_markPluginParametersForCleanup('module', 'core');
+	if ($ret) {
+	    return $ret;
+	}
+	
+	$this->_mockSmarty->_tpl_vars['l10Domain'] = 'modules_foo';
+	$params = array('type' => 'core.Bogus');
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smarty.compile_check', false);
+	if ($ret) {
+	    return $ret;
+	}
+	
+	$this->_templateAdapter->block($params, $this->_mockSmarty);
+	$this->assertEquals(
+	    array('smarty_include_tpl_file' => 'gallery:modules/core/templates/blocks/Bogus.tpl',
+		  'smarty_include_vars' => array('type' => 'core.Bogus',
+						 'class' => 'block-core-Bogus',
+						 'l10Domain' => 'modules_core')),
+	    $this->_mockSmarty->_includes[0]);
+    }
+
+    /* Without compile check; no compiled template and no tpl */
+    function testMissingBlockNoCompileCheck() {
+        global $gallery;
+	$this->_setupAdapterWithMocks();
+	$mockPlatform = new UnitTestPlatform();
+	$mockPlatform->setReply('file_exists', 
+				array('gallery:modules/core/templates/blocks/Bogus.tpl'), 0);
+	$gallery->_platform =& $mockPlatform;
+	$ret = $this->_markPluginParametersForCleanup('module', 'core');
+	if ($ret) {
+	    return $ret;
+	}
+	
+	$this->_mockSmarty->_tpl_vars['l10Domain'] = 'modules_foo';
+	$params = array('type' => 'core.Bogus');
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smarty.compile_check', false);
+	if ($ret) {
+	    return $ret;
+	}
+	
+	$this->_templateAdapter->block($params, $this->_mockSmarty);
+	$this->assertEquals(
+	    array('smarty_include_tpl_file' => 'gallery:modules/core/templates/blocks/Missing.tpl',
+		  'smarty_include_vars' => array('type' => 'core.Bogus',
+						 'class' => 'block-core-Missing',
+						 'l10Domain' => 'modules_core')),
+	    $this->_mockSmarty->_includes[0]);
+    }
 }
 
 class TemplateAdapterMockTheme {
@@ -347,6 +428,14 @@ class TemplateAdapterMockSmarty {
 
     function _smarty_include($params) {
 	$this->_includes[] = $params;
+    }
+    
+    function template_exists($path) {
+	return strpos($path, 'Bogus') === false;
+    }
+    
+    function _get_compile_path($path) {
+	return $path;
     }
 }
 
