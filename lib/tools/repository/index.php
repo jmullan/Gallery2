@@ -62,22 +62,23 @@ function RepositoryToolsMain() {
     GalleryCoreApi::requireOnce(
 	'lib/tools/repository/classes/RepositoryControllerAndView.class');
 
-    /* Set repository configuration data. */
-    $repositoryPath = $gallery->getConfig('data.gallery.base') . '/repository/';
-    $gallery->setConfig('repository.path', $repositoryPath);
+    /* Set repository configuration data. Allow config.php to override. */
+    $repositoryPath = @$gallery->getConfig('repository.path');
+    if (empty($repositoryPath)) {
+	$repositoryPath = $gallery->getConfig('data.gallery.base') . '/repository/';
+	$gallery->setConfig('repository.path', $repositoryPath);
+    }
     $gallery->setConfig('repository.templates', 'lib/tools/repository/templates/');
 
     if ($isSiteAdmin) {
 	/* Verify our repository structure exists */
 	$platform =& $gallery->getPlatform();
-	foreach (array($repositoryPath,
-		       $repositoryPath . '/modules',
+	foreach (array($repositoryPath . '/modules',
 		       $repositoryPath . '/themes') as $path) {
-	    if (!$platform->file_exists($path)) {
-		if (!$platform->mkdir($path)) {
-		    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+	    list ($success) = GalleryUtilities::guaranteeDirExists($path);
+	    if (!$success) {
+		return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 						 "Unable to create directory: $path");
-		}
 	    }
 	}
 

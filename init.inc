@@ -66,8 +66,11 @@ function GalleryInitFirstPass($params=array()) {
 	$gallery->setConfig('data.gallery.base', $dataBase);
     }
 
-    /* Init for downloadable plugins */
-    $gallery->setConfig('repository.url', 'http://gallery.menalto.com/repository/');
+    /* Init for downloadable plugins. Allow config.php to override. */
+    $repositoryUrl = @$gallery->getConfig('repository.url');
+    if (empty($repositoryUrl)) {
+	$gallery->setConfig('repository.url', 'http://gallery.menalto.com/repository/');
+    }
     $gallery->setConfig('repository.cache', $dataBase . 'cache' . $slash . 'repository' . $slash);
 
     /* Set our various data paths */
