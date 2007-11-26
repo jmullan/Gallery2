@@ -37,7 +37,7 @@ class GalleryMimeTypeHelper_simple {
 	    return array($ret, null);
 	}
 
-	$extension = strtolower($extension);
+	$extension = GalleryUtilities::strToLower($extension);
 	return array(null,
 		     isset($mimeData['by-extension'][$extension])
 			 ? $mimeData['by-extension'][$extension] : 'application/unknown');
@@ -52,7 +52,7 @@ class GalleryMimeTypeHelper_simple {
 	    return array($ret, null);
 	}
 
-	$mimeType = strtolower($mimeType);
+	$mimeType = GalleryUtilities::strToLower($mimeType);
 	return array(null,
 		     isset($mimeData['by-mimetype'][$mimeType])
 			 ? $mimeData['by-mimetype'][$mimeType]['exts'] : array());
