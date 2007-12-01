@@ -205,7 +205,7 @@ class GalleryItemHelper_advanced {
 
 	/* Make sure the parent album is indeed an album */
 	list ($ret, $parentAlbum) =
-		GalleryCoreApi::loadEntitiesById($parentAlbumId, 'GalleryAlbumItem');
+	    GalleryCoreApi::loadEntitiesById($parentAlbumId, 'GalleryAlbumItem');
 	if ($ret) {
 	    return array($ret, null);
 	}
