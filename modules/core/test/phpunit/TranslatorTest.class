@@ -415,7 +415,7 @@ class TranslatorTest extends GalleryTestCase {
 	global $gallery;
 	$platform = new UnitTestPlatform();
 
-	$gallery->setConfig('data.gallery.base', '/g2data/');
+	$gallery->setConfig('data.gallery.locale', '/g2data/locale/');
 	$modulePath = GalleryCoreApi::getCodeBasePath() . 'modules/TranslatorTest/';
 	$poPath = "${modulePath}po/";
 	$platform->setReply('glob', array("${poPath}*.mo", null), array("${poPath}aa.mo"));
@@ -439,7 +439,7 @@ class TranslatorTest extends GalleryTestCase {
 	global $gallery;
 	$platform = new UnitTestPlatform();
 
-	$gallery->setConfig('data.gallery.base', '/g2data/');
+	$gallery->setConfig('data.gallery.locale', '/g2data/locale/');
 	$modulePath = GalleryCoreApi::getCodeBasePath() . 'modules/TranslatorTest/';
 	$poPath = "${modulePath}po/";
 	$platform->setReply('glob', array("${poPath}*.mo", null), array());
@@ -467,7 +467,7 @@ class TranslatorTest extends GalleryTestCase {
 	global $gallery;
 	$platform = new UnitTestPlatform();
 
-	$gallery->setConfig('data.gallery.base', '/g2data/');
+	$gallery->setConfig('data.gallery.locale', '/g2data/locale/');
 	$modulePath = GalleryCoreApi::getCodeBasePath() . 'modules/TranslatorTest/';
 	$poPath = "${modulePath}po/";
 	$platform->setReply('glob', array("${poPath}*.mo", null), array("${poPath}aa.mo"));
@@ -501,7 +501,7 @@ class TranslatorTest extends GalleryTestCase {
 	global $gallery;
 	$platform = new UnitTestPlatform();
 
-	$gallery->setConfig('data.gallery.base', '/g2data/');
+	$gallery->setConfig('data.gallery.locale', '/g2data/locale/');
 	$base = GalleryCoreApi::getCodeBasePath();
 	$platform->setReply(
 	    'glob',
@@ -525,7 +525,7 @@ class TranslatorTest extends GalleryTestCase {
 	global $gallery;
 	$platform = new UnitTestPlatform();
 
-	$gallery->setConfig('data.gallery.base', '/g2data/');
+	$gallery->setConfig('data.gallery.locale', '/g2data/locale/');
 	$codeBase = GalleryCoreApi::getCodeBasePath();
 	$platform->setReply('glob', array("${codeBase}modules/*/po", null),
 			    array("${codeBase}modules/test/po"));

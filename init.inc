@@ -85,6 +85,7 @@ function GalleryInitFirstPass($params=array()) {
     $gallery->setConfig('data.gallery.plugins_data', $dataBase . 'plugins_data' . $slash);
     $gallery->setConfig('data.gallery.version', $dataBase . 'versions.dat');
     $gallery->setConfig('data.gallery.backup', $dataBase . 'backups' . $slash);
+    $gallery->setConfig('data.gallery.locale', $dataBase . 'locale' . $slash);
 
     /* Configure our url generator */
     if (!isset($params['noDatabase'])) {

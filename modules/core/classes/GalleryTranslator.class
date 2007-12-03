@@ -488,7 +488,8 @@ class GalleryTranslator {
 
 	if (function_exists('dgettext') && $this->_languageCode != 'en_US') {
 	    if (isset($domain) && !isset($this->_boundDomains[$domain])) {
-		$localeDir = $gallery->getConfig('data.gallery.base') . 'locale';
+		/* The installer and upgrader use a separate domain and should never end up here */
+		$localeDir = $gallery->getConfig('data.gallery.locale');
 		bindtextdomain($domain, $localeDir);
 		textdomain($domain);
 		if (function_exists('bind_textdomain_codeset')) {
