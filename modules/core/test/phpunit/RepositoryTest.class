@@ -1007,9 +1007,13 @@ class RepositoryTest extends GalleryTestCase {
 	    'contents' => array('files' => array(
 		'moduleFile1' => array('packages' => array('package1'),
 				       'bytes' => 1337,
+				       'bytes_crlf' => 1337,
+				       'hash_crlf' => md5('moduleFile1'),
 				       'hash' => md5('moduleFile1')),
 		'moduleFile2' => array('packages' => array('package1'),
 				       'bytes' => 31337,
+				       'bytes_crlf' => 31337,
+				       'hash_crlf' => md5('moduleFile2'),
 				       'hash' => md5('moduleFile2')))));
 
 	$platform = new UnitTestPlatform();

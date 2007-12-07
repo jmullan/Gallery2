@@ -728,11 +728,13 @@ class GalleryRepository {
  
 		    if (!$platform->file_exists($filePath)) {
 			$errorMessage = "'$filePath' doesn't exist.";
-		    } else if ($platform->filesize($filePath) != $metaData['bytes']) {
-			$errorMessage = "Size of '$filePath' not {$metaData['bytes']}.";
+		    } else if (!in_array($platform->filesize($filePath), 
+					 array($metaData['bytes'], $metaData['bytes_crlf']))) {
+			$errorMessage = "Size of '$filePath' did not match package descriptor.";
 		    } else if (false === $contents) {
 			$errorMessage = "Couldn't read '$filePath'.";
-		    } else if ($checksum != $metaData['hash']) {
+		    } else if (!in_array($checksum, 
+					 array($metaData['hash'], $metaData['hash_crlf']))) {
 			$errorMessage = "Integrity check failed for '$filePath'.";
 		    }
 
