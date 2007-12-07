@@ -786,12 +786,7 @@ class GalleryRepository {
 	    return $ret;
 	}
 
-	list ($ret, $tag) = $this->_utilities->getFirstBytesFromFile($manifestPath, 128);
-	if ($ret) {
-	    return $ret;
-	}
-
-	list ($ret, $revision) = $this->_utilities->extractRevision($tag);
+	list ($ret, $revision) = $this->_utilities->getFileRevision($manifestPath);
 	if ($ret) {
 	    return $ret;
 	}
@@ -811,11 +806,7 @@ class GalleryRepository {
 
 	$stringsRawFile = "$pluginDir/po/strings.raw";
 	if ($platform->file_exists($stringsRawFile)) {
-	    list ($ret, $tag) = $this->_utilities->getFirstBytesFromFile($stringsRawFile, 128);
-	    if ($ret) {
-		return $ret;
-	    }
-	    list ($ret, $stringsRevision) = $this->_utilities->extractRevision($tag);
+	    list ($ret, $stringsRevision) = $this->_utilities->getFileRevision($stringsRawFile);
 	    if ($ret) {
 		return $ret;
 	    }
@@ -823,12 +814,7 @@ class GalleryRepository {
 	    $poFiles = $platform->glob("$pluginDir/po/*.po");
 	    if ($poFiles) {
 		foreach ($poFiles as $file) {
-		    list ($ret, $tag) = $this->_utilities->getFirstBytesFromFile($file, 128);
-		    if ($ret) {
-			return $ret;
-		    }
-
-		    list ($ret, $revision) = $this->_utilities->extractRevision($tag);
+		    list ($ret, $revision) = $this->_utilities->getFileRevision($file);
 		    if ($ret) {
 			return $ret;
 		    }

@@ -90,9 +90,8 @@ class RepositoryDescriptorTest extends GalleryTestCase {
     function _getDescriptorWithFakeFileMetadata() {
 	$data = array();
 	$utils = new RepositoryDescriptorTestUtilities();
-	$utils->setGetFirstBytesFromFile(array('/MANIFEST', 128), '# $' . 'Revision: 14604 $');
-	$utils->setGetFirstBytesFromFile(
-	    array('/po/aa.po', 128), '# $' . 'Id: de.po 14444 2006-09-03 08:03:07Z bharat $');
+	$utils->setGetFileRevision('/MANIFEST', '14604');
+	$utils->setGetFileRevision('/po/aa.po', '14444');
 	$descriptor = new RepositoryDescriptor_FakeFileMetaDataTest($this->_canonicalFileMetaData);
 	$descriptor->setUtilities($utils);
 	$descriptor->setTemplate(new RepositoryTestTemplate());
@@ -188,9 +187,7 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	$data = array();
 	$descriptor = new RepositoryDescriptor();
 	$utils = new RepositoryDescriptorTestUtilities();
-	$utils->setGetFirstBytesFromFile(
-	    array($testDataDir . 'po/strings.raw', 128),
-	    '# $' . 'Id: strings.raw 22222 2006-07-08 23:55:12Z bharat $');
+	$utils->setGetFileRevision($testDataDir . 'po/strings.raw', '22222');
 	$descriptor->setUtilities($utils);
 
 	$platform = new UnitTestPlatform();
@@ -415,17 +412,14 @@ class RepositoryDescriptorTestTranslator {
 }
 
 class RepositoryDescriptorTestUtilities {
-    function setGetFirstBytesFromFile($expected, $reply) {
-	$this->_matches[serialize($expected)] = $reply;
+    function setGetFileRevision($expected, $reply) {
+	var_dump($expected);
+	$this->_matches[$expected] = $reply;
     }
 
-    function getFirstBytesFromFile($file, $bytes) {
-	return array(null, $this->_matches[serialize(array($file, $bytes))]);
+    function getFileRevision($file) {
+	return array(null, $this->_matches[$file]);
     }
 
-    function extractRevision($string) {
-	preg_match('/([\d]{5})/', $string, $matches);
-	return array(null, $matches[0]);
-    }
 }
 ?>

@@ -161,14 +161,8 @@ class RepositoryDescriptor extends RepositoryObject {
 	    return $ret;
 	}
 
-	list ($ret, $tag) = $this->_utilities->getFirstBytesFromFile(
-	    $this->_pluginDir . 'MANIFEST', 128);
-	if ($ret) {
-	    return $ret;
-	}
-
 	list ($ret, $this->_data['header']['buildTimestamp']) =
-	    $this->_utilities->extractRevision($tag);
+	    $this->_utilities->getFileRevision($this->_pluginDir . 'MANIFEST');
 	if ($ret) {
 	    return $ret;
 	}
@@ -179,13 +173,8 @@ class RepositoryDescriptor extends RepositoryObject {
 		$languageCode = $languageCode[1];
 
 		/* Get revision number from po file. */
-		list ($ret, $tag) =
-		    $this->_utilities->getFirstBytesFromFile($this->_pluginDir . $fileName, 128);
-		if ($ret) {
-		    return $ret;
-		}
-
-		list ($ret, $revision) = $this->_utilities->extractRevision($tag);
+		list ($ret, $revision) = 
+		    $this->_utilities->getFileRevision($this->_pluginDir . $fileName);
 		if ($ret) {
 		    return $ret;
 		}
@@ -251,13 +240,7 @@ class RepositoryDescriptor extends RepositoryObject {
 
 	    if (basename($file) == 'strings.raw') {
 		/* Get strings.raw revision. */
-		list ($ret, $tag) =
-		    $this->_utilities->getFirstBytesFromFile("$pluginDir$file", 128);
-		if ($ret) {
-		    return $ret;
-		}
-
-		list ($ret, $revision) = $this->_utilities->extractRevision($tag);
+		list ($ret, $revision) = $this->_utilities->getFileRevision("$pluginDir$file");
 		if ($ret) {
 		    return $ret;
 		}

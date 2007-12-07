@@ -1319,7 +1319,7 @@ class RepositoryTestModule {
 }
 
 class RepositoryTestUtilitiesForScanPlugin {
-    function getFirstBytesFromFile($filename, $bytes) {
+    function getFileRevision($filename) {
 	$matches = array('RepositoryTest/MANIFEST' => '11111',
 			 'po/strings.raw' => '22222',
 			 'po/aa.po' => '33333',
@@ -1332,11 +1332,6 @@ class RepositoryTestUtilitiesForScanPlugin {
 
 	return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					   "Unexpected filename: $filename"), null);
-    }
-
-    function extractRevision($tag) {
-	/* getFirstBytesFromFile returns just a revision id; no munging necessary */
-	return array(null, $tag);
     }
 }
 
