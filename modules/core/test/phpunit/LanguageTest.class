@@ -91,5 +91,63 @@ class LanguageTest extends GalleryControllerTestCase {
 	}
 	$this->assertEquals('test_language', $language, 'language');
     }
+
+    function testGetLanguageDescription() {
+	$testCases = array(
+	    'en_US' => 'English (US)',
+	    'hu_HU' => 'Magyar');
+
+	foreach ($testCases as $case => $expected) {
+	    list ($ret, $description) = GalleryCoreApi::getLanguageDescription($case);
+	    if ($ret) {
+		return ($ret);
+	    }
+	    $this->assertEquals($expected, $description, "Testcase: $case");
+	}
+    }
+
+    function testGetSupportedLanguageInstall() {
+	list ($languageData) = GalleryTranslator::getLanguageData();
+	$supportedLanguages = GalleryCoreApi::getSupportedLanguages(true);
+	$this->assertEquals($languageData, $supportedLanguages, 'Language lists don\'t match');
+    }
+
+    function testGetSupportedLanguageEnglishOnly() {
+	global $gallery;
+	$gallery->setPlatform(new UnitTestPlatform());
+	$platform =& $gallery->getPlatform();
+
+	list ($languageData) = GalleryTranslator::getLanguageData();
+	$expected['en']['US'] = $languageData['en']['US'];
+
+	$gallery->setConfig('data.gallery.locale', '/g2data/');
+	$platform->setReply('glob', array('/g2data/*', null), array('.', '..'));
+
+	$supportedLanguages = GalleryCoreApi::getSupportedLanguages();
+
+	$this->assertEquals($expected, $supportedLanguages);
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testGetSupportedLanguageEnglishFilterd() {
+	global $gallery;
+	$gallery->setPlatform(new UnitTestPlatform());
+	$platform =& $gallery->getPlatform();
+
+	list ($languageData) = GalleryTranslator::getLanguageData();
+	$expected['en']['US'] = $languageData['en']['US'];
+	$expected['en']['GB'] = $languageData['en']['GB'];
+	$expected['pt']['BR'] = $languageData['pt']['BR'];
+
+	$gallery->setConfig('data.gallery.locale', '/g2data/');
+	$platform->setReply('glob', array('/g2data/*', null), array('.', '..', 'en_GB', 'pt_BR'));
+	$platform->setReply('is_dir', array('en_GB'), true);
+	$platform->setReply('is_dir', array('pt_BR'), true);
+
+	$supportedLanguages = GalleryCoreApi::getSupportedLanguages();
+
+	$this->assertEquals($expected, $supportedLanguages);
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
 }
 ?>

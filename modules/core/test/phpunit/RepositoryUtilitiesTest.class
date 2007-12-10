@@ -154,7 +154,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	    'hu_HU' => 'Magyar');
 
 	foreach ($testCases as $case => $result) {
-	    list ($ret, $description) = $utilities->getLanguageDescription($case);
+	    list ($ret, $description) = GalleryCoreApi::getLanguageDescription($case);
 	    if ($ret) {
 		return ($ret);
 	    }

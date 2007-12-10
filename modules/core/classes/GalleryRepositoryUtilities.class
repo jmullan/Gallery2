@@ -328,26 +328,10 @@ class GalleryRepositoryUtilities {
      * @param string $languageCode
      * @return array GalleryStatus a status code
      *		     string language description
+     * @deprecated use GalleryCoreApi::getLanguageDescription() remove after next api bump.
      */
     function getLanguageDescription($languageCode) {
-	global $gallery;
-	$translator =& $gallery->getTranslator();
-
-	list ($newLanguageCode, $languageData) =
-	    $translator->getSupportedLanguageCode($languageCode, false);
-	if (!$newLanguageCode) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					       "Invalid language code specified [$languageCode]"),
-			 null);
-	}
-
-	if (!isset($languageData['description'])) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					       "Language not supported [{$language}_{$country}]"),
-			 null);
-	}
-
-	return array(null, $languageData['description']);
+	return GalleryCoreApi::getLanguageDescription($languageCode);
     }
 
     /**

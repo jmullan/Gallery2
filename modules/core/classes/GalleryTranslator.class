@@ -268,14 +268,13 @@ class GalleryTranslator {
 
     /**
      * Return the list of languages that we support.
-     *
+     * @param boolean $installation (optional) Is this part of the install. Default false
      * @return array['language code']['country code'] =
      *              array('description', 'right-to-left'?)
+     * @deprecated Remove on next major api bump. Use GalleryCoreApi::getSupportedLanguages
      */
-    function getSupportedLanguages() {
-	/* Get our language data */
-	list ($supportedLanguages, $defaultCountry) = GalleryTranslator::getLanguageData();
-	return $supportedLanguages;
+    function getSupportedLanguages($installation=false) {
+	return GalleryCoreApi::getSupportedLanguages($installation);
     }
 
     /**
@@ -412,7 +411,7 @@ class GalleryTranslator {
 	}
 
 	list ($language, $country) = preg_split('/[-_]/', "${languageCode}_");
-	$country = strtoupper($country);
+	$country = GalleryUtilities::strToUpper($country);
 	if ((empty($country) || !isset($supportedLanguages[$language][$country]))
 		&& isset($defaultCountry[$language])) {
 	    /* Use default country if none specified or particular country not supported */

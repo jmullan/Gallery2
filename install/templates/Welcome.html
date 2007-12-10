@@ -11,7 +11,7 @@
       <select name="language" onchange="this.form.submit()" style="direction:ltr">
 	<?php
 	  /* Don't use $language here as it conflicts with $_SESSION if register_globals is on */
-	  foreach ($translator->getSupportedLanguages() as $lang => $list) {
+	  foreach (GalleryCoreApi::getSupportedLanguages(true) as $lang => $list) {
 	    foreach ($list as $country => $data) {
 	      $code = $lang . '_' . $country;
 	      print '<option value="' . $code . '"';

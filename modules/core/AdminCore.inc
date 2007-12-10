@@ -279,7 +279,7 @@ class AdminCoreView extends GalleryView {
 
 	    /* Set up our language selection list */
 	    $AdminCore['languageList'] = array();
-	    $supportedLanguages = $translator->getSupportedLanguages();
+	    $supportedLanguages = GalleryCoreApi::getSupportedLanguages();
 	    foreach ($supportedLanguages as $language => $countryList) {
 		foreach ($countryList as $country => $languageData) {
 		    $AdminCore['languageList'][$language . '_' . $country] =

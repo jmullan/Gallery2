@@ -83,9 +83,10 @@ class GalleryCoreApi {
      * - consider renaming everything using "languageCode" to "locale" for correct terminology
      *   (GalleryTranslator.class and Gallery.class)
      * - delete modules/core/templates/blocks/NavigationLinks.tpl
+     * - remove GalleryRepository::getLanguageDescription
      */
     function getApiVersion() {
-	return array(7, 42);
+	return array(7, 43);
     }
 
     /**
@@ -3214,6 +3215,32 @@ class GalleryCoreApi {
 	GalleryCoreApi::requireOnce(
 		'modules/core/classes/helpers/GalleryTranslatorHelper_medium.class');
 	return GalleryTranslatorHelper_medium::installTranslationsForLocale($locale);
+    }
+
+    /**
+     * Return the list of languages that we support.
+     * @param boolean $installation (optional) Is this part of the install. Default false
+     * @return array['language code']['country code'] =
+     *              array('description', 'right-to-left'?)
+     */
+    function getSupportedLanguages($installation=false) {
+    	GalleryCoreApi::requireOnce(
+		'modules/core/classes/helpers/GalleryTranslatorHelper_medium.class');
+	return GalleryTranslatorHelper_medium::getSupportedLanguages($installation);
+    }
+
+    /**
+     * Returns the language description of the specified language-country code.
+     * eg. en_US => English (US)
+     *
+     * @param string $languageCode
+     * @return array GalleryStatus a status code
+     *		     string language description
+     */
+    function getLanguageDescription($languageCode) {
+    	GalleryCoreApi::requireOnce(
+		'modules/core/classes/helpers/GalleryTranslatorHelper_medium.class');
+	return GalleryTranslatorHelper_medium::getLanguageDescription($languageCode);
     }
 
     /**

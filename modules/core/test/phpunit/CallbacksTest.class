@@ -41,8 +41,8 @@ class CallbacksTest extends GalleryTestCase {
 
     function testLoadLanguageSelector() {
 	global $gallery;
-	$translator =& $gallery->getTranslator();
-	$supportedLanguages = $translator->getSupportedLanguages();
+
+	$supportedLanguages = GalleryCoreApi::getSupportedLanguages();
 
 	$ret = $this->_callback->callback(array(), $this->_smarty, 'LoadLanguageSelector');
 	if ($ret) {

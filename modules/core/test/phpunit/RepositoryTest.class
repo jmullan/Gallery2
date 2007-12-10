@@ -282,6 +282,9 @@ class RepositoryTest extends GalleryTestCase {
 	    'expectedPackages' => array(/* the module is incompatible, but the theme is ok */
 		'theme' => array('testTheme' => array('lang-en_US' => 1)))));
 
+	foreach (array('en_US', 'en_GB', 'pt_PT', 'pt_BR') as $lang) {
+	    GalleryDataCache::put("GalleryTranslator::LanguageDescription::$lang", $lang);
+	}
 	$i = 0;
 	foreach ($testcases as $case) {
 	    $i++;
@@ -1238,8 +1241,7 @@ class RepositoryTest extends GalleryTestCase {
     function testGetPluginUpgradeInfoForBasePackageUpgrade() {
 	list ($repository, $languages) = $this->_prepareForGetPluginUpgradeInfo();
 
-	list ($ret, $info) =
-	    $repository->getPluginUpgradeInfo('module', 'testModule');
+	list ($ret, $info) = $repository->getPluginUpgradeInfo('module', 'testModule');
 	if ($ret) {
 	    return $ret;
 	}
@@ -1294,7 +1296,7 @@ class RepositoryTest extends GalleryTestCase {
 	    $currentBuild = $lang == 'en_GB' ? '1' : null;
 	    $languages[$lang] = array('name' => $lang, 'currentBuild' => $currentBuild,
 				      'newBuild' => '33333', 'relation' => 'older', 'locked' => 0);
-	    $utilities->setReply('getLanguageDescription', array($lang), array(null, $lang));
+	    GalleryDataCache::put("GalleryTranslator::LanguageDescription::$lang", $lang);
 	    $utilities->setReply('compareRevisions', array($currentBuild, '33333'), 'older');
 	}
 	$repository->_utilities =& $utilities;
@@ -1343,10 +1345,6 @@ class RepositoryTestUtilities {
     function RepositoryTestUtilities($packages = null) {
 	$this->_packages = $packages;
 	$this->_utilities = new GalleryRepositoryUtilities();
-    }
-
-    function getLanguageDescription($language) {
-	return array(null, $language);
     }
 
     function compareRevisions($revision1, $revision2) {

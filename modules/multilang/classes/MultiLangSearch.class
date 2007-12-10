@@ -57,7 +57,7 @@ class MultiLangSearch extends GallerySearchInterface_1_0 {
 	}
 
 	/* Get name for current language */
-	$supportedLanguages = GalleryTranslator::getSupportedLanguages();
+	$supportedLanguages = GalleryCoreApi::getSupportedLanguages();
 	list ($language, $country) = preg_split('/[-_]/', "${languageCode}_");
 	if (empty($supportedLanguages[$language][$country]['description'])) {
 	    return array(null, array('options' => array()));

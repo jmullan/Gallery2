@@ -85,7 +85,7 @@ class MultiLangItemEdit extends ItemEditPlugin {
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
 	global $gallery;
 	$session =& $gallery->getSession();
-	$translator =& $gallery->getTranslator();
+
 	GalleryCoreApi::requireOnce('modules/multilang/classes/MultiLangHelper.class');
 
 	if ($form['formName'] != 'MultiLangItemEdit') {
@@ -108,7 +108,7 @@ class MultiLangItemEdit extends ItemEditPlugin {
 	    $form['languageData'][$form['language']]['description'] = $form['description'];
 	}
 
-	$supportedLanguages = $translator->getSupportedLanguages();
+	$supportedLanguages = GalleryCoreApi::getSupportedLanguages();
 	$languageList = array();
 	foreach ($supportedLanguages as $language => $countryList) {
 	    foreach ($countryList as $country => $languageData) {

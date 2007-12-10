@@ -234,7 +234,7 @@ class GalleryRepository {
 	if ($forBasePackageUpgrade || $upgradeInfo['base']['relation'] == 'equal') {
 	    foreach ($languages as $language => $revision) {
 		list ($ret, $languageDescription) =
-		    $this->_utilities->getLanguageDescription($language);
+		    GalleryCoreApi::getLanguageDescription($language);
 		if ($ret) {
 		    if ($ret->getErrorCode() & ERROR_BAD_PARAMETER) {
 			/* Unsupported language .. ignore it. */
@@ -243,9 +243,10 @@ class GalleryRepository {
 		    return array($ret, null);
 		}
 
-		if (isset($installedPackages['lang-' . $language])) {
-		    $currentBuild = $installedPackages['lang-' . $language]['build'];
-		    $locked = $installedPackages['lang-' . $language]['locked'];
+		$languagePackageName = 'lang-' . $language;
+		if (isset($installedPackages[$languagePackageName])) {
+		    $currentBuild = $installedPackages[$languagePackageName]['build'];
+		    $locked = $installedPackages[$languagePackageName]['locked'];
 		} else {
 		    $currentBuild = null;
 		    $locked = 0;
@@ -642,6 +643,14 @@ class GalleryRepository {
 	return array(null, $descriptor);
     }
 
+    /** 
+     * @see GalleryRepositoryUtilities::downloadSourceFiles
+     */
+    function downloadSourceFiles($pluginType, $pluginId, $pluginDownloadData, $callback=null) {
+	return $this->_utilities->downloadSourceFiles($pluginType, $pluginId, $pluginDownloadData, 
+	    $callback);
+    }
+
     /**
      * Verify that a package will install cleanly by examining all of its paths and making sure
      * that any file operations that we intend to make will be successful.
@@ -907,6 +916,13 @@ class GalleryRepository {
      */
     function getPluginName($pluginType, $pluginId) {
 	return $this->_index->getPluginName($pluginType, $pluginId);
+    }
+
+    /**
+     * @see GalleryRepositoryIndex::getLanguageSourceFiles
+     */
+    function getLanguageSourceFiles($locales) {
+	return $this->_index->getLanguageSourceFiles($locales);
     }
 }
 ?>

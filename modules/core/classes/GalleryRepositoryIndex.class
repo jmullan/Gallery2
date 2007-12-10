@@ -480,5 +480,56 @@ class GalleryRepositoryIndex {
 	global $gallery;
 	return $gallery->getConfig('repository.cache') . $this->_source . '/';
     }
+
+    /**
+     * Searches the repository index and returns all the source files that contain the language
+     * packages for the specified locale
+     *
+     * @param mixed $locales a single or an array of locale identifiers.
+     * @return array GalleryStatus a status code
+     *		     array[$pluginType] => 
+     *			array($pluginId => array('name' => $pluginName, 
+     * 			    'files' => array('descriptor' => $descriptorUrl,
+     * 				'en_gb' => url, 'pt_BR' => url...))
+     */
+    function getLanguageSourceFiles($locales) {
+	global $gallery;
+	$files = array();
+	if (!is_array($locales)) {
+	    $locales = array($locales);
+	}
+	foreach ($locales as $locale) {
+	    foreach (array('module', 'theme') as $pluginType) {
+		foreach ($this->_index[$pluginType . 's'] as $pluginId => $entry) {
+		    if (empty($entry['header']['stringsRevision'])) {
+			continue;
+		    }
+		    $stringsRevision = $entry['header']['stringsRevision'];
+		    list ($ret, $pluginName) = $this->getPluginName($pluginType, $pluginId);
+		    if ($ret) {
+			return array($ret, null);
+		    }
+
+		    list ($ret, $descriptorUrl) =
+			$this->getDescriptorUrl($pluginType, $pluginId);
+		    if ($ret) {
+			return array($ret, null);
+		    }
+
+		    if (!empty($entry['languages'][$stringsRevision][$locale])) {
+			list ($ret, $packageUrl) = 
+			    $this->getPackageUrl($pluginType, $pluginId, $locale);
+			if ($ret) {
+			    return array($ret, null);
+			}
+			$files[$pluginType][$pluginId]['name'] = $pluginName;
+			$files[$pluginType][$pluginId]['files']['descriptor'] = $descriptorUrl;
+			$files[$pluginType][$pluginId]['files'][$locale] = $packageUrl;
+		    }
+		}
+	    }
+	}
+	return array(null, $files);
+    }
 }
 ?>

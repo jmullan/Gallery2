@@ -32,8 +32,7 @@ class CoreCallbacks {
 	switch($callback) {
 	case 'LoadLanguageSelector':
 	    $languageList = array();
-	    $translator =& $gallery->getTranslator();
-	    $supportedLanguages = $translator->getSupportedLanguages();
+	    $supportedLanguages = GalleryCoreApi::getSupportedLanguages();
 	    foreach ($supportedLanguages as $language => $countryList) {
 		foreach ($countryList as $country => $languageData) {
 		    $languageList[$language . '_' . $country] = $languageData['description'];

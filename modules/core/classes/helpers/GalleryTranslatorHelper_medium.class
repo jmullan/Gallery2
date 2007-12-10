@@ -53,7 +53,9 @@ class GalleryTranslatorHelper_medium {
 	    foreach ($moFiles as $moPath) {
 		$gallery->guaranteeTimeLimit(30);
 
-		preg_match($codePattern, $moPath, $matches);
+		if (!preg_match($codePattern, $moPath, $matches)) {
+		    continue;
+		}
 		$destinationDir = $g2locale . sprintf($localeDirPattern, $matches[1]);
 
 		list ($success, $created) =
@@ -136,6 +138,87 @@ class GalleryTranslatorHelper_medium {
 	    }
 	}
 	return null;
+    }
+
+    /**
+     * @see GalleryCoreApi::getLanguageDescription
+     */
+    function getLanguageDescription($languageCode) {
+	$cacheKey = "GalleryTranslator::LanguageDescription::$languageCode";
+	if (!GalleryDataCache::containsKey($cacheKey)) {
+	    list ($newLanguageCode, $languageData) =
+		GalleryTranslator::getSupportedLanguageCode($languageCode, false);
+		if (!$newLanguageCode) {
+		    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					       "Invalid language code specified [$languageCode]"),
+				 null);
+		}
+
+		if (!isset($languageData['description'])) {
+		    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					       "Language not supported [{$language}_{$country}]"),
+				 null);
+	    }
+	    $languageDescription = $languageData['description'];
+	    GalleryDataCache::put($cacheKey, $languageDescription);
+	} else {
+	    $languageDescription = GalleryDataCache::get($cacheKey);
+	}
+	return array(null, $languageDescription);
+    }
+
+    /**
+     * @see GalleryCoreApi::getSupportedLanguages
+     */
+    function getSupportedLanguages($installation=false) {
+	global $gallery;
+
+	$cacheKey = 'GalleryTranslator::SupportedLanguages';
+
+	if (!GalleryDataCache::containsKey($cacheKey) || $installation) {
+	    /* Get our language data */
+	    list ($supportedLanguages, $defaultCountry) = GalleryTranslator::getLanguageData();
+	    if ($installation) {
+		return $supportedLanguages;
+	    }
+
+	    $installedLanguages = array();
+	    $localeBase = $gallery->getConfig('data.gallery.locale');
+	    $platform =& $gallery->getPlatform();
+	    $languageDirectories = $platform->glob($localeBase . '*');
+	    if ($languageDirectories) {
+		foreach ($languageDirectories as $directory) {
+		    if (!in_array($directory, array('..', '.'))
+			    && $platform->is_dir($directory)) {
+			$installedLanguages[basename($directory)] = 1;
+		    }
+		}
+
+		foreach ($supportedLanguages as $language => $countryList) {
+		    foreach ($countryList as $country => $languageData) {
+			if ($defaultCountry[$language] == $country) {
+			    $langCode = $language;
+			} else {
+			    $langCode = $language . '_' . $country;
+			}
+			if ($langCode != 'en' && empty($installedLanguages[$langCode])) {
+			    unset($supportedLanguages[$language][$country]);
+			    if (empty($supportedLanguages[$language])) {
+				unset($supportedLanguages[$language]);
+			    }
+			}
+		    }
+		}
+	    } else {
+		$default['en']['US'] = $supportedLanguages['en']['US'];
+		$supportedLanguages = $default;
+	    }
+	    GalleryDataCache::put($cacheKey, $supportedLanguages);
+	} else {
+	    $supportedLanguages = GalleryDataCache::get($cacheKey);
+	}
+	
+	return $supportedLanguages;
     }
 }
 ?>
