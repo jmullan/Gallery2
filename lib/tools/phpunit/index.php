@@ -148,6 +148,10 @@ function loadTests($moduleId, $testDir, $filter) {
 
 	while (($file = $platform->readdir($dir)) != false) {
 	    if (preg_match('/(.*Test).class$/', $file, $matches)) {
+		if (!strncmp($matches[1], '.#', 2)) {
+		    /* Ignore Emacs backup files */
+		    continue;
+		}
 		require_once($testDir . '/' . $file);
 			$className = $matches[1];
 		if (class_exists($className) &&
