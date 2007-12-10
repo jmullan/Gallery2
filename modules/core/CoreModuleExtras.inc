@@ -145,6 +145,7 @@ class CoreModuleExtras {
 	 * then your code.  Do *not* put in a break statement.  (Update _prepareConfigUpgrade too).
 	 */
 	$gallery->debug(sprintf('The current version is %s', $currentVersion));
+	$progressText = $module->translate('Installing the core module');
 	switch ($currentVersion) {
 	case '0':
 	    $gallery->debug('Install core module');
@@ -160,8 +161,7 @@ class CoreModuleExtras {
 		return $ret;
 	    }
 
-	    $ret = $statusMonitor->renderStatusMessage(
-		    $module->translate('Installing the core module'), '', 0.15);
+	    $ret = $statusMonitor->renderStatusMessage($progressText, '', 0.15);
 	    if ($ret) {
 		return $ret;
 	    }
@@ -218,8 +218,7 @@ class CoreModuleExtras {
 		}
 	    }
 
-	    $ret = $statusMonitor->renderStatusMessage(
-		    $module->translate('Installing the core module'), '', 0.2);
+	    $ret = $statusMonitor->renderStatusMessage($progressText, '', 0.2);
 	    if ($ret) {
 		return $ret;
 	    }
@@ -260,8 +259,7 @@ class CoreModuleExtras {
 		return $ret;
 	    }
 
-	    $ret = $statusMonitor->renderStatusMessage(
-		    $module->translate('Installing the core module'), '', 0.25);
+	    $ret = $statusMonitor->renderStatusMessage($progressText, '', 0.25);
 	    if ($ret) {
 		return $ret;
 	    }
@@ -275,8 +273,7 @@ class CoreModuleExtras {
 		return $ret;
 	    }
 
-	    $ret = $statusMonitor->renderStatusMessage(
-		    $module->translate('Installing the core module'), '', 0.3);
+	    $ret = $statusMonitor->renderStatusMessage($progressText, '', 0.3);
 	    if ($ret) {
 		return $ret;
 	    }
@@ -290,8 +287,7 @@ class CoreModuleExtras {
 		return $ret;
 	    }
 
-	    $ret = $statusMonitor->renderStatusMessage(
-		    $module->translate('Installing the core module'), '', 0.4);
+	    $ret = $statusMonitor->renderStatusMessage($progressText, '', 0.4);
 	    if ($ret) {
 		return $ret;
 	    }
@@ -333,8 +329,7 @@ class CoreModuleExtras {
 		}
 	    }
 
-	    $ret = $statusMonitor->renderStatusMessage(
-		    $module->translate('Installing the core module'), '', 0.5);
+	    $ret = $statusMonitor->renderStatusMessage($progressText, '', 0.5);
 	    if ($ret) {
 		return $ret;
 	    }
@@ -358,8 +353,7 @@ class CoreModuleExtras {
 		}
 	    }
 
-	    $ret = $statusMonitor->renderStatusMessage(
-		    $module->translate('Installing the core module'), '', 0.6);
+	    $ret = $statusMonitor->renderStatusMessage($progressText, '', 0.6);
 	    if ($ret) {
 		return $ret;
 	    }
@@ -376,8 +370,7 @@ class CoreModuleExtras {
 	    }
 	    $gallery->debug('CoreModulesExtra::upgrade: successfully installed core');
 
-	    $ret = $statusMonitor->renderStatusMessage(
-		    $module->translate('Installing the core module'), '', 0.7);
+	    $ret = $statusMonitor->renderStatusMessage($progressText, '', 0.7);
 	    if ($ret) {
 		return $ret;
 	    }
