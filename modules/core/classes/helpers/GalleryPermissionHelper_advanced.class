@@ -41,7 +41,9 @@ class GalleryPermissionHelper_advanced {
 	}
 
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	$event->setData(array('userId' => $userId, 'itemId' => $itemId));
+	$event->setData(array('userId' => $userId, 'itemId' => $itemId, 
+			      'permission' => $permission, 'applyToChildren' => $applyToChildren, 
+			      'changeType' => 'add'));
 	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
 	    return $ret;
@@ -60,7 +62,8 @@ class GalleryPermissionHelper_advanced {
 	    return $ret;
 	}
 
-	$ret = GalleryPermissionHelper_advanced::_postGroupEvent($groupId, $itemId);
+	$ret = GalleryPermissionHelper_advanced::_postGroupEvent( 
+	    $groupId, $itemId, $permission, $applyToChildren, 'add');
 	if ($ret) {
 	    return $ret;
 	}
@@ -73,10 +76,13 @@ class GalleryPermissionHelper_advanced {
      *
      * @param int $groupId
      * @param mixed $itemId item id or array of ids
+     * @param string $permission the permission id
+     * @param boolean $applyToChildren whether or not this call applies to child items
+     * @param string $changeType the type of change ('add' or 'remove')
      * @return GalleryStatus a status code
      * @access private
      */
-    function _postGroupEvent($groupId, $itemId) {
+    function _postGroupEvent($groupId, $itemId, $permission, $applyToChildren, $changeType) {
 	$userId = null;
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId, 'GalleryGroup');
 	if ($ret) {
@@ -92,7 +98,9 @@ class GalleryPermissionHelper_advanced {
 	}
 
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	$event->setData(array('userId' => $userId, 'itemId' => $itemId));
+	$event->setData(array('userId' => $userId, 'itemId' => $itemId, 
+			      'permission' => $permission, 'applyToChildren' => $applyToChildren,
+			      'changeType' => $changeType));
 	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
 	    return $ret;
@@ -126,7 +134,9 @@ class GalleryPermissionHelper_advanced {
 	}
 
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	$event->setData(array('userId' => $userId, 'itemId' => $itemId));
+	$event->setData(array('userId' => $userId, 'itemId' => $itemId, 
+			      'permission' => $permission, 'applyToChildren' => $applyToChildren, 
+			      'changeType' => 'remove'));
 	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
 	    return $ret;
@@ -146,7 +156,8 @@ class GalleryPermissionHelper_advanced {
 	    return $ret;
 	}
 
-	$ret = GalleryPermissionHelper_advanced::_postGroupEvent($groupId, $itemId);
+	$ret = GalleryPermissionHelper_advanced::_postGroupEvent( 
+	    $groupId, $itemId, $permission, $applyToChildren, 'remove');
 	if ($ret) {
 	    return $ret;
 	}

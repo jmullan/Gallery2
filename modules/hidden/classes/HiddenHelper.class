@@ -49,6 +49,7 @@ class HiddenHelper extends HiddenInterface_1_0 {
     function hideItem(&$item, $useProgressBar=false,
 		      $hideId=null, $hiddenAncestor=null, $passwordAncestor=null) {
 	global $gallery;
+
 	/* If item is already hidden, we're done */
 	if ($item->hasOnLoadHandler('Hidden')) {
 	    return null;
@@ -148,23 +149,31 @@ class HiddenHelper extends HiddenInterface_1_0 {
 
 	/* Set onLoadHandler */
 	if ($itemId == $hideId) {
-	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemId);
-	    if ($ret) {
-		return $ret;
-	    }
-	    list ($ret, $item) = $item->refresh();
-	    if ($ret) {
-		return $ret;
-	    }
-	    $item->addOnLoadHandler('Hidden');
-	    $ret = $item->save();
-	    if ($ret) {
-		GalleryCoreApi::releaseLocks($lockId);
-		return $ret;
-	    }
-	    $ret = GalleryCoreApi::releaseLocks($lockId);
-	    if ($ret) {
-		return $ret;
+	    if (!$item->hasOnLoadHandler('Hidden')) {
+		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemId);
+		if ($ret) {
+		    return $ret;
+		}
+		$ret = GalleryCoreApi::addMapEntry('ItemHiddenMap', array('itemId' => $itemId));
+		if ($ret) {
+		    GalleryCoreApi::releaseLocks($lockId);
+		    return $ret;
+		}
+		list ($ret, $item) = $item->refresh();
+		if ($ret) {
+		    GalleryCoreApi::releaseLocks($lockId);
+		    return $ret;
+		}
+		$item->addOnLoadHandler('Hidden');
+		$ret = $item->save();
+		if ($ret) {
+		    GalleryCoreApi::releaseLocks($lockId);
+		    return $ret;
+		}
+		$ret = GalleryCoreApi::releaseLocks($lockId);
+		if ($ret) {
+		    return $ret;
+		}
 	    }
 	}
 
@@ -232,6 +241,7 @@ class HiddenHelper extends HiddenInterface_1_0 {
 	    return null;
 	}
 	$itemId = $item->getId();
+
 	if (!isset($hideId)) {
 	    $hideId = $itemId;
 	    $gallery->guaranteeTimeLimit(60);
@@ -289,6 +299,33 @@ class HiddenHelper extends HiddenInterface_1_0 {
 	/* Remove session based permission */
 	if ($item->getId() != $hideId || !$hasPassword) {
 	    $ret = GalleryCoreApi::removeEntityPermission($itemId, $hideId, 'core.view');
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
+	/* Remove onLoadHandler and remove from ItemHiddenMap */
+	if ($itemId == $hideId) {
+	    $ret = GalleryCoreApi::removeMapEntry('ItemHiddenMap', array('itemId' => $itemId));
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemId);
+	    if ($ret) {
+		return $ret;
+	    }
+	    list ($ret, $item) = $item->refresh();
+	    if ($ret) {
+		return $ret;
+	    }
+	    $item->removeOnLoadHandler('Hidden');
+	    $ret = $item->save();
+	    if ($ret) {
+		GalleryCoreApi::releaseLocks($lockId);
+		return $ret;
+	    }
+	    $ret = GalleryCoreApi::releaseLocks($lockId);
 	    if ($ret) {
 		return $ret;
 	    }
@@ -359,28 +396,6 @@ class HiddenHelper extends HiddenInterface_1_0 {
 		if ($ret) {
 		    return $ret;
 		}
-	    }
-	}
-
-	/* Remove onLoadHandler */
-	if ($itemId == $hideId) {
-	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemId);
-	    if ($ret) {
-		return $ret;
-	    }
-	    list ($ret, $item) = $item->refresh();
-	    if ($ret) {
-		return $ret;
-	    }
-	    $item->removeOnLoadHandler('Hidden');
-	    $ret = $item->save();
-	    if ($ret) {
-		GalleryCoreApi::releaseLocks($lockId);
-		return $ret;
-	    }
-	    $ret = GalleryCoreApi::releaseLocks($lockId);
-	    if ($ret) {
-		return $ret;
 	    }
 	}
 

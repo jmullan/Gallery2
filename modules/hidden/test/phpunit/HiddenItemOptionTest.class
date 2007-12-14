@@ -60,7 +60,14 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 	    return $ret;
 	}
 
-	$this->_registerTestEventListener('GalleryEntity::save', new HiddenModule());
+	$ret = $this->_registerFactoryImplementationForTest(
+	    'GalleryEventListener', 'HiddenModule', 'HiddenModule', 
+	    'modules/hidden/module.inc', 'hidden', 
+	    array('Gallery::ViewableTreeChange', 'GalleryEntity::save', 'GalleryEntity::delete'));
+	if ($ret) {
+	    return $ret;
+	}
+
     }
 
     function _createSubAlbumWithItems($parentId, $top=false) {
