@@ -2448,8 +2448,6 @@ class CoreModuleExtras {
 	    }
 	case '1.2.24':
 	    /* Combined YUI libraries into a single file */ 
-	case '1.2.25':
-	    /* Added additional information to Gallery::ViewableTreeChange event */ 
 
 	case 'end of upgrade path':
 	    /*
@@ -2788,7 +2786,6 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.22':
 	case '1.2.23':
 	case '1.2.24':
-	case '1.2.25':
 
 	case 'end of upgrade path':
 	    /*
