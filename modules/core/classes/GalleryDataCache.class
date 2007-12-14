@@ -847,7 +847,7 @@ class GalleryDataCache {
 	    $userIdForSql = new GallerySqlFragment('<> ?', (int)$anonymousUserId);
 	}
 
-	list ($ret, $results) = GalleryCoreApi::updateMapEntry('GalleryCacheMap',
+	$ret = GalleryCoreApi::updateMapEntry('GalleryCacheMap',
 		array('userId' => $userIdForSql,
 		      'timestamp' => new GallerySqlFragment('< ?', (int)$cutoff), 'isEmpty' => 0),
 		array('value' => null, 'isEmpty' => 1));
