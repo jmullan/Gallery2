@@ -1589,6 +1589,16 @@ class UtilitiesTest extends GalleryTestCase {
 
     }
 
+    function testHtmlSafeWithDecode() {
+	/*
+	 * I don't fully understand why htmlSafe does this particular transform, so I'm
+	 * documenting it here in case it changes.
+	 */
+	$this->assertEquals(
+	    'December &amp;lt;#952&gt;',
+	    GalleryUtilities::htmlSafe('December <#952>', true));
+    }
+
     function testHtmlSafeUtf7() {
 	/*
 	 * HTML_Safe 0.9.9beta strips "invalid UTF-7": a+b-c -> ac
