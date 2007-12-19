@@ -1397,7 +1397,7 @@ class UtilitiesTest extends GalleryTestCase {
 			    'mkdir for cache, but without specific perms');
     }
 
-    /* 
+    /*
      * For a given path /a/b/c/d, file_exists() returns false for /a/b/c/d and /a/b/c and true for
      * /a/b if we don't have read+execute permission on /a/b.
      * In case we don't have r+w for the root directory /, we are in an infinite loop unless we
@@ -1575,6 +1575,8 @@ class UtilitiesTest extends GalleryTestCase {
 		'<a href="test" onmouseover="alert(1)">12</a>8 <br />'));
 	$this->assertEquals('<a>12</a>b<br />', GalleryUtilities::htmlSafe(
 		'<a href="javascript:alert(1)">12</a>b<br/>'));
+	$this->assertEquals('test ', GalleryUtilities::htmlSafe(
+	        'test <body onload=alert("xss")>'));
 
 	/* HTML_Safe does some normalizing of other tags */
 	$this->assertEquals('br<br />is<br />ok', GalleryUtilities::htmlSafe('br<br>is<br/>ok'));
