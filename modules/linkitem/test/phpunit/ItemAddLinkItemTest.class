@@ -150,10 +150,14 @@ class ItemAddLinkItemTest extends ItemAddPluginTestCase {
 	    return $ret;
 	}
 	$this->assertEquals(array($childIds[0]), array_keys($thumbnailTable), 'thumbnail table');
-	$thumbnail = $thumbnailTable[$childIds[0]];
-	$this->assertEquals($childIds[0], $thumbnail->getDerivativeSourceId(), 'src');
-	$this->assertEquals('convert-to-image/jpeg;thumbnail|123',
-			    $thumbnail->getDerivativeOperations(), 'op');
+	if (!empty($thumbnailTable[$childIds[0]])) {
+	    $thumbnail = $thumbnailTable[$childIds[0]];
+	    $this->assertEquals($childIds[0], $thumbnail->getDerivativeSourceId(), 'src');
+	    $this->assertEquals('convert-to-image/jpeg;thumbnail|123',
+				$thumbnail->getDerivativeOperations(), 'op');
+	} else {
+	    $this->assert(false, 'Missing thumbnail!');
+	}
     }
 
     function testAddLinkItemAlbumNotFound() {
@@ -203,13 +207,18 @@ class ItemAddLinkItemTest extends ItemAddPluginTestCase {
 	    return $ret;
 	}
 	$this->assertEquals(array($childIds[0]), array_keys($thumbnailTable), 'thumbnail table');
-	$thumbnail = $thumbnailTable[$childIds[0]];
-	$this->assertEquals($childIds[0], $thumbnail->getDerivativeSourceId(), 'src');
-	$this->assertEquals('convert-to-image/jpeg;thumbnail|123',
-			    $thumbnail->getDerivativeOperations(), 'op');
-	$this->assertEquals(
-	    'composite|plugins_data/modules/linkitem/arrow.png,image/png,14,14,bottom-right,0,0',
-	    $thumbnail->getPostFilterOperations(), 'postfilter');
+	if (!empty($thumbnailTable[$childIds[0]])) {
+	    $thumbnail = $thumbnailTable[$childIds[0]];
+	    $this->assertEquals($childIds[0], $thumbnail->getDerivativeSourceId(), 'src');
+	    $this->assertEquals('convert-to-image/jpeg;thumbnail|123',
+				$thumbnail->getDerivativeOperations(), 'op');
+	    $this->assertEquals(
+		'composite|plugins_data/modules/linkitem/arrow.png,' .
+		'image/png,14,14,bottom-right,0,0',
+		$thumbnail->getPostFilterOperations(), 'postfilter');
+	} else {
+	    $this->assert(false, 'Missing thumbnail!');
+	}
     }
 
     function testAddLinkItemURLMissing() {
