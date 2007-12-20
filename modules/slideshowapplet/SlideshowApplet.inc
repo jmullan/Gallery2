@@ -65,7 +65,7 @@ class SlideshowAppletView extends GalleryView {
 	    }
 	    if (!$canView) {
 		/* Avoid information disclosure, act as if the item didn't exist. */
-		return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	    }
 	}
 

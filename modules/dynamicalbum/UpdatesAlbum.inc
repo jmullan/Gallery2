@@ -83,7 +83,7 @@ class UpdatesAlbumView extends GalleryView {
 	    }
 	    if (!$hasPermission) {
 		/* Avoid information disclosure, act as if the item didn't exist. */
-		return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null, null, null);
 	    }
 
 	    /* Provide parent, parent URL and get-children function to Theme API */
@@ -205,7 +205,7 @@ class UpdatesAlbumView extends GalleryView {
 	    }
 	    if (!$hasPermission) {
 		/* Avoid information disclosure, act as if the item didn't exist. */
-		return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	    }
 
 	    list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($albumId);
