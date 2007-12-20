@@ -858,7 +858,20 @@ class GalleryTestCase extends TestCase {
 	    }
 	} else {
 	    if ($obj1 !== $obj2) {
-		return "[$context] $obj1 !== $obj2";
+		if (is_string($obj1)) {
+		    for ($i = 0; $i < max(strlen($obj1), strlen($obj2)); $i++) {
+			if ($obj1[$i] != $obj2[$i]) {
+			    $result = sprintf(
+				"[%s at char %d (0x%d != 0x%d)] ", trim($context), $i,
+				ord($obj1[$i]), ord($obj2[$i]));
+			    break;
+			}
+		    }
+		} else {
+		    $result = "[$context] ";
+		}
+		$result .= "$obj1 !== $obj2";
+		return $result;
 	    }
 	}
 
@@ -984,7 +997,7 @@ class GalleryTestCase extends TestCase {
      */
     function _registerFactoryImplementationForTest($classType, $className, $implId, $implPath,
 						   $implModuleId, $hints=array()) {
-	$ret = GalleryCoreApi::registerFactoryImplementationForRequest($classType, $className, 
+	$ret = GalleryCoreApi::registerFactoryImplementationForRequest($classType, $className,
 							 $implId, $implPath, $implModuleId, $hints);
 	if ($ret) {
 	    $this->failWithStatus($ret);
