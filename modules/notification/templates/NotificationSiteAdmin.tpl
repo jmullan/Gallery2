@@ -21,7 +21,7 @@
     var disabled = '' == eventValue;
     document.getElementById('handler' + iteration).disabled = disabled;
     document.getElementById('enable' + iteration).disabled = disabled;
-    
+
     if (!disabled) {
       var nextRow = document.getElementById('row' + (iteration + 1));
       if (nextRow != null) {
@@ -62,12 +62,12 @@
   <div class="yui-g" id="row{$iteration}" style="width:800px{if $iteration>$form.displayRows}; display:none{/if}">
     <div class="yui-g first" style="width:315px">
       <div class="yui-u first" style="width:150px">
-	<input type="hidden" name="{g->formVar var="form[notificationMap][$iteration][currentName]"}" 
+	<input type="hidden" name="{g->formVar var="form[notificationMap][$iteration][currentName]"}"
 		{if $iteration <= $eventCount}value="{$form.notificationMap[$iteration].currentName}"{/if} />
-	<select id="select{$iteration}" name="{g->formVar var="form[notificationMap][$iteration][notificationName]"}" 
+	<select id="select{$iteration}" name="{g->formVar var="form[notificationMap][$iteration][notificationName]"}"
 		onchange="enableInput({$iteration})" style="width:100%">
 	  {foreach from=$definedEvents item=eventDescription key=notificationName}
-	    <option value="{$notificationName}" 
+	    <option value="{$notificationName}"
 	      {if !empty($form.notificationMap[$iteration].notificationName) && $notificationName==$form.notificationMap[$iteration].notificationName} selected="selected"{/if}>
 	      {$eventDescription}
 	    </option>
@@ -75,7 +75,7 @@
 	</select>
       </div>
       <div class="yui-u" style="width:150px">
-	<input type="hidden" name="{g->formVar var="form[notificationMap][$iteration][currentHandler]"}" 
+	<input type="hidden" name="{g->formVar var="form[notificationMap][$iteration][currentHandler]"}"
 		{if $iteration <= $eventCount}value="{$form.notificationMap[$iteration].currentHandler}"{/if} />
 	<select id="handler{$iteration}" name="{g->formVar var="form[notificationMap][$iteration][handler]"}"
 		style="width:100%" {if $iteration >= $form.displayRows} disabled="disabled"{/if}>
@@ -112,7 +112,7 @@
 </div>
 
 <div class="gbBlock gcBackground1">
-  <input type="submit" class="inputTypeSubmit" name="{g->formVar var="form[action][save]"}" 
+  <input type="submit" class="inputTypeSubmit" name="{g->formVar var="form[action][save]"}"
 	 value="{g->text text="Save"}" />
   <input type="submit" class="inputTypeSubmit" name="{g->formVar var="form[action][reset]"}"
 	 value="{g->text text="Reset"}"/>

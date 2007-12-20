@@ -29,8 +29,8 @@ GalleryCoreApi::requireOnce('modules/notification/classes/NotificationHelper.cla
  */
 class NotificationRouter /* extends GalleryEventListener */ {
     /**
-     * Generic event handler for notifications.  
-     * Determine if there are any notification handlers registered for the input event and if there 
+     * Generic event handler for notifications.
+     * Determine if there are any notification handlers registered for the input event and if there
      * are any subscribers.
      *
      * @see GalleryEventListener::handleEvent
@@ -51,7 +51,7 @@ class NotificationRouter /* extends GalleryEventListener */ {
 	    return array($ret, null);
 	}
 
-	list ($ret, $active) = 
+	list ($ret, $active) =
 	    NotificationHelper::getActiveNotificationsHandlers(array_keys($implementations));
 	if ($ret) {
 	    return array($ret, null);
@@ -81,7 +81,7 @@ class NotificationRouter /* extends GalleryEventListener */ {
 		    continue;
 		}
 
-		if (!empty($specs['persistentFlag']) 
+		if (!empty($specs['persistentFlag'])
 			&& !$entity->testPersistentFlag($specs['persistentFlag'])) {
 		    continue;
 		}
@@ -90,7 +90,7 @@ class NotificationRouter /* extends GalleryEventListener */ {
 	    $notification->setEvent($event);
 
 	    foreach ($handlers as $handlerId) {
-		if (empty($notifications[$notificationName][$handlerId]) 
+		if (empty($notifications[$notificationName][$handlerId])
 			|| empty($notifications[$notificationName][$handlerId]['enabled'])) {
 		    continue;
 		}
@@ -113,7 +113,7 @@ class NotificationRouter /* extends GalleryEventListener */ {
      * @return GalleryStatus
      */
     function _fireNotification($name, $notification, $handler) {
-	list ($ret, $handlerInstance) = 
+	list ($ret, $handlerInstance) =
 	    GalleryCoreApi::newFactoryInstanceById('NotificationHandler_1_0', $handler);
 	if ($ret) {
 	    return $ret;

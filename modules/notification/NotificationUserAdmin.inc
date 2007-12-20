@@ -65,7 +65,7 @@ class NotificationUserAdminController extends GalleryController {
 
 		foreach ($notification['items'] as $formItem) {
 		    if (empty($formItem['oldSubscribed']) ^ empty($formItem['subscribed'])) {
-			list ($ret, $hints) = 
+			list ($ret, $hints) =
 			    GalleryCoreApi::getFactoryDefinitionHints('NotificationEvent_1_0',
 								      $notificationName);
 			if ($ret) {
@@ -96,7 +96,7 @@ class NotificationUserAdminController extends GalleryController {
 					return array($ret, null);
 				    }
 				}
-				list ($ret, $item) = 
+				list ($ret, $item) =
 				    GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 				if ($ret) {
 				    return array($ret, null);
@@ -125,7 +125,7 @@ class NotificationUserAdminController extends GalleryController {
 	    }
 	}
 
-	$results[$returnOption] = array('view' => 'core.UserAdmin', 
+	$results[$returnOption] = array('view' => 'core.UserAdmin',
 					'subView' => 'notification.NotificationUserAdmin');
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -163,7 +163,7 @@ class NotificationUserAdminView extends GalleryView {
 	}
 
 	$template->setVariable('controller', 'notification.NotificationUserAdmin');
-	return array(null, 
+	return array(null,
 		     array('body' => 'modules/notification/templates/NotificationUserAdmin.tpl'));
     }
 
@@ -193,7 +193,7 @@ class NotificationUserAdminView extends GalleryView {
 	$form['notifications'] = array();
 	$i = 0;
 	foreach ($notifications as $notificationName => $notification) {
-	    list ($ret, $instance) = 
+	    list ($ret, $instance) =
 		GalleryCoreApi::newFactoryInstanceById('NotificationEvent_1_0', $notificationName);
 	    if ($ret) {
 		return $ret;
@@ -205,7 +205,7 @@ class NotificationUserAdminView extends GalleryView {
 	    }
 
 	    foreach ($notification as $handlerName => $status) {
-		if (empty($status['enabled']) 
+		if (empty($status['enabled'])
 			|| (empty($status['public']) && !$isAdminGroup)) {
 		    continue;
 		}
@@ -221,7 +221,7 @@ class NotificationUserAdminView extends GalleryView {
 		    return $ret;
 		}
 
-		/* 
+		/*
 		 * If there are no subscriptions then check to see if the user has permission to
 		 * subscribe to this event.
 		 */
@@ -235,8 +235,8 @@ class NotificationUserAdminView extends GalleryView {
 					  'description' => $description,
 					  'handler' => $handlerName,
 					  'handlerDescription' => $handlerName,
-					  'items' => array('1' => array('itemId' => 0, 
-									'title' => '', 
+					  'items' => array('1' => array('itemId' => 0,
+									'title' => '',
 									'subscribed' => false)));
 		} else {
 		    $form['notifications'][++$i] = array('name' => $notificationName,
@@ -247,7 +247,7 @@ class NotificationUserAdminView extends GalleryView {
 		    /* Do the global subscriptions first */
 		    foreach ($subscriptions[$notificationName] as $itemId) {
 			if (empty($itemId)) {
-			    $form['notifications'][$i]['items'][1] = 
+			    $form['notifications'][$i]['items'][1] =
 				array('itemId' => 0, 'subscribed' => true, 'title' => '');
 			} else {
 			    $itemIds[] = $itemId;
@@ -273,7 +273,7 @@ class NotificationUserAdminView extends GalleryView {
 			$itemIds = $filteredItemIds;
 
 			if (!empty($itemIds)) {
-			    list ($ret, $items) = 
+			    list ($ret, $items) =
 				GalleryCoreApi::loadEntitiesById($itemIds, 'GalleryItem');
 			    if ($ret) {
 				return $ret;
@@ -282,8 +282,8 @@ class NotificationUserAdminView extends GalleryView {
 			    foreach ($items as $item) {
 				$itemUrl = $urlGenerator->generateUrl(
 				    array('view' => 'core.ShowItem', 'itemId' => $item->getId()));
-				$form['notifications'][$i]['items'][++$j] = 
-				    array('itemId' => $item->getId(), 'subscribed' => true, 
+				$form['notifications'][$i]['items'][++$j] =
+				    array('itemId' => $item->getId(), 'subscribed' => true,
 					  'url' => $itemUrl, 'title' => $item->getTitle());
 			    }
 			}

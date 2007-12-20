@@ -58,12 +58,12 @@ class NotificationHelper {
     function getEnabledNotifications($forUpdate=false) {
 	$eventMapLockId = null;
 	if ($forUpdate) {
-	    list($ret, $eventMapLock) = 
+	    list($ret, $eventMapLock) =
 		GalleryCoreApi::getPluginParameter('module', 'notification', 'id.eventMapLock');
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
-	    
+
 
 	    list ($ret, $eventMapLockId) = GalleryCoreApi::acquireWriteLock($eventMapLock);
 	    if ($ret) {
@@ -71,7 +71,7 @@ class NotificationHelper {
 	    }
 	}
 
-	list ($ret, $enabled) = 
+	list ($ret, $enabled) =
 	    GalleryCoreApi::getPluginParameter('module', 'notification', '_enabledMap');
 	if ($ret) {
 	    global $gallery;
@@ -94,7 +94,7 @@ class NotificationHelper {
 	    return array($ret, null);
 	}
 
-	list ($ret, $notificationNames) = 
+	list ($ret, $notificationNames) =
 	    GalleryCoreApi::getAllFactoryImplementationIds('NotificationEvent_1_0');
 	if ($ret) {
 	    return array($ret, null);
@@ -131,19 +131,19 @@ class NotificationHelper {
 	if ($ret) {
 	    return array($ret, null);
 	}
-	
-	list ($ret, $handlerNames) = 
+
+	list ($ret, $handlerNames) =
 	    GalleryCoreApi::getAllFactoryImplementationIds('NotificationHandler_1_0');
 	if ($ret) {
 	    return array($ret, null);
 	}
-	
+
 	if ($display) {
 	    $handlers[''] = $module->translate('Select Handler');
 	}
-	
+
 	foreach (array_keys($handlerNames) as $handlerName) {
-	    list($ret, $handler) = 
+	    list($ret, $handler) =
 		GalleryCoreApi::newFactoryInstanceById('NotificationHandler_1_0', $handlerName);
 	    if ($ret) {
 		return array($ret, null);
@@ -185,7 +185,7 @@ class NotificationHelper {
     }
 
     /**
-     * Retrieve the active Gallery events that the active notification subscriptions depend on. 
+     * Retrieve the active Gallery events that the active notification subscriptions depend on.
      * @return array GalleryStatus
      *               array An array suitable for use as hints. (i.e. array(gallery event, ...))
      */
@@ -201,7 +201,7 @@ class NotificationHelper {
 
 	$events = array();
 	while ($row = $searchResult->nextResult()) {
-	    list($ret, $notification) = 
+	    list($ret, $notification) =
 		GalleryCoreApi::newFactoryInstanceById('NotificationEvent_1_0', $row[0]);
 	    if ($ret) {
 		return array($ret, null);
@@ -218,7 +218,7 @@ class NotificationHelper {
 
     /**
      * Retrieve the list of active notifications and hndlers registered for the specified event
-     * 
+     *
      * @param array $notificationEvents Names of the Notification events to return.
      * @return array array('notificationName' => array('handlerId', ...)
      */
@@ -228,7 +228,7 @@ class NotificationHelper {
 	$markers = GalleryUtilities::makeMarkers(count($notificationEvents));
 
 	$sql = '
-	    SELECT DISTINCT [::notificationName], [::handlerName] 
+             SELECT DISTINCT [::notificationName], [::handlerName]
 	      FROM [SubscriptionMap]
 	     WHERE [::notificationName] IN (' . $markers . ')';
 
@@ -259,7 +259,7 @@ class NotificationHelper {
 	$requiredPermission = $notification->getPermission();
 
 	list ($ret, $searchResult) = GalleryCoreApi::getMapEntry('SubscriptionMap',
-			array('userId'), array('notificationName' => $notificationName, 
+			array('userId'), array('notificationName' => $notificationName,
 					       'itemId' => $itemId));
 	if ($ret) {
 	    return array($ret, null);
@@ -293,7 +293,7 @@ class NotificationHelper {
      */
     function getSubscriberByEntityId($itemId) {
 	list ($ret, $searchResult) = GalleryCoreApi::getMapEntry('SubscriptionMap',
-			   array('notificationName', 'userId', 'handlerName'), 
+			   array('notificationName', 'userId', 'handlerName'),
 			   array('itemId' => $itemId));
 	if ($ret) {
 	    return array($ret, null);
@@ -309,7 +309,7 @@ class NotificationHelper {
 
     /**
      * Unsubscribe the user from the item/event combination.
-     * 
+     *
      * @param int $userId The user id
      * @param int $itemId The item id
      * @param string $eventName The name of the event that is being unsubscribed from.
@@ -319,7 +319,7 @@ class NotificationHelper {
      * @return GalleryStatus
      */
     function unsubscribe($userId, $itemId, $eventName, $notificationName, $handler, $recursive) {
-	$ret = NotificationHelper::_applyUnsubscribe($userId, $itemId, $eventName, 
+	$ret = NotificationHelper::_applyUnsubscribe($userId, $itemId, $eventName,
 						     $notificationName, $handler, $recursive);
 	if ($ret) {
 	    return $ret;
@@ -329,7 +329,7 @@ class NotificationHelper {
     }
 
     /**
-     * Unubscribe the user to item/event combination with the specified handler and optioanlly 
+     * Unubscribe the user to item/event combination with the specified handler and optioanlly
      * propagate the subscription removal to any existing descendents.
      * @param int $userId The user id
      * @param int $itemId The item id
@@ -340,8 +340,8 @@ class NotificationHelper {
      * @return GalleryStatus
      */
     function _applyUnsubscribe($userId, $itemId, $eventName, $name, $handler, $recursive) {
-	$ret = GalleryCoreApi::removeMapEntry('SubscriptionMap', 
-			    array('userId' => $userId, 'itemId' => $itemId, 
+	$ret = GalleryCoreApi::removeMapEntry('SubscriptionMap',
+			    array('userId' => $userId, 'itemId' => $itemId,
 				  'notificationName' => $name, 'handlerId' => $handler));
 	if ($ret) {
 	    return $ret;
@@ -376,7 +376,7 @@ class NotificationHelper {
 
     /**
      * When a subscription is removed, check that that the event listener is no longer required.
-     * 
+     *
      * @param int $event The id of the event to be unsubscribed from
      * @return GalleryStatus
      */
@@ -396,7 +396,7 @@ class NotificationHelper {
 	    return $ret;
 	}
 
-	$sql = 'SELECT COUNT(*) FROM [SubscriptionMap] 
+	$sql = 'SELECT COUNT(*) FROM [SubscriptionMap]
 		 WHERE [SubscriptionMap::notificationName] = ?';
 	list ($ret, $results) = $storage->search($sql, array($event));
 	if ($ret) {
@@ -490,7 +490,7 @@ class NotificationHelper {
 	    return $ret;
 	}
 
-	$ret = NotificationHelper::_applySubscription($userId, $item, $notificationName, 
+	$ret = NotificationHelper::_applySubscription($userId, $item, $notificationName,
 						      $notification, $handler, $recursive);
 	if ($ret) {
 	    return $ret;
@@ -501,7 +501,7 @@ class NotificationHelper {
     }
 
     /**
-     * Subscribe the user to item/event combination with the specified handler and optionally 
+     * Subscribe the user to item/event combination with the specified handler and optionally
      * propagate the subscriptions to any existing children.
      * @param int $userId The user id
      * @param GalleryItem $item The item
@@ -519,8 +519,8 @@ class NotificationHelper {
 	    $itemId = 0;
 	    $canContainChildren = false;
 	}
-	$ret = GalleryCoreApi::addMapEntry('SubscriptionMap', array('userId' => $userId, 
-			    'itemId' => $itemId, 'notificationName' => $name, 
+	$ret = GalleryCoreApi::addMapEntry('SubscriptionMap', array('userId' => $userId,
+			    'itemId' => $itemId, 'notificationName' => $name,
 			    'handlerName' => $handler));
 	if ($ret) {
 	    return $ret;
@@ -538,7 +538,7 @@ class NotificationHelper {
 		    return $ret;
 		}
 
-		list ($ret, $childItems) = 
+		list ($ret, $childItems) =
 		    GalleryCoreApi::loadEntitiesById($childItemIds, 'GalleryItem');
 		if ($ret) {
 		    return $ret;
@@ -560,7 +560,7 @@ class NotificationHelper {
 			continue;
 		    }
 
-		    
+
 		    list ($ret, $permissions) = GalleryCoreApi::getPermissions($childId, $userId);
 		    if ($ret) {
 			return $ret;
@@ -570,8 +570,8 @@ class NotificationHelper {
 			continue;
 		    }
 
-		    $ret = NotificationHelper::_applySubscription($userId, $child, 
-							$name, $notification, $handler, true);
+		    $ret = NotificationHelper::_applySubscription(
+			$userId, $child, $name, $notification, $handler, true);
 		    if ($ret) {
 			return $ret;
 		    }
@@ -588,7 +588,7 @@ class NotificationHelper {
      * @private
      */
     function _lockHints() {
-	list($ret, $hintsLock) = 
+	list($ret, $hintsLock) =
 		GalleryCoreApi::getPluginParameter('module', 'notification', 'id.hintsLock');
 	if ($ret) {
 	    return array($ret, null);

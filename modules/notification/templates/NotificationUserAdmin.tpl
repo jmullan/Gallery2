@@ -45,7 +45,7 @@
     {/if}
     {assign var="subscriptionCount" value=$notification.items|@count}
 	<tr>
-	    
+	
 	    <td colspan="5">
 	      <input type="hidden" name="{g->formVar var="form[notifications][$i][name]"}" value="{$notification.name}">
 	      <input type="hidden" name="{g->formVar var="form[notifications][$i][description]"}" value="{$notification.description}">
@@ -74,7 +74,7 @@
 	    <td style="text-align: center">
 	      <input id="old{$i}"type="hidden" name="{g->formVar var="form[notifications][$i][items][$j][oldSubscribed]"}" value="{$item.subscribed}" />
 	      <input id="new{$i}"type="checkbox" onchange="enableRecursive({$i})"
-		name="{g->formVar var="form[notifications][$i][items][$j][subscribed]"}" 
+		name="{g->formVar var="form[notifications][$i][items][$j][subscribed]"}"
 		{if !empty($item.subscribed)} checked="checked"{/if}/>
 	    </td>
 	    <td style="text-align: center">

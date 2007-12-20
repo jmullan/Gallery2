@@ -59,7 +59,7 @@ class NotificationItemAdminController extends GalleryController {
 	if (!empty($form['action']['save'])) {
 	    foreach ($form['notifications'] as $i => $notification) {
 		if (empty($notification['oldSubscribed']) ^ empty($notification['subscribed'])) {
-		    list ($ret, $hints) = 
+		    list ($ret, $hints) =
 			GalleryCoreApi::getFactoryDefinitionHints('NotificationEvent_1_0',
 								  $notification['name']);
 		    if ($ret) {
@@ -67,7 +67,7 @@ class NotificationItemAdminController extends GalleryController {
 		    }
 
 		    if (empty($notification['subscribed'])) {
-			$ret = NotificationHelper::unsubscribe($userId, $itemId, $hints[0], 
+			$ret = NotificationHelper::unsubscribe($userId, $itemId, $hints[0],
 						    $notification['name'], $notification['handler'],
 						    !empty($notification['recursive']));
 		    } else {
@@ -81,7 +81,7 @@ class NotificationItemAdminController extends GalleryController {
 
 			    $permission = $instance->getPermission();
 			    if (!empty($permission)) {
-				list ($ret, $authorized) = 
+				list ($ret, $authorized) =
 				    GalleryCoreApi::hasItemPermission($itemId, $permission);
 				if ($ret) {
 				    return array($ret, null);
@@ -89,7 +89,7 @@ class NotificationItemAdminController extends GalleryController {
 			    }
 			}
 			if ($authorized) {
-			    $ret = NotificationHelper::subscribe($userId, $item, $hints[0], 
+			    $ret = NotificationHelper::subscribe($userId, $item, $hints[0],
 						    $notification['name'], $notification['handler'],
 						    !empty($notification['recursive']));
 			} else {
@@ -112,7 +112,7 @@ class NotificationItemAdminController extends GalleryController {
 	    }
 	}
 
-	$results[$returnOption] = array('view' => 'core.ItemAdmin', 
+	$results[$returnOption] = array('view' => 'core.ItemAdmin',
 					'subView' => 'notification.NotificationItemAdmin',
 					'itemId' => $itemId);
 	$results['status'] = $status;
@@ -138,7 +138,7 @@ class NotificationItemAdminView extends GalleryView {
 	}
 
 	$template->setVariable('controller', 'notification.NotificationItemAdmin');
-	return array(null, 
+	return array(null,
 		     array('body' => 'modules/notification/templates/NotificationItemAdmin.tpl'));
     }
 
@@ -215,12 +215,12 @@ class NotificationItemAdminView extends GalleryView {
 		return $ret;
 	    }
 	    foreach ($notification as $handlerName => $status) {
-		if (empty($status['enabled']) 
+		if (empty($status['enabled'])
 			|| (empty($status['public']) && !$isAdminGroup)) {
 		    continue;
 		}
 
-		list ($ret, $handler) = 
+		list ($ret, $handler) =
 		    GalleryCoreApi::newFactoryInstance('NotificationHandler_1_0', $handlerName);
 		if ($ret) {
 		    return $ret;

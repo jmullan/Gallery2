@@ -78,7 +78,7 @@ class NotificationEvent_1_0 {
     }
 
     /**
-     * What permission of the item should be checked to see if a user is allowed to 
+     * What permission of the item should be checked to see if a user is allowed to
      * get that event. Setting to null will limit the notifications to administrators
      *
      * @return string name of permission to check
@@ -97,7 +97,7 @@ class NotificationEvent_1_0 {
     }
 
     /**
-     * Determines if the event is appropriate for the supplied item.  This could be null and might 
+     * Determines if the event is appropriate for the supplied item.  This could be null and might
      * not be an object.
      *
      * @param GalleryItem $item The item to be checked against.
@@ -112,9 +112,9 @@ class NotificationEvent_1_0 {
      * The event specification determines the selection criteria for the particular event.  The only
      * required entry is 'eventName'.
      *
-     * @return array ('eventName' => eventName, 'entityType' => entityType, 
+     * @return array ('eventName' => eventName, 'entityType' => entityType,
      * 		      'persistentFlag' => flags)
-     * @abstract 
+     * @abstract
      */
     function getEventSpecs() {
 	return null;

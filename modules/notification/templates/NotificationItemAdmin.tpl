@@ -52,7 +52,7 @@
 	    </td>
 	    <td style="text-align: center">
 	      <input id="old{$i}" type="hidden" name="{g->formVar var="form[notifications][$i][oldSubscribed]"}" value="{$notification.subscribed}" />
-	      <input id="new{$i}" type="checkbox" name="{g->formVar var="form[notifications][$i][subscribed]"}" 
+	      <input id="new{$i}" type="checkbox" name="{g->formVar var="form[notifications][$i][subscribed]"}"
 	      	onchange="enableRecursive({$i})"
 		{if !empty($notification.subscribed)} checked="checked"{/if} />
 	    </td>

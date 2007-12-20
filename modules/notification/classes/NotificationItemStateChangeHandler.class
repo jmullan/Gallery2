@@ -22,9 +22,9 @@ GalleryCoreApi::requireOnce('modules/notification/classes/NotificationHelper.cla
 
 /**
  * Notification Item State Change Handler
- * 
+ *
  * Handles item delete and save events.  If it is a delete event, then any subscriptions for the
- * item are removed.  In the case of the save event, if there are any subscriptions on the 
+ * item are removed.  In the case of the save event, if there are any subscriptions on the
  * parent item, then these are propagated to the new item.
  */
 class NotificationItemStateChangeHandler /* extends GalleryEventListener */ {
@@ -38,7 +38,7 @@ class NotificationItemStateChangeHandler /* extends GalleryEventListener */ {
 	$entity = $event->getEntity();
 	
 	if (empty($entity)) {
-	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, null, null, 
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, null, null,
 	    				       'No entity supplied for ' . $eventName), null);
 	}
 	if ($eventName == 'GalleryEntity::save') {
@@ -58,7 +58,7 @@ class NotificationItemStateChangeHandler /* extends GalleryEventListener */ {
 		return array($ret, null);
 	    }
 	} else if ($eventName == 'GalleryEntity::delete') {
-	    $ret = GalleryCoreApi::removeMapEntry('SubscriptionMap', 
+	    $ret = GalleryCoreApi::removeMapEntry('SubscriptionMap',
 						  array('itemId' => $entity->getId()));
 	    if ($ret) {
 		return array($ret, null);
@@ -69,10 +69,10 @@ class NotificationItemStateChangeHandler /* extends GalleryEventListener */ {
     }
 
     /**
-     * For the specified entityId, this method will retrieve all the events that have users 
-     * subscribed to. If the user has permission to the new item, the subscription will be applied 
+     * For the specified entityId, this method will retrieve all the events that have users
+     * subscribed to. If the user has permission to the new item, the subscription will be applied
      * to the new item.
-     * 
+     *
      * @param GalleryItem $entity The entity which triggered the save or delete event.
      * @param array $eventMap Associative array: eventId => array(userId, handlerName)
      * @return GalleryStatus
@@ -99,7 +99,7 @@ class NotificationItemStateChangeHandler /* extends GalleryEventListener */ {
 
 	    $requiredPermission = $notification->getPermission();
 	    foreach ($subscribers as $data) {
-		list ($ret, $permissions) = 
+		list ($ret, $permissions) =
 		    GalleryCoreApi::getPermissions($entity->getId(), $data[0]);
 		if ($ret) {
 		    return $ret;
