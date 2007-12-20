@@ -146,17 +146,11 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	}
 	$sequence .= $itemId . '/%';
 
-	list ($ret, $aclIds) =
-	    GalleryCoreApi::fetchAccessListIds('comment.view', $gallery->getActiveUserId());
+	list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds(
+	    array('comment.view', 'core.view'), $gallery->getActiveUserId());
 	if ($ret) {
 	    return array($ret, null, null);
 	}
-	list ($ret, $viewItemAclIds) =
-	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
-	if ($ret) {
-	    return array($ret, null, null);
-	}
-	$aclIds = array_intersect($viewItemAclIds, $aclIds);
 	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
 	if (empty($aclIds)) {
