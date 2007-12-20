@@ -858,19 +858,24 @@ class GalleryTestCase extends TestCase {
 	    }
 	} else {
 	    if ($obj1 !== $obj2) {
+		$result = sprintf("[%s ", trim($context));
 		if (is_string($obj1)) {
-		    for ($i = 0; $i < max(strlen($obj1), strlen($obj2)); $i++) {
-			if ($obj1[$i] != $obj2[$i]) {
+		    $len1 = strlen($obj1);
+		    $len2 = strlen($obj2);
+		    for ($i = 0; $i < max($len1, $len2); $i++) {
+			if ($i > $len1 - 1) {
+			    $result .= sprintf("at char %d (END != 0x%d)", $i, $obj2[$i]);
+			} else if ($i > $len2 - 1) {
+			    $result .= sprintf("at char %d (0x%d != END)", $i, $obj1[$i]);
+			} else if ($obj1[$i] != $obj2[$i]) {
 			    $result = sprintf(
-				"[%s at char %d (0x%d != 0x%d)] ", trim($context), $i,
+				"at char %d (0x%d != 0x%d)", trim($context), $i,
 				ord($obj1[$i]), ord($obj2[$i]));
 			    break;
 			}
 		    }
-		} else {
-		    $result = "[$context] ";
 		}
-		$result .= "$obj1 !== $obj2";
+		$result .= "] $obj1 !== $obj2";
 		return $result;
 	    }
 	}
