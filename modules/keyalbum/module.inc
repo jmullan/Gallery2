@@ -32,7 +32,7 @@ class KeyAlbumModule extends GalleryModule {
 	$this->setId('keyalbum');
 	$this->setName($gallery->i18n('Keyword Albums'));
 	$this->setDescription($gallery->i18n('Dynamic albums based on keyword search'));
-	$this->setVersion('1.0.4');
+	$this->setVersion('1.0.5');
 	$this->_templateVersion = 1;
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getSiteAdminViews|getItemSummaries');
@@ -173,7 +173,9 @@ class KeyAlbumModule extends GalleryModule {
 		      'help' => $this->translate('Short URL for Keyword Albums'),
 		      'keywords' => array(
 			  'keyword' => array('pattern' => '([^?/]+)',
-			      'help' => $this->translate('Keyword to use for dynamic album')))
+			      'help' => $this->translate('Keyword to use for dynamic album')),
+			  'page' => array('pattern' => '([0-9]*)',
+			      'help' => $this->translate('Page number in a dynamic album')))
 		    ));
     }
 }
