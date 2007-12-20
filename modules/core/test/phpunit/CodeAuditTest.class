@@ -318,6 +318,8 @@ class CodeAuditTest extends CodeAuditTestCase {
 
 		    $finalCount = "array($commaCount)";
 		    $returnCount[$function][$i] = array($finalCount, $tmp);
+		} else if (preg_match('/^GalleryCoreApi::error\(.*\)/', $returns[$i])) {
+		    $returnCount[$function][$i] = array("scalar", $returns[$i]);
 		} else if (preg_match('/\w\s*\(.*\)/', $returns[$i])) {
 		    $returnCount[$function][$i] = array("function", $returns[$i]);
 		} else {
