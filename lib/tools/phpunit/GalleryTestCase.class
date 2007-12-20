@@ -865,8 +865,10 @@ class GalleryTestCase extends TestCase {
 		    for ($i = 0; $i < max($len1, $len2); $i++) {
 			if ($i > $len1 - 1) {
 			    $result .= sprintf("at char %d (END != 0x%d)", $i, $obj2[$i]);
+			    break;
 			} else if ($i > $len2 - 1) {
 			    $result .= sprintf("at char %d (0x%d != END)", $i, $obj1[$i]);
+			    break;
 			} else if ($obj1[$i] != $obj2[$i]) {
 			    $result = sprintf(
 				"at char %d (0x%d != 0x%d)", trim($context), $i,
