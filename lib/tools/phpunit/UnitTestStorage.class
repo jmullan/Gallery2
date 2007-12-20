@@ -45,6 +45,32 @@
  */
 class UnitTestStorage extends MockObject {
     var $_extras;
+    var $_lockSystem;
+
+    function UnitTestStorage() {
+	$this->MockObject();
+	list ($ret, $this->_lockSystem) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'lock.system');
+	if ($ret) {
+	    /*
+	     * It's a pita for the caller to have to handle this, so just print it out, which
+	     * should raise enough of a red flag.
+	     */
+	    print $ret->getAsHtml();
+	}
+    }
+
+   function setReply($function, $inputs, $outputs, $optional=false) {
+       if ($this->_lockSystem != 'database' &&
+	       in_array($function, array('acquireReadLock', 'acquireWriteLock', 'releaseLocks'))) {
+	   return;
+       }
+       if ($function == 'search') {
+	   $inputs[0] = trim(preg_replace('/\s+/', ' ', $inputs[0]));
+       }
+       parent::setReply($function, $inputs, $outputs, $optional);
+    }
+
     function getAdoDbType() {
 	return $this->_makeReply('getAdoDbType', array());
     }
@@ -106,6 +132,7 @@ class UnitTestStorage extends MockObject {
     }
 
     function search($query, $data=array(), $optional=array()) {
+	$query = trim(preg_replace('/\s+/', ' ', $query));
 	return $this->_makeReply('search', array($query, $data, $optional));
     }
 
@@ -235,7 +262,7 @@ class UnitTestStorage extends MockObject {
     function validateConnection() {
 	return $this->_makeReply('validateConnection', array());
     }
-    								
+
     function &_getExtras() {
     	if (!isset($this->_extras)) {
 	    $this->_extras = new UnitTestStorageExtras();
