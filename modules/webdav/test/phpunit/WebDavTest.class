@@ -34,18 +34,12 @@ class WebDavTest extends GalleryTestCase {
     }
 
     function setUp() {
+	global $gallery;
+
 	$ret = parent::setUp();
 	if ($ret) {
 	   return $ret;
 	}
-
-	/* Require here to avoid loading if none of our tests will be run */
-	ob_start();
-	GalleryCoreApi::requireOnce('main.php');
-	ob_end_clean();
-
-	/* main.php / bootstrap.inc creates a new $gallery object */
-	global $gallery;
 
 	/* Use WebDavTestPhpVm */
 	$this->_phpVm = new WebDavTestPhpVm();

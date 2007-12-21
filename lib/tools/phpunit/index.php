@@ -27,6 +27,15 @@ define('G2_SUPPORT_URL_FRAGMENT', '../../support/');
 include('../../support/security.inc');
 include('../../../bootstrap.inc');
 require_once('../../../init.inc');
+
+/*
+ * Load up main.php so that tests that want _GalleryMain can get to it.  Do it now, though so that
+ * we don't mangle the $gallery object during test runs.
+ */
+ob_start();
+require_once('../../../main.php');
+ob_end_clean();
+
 require_once('phpunit.inc');
 require_once('GalleryTestCase.class');
 require_once('GalleryImmediateViewTestCase.class');

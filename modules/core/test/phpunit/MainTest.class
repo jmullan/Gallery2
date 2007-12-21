@@ -38,24 +38,6 @@ class MainTest extends GalleryTestCase {
 	   return $ret;
 	}
 
-	$this->_saveGallery = $gallery;
-
-	/*
-	 * Copies of the Gallery object still have all the same reference to the one and only
-	 * session object.  Thus we need to backup the session too.
-	 */
-	$this->_saveSession = $gallery->_session;
-
-	/*
-	 * Previously we defined G2_EMBED here to prevent main.php from displaying any content when
-	 * it was included.  This caused problems with some tests that varied their behavior based
-	 * on G2_EMBED.  Now we capture the output and send it to /dev/null via output buffering.
-	 * G2_EMBED is not required for testEmbedOnly().
-	 */
-	ob_start();
-	require_once(dirname(__FILE__) . '/../../../../main.php');
-	ob_end_clean();
-
 	$_SERVER['HTTP_HOST'] = 'example.com';
 	$_SERVER['SERVER_PORT'] = 80;
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php';
@@ -452,7 +434,7 @@ class MainTest extends GalleryTestCase {
 	    array('forceFullUrl' => true, 'htmlEntities' => false, 'forceSessionId' => false));
 
 	$gallery->setConfig('anonymousUserId', $gallery->getActiveUserId());
-	    
+
 	list ($ret, $g2Data) = _GalleryMain();
 	if ($ret) {
 	    return $ret;
