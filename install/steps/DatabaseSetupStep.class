@@ -125,7 +125,11 @@ class DatabaseSetupStep extends InstallStep {
                         _('You must have the PHP Data Object(PDO) PHP module installed');
                 }
                 $dbPlatformType = 'sqlite';
-                break;		
+                break;
+            default:
+		$this->_config['type'] = 'mysqlt';
+		$dbPlatformType = 'mysql';
+		$templateData['error']['invalidDbType'] = 1;
 	}
 
 	if (!empty($_POST['action']) && $_POST['action'] == 'save') {
