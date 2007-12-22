@@ -114,11 +114,29 @@ class SelectAlbumView extends GalleryView {
 	$albumIds['allIds'] =
 	    array_unique(array_merge($albumIds['addDataItem'], $albumIds['addAlbumItem']));
 
-	/* Load all the album entities */
-	list ($ret, $albums) =
-	    GalleryCoreApi::loadEntitiesById($albumIds['allIds'], 'GalleryAlbumItem');
-	if ($ret) {
-	    return array($ret, null);
+	if (!empty($albumIds['allIds'])) {
+	    /** @todo Use fetchAllItemIds with multiple permissions once the API is available */
+	    list ($ret, $permissions) =
+		GalleryCoreApi::fetchPermissionsForItems($albumIds['allIds']);
+	     if ($ret) {
+		return array($ret, null);
+	    }
+	    $filteredIds = array();
+	    foreach ($albumIds['allIds'] as $id) {
+		if (!empty($permissions[$id]['core.view'])) {
+		    $filteredIds[] = $id;
+		}
+	    }
+	    $albumIds['allIds'] = $filteredIds;
+	}
+
+	if (!empty($albumIds['allIds'])) {
+	    /* Load all the album entities */
+	    list ($ret, $albums) =
+		GalleryCoreApi::loadEntitiesById($albumIds['allIds'], 'GalleryAlbumItem');
+	    if ($ret) {
+		return array($ret, null);
+	    }
 	}
 
 	$SelectAlbum = array();

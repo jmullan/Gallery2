@@ -87,6 +87,7 @@ class OptionsView extends GalleryView {
 		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	    }
 	}
+	$form['albumId'] = (int)$form['albumId'];
 
 	/* Get all the add options */
 	GalleryCoreApi::requireOnce('modules/core/ItemAdd.inc');
@@ -97,6 +98,17 @@ class OptionsView extends GalleryView {
 	    if ($ret) {
 		return array($ret, null);
 	    }
+	}
+
+	list ($ret, $permissions) = GalleryCoreApi::getPermissions($form['albumId']);
+	if ($ret) {
+	    return array($ret, null);
+	}
+	if (empty($permissions['core.view'])) {
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+	} else if (empty($permissions['core.addDataItem'])
+		   && empty($permissions['core.addAlbumItem'])) {
+	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 	}
 
 	/* Now let all options load their template data */
