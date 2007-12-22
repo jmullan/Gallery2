@@ -1047,6 +1047,22 @@ class UrlGeneratorTest extends GalleryTestCase {
 	}
     }
 
+    function testDetectPhishingAttackThroughFormUrl() {
+	$badUrl = 'https://EVIL.com/gallery2/main.php';
+	GalleryUtilities::putRequestVariable('formUrl', $badUrl);
+	$ret = $this->_urlGenerator->initNavigation();
+	$this->assert($ret && $ret->getErrorCode() & ERROR_PERMISSION_DENIED,
+		      "Phishing attack '$badUrl' not detected for url");
+
+	$goodUrl = 'v/GoodAlbumName/';
+	GalleryUtilities::putRequestVariable('formUrl', $goodUrl);
+	$ret = $this->_urlGenerator->initNavigation();
+	if ($ret) {
+	    $this->assert(false, "Normal URL '$goodUrl' not accepted");
+	    return ($ret);
+	}
+    }
+
     function testDetectHeaderInjectionAttack() {
 	$badUrls = array(
 	    'http://EVIL.com/gallery2/main.php?test%0d%0afoo',

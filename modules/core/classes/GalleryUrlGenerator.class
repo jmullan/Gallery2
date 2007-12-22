@@ -790,15 +790,30 @@ class GalleryUrlGenerator {
      * @return GalleryStatus a status code
      */
     function initNavigation() {
+	foreach (array('return', 'formUrl') as $param) {
+	    $url = GalleryUtilities::getRequestVariables($param);
+	    $ret = $this->assertIsInternalUrl($url);
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+	return null;
+    }
+
+    /**
+     * Assert that the given URL is internal to the application
+     * @param string $url URL to check
+     * @return GalleryStatus a status code
+     */
+    function assertIsInternalUrl($url) {
 	global $gallery;
 
-	$returnUrl = GalleryUtilities::getRequestVariables('return');
-	if (!empty($returnUrl)) {
+	if (!empty($url)) {
 	    /* Detect header injection attempts */
-	    if (!GalleryUtilities::isSafeHttpHeader($returnUrl)) {
+	    if (!GalleryUtilities::isSafeHttpHeader($url)) {
 		$message = sprintf('Invalid return URL! The requested URL %s contains malicious ' .
 				   'characters.',
-				   $this->makeUrl($this->getCurrentRequestUri()), $returnUrl);
+				   $this->makeUrl($this->getCurrentRequestUri()), $url);
 		return GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__, $message);
 	    }
 
@@ -808,22 +823,22 @@ class GalleryUrlGenerator {
 	     * the path Allow all URLs that don't start with a protocol and neither with '/', eg.
 	     * v/albumname but also www.EVIL.com is fine, since it's interpreted as a relative URL
 	     */
-	    $validPath =  '/' . str_replace($this->makeUrl(''), '', $this->getCurrentUrlDir());
+	    $validPath = '/' . str_replace($this->makeUrl(''), '', $this->getCurrentUrlDir());
 	    /*
 	     * We check for ../ and /../ patterns and on windows \../ would also break out,
 	     * normalize to URL / *nix style paths to check fewer cases
 	     */
-	    $normReturnUrl = str_replace("\\", '/', $returnUrl);
-	    if (((empty($this->_file[0]) || strpos($returnUrl, $this->_file[0]) !== 0)
-			&& strpos($normReturnUrl, $validPath) !== 0
-			&& strpos($returnUrl, $this->getCurrentUrlDir()) !== 0
-			&& !( !preg_match('{^\s*\w*://}i', $normReturnUrl)
-			    && preg_match('{^\s*[^/\s]}i', $normReturnUrl)))
-		    || preg_match('{^\s*\.\./}', $normReturnUrl)
-		    || strpos($normReturnUrl, '/../') !== false) {
-		$message = sprintf('Invalid return URL! The requested URL %s tried to insert a ' .
-				   'redirection to %s which is not a part of this Gallery.',
-				   $this->makeUrl($this->getCurrentRequestUri()), $returnUrl);
+	    $normUrl = str_replace("\\", '/', $url);
+	    if (((empty($this->_file[0]) || strpos($url, $this->_file[0]) !== 0)
+			&& strpos($normUrl, $validPath) !== 0
+			&& strpos($url, $this->getCurrentUrlDir()) !== 0
+			&& !( !preg_match('{^\s*\w*://}i', $normUrl)
+			    && preg_match('{^\s*[^/\s]}i', $normUrl)))
+		    || preg_match('{^\s*\.\./}', $normUrl)
+		    || strpos($normUrl, '/../') !== false) {
+		$message = sprintf('Invalid URL! The requested URL %s tried to insert a '
+				 . 'redirection to %s which is not a part of this Gallery.',
+				   $this->makeUrl($this->getCurrentRequestUri()), $url);
 		return GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__, $message);
 	    }
 	}
