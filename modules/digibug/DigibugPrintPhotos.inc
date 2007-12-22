@@ -59,7 +59,11 @@ class DigibugPrintPhotosView extends GalleryView {
 	if (empty($cartItemIds) || empty($returnUrl)) {
 	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
-
+	$ret = $urlGenerator->assertIsInternalUrl($returnUrl);
+	if ($ret) {
+	    return $ret;
+	}
+	
 	/* Load the necessary item data */
 	$itemIds = array_keys($cartItemIds);
 	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds, 'GalleryPhotoItem');

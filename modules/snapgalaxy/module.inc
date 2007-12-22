@@ -35,11 +35,11 @@ class SnapGalaxyModule extends GalleryModule {
 	$this->setId('snapgalaxy');
 	$this->setName($gallery->i18n('SnapGalaxy'));
 	$this->setDescription($gallery->i18n('SnapGalaxy Photo Printing Module'));
-	$this->setVersion('0.9.3'); /* Update upgrade() too */
+	$this->setVersion('0.9.4'); /* Update upgrade() too */
 	$this->_templateVersion = 1;
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getSiteAdminViews|getItemLinks');
-	$this->setRequiredCoreApi(array(7, 30));
+	$this->setRequiredCoreApi(array(7, 43));
 	$this->setRequiredModuleApi(array(3, 9));
     }
 
@@ -80,9 +80,11 @@ class SnapGalaxyModule extends GalleryModule {
 	    break;
 
 	case '0.9.0':
+	case '0.9.0.1':
 	case '0.9.1':
 	    /* Implementing new version of the cart plugin interface */
 	case '0.9.2':
+	case '0.9.3':
 
 	case 'end of upgrade path':
 	    break;

@@ -31,12 +31,19 @@ class SnapGalaxyPrintPhotosController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+
 	list ($ret, $item) = $this->getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}
 
 	$returnUrl = GalleryUtilities::getRequestVariables('returnUrl');
+	$ret = $urlGenerator->assertIsInternalUrl($returnUrl);
+	if ($ret) {
+	    return array($ret, null);
+	}
 
 	GalleryCoreApi::requireOnce('modules/snapgalaxy/classes/SnapGalaxyHelper.class');
 	list ($ret, $cartUrl) =
