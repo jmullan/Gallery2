@@ -30,6 +30,16 @@
 class GalleryPlatform {
 
     /**
+     * List of file extensions that are disallowed for server and/or client security reasons.
+     * @var array
+     * @deprecated This list will be made configurable by merging it into the mime-map data.
+     */
+    var $_blacklistedFileExtensions = array(
+	'php', 'php2', 'php3', 'php4', 'php5', 'php6', 'cgi', 'inc', 'phps', 'pwml', 'phtml',
+	'html', 'js', 'htm', 'shtml', 'vbs', 'dll', 'jsp' , 'cfm', 'reg', 'shtm', 'phtm', 'exe',
+	'bat', 'sh', 'cmd', 'install', 'pl', 'tcl', 'py', 'com', 'rb', 'asp', 'aspx', 'ascx');
+
+    /**
      * Copy a file.
      * @param string $source the source file
      * @param string $dest the destination file
@@ -600,6 +610,14 @@ class GalleryPlatform {
 	 */
 	$fileBase = str_replace('.', '_', $fileBase);
 
+	$blacklistKey = 'GalleryPlatform::blacklistedFileExtensions';
+	if (GalleryDataCache::containsKey($blacklistKey)) {
+	    $blacklistedExtensions = GalleryDataCache::get($blacklistKey);
+	} else {
+	    $blacklistedExtensions = array_flip($this->_blacklistedFileExtensions);
+	    GalleryDataCache::put($blacklistKey, $blacklistedExtensions);
+	}
+
 	/*
 	 * If we don't know exactly what type this file is, we have to assume that it's something
 	 * malicious.  In that case, it might be a server side script of some kind and we don't want
@@ -612,7 +630,8 @@ class GalleryPlatform {
 	    $gallery->debug('Error: convertExtensionToMime in ' .
 		'GalleryPlatform::legalizePathComponent');
 	}
-	if (($ret || $tmp == 'application/unknown') && !empty($extension)) {
+	if (!empty($extension) && ($ret || $tmp == 'application/unknown'
+		|| isset($blacklistedExtensions[GalleryUtilities::strToLower($extension)]))) {
 	    $fileBase = $fileBase . '_' . $extension;
 	    $extension = null;
 	}

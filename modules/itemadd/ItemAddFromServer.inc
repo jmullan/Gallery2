@@ -55,6 +55,14 @@ class ItemAddFromServer extends ItemAddPlugin {
 
 	$status = $error = array();
 
+	list ($ret, $hasPermission) = $this->isAppropriate();
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+	if (!$hasPermission) {
+	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null, null);
+	}
+
 	if (isset($form['action']['addFromLocalServer'])
 		&& (!empty($form['localServerFiles']) || !empty($form['localServerDirectories']))) {
 	    /* Add the selected items */

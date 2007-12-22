@@ -57,6 +57,18 @@ class UploadItemsController extends GalleryController {
 
 	$results = $error = $status = array();
 	if (isset($form['action']['uploadItem'])) {
+	    if (!isset($form['albumId'])) {
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
+	    }
+	    $form['albumId'] = (int)$form['albumId'];
+
+	    list ($ret, $canView) =
+		GalleryCoreApi::hasItemPermission($form['albumId'], 'core.view');
+	    if ($ret) {
+		/* Avoid information disclosure, act as if the item didn't exist. */
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+	    }
+
 	    /* Check the user has permissions in this album */
 	    $ret = GalleryCoreApi::assertHasItemPermission($form['albumId'], 'core.addDataItem');
 	    if ($ret) {

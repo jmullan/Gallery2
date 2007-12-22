@@ -64,6 +64,27 @@ class RestrictMimeOptionTest extends ItemAddOptionTestCase {
 	 * clear the list before we start our tests.
 	 */
 	$gallery->_shutdownActions = null;
+
+	$ret = GalleryCoreApi::addMimeType('xxx', 'test/file', false);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::addMimeType('yyy', 'test/bad', false);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+    }
+
+    function tearDown() {
+	$ret = GalleryCoreApi::removeMimeType(array('mimeType' => array('test/file', 'test/bad')));
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	$ret = parent::tearDown();
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
     }
 
     function testAllowAll() {
@@ -102,11 +123,11 @@ class RestrictMimeOptionTest extends ItemAddOptionTestCase {
 
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($item));
 	$this->assertEquals(array(), $errors, 'no errors');
-	$this->assertEquals(array(), $warnings, 'no warnings');
+	$this->assertEquals(array(array()), $warnings, 'no warnings');
 
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($badItem));
 	$this->assertEquals(array(), $errors, 'errors');
-	$this->assertEquals(array($this->_rejectMessage), $warnings, 'warnings');
+	$this->assertEquals(array(array($this->_rejectMessage)), $warnings, 'warnings');
 
 	$gallery->performShutdownActions();
 
@@ -139,11 +160,101 @@ class RestrictMimeOptionTest extends ItemAddOptionTestCase {
 
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($item));
 	$this->assertEquals(array(), $errors, 'no errors');
-	$this->assertEquals(array(), $warnings, 'no warnings');
+	$this->assertEquals(array(array()), $warnings, 'no warnings');
 
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($badItem));
 	$this->assertEquals(array(), $errors, 'errors');
-	$this->assertEquals(array($this->_rejectMessage), $warnings, 'warnings');
+	$this->assertEquals(array(array($this->_rejectMessage)), $warnings, 'warnings');
+
+	$gallery->performShutdownActions();
+
+	$ret = $this->_verifyMissing($badItem->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+    }
+
+    function testBlockByFileExtension() {
+	global $gallery;
+
+	$ret = $this->_module->setParameter('allowMime', 'block');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = $this->_module->setParameter('mimeList', 'video/mpeg | test/bad');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId(), 'test/file');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	/*
+	 * See bugs 1836651 and 1836669. Mime-type and extension might not agree. Simulate an item
+	 * with mime-type test/file which corresponds to file extension .xxx, but the item actually
+	 * has a .yyy extension which is mapped to the test/bad mime-type.
+	 */
+	list ($ret, $badItem) = $this->_createRandomDataItem($this->_album->getId(), 'test/file',
+	    array('pathComponent' => 'somefile.yyy'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('somefile.yyy', $badItem->getPathComponent(),
+			    'precondition: bad path component');
+
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($item));
+	$this->assertEquals(array(), $errors, 'no errors');
+	$this->assertEquals(array(array()), $warnings, 'no warnings');
+
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($badItem));
+	$this->assertEquals(array(), $errors, 'errors');
+	$this->assertEquals(array(array($this->_rejectMessage)), $warnings, 'warnings');
+
+	$gallery->performShutdownActions();
+
+	$ret = $this->_verifyMissing($badItem->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+    }
+
+    function testAllowWithDisallowedFileExtension() {
+	global $gallery;
+
+	$ret = $this->_module->setParameter('allowMime', 'allow');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = $this->_module->setParameter('mimeList', 'video/mpeg | test/file');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId(), 'test/file');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	/*
+	 * See bugs 1836651 and 1836669. Mime-type and extension might not agree. Simulate an item
+	 * with mime-type test/file which corresponds to file extension .xxx, but the item actually
+	 * has a .yyy extension which is mapped to the test/bad mime-type.
+	 */
+	list ($ret, $badItem) = $this->_createRandomDataItem($this->_album->getId(), 'test/file',
+	    array('pathComponent' => 'somefile.yyy'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('somefile.yyy', $badItem->getPathComponent(),
+			    'precondition: bad path component');
+
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($item));
+	$this->assertEquals(array(), $errors, 'no errors');
+	$this->assertEquals(array(array()), $warnings, 'no warnings');
+
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($badItem));
+	$this->assertEquals(array(), $errors, 'errors');
+	$this->assertEquals(array(array($this->_rejectMessage)), $warnings, 'warnings');
 
 	$gallery->performShutdownActions();
 

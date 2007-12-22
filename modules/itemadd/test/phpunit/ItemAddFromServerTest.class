@@ -132,6 +132,20 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	$this->assertEquals(true, $isAppropriate, 'on');
     }
 
+    function testAddFromLocalServerCallsIsAppropriate() {
+	$ret = $this->_markPluginParametersForCleanup('module', 'itemadd');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'itemadd', 'fromserver', 'off');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$results = $this->handleRequest($this->_album, ERROR_PERMISSION_DENIED);
+	$this->assertEquals(array(null, null), $results);
+    }
+
     /*
      * call _testAddChildrenFromLocalServer with the '$useSymlink'
      * parameter set to false, thus specifying that the files should be copied.

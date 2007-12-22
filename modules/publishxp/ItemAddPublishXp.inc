@@ -34,6 +34,13 @@ class ItemAddPublishXp extends ItemAddPlugin {
      * @see ItemAddPlugin::loadTemplate
      */
     function loadTemplate(&$template, &$form, $item) {
+	$httpUserAgent = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
+
+	$isWindowsVista = strpos($httpUserAgent, 'Windows NT 6') !== false;
+	$template->setVariable('ItemAddPublishXp',
+			       array('isUsingWindowsVista' => (int)$isWindowsVista,
+				     'isUsingOtherWindows' => (int)!$isWindowsVista));
+
 	return array(null, 'modules/publishxp/templates/ItemAddPublishXp.tpl', 'modules_publishxp');
     }
 

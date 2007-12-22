@@ -113,8 +113,8 @@ class PrintPhotosController extends GalleryController {
 		return array($ret, null);
 	    }
 
-	    if (!isset($permissions['fotokasten.print'])) {
-		/* Skip any cart items for which we don't have print permission */
+	    if (!isset($permissions['fotokasten.print']) || !isset($permissions['core.view'])) {
+		/* Skip any cart items for which we don't have permission */
 		continue;
 	    }
 

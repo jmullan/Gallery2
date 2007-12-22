@@ -135,6 +135,60 @@ class ViewTest extends GalleryTestCase {
 	$this->assert($ret, 'getItem() should return an error if the itemId is the id of a user.');
 	$this->assert($ret->getErrorCode() & ERROR_MISSING_OBJECT, 'ERROR_MISSING_OBJECT');
     }
+
+    function testGetItemRequiresViewPermission() {
+	global $gallery;
+
+	list ($ret, $view) = GalleryView::loadView('core.ShowItemError');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->_markForCleanup($album);
+
+	GalleryUtilities::putRequestVariable('itemId', $album->getId());
+
+	$ret = GalleryCoreApi::removeItemPermissions($album->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $item, $wasSpecified) = $view->getItem();
+	if ($ret) {
+	    if (!($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+	    	$this->fail('Wrong error code, expected ERROR_MISSING_OBJECT');
+		return $this->failWithStatus($ret);
+	    }
+	} else {
+	    $this->fail('Expected ERROR_MISSING_OBJECT, no error returned');
+	}
+
+	/* No permission check */
+	list ($ret, $item, $wasSpecified) = $view->getItem(false);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert($wasSpecified, 'no permissions check, itemId specified');
+	$this->assertEquals($album->getId(), $item->getId(), 'no permission check, itemId');
+
+	/* Prepare test with permission */
+	$ret = GalleryCoreApi::addUserPermission(
+	    $album->getId(), $gallery->getActiveUserId(), 'core.view');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $item, $wasSpecified) = $view->getItem();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert($wasSpecified, 'with permissions, itemId specified');
+	$this->assertEquals($album->getId(), $item->getId(), 'with permission, itemId');
+    }
 }
 
 class ViewTestModule {

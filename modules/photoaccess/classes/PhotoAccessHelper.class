@@ -101,8 +101,8 @@ class PhotoAccessHelper {
 		return array($ret, null);
 	    }
 
-	    if (!isset($permissions['photoaccess.print'])) {
-		/* Skip any cart items for which we don't have print permission */
+	    if (!isset($permissions['photoaccess.print']) || !isset($permissions['core.view'])) {
+		/* Skip any cart items for which we don't have permission */
 		continue;
 	    }
 

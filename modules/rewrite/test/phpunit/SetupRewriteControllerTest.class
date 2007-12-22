@@ -41,6 +41,8 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
+	$this->_controller->_parserIds = array('setuprewritemock');
+
 	/* Set up our mock parser */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'parserId',
 	    'setuprewritemock');

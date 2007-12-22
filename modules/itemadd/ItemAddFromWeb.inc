@@ -53,6 +53,14 @@ class ItemAddFromWeb extends ItemAddPlugin {
 
 	$status = $error = array();
 
+	list ($ret, $hasPermission) = $this->isAppropriate();
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+	if (!$hasPermission) {
+	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null, null);
+	}
+
 	if (isset($form['action']['findFilesFromWebPage'])) {
 	    /* Delegate back to the same view */
 	} else if (isset($form['action']['addFromWebPage']) && empty($form['webPageUrls'])) {
