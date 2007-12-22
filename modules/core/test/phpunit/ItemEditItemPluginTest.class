@@ -197,6 +197,16 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 			    $results);
     }
 
+    function testInvalidPathComponentDisallowedFileExtension() {
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[pathComponent]', 'test_new.php');
+
+	/* Perform the request and verify that we fail */
+	$results = $this->handleRequest($this->_item[0], $this->_preferred);
+	$this->assertEquals(array(array('form[error][pathComponent][invalid]'), null),
+			    $results);
+    }
+
     function testMissingPathComponent() {
 	$newPathComponent = $this->_item[0]->getPathComponent() . rand();
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
