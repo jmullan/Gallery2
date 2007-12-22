@@ -84,6 +84,10 @@ function RepositoryToolsMain() {
 
 	/* Load controller. */
 	$controllerName = GalleryUtilities::getRequestVariables('controller');
+	if (!preg_match('/^[A-Za-z]+$/', $controllerName)) {
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					 "Bad controller '$controllerName'");
+	}
 	$methodName = GalleryUtilities::getRequestVariables('action');
 	$controllerPath = sprintf('%s/%s.inc', dirname(__FILE__), $controllerName);
     }
