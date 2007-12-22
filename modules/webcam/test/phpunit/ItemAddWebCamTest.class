@@ -148,6 +148,30 @@ class ItemAddWebCamTest extends ItemAddPluginTestCase {
 	$this->assertEquals(array(), $results[1], 'status');
     }
 
+    function testAddWebCamXssUrl() {
+	GalleryUtilities::putRequestVariable('form[action][addWebCam]', 1);
+	GalleryUtilities::putRequestVariable(
+	    'form[imageUrl]', 'http://test.com/foo<script>bar.jpg');
+
+	$results = $this->handleRequest($this->_album);
+	$this->assertEquals(array(), $results[0], 'no error');
+	$this->assertEquals(array(), $results[0], 'no error');
+	$this->assertEquals(array('addedFiles'), array_keys($results[1]), 'addedFiles');
+	$this->assertEquals(1, count($results[1]['addedFiles']), '1 file');
+	$this->assertEquals(array('fileName', 'id', 'warnings'),
+			    array_keys($results[1]['addedFiles'][0]), 'key');
+	$this->assertEquals('foo&lt;script&gt;bar.jpg',
+			    $results[1]['addedFiles'][0]['fileName'], 'fileName');
+	$this->assertEquals(array(), $results[0], 'no error');
+
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($results[1]['addedFiles'][0]['id']);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('foo&lt;script&gt;bar.jpg', $item->getTitle());
+	$this->assertEquals('foo_script_bar.jpg', $item->getPathComponent());
+    }
+
     function testRefresh() {
 	list ($ret, $refresh) = GalleryCoreApi::loadEntitiesById($this->_item->getId());
 	if ($ret) {
@@ -213,6 +237,7 @@ class ItemAddWebCamTestPlatform {
 	    switch ($string) {
 	    case "GET /test.jpg HTTP/1.0\r\nHost: test.com\r\n\r\n":
 	    case "GET /testimage HTTP/1.0\r\nHost: test.com\r\n\r\n":
+	    case "GET /foo<script>bar.jpg HTTP/1.0\r\nHost: test.com\r\n\r\n":
 		$status = 'HTTP/1.1 200 OK';
 		$mime = 'image/jpeg';
 		break;
@@ -265,6 +290,9 @@ class ItemAddWebCamTestPlatform {
 	case 'test.html':
 	    return $component;
 
+	case 'foo<script>bar.jpg':
+	    return 'foo_script_bar.jpg';
+
 	default:
 	    print "Unexpected legalizePathComponent($component)";
 	    return 'UNEXPECTED';
@@ -277,6 +305,7 @@ class ItemAddWebCamTestPlatform {
 	    case 'test.jpg':
 	    case 'testimage':
 	    case 'test.html':
+	    case 'foo_script_bar.jpg':
 		return true;
 	    }
 	    if (preg_match('{^test.*dat$}', basename($toFile))) {
@@ -294,6 +323,7 @@ class ItemAddWebCamTestPlatform {
 	switch (basename($filename)) {
 	case 'test.jpg':
 	case 'testimage':
+	case 'foo_script_bar.jpg':
 	    $result = array(100, 200);
 	    break;
 
@@ -311,6 +341,7 @@ class ItemAddWebCamTestPlatform {
 	case 'test.jpg':
 	case 'testimage':
 	case 'test.html':
+	case 'foo_script_bar.jpg':
 	    return 5;
 	}
 	if (preg_match('{^test.*dat$}', basename($filename))) {

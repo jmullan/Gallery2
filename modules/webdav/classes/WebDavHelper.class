@@ -920,7 +920,11 @@ class WebDavHelper {
 		continue;
 	    }
 
-	    $item->$setter($prop['value']);
+	    $value = $prop['value'];
+	    if (is_string($value)) {
+		GalleryUtilities::sanitizeInputValues($value);
+	    }
+	    $item->$setter($value);
 	}
 	return null;
     }

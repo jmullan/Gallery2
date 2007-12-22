@@ -44,6 +44,7 @@ class ItemAddWebCam extends ItemAddPlugin {
 	    $tmpFile = $platform->tempnam($tmpDir, 'webcam');
 	    $url = $form['imageUrl'];
 	    GalleryUtilities::unsanitizeInputValues($url, false);
+            $urlComponents = parse_url($url);
 
 	    list ($successfullyCopied, $response, $headers) =
 		GalleryCoreApi::fetchWebFile($url, $tmpFile);
@@ -64,8 +65,11 @@ class ItemAddWebCam extends ItemAddPlugin {
 	    }
 
 	    if (empty($error)) {
+                $basename = basename($urlComponents['path']);
+ 		$title = $basename;
+ 		GalleryUtilities::sanitizeInputValues($title);
 		list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
-		    $tmpFile, basename($url), basename($url), '', '', $mimeType, $item->getId());
+		    $tmpFile, $basename, $title, '', '', $mimeType, $item->getId());
 		@$platform->unlink($tmpFile);
 		if ($ret) {
 		    return array($ret, null, null);
