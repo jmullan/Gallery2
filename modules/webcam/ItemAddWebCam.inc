@@ -81,8 +81,10 @@ class ItemAddWebCam extends ItemAddPlugin {
 		    }
 		}
 
+		$title = $basename;
+		GalleryUtilities::sanitizeInputValues($title);
 		list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
-		    $tmpFile, $basename, $basename, '', '', $mimeType, $item->getId());
+		    $tmpFile, $basename, $title, '', '', $mimeType, $item->getId());
 		if ($urlComponents['scheme'] == 'http') {
 		    @$platform->unlink($tmpFile);
 		}

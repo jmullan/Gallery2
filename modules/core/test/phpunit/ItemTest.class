@@ -960,6 +960,34 @@ class ItemTest extends GalleryTestCase {
 	    'parent modification timestamp');
     }
 
+    function testAddItemToAlbumEntitizesAngleBracketsButIgnoresXssPayload() {
+	global $gallery;
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_album->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
+	    __FILE__, 'itemName',
+	    'title&lt;script&gt;evil',
+	    'caption&lt;script&gt;evil',
+	    'description&lt;script&gt;evil',
+	    'application/unknown', $this->_album->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals('title&lt;script&gt;evil', $newItem->getTitle());
+	$this->assertEquals('caption&lt;script&gt;evil', $newItem->getSummary());
+	$this->assertEquals('description&lt;script&gt;evil', $newItem->getDescription());
+    }
+
     /*
      * Check that when adding a file to an album, the originationTimestamp
      * provided by some toolkit gets added

@@ -202,6 +202,44 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	}
     }
 
+    function testAddMaliciousFilename() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][addFromWebPage]', 1);
+	GalleryUtilities::putRequestVariable(
+	    'form[webPage]', 'http://www.test.com/');
+	GalleryUtilities::putRequestVariable(
+	    'form[webPageUrls][http://www.test.com/evil<script>.jpg]', 1);
+	GalleryUtilities::putRequestVariable('form[set][title]', 1);
+	GalleryUtilities::putRequestVariable('form[set][summary]', 1);
+	GalleryUtilities::putRequestVariable('form[set][description]', 1);
+	$basenames = array('test1', 'test2', 'test3', 'test4', 'apo\'strophe');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_album);
+	$this->assertEquals(array(), $results[0], 'errors');
+	$this->assertEquals(1, sizeof($results[1]['addedFiles']), 'number of added files');
+	$this->assertEquals('http://www.test.com/evil&lt;script&gt;.jpg',
+			    $results[1]['addedFiles'][0]['fileName'], 'filename');
+	$this->assert(isset($results[1]['addedFiles'][0]['id']), 'id 1');
+
+	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_album);
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($ids[0], 'GalleryItem');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals('evil&lt;script&gt;', $item->getTitle(), 'title');
+	$this->assertEquals('evil&lt;script&gt;', $item->getSummary(), 'summary');
+	$this->assertEquals('evil&lt;script&gt;', $item->getDescription(), 'description');
+	$this->assertEquals('evil_script_.jpg', $item->getPathComponent(), 'path component');
+    }
+
     /*
      * Test how the controller reacts when the Add Urls button was pushed with no items selected.
      */
@@ -649,6 +687,20 @@ class ItemAddFromWebTestPlatform  {
 		$this->_readBuffer[$handle] = $buffer;
 		return strlen($string);
 
+	    case "GET /evil<script>.jpg HTTP/1.0\r\nHost: www.test.com\r\n" .
+		"Referer: http://www.test.com/\r\n\r\n":
+		$buffer = array();
+		$buffer[] = 'HTTP/1.1 200 OK';
+		$buffer[] = 'Connection: close';
+		$buffer[] = 'Date: Mon, 24 Nov 2003 05:40:03 GMT';
+		$buffer[] = 'Content-Length: 5';
+		$buffer[] = 'Content-Type: text/html';
+		$buffer[] = '';
+		$buffer[] = 'test';
+		$buffer[] = '';
+		$this->_readBuffer[$handle] = $buffer;
+		return strlen($string);
+
 	    default:
 		print "Unexpected write: $string";
 	    }
@@ -681,6 +733,9 @@ class ItemAddFromWebTestPlatform  {
 	case 'apo\'strophe.jpg':
 	    return 'apo_strophe.jpg';
 
+	case 'evil<script>.jpg':
+	    return 'evil_script_.jpg';
+
 	default:
 	    print "Unexpected legalizePathComponent($component)";
 	    return 'UNEXPECTED';
@@ -694,6 +749,7 @@ class ItemAddFromWebTestPlatform  {
 	    case 'test2.jpg':
 	    case 'test3.jpg':
 	    case 'test4.jpg':
+	    case 'evil_script_.jpg':
 	    case 'apo_strophe.jpg':
 		return true;
 	    }
@@ -710,6 +766,7 @@ class ItemAddFromWebTestPlatform  {
 	case 'test3.jpg':
 	case 'test4.jpg':
 	case 'apo_strophe.jpg':
+	case 'evil_script_.jpg':
 	    return array(100, 200);
 	}
 
@@ -724,6 +781,7 @@ class ItemAddFromWebTestPlatform  {
 	case 'test3.jpg':
 	case 'test4.jpg':
 	case 'apo_strophe.jpg':
+	case 'evil_script_.jpg':
 	    return 5;
 	}
 

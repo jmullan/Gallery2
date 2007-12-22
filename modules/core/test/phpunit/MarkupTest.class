@@ -43,24 +43,6 @@ class MarkupTest extends GalleryTestCase {
 	$this->_bbcode = new GalleryBbcodeMarkupParser();
 	$this->_html = new GalleryHtmlMarkupParser();
 	$this->_none = new GalleryNoMarkupParser();
-
-	list ($ret, $this->_markup) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
-	if ($ret) {
-	    return $ret;
-	}
-    }
-
-    function tearDown() {
-	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', $this->_markup);
-	if ($ret) {
-	    $this->failWithStatus($ret);
-	}
-
-	$ret = parent::tearDown();
-	if ($ret) {
-	   $this->failWithStatus($ret);
-	}
     }
 
     function testBold() {
@@ -230,7 +212,7 @@ class MarkupTest extends GalleryTestCase {
     }
 
     function testMarkupNone() {
-	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', 'none');
+	$ret = $this->_setMarkupType('none', true);
 	if ($ret) {
 	    return $ret;
 	}
@@ -242,7 +224,7 @@ class MarkupTest extends GalleryTestCase {
     }
 
     function testMarkupBbcode() {
-	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', 'bbcode');
+	$ret = $this->_setMarkupType('bbcode', true);
 	if ($ret) {
 	    return $ret;
 	}
@@ -255,12 +237,13 @@ class MarkupTest extends GalleryTestCase {
     }
 
     function testMarkupHtml() {
-	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', 'html');
+	$ret = $this->_setMarkupType('html', true);
 	if ($ret) {
 	    return $ret;
 	}
 
-	$this->assertEquals('<b> [i] &oacute;',
+	/* GalleryUtilities::htmlSafe fixes the missing </b> */
+	$this->assertEquals('<b> [i] &oacute;</b>',
 			    smarty_modifier_markup('&lt;b&gt; [i] &amp;oacute;'));
 	$this->assertEquals(' [i] &oacute;',
 			    smarty_modifier_markup('&lt;b&gt; [i] &amp;oacute;', 'strip'), 'strip');
@@ -273,6 +256,18 @@ class MarkupTest extends GalleryTestCase {
 	$this->assertEquals('&lt;b&gt;  &amp;oacute;',
 			    smarty_modifier_markup('&lt;b&gt; [i] &amp;oacute;', 'strip', 'bbcode'),
 			    'strip+override');
+    }
+
+    function testMarkupHtmlEmptyData() {
+	/* Guard against http://bugs.php.net/bug.php?id=22014 */
+	$this->assertEquals(null, $this->_html->parse(null));
+	$this->assertEquals('', $this->_html->parse(''));
+    }
+
+    function testMarkupHtmlSanitizesXss() {
+	$this->assertEquals(
+	    'good good good',
+	    $this->_html->parse('good<script>evil</script> good<body onload=alert("evil")> good'));
     }
 }
 ?>

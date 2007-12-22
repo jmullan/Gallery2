@@ -506,6 +506,66 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 		array(array('fileName' => 'foo', 'id' => $id, 'warnings' => array())))), $results);
 	}
     }
+
+    function testAddItemWithXssFilename() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+	$dirSep = $platform->getDirectorySeparator();
+	$baseDir = $this->_baseDir . $dirSep . 'data' . $dirSep;
+
+	$ret = $this->_plugin->addItem(
+	    $this->_rootAlbum->getId(), $baseDir . 'good<script>evil.jpg', false,
+	    array('title' => 1, 'summary' => 1, 'description' => 1), $status, $error);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals('good&lt;script&gt;evil.jpg', $status['addedFiles'][0]['fileName']);
+	$this->assertEquals(array(), $status['addedFiles'][0]['warnings']);
+	$this->assertEquals(null, $error);
+
+	$id = $status['addedFiles'][0]['id'];
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($id, 'GalleryItem');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals('good&lt;script&gt;evil', $item->getTitle());
+	$this->assertEquals('good&lt;script&gt;evil', $item->getSummary());
+	$this->assertEquals('good&lt;script&gt;evil', $item->getDescription());
+	$this->assertEquals('good_script_evil.jpg', $item->getPathComponent());
+    }
+
+    function testAddDirectoryWithXssFilename() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+	$dirSep = $platform->getDirectorySeparator();
+	$baseDir = $this->_baseDir . $dirSep . 'data' . $dirSep;
+
+	/* Force some private variables that the plugin normally has at this point */
+	$this->_plugin->_platform = $platform;
+	$this->_plugin->_localServerDirList = array('/');
+
+	list ($ret, $id) = $this->_plugin->addDirectory(
+	    $this->_rootAlbum->getId(), $baseDir . 'good<script>evil_dir', false,
+	    array('title' => 1, 'summary' => 1, 'description' => 1), $status, $error);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(null, $status);
+	$this->assertEquals(null, $error);
+
+	list ($ret, $album) = GalleryCoreApi::loadEntitiesById($id, 'GalleryItem');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals('good&lt;script&gt;evil_dir', $album->getTitle());
+	$this->assertEquals('good&lt;script&gt;evil_dir', $album->getSummary());
+	$this->assertEquals('good&lt;script&gt;evil_dir', $album->getDescription());
+	$this->assertEquals('good_script_evil_dir', $album->getPathComponent());
+    }
 }
 
 /**
@@ -534,6 +594,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 	case $this->_baseDir . 'December - <#952>.jpg':
 	case $this->_baseDir . 'Black&White':
 	case $this->_baseDir . '<My "Files">' . $this->_dirSep . 'foo':
+	case $this->_baseDir . 'good<script>evil.jpg':
 	case $this->_baseDir . "t\xebst.png":
 	case $this->_baseDir . 'apo\'strophe.jpg':
 	case $this->_baseDirRecursive . 'apo\'strophe.jpg':
@@ -551,6 +612,8 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 	case $this->_baseDir . 'December - <#952>.jpg':
 	case $this->_baseDir . 'Black&White':
 	case $this->_baseDir . '<My "Files">' . $this->_dirSep . 'foo':
+	case $this->_baseDir . 'good<script>evil.jpg':
+	case $this->_baseDir . 'good<script>evil_dir':
 	case $this->_baseDir . "subD\xeer":
 	case $this->_baseDir . "t\xebst.png":
 	case $this->_baseDir . 'apo\'strophe.jpg':
@@ -568,6 +631,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 	switch ($source) {
 	case $this->_baseDir . 'December - <#952>.jpg':
 	case $this->_baseDir . '<My "Files">' . $this->_dirSep . 'foo':
+	case $this->_baseDir . 'good<script>evil.jpg':
 	case $this->_baseDir . "t\xebst.png":
 	case $this->_baseDir . 'apo\'strophe.jpg':
 	case $this->_baseDirRecursive . 'apo\'strophe.jpg':

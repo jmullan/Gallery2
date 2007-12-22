@@ -521,7 +521,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$this->_controller->setOptionInstances(array());
 
 	$_FILES[GalleryUtilities::prefixFormVariable('userfile')] =
-	    array('name' => 'testfile.txt',
+	    array('name' => 'test<script>file.txt',
 		  'type' => 'text/plain',
 		  'tmp_name' => __FILE__,
 		  'error' => 0,
@@ -544,7 +544,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	    return $ret;
 	}
 
-	$this->assertEquals('testfile.txt', $newItem->getPathComponent());
+	$this->assertEquals('test_lt_script_gt_file.txt', $newItem->getPathComponent());
 	$this->assertEquals('caption', $newItem->getTitle());
     }
 

@@ -307,7 +307,9 @@ class ItemAddFromServer extends ItemAddPlugin {
 	    return $ret;
 	}
 
-	$status['addedFiles'][] = array('fileName' => GalleryCoreApi::convertToUtf8($fileName),
+	$safeFilename = GalleryCoreApi::convertToUtf8($fileName);
+	GalleryUtilities::sanitizeInputValues($safeFilename);
+	$status['addedFiles'][] = array('fileName' => $safeFilename,
 					'id' => $newItem->getId(),
 					'warnings' => array());
 
@@ -484,7 +486,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 
     /**
      * Get the number of files / dirs within a sub-tree of the filesystem.
-     * @param string $dirName 
+     * @param string $dirName
      * @param int $progressCount
      * @return int the number of files with this sub-tree of the filesystem
      */

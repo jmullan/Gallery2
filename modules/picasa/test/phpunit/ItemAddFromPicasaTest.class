@@ -97,12 +97,17 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
      * Test whether the importing routine works; NOTE: archiveupload module is required
      */
     function testImportFromPicasaSuccessful() {
+	/* Test with the loosest markup type */
+	$ret = $this->_setMarkupType('html', true);
+	if ($ret) {
+	    return $ret;
+	}
 
 	/* The XML Data that we will test with */
 	$testXmlData = array('<?xml version="1.0" encoding="utf-8" ?>',
-	    '<album><albumName>GalleryTest 2</albumName>',
+	    '<album><albumName><![CDATA[GalleryTest 2<script>evil]]></albumName>',
 	    '<albumItemCount>2</albumItemCount>',
-	    '<albumCaption>This is a test</albumCaption>',
+	    '<albumCaption><![CDATA[This is a<script>test]]></albumCaption>',
 	    '<images>',
 	    '<image>',
 	    '<itemLargeImage>images/ajipankachile5.jpg0</itemLargeImage>',
@@ -125,14 +130,14 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 	    '<itemCaption>Testpicture</itemCaption>',
 	    '</image>',
 	    '<image>',
-	    '<itemLargeImage>images/cascabelchiles5.jpg0</itemLargeImage>',
+	    '<itemLargeImage><![CDATA[images/a<script>b.jpg0]]></itemLargeImage>',
 	    '<itemWidth>171</itemWidth>',
 	    '<itemHeight>426</itemHeight>',
-	    '<itemThumbnailImage>thumbnails/cascabelchiles5.jpg0</itemThumbnailImage>',
+	    '<itemThumbnailImage><![CDATA[thumbnails/a<script>b.jpg0]]></itemThumbnailImage>',
 	    '<itemThumbnailWidth>42</itemThumbnailWidth>',
 	    '<itemThumbnailHeight>90</itemThumbnailHeight>',
-	    '<itemName>cascabelchiles5.jpg0</itemName>',
-	    '<itemCaption>Testpicture</itemCaption>',
+	    '<itemName><![CDATA[a<script>b.jpg0]]></itemName>',
+	    '<itemCaption><![CDATA[Test<script>picture]]></itemCaption>',
 	    '</image>',
 	    '</images>',
 	    '</album>');
@@ -160,19 +165,21 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 	$this->_platform->setReply('file_exists', array('/tmp.dir/index.xml'), true);
 	$this->_platform->setReply('is_readable', array('/tmp.dir/index.xml'), true);
 	$this->_platform->setReply('file', array('/tmp.dir/index.xml', ''), $testXmlData);
-	$this->_platform->setReply('legalizePathComponent',  array('GalleryTest 2', false),
-	    'GalleryTest 2');
-	$this->_platform->setReply('isLegalPathComponent', array('GalleryTest 2', false), true);
-	$this->_platform->setReply('legalizePathComponent', array('GalleryTest 2', true),
-	    'GalleryTest 2');
+	$this->_platform->setReply(
+	    'legalizePathComponent',
+	    array('GalleryTest 2<script>evil', false), 'GalleryTest 2_script_evil');
+	$this->_platform->setReply(
+	    'isLegalPathComponent', array('GalleryTest 2_script_evil', false), true);
+	$this->_platform->setReply(
+	    'legalizePathComponent', array('GalleryTest 2_script_evil', true),
+	    'GalleryTest 2_script_evil');
 	$this->_platform->setReply('getDirectorySeparator', array(), '/');
 	$this->_platform->setReply('file_exists', array('fuzzy' => '{.*GalleryTest 2}'), false);
 	$this->_platform->setReply('mkdir', array('fuzzy' => '{.*GalleryTest 2}',
 		    'fuzzy2' => '{\d+}'), true);
 
 	/* Image creation */
-	$testImages =
-	    array('ajipankachile5.jpg0', 'californiadriedchile5.jpg0', 'cascabelchiles5.jpg0');
+	$testImages = array('ajipankachile5.jpg0', 'californiadriedchile5.jpg0', 'a<script>b.jpg0');
 	foreach ($testImages as $testImage) {
 	    $this->_platform->setReply('is_uploaded_file',
 		array('/tmp.dir/images/' . $testImage . ''),
@@ -202,7 +209,7 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 
 	/* We don't know the ids, but we can verify everything else */
 	foreach ($testImages as $file) {
-	    $this->assertEquals($file, $status['addedFiles'][$i]['fileName']);
+	    $this->assertEquals(htmlentities($file), $status['addedFiles'][$i]['fileName']);
 	    $this->assert(isset($status['addedFiles'][$i]['id']));
 	    $ids[] = $status['addedFiles'][$i]['id'];
 	    $this->assertEquals(array(), $status['addedFiles'][$i]['warnings']);
@@ -222,6 +229,9 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 	$this->assertEquals(1, count($itemIds), 'child count 1');
 
 	list ($ret, $importedAlbum) = GalleryCoreApi::loadEntitiesById($itemIds[0], 'GalleryItem');
+	if ($ret) {
+	    return $ret;
+	}
 
 	list ($ret, $itemIds) = GalleryCoreApi::fetchChildItemIds($importedAlbum);
 	if ($ret) {
@@ -260,11 +270,18 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 
 	foreach ($items as $item) {
 	    $this->assertEquals($this->_platform->legalizePathComponent($testImages[$i]),
-		    $item->getPathComponent(), 'path component');
+                   $item->getPathComponent(), 'path component');
 	    list ($base, $extension) = GalleryUtilities::getFileNameComponents($testImages[$i]);
-	    $this->assertEquals($base, $item->getTitle(), 'title');
-	    $this->assertEquals('Testpicture', $item->getSummary(), 'summary');
-	    $this->assertEquals('Testpicture', $item->getDescription(), 'description');
+	    $sanitizedBase = $base;
+	    GalleryUtilities::sanitizeInputValues($sanitizedBase);
+	    $this->assertEquals($sanitizedBase, $item->getTitle(), "title $i");
+	    if ($i == 2) {
+		$this->assertEquals('Test&lt;script&gt;picture', $item->getSummary(), "summary $i");
+		$this->assertEquals('Test&lt;script&gt;picture', $item->getDescription(), "dsc $i");
+	    } else {
+		$this->assertEquals('Testpicture', $item->getSummary(), "summary $i");
+		$this->assertEquals('Testpicture', $item->getDescription(), "description $i");
+	    }
 	    $i++;
 	}
     }

@@ -987,11 +987,6 @@ class AlbumTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	list ($ret, $album) = $album->refresh();
-	if ($ret) {
-	    return $ret;
-	}
-
 	list ($ret, $path) = $album->fetchPath();
 	if ($ret) {
 	    return $ret;
@@ -1006,6 +1001,24 @@ class AlbumTest extends GalleryTestCase {
 	 */
 	$platform =& $gallery->getPlatform();
 	$this->assert($platform->file_exists($path), 'Path doesn\'t exist');
+    }
+
+    function testCreateAlbumEntitizesAngleBracketsButIgnoresXssPayload() {
+	global $gallery;
+
+	list ($ret, $album) = GalleryCoreApi::createAlbum(
+	    $this->_parentAlbum->getId(), 'test',
+	    'title&lt;script&gt;evil',
+	    'summary&lt;script&gt;evil',
+	    'description&lt;script&gt;evil',
+	    'keywords');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals('title&lt;script&gt;evil', $album->getTitle());
+	$this->assertEquals('summary&lt;script&gt;evil', $album->getSummary());
+	$this->assertEquals('description&lt;script&gt;evil', $album->getDescription());
     }
 
     function testRenameAlbumToHaveLeadingAndTrailingSpace() {

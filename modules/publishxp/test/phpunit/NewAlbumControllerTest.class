@@ -68,6 +68,41 @@ class NewAlbumControllerTest extends GalleryControllerTestCase {
 	}
     }
 
+    function testNewAlbumWithXss() {
+	GalleryUtilities::putRequestVariable('form[parentId]', $this->_getRootId());
+	GalleryUtilities::putRequestVariable(
+	    'form[pathComponent]', $pathComponent = 'test-' . rand(1000, 9999));
+	GalleryUtilities::putRequestVariable('form[title]', 'test<script>evil</script> title');
+	GalleryUtilities::putRequestVariable('form[summary]', 'test<script>evil</script> summary');
+	GalleryUtilities::putRequestVariable('form[description]', 'test<script>evil</script> desc');
+	GalleryUtilities::putRequestVariable('form[action][newAlbum]', 1);
+
+	$results = $this->handleRequest();
+	$entityCounter =& GalleryTestCase::getEntityCounter();
+	$albumId = $entityCounter->getRecentEntityId('GalleryAlbumItem');
+	$this->assertEquals(array('redirect' => array('view' => 'publishxp.SelectAlbum',
+						      'albumId' => $albumId),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId, 'GalleryAlbumItem');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals($this->_getRootId(), $album->getParentId());
+	$this->assertEquals($pathComponent, $album->getPathComponent());
+	$this->assertEquals('test&lt;script&gt;evil&lt;/script&gt; title', $album->getTitle());
+	$this->assertEquals('test&lt;script&gt;evil&lt;/script&gt; summary', $album->getSummary());
+	$this->assertEquals('test&lt;script&gt;evil&lt;/script&gt; desc', $album->getDescription());
+
+	$ret = GalleryCoreApi::deleteEntityById($albumId, 'GalleryAlbumItem');
+	if ($ret) {
+	    return $ret;
+	}
+    }
+
     function testNewAlbumInvalidPathComponent() {
 	GalleryUtilities::putRequestVariable('form[parentId]', $this->_getRootId());
 	GalleryUtilities::putRequestVariable('form[pathComponent]', '@!INVALID!@');
