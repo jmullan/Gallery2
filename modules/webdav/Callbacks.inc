@@ -33,10 +33,20 @@ class WebDavCallbacks {
 	case 'LoadMountLink':
 	    GalleryCoreApi::requireOnce('modules/webdav/classes/WebDavHelper.class');
 
-	    $link = WebDavHelper::getMountLink($params['itemId']);
+	    list ($ret, $hasPermission) =
+		GalleryCoreApi::hasItemPermission($params['itemId'], 'core.view');
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    $link = array();
+	    if ($hasPermission) {
+		$link = WebDavHelper::getMountLink($params['itemId']);
+	    }
 
 	    $block =& $smarty->_tpl_vars['block'];
-	    $block['webdav']['LoadMountLink'] = $link;
+	    $block['webdav']['LoadMountLink'] =
+		array('link' => $link, 'hasPermission' => $hasPermission);
 
 	    return null;
 	}
