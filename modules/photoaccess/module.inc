@@ -33,10 +33,10 @@ class PhotoAccessModule extends GalleryModule {
 	$this->setId('photoaccess');
 	$this->setName($gallery->i18n('PhotoWorks'));
 	$this->setDescription($gallery->i18n('PhotoWorks Photo Printing Module'));
-	$this->setVersion('1.0.7'); /* Update upgrade() too */
+	$this->setVersion('1.0.7.1'); /* Update upgrade() too */
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getItemLinks');
-	$this->setRequiredCoreApi(array(7, 4));
+	$this->setRequiredCoreApi(array(7, 12));
 	$this->setRequiredModuleApi(array(3, 0));
     }
 
@@ -92,6 +92,7 @@ class PhotoAccessModule extends GalleryModule {
 	case '1.0.4':
 	case '1.0.5':
 	case '1.0.6':
+	case '1.0.7':
 
 	case 'end of upgrade path':
 	    break;

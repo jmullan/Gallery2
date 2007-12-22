@@ -337,11 +337,15 @@ class GalleryView {
     /**
      * Return the current item, as specified in the itemId request variable.
      *
-     * @return array object GalleryStatus a status code
-     *               object GalleryItem an item
+     * If no itemId is specified as request variable the default album is returned.
+     *
+     * @param bool $checkPermissions (optional) Default true. Whether to enfore the required (view)
+     *                                          permission.
+     * @return array GalleryStatus a status code
+     *               GalleryItem an item
      *               boolean true if item was specified, false if default was used
      */
-    function getItem() {
+    function getItem($checkPermissions=true) {
 	global $gallery;
 	$itemId = (int)GalleryUtilities::getRequestVariables('itemId');
 	$wasSpecified = true;
@@ -366,9 +370,20 @@ class GalleryView {
 	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null, null);
 	}
 
+	if ($checkPermissions) {
+	    list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission($itemId, 'core.view');
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+	    if (!$hasPermission) {
+		/* Avoid information disclosure by treating this as if the item didn't exist. */
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null, null);
+	    }
+	}
+
 	return array(null, $item, $wasSpecified);
     }
-    
+
     /**
      * Return the current item, as specified in the itemId request variable.
      *
@@ -392,7 +407,17 @@ class GalleryView {
     function loadThemeAndParameters() {
 	list ($ret, $item, $wasSpecified) = $this->getItem();
 	if ($ret) {
-	    return array($ret, null, null, null);
+	    /* Ignore missing object here to avoid revealing valid/invalid ids */
+	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		$wasSpecified = false;
+		list ($ret, $itemId) = GalleryCoreApi::getDefaultAlbumId();
+		if (!$ret) {
+		    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+		}
+	    }
+	    if ($ret) {
+		return array($ret, null, null, null);
+	    }
 	}
 
 	list ($ret, $theme) = $this->loadThemeForItem($wasSpecified ? $item : null);
@@ -482,6 +507,39 @@ class GalleryView {
 	}
 
 	return array(null, $theme);
+    }
+
+    /**
+     * Process possible permission errors when accessing a view.
+     * If the given status indicates permission denied or missing object and this is a guest
+     * user, redirect to the login view.  Otherwise return given status to be shown by the
+     * error handler.  Missing object is treated like permission denied to avoid information
+     * disclosure by trying URLs with different ids.
+     * @param GalleryStatus $ret or null
+     * @return array for return from GalleryView::loadTemplate or null
+     * @access protected
+     */
+    function _permissionCheck($ret) {
+	global $gallery;
+	$result = null;
+	if ($ret) {
+	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		$ret->addErrorCode(ERROR_PERMISSION_DENIED);
+	    }
+	    $result = array($ret, null);
+	    if ($ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
+		list ($ret2, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
+		if ($ret2) {
+		    return $result;
+		}
+		if ($isAnonymous) {
+		    /* Redirect to login view */
+		    $result = array(null,
+				    array('redirect' => $gallery->getConfig('loginRedirect')));
+		}
+	    }
+	}
+	return $result;
     }
 }
 ?>

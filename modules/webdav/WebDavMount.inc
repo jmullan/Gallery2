@@ -30,7 +30,22 @@ class WebDavMountView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	$template->setVariable('WebDavMount', array('isView' => true));
+	list ($ret, $item) = $this->getItem();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	list ($ret, $canView) = GalleryCoreApi::hasItemPermission($item->getId(), 'core.view');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	if (!$canView) {
+	    /* Avoid information disclosure, act as if the item didn't exist. */
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+	}
+
+    	$template->setVariable('item', (array)$item);
+	$template->setVariable('isView', true);
+
 	return array(null, array('body' => 'modules/webdav/templates/WebDavMount.tpl'));
     }
 

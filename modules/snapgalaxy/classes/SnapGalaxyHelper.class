@@ -101,8 +101,8 @@ class SnapGalaxyHelper {
 		return array($ret, null);
 	    }
 
-	    if (!isset($permissions['snapgalaxy.print'])) {
-		/* Skip any cart items for which we don't have print permission */
+	    if (!isset($permissions['snapgalaxy.print']) || !isset($permissions['core.print'])) {
+		/* Skip any cart items for which we don't have permission */
 		continue;
 	    }
 

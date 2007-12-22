@@ -92,6 +92,13 @@ class MainTest extends GalleryTestCase {
 	parent::tearDown();
     }
 
+    function _getResponseHeaders() {
+	$headers = GalleryUtilities::_getResponseHeaders();
+	/* We're not interested in the status header */
+	unset($headers['status']);
+	return $headers;
+    }
+
     /**
      * Test embed-only mode with simple permission denied error.
      */
@@ -366,17 +373,175 @@ class MainTest extends GalleryTestCase {
 	    $this->assert(false, 'unexpected result');
 	}
     }
+
+    function testRedirectViewForGuestWithoutPermissions() {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$session =& $gallery->getSession();
+
+	list ($ret, $item) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->_markForCleanup($item);
+
+	$ret = GalleryCoreApi::removeItemPermissions($item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $item->getId());
+	GalleryUtilities::putRequestVariable('view', 'core.ShowItem');
+
+	$ret = $session->init();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = $this->_becomeGuestUser();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$session->doNotUseTempId();
+	$expectedUrl = $urlGenerator->generateUrl($gallery->getConfig('loginRedirect'),
+	    array('forceFullUrl' => true, 'htmlEntities' => false, 'forceSessionId' => false));
+
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('isDone' => true), $g2Data, 'returned data');
+	$this->assertEquals(array('location' => "Location: $expectedUrl"),
+			    $this->_getResponseHeaders(), 'headers');
+    }
+
+    function testRedirectViewForAlternateGuestWithoutPermissions() {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$session =& $gallery->getSession();
+
+	list ($ret, $item) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->_markForCleanup($item);
+
+	$ret = GalleryCoreApi::removeItemPermissions($item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $item->getId());
+	GalleryUtilities::putRequestVariable('view', 'core.ShowItem');
+
+	$ret = $session->init();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$session->doNotUseTempId();
+
+	$expectedUrl = $urlGenerator->generateUrl($gallery->getConfig('loginRedirect'),
+	    array('forceFullUrl' => true, 'htmlEntities' => false, 'forceSessionId' => false));
+
+	$gallery->setConfig('anonymousUserId', $gallery->getActiveUserId());
+	    
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('isDone' => true), $g2Data, 'returned data');
+	$this->assertEquals(array('location' => "Location: $expectedUrl"),
+			    $this->_getResponseHeaders(), 'headers');
+    }
+
+    function testViewForUserWithoutPermission() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	list ($ret, $item) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->_markForCleanup($item);
+
+	/* Verify registered user gets error page (used to redirect to root album) */
+	$ret = GalleryCoreApi::removeItemPermissions($item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $item->getId());
+	GalleryUtilities::putRequestVariable('view', 'core.ShowItem');
+
+	$ret = $session->init();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    $this->assert($ret->getErrorCode() & ERROR_PERMISSION_DENIED,
+			  'expect ERROR_PERMISSION_DENIED');
+	    $this->assert($ret->getErrorCode() & ERROR_MISSING_OBJECT,
+			  'expect ERROR_MISSING_OBJECT');
+	    if (!($ret->getErrorCode() & (ERROR_PERMISSION_DENIED | ERROR_MISSING_OBJECT))) {
+		return $this->failWithStatus($ret);
+	    }
+	} else {
+	    $this->fail('Expected an error');
+	}
+	$this->assertEquals(null, $g2Data, 'returned data');
+	$this->assertEquals(array(), $this->_getResponseHeaders(), 'headers');
+    }
+
+    function testImmediateViewNormalizesError() {
+	GalleryUtilities::putRequestVariable('view', 'core.MainTestImmediate');
+
+	$ret = $this->_becomeGuestUser();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    $this->assert($ret->getErrorCode() & ERROR_PERMISSION_DENIED,
+			  'expect ERROR_PERMISSION_DENIED');
+	    $this->assert($ret->getErrorCode() & ERROR_MISSING_OBJECT,
+			  'expect ERROR_MISSING_OBJECT');
+	    if (!($ret->getErrorCode() & (ERROR_PERMISSION_DENIED | ERROR_MISSING_OBJECT))) {
+		return $this->failWithStatus($ret);
+	    }
+	} else {
+	    $this->fail('Expected an error');
+	}
+	$this->assertEquals(null, $g2Data, 'returned data');
+	$this->assertEquals(array(), $this->_getResponseHeaders(), 'headers');
+    }
 }
 
 class MainTestPhpVm extends GalleryPhpVm {
 
     function header($header, $replace=null) {
 	/* Avoid modifying actual header information */
+	$_REQUEST['header'][] = $header;
     }
 }
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryView.class');
 class FooViewView extends GalleryView {
+}
+
+class MainTestImmediateView extends GalleryView {
+    function renderImmediate($status, $error) {
+	return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
+    }
+
+    function isImmediate() {
+	return true;
+    }
 }
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryController.class');

@@ -138,6 +138,20 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	$this->assertEquals(true, $isAppropriate, 'on');
     }
 
+    function testAddFromWebPageCallsIsAppropriate() {
+	$ret = $this->_markPluginParametersForCleanup('module', 'itemadd');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'itemadd', 'fromweb', 'off');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$results = $this->handleRequest($this->_album, ERROR_PERMISSION_DENIED);
+	$this->assertEquals(array(null, null), $results);
+    }
+
     function testAddChildrenFromWebPage() {
 	global $gallery;
 

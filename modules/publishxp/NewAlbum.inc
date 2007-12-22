@@ -40,6 +40,21 @@ class NewAlbumController extends GalleryController {
 	$results = $error = $status = array();
 
 	if (isset($form['action']['newAlbum'])) {
+	    if (empty($form['parentId'])) {
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
+	    }
+	    list ($ret, $permissions) = GalleryCoreApi::getPermissions((int)$form['parentId']);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    if (empty($permissions['core.view'])) {
+		/* Avoid information disclosure, act as if the item didn't exist. */
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+	    }
+	    if (empty($permissions['core.addAlbumItem'])) {
+		return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
+	    }
+
 	    /* Now check the value of name and title */
 	    if (empty($form['pathComponent'])) {
 		$error[] = 'form[error][pathComponent][missing]';
@@ -51,7 +66,7 @@ class NewAlbumController extends GalleryController {
 	    }
 	    if (empty($error)) {
 		list ($ret, $newAlbum) = GalleryCoreApi::createAlbum(
-		    $form['parentId'], $form['pathComponent'], $form['title'],
+		    (int)$form['parentId'], $form['pathComponent'], $form['title'],
 		    $form['summary'], $form['description'], null);
 		if ($ret) {
 		    return array($ret, null);
@@ -105,6 +120,16 @@ class NewAlbumView extends GalleryView {
 	    $form['summary'] = '';
 	    $form['keywords'] = '';
 	    $form['description'] = '';
+	}
+	$form['parentId'] = (int)$form['parentId'];
+
+	list ($ret, $canView) = GalleryCoreApi::hasItemPermission($form['parentId'], 'core.view');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	if (!$canView) {
+	    /* Avoid information disclosure, act as if the item didn't exist. */
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	}
 
 	$ret = GalleryCoreApi::assertHasItemPermission($form['parentId'], 'core.addAlbumItem');

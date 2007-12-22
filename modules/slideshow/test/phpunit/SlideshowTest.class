@@ -580,6 +580,28 @@ class SlideshowTest extends GalleryTestCase {
 	}
     }
 
+    function testSlideshowForItemListWithoutPermission() {
+	$pd = $this->_photoData;
+
+	$ret = GalleryCoreApi::removeGroupPermission(
+	    $pd[11]['id'], $this->_allUsersGroupId, 'core.view');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = $this->_runTest('itemList', array(), null,
+	    array($pd[2]['id'], $pd[11]['id'], $pd[4]['id'], $pd[10]['id'], $pd[0]['id']));
+	if (!$ret) {
+	    $this->fail('Expected the slideshow to fail');
+	} else {
+	    $this->assert($ret->getErrorCode() & ERROR_MISSING_OBJECT,
+		'expected ERROR_MISSING_OBJECT');
+	    if (!($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+		return $this->failWithStatus($ret);
+	    }
+	}
+    }
+
     // test with links?
 }
 

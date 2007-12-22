@@ -35,9 +35,29 @@ class PlatformTest extends GalleryTestCase {
 	global $gallery;
 	parent::setUp();
 
+	$ret = GalleryCoreApi::addMimeType('xxx', 'test/test', false);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
 	$this->_platform =& $gallery->getPlatform();
 	$this->_sourceFile = dirname(__FILE__) . '/../data/test1.gif';
 	$this->_destFile = $gallery->getConfig('data.gallery.tmp') . 'test.dat';
+    }
+
+    function tearDown() {
+	$ret = GalleryCoreApi::removeMimeType(array('mimeType' => 'test/test'));
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+	if (($pos = array_search('xxx', $this->_platform->_blacklistedFileExtensions)) !== false) {
+	    array_splice($this->_platform->_blacklistedFileExtensions, $pos, 1);
+	}
+
+	$ret = parent::tearDown();
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
     }
 
     function testCopy() {
@@ -186,9 +206,9 @@ class PlatformTest extends GalleryTestCase {
 			    $this->_platform->legalizePathComponent('The!Quick$'));
     }
 
-    function testLegalizePathComponent2() {
-	$this->assertEquals('test_php',
-			    $this->_platform->legalizePathComponent('test.php'));
+    function testLegalizePathComponentUnknownExtension() {
+	$this->assertEquals('test_zzz',
+			    $this->_platform->legalizePathComponent('test.zzz'));
     }
 
     function testLegalizePathComponent3() {
@@ -243,6 +263,22 @@ class PlatformTest extends GalleryTestCase {
 			    $this->_platform->isLegalPathComponent('._test'));
 	$this->assertEquals('__test',
 			    $this->_platform->legalizePathComponent('._test'));
+    }
+
+    function testLegalizePathComponentWithBlacklistedExtension() {
+	$this->_platform->_blacklistedFileExtensions[] = 'xxx';
+	$this->assertEquals('test_xxx', $this->_platform->legalizePathComponent('test.xxx'));
+    }
+
+    function testIsLegalPathComponentForAllowedExtension() {
+	$this->assert($this->_platform->isLegalPathComponent('test.xxx'));
+	$this->assert($this->_platform->isLegalPathComponent('test.XxX'), 'mixed case');
+    }
+
+    function testIsLegalPathComponentForBlacklistedExtension() {
+	$this->_platform->_blacklistedFileExtensions[] = 'xxx';
+	$this->assert(!$this->_platform->isLegalPathComponent('test.xxx'));
+	$this->assert(!$this->_platform->isLegalPathComponent('test.XXX'), 'upper case');
     }
 
     /**
@@ -397,15 +433,15 @@ class PlatformTest extends GalleryTestCase {
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'permissions.directory', '734');
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'permissions.file', '652');
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 	return null;
     }

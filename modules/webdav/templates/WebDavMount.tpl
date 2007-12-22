@@ -9,10 +9,10 @@
 {assign var=isView value=$isView|default:true}
 
 {g->callback type="webdav.LoadMountLink" itemId=$item.id}
-{assign var=link value=$block.webdav.LoadMountLink}
+{assign var=link value=$block.webdav.LoadMountLink.link}
 
 {* Only show the block for albums *}
-{if $isView or $item.canContainChildren}
+{if $block.webdav.LoadMountLink.hasPermission and ($isView or $item.canContainChildren)}
 
 {if $isView}
 <div class="gbBlock gcBackground1">

@@ -55,11 +55,17 @@ class DownloadRegistryFileView extends GalleryView {
 	if ($ret) {
 	    return $ret;
 	}
-	list ($ret, $root) = GalleryCoreApi::loadEntitiesById($rootId);
-	if ($ret) {
-	    return $ret;
+	list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission($rootId, 'core.view');
+	if (!$hasPermission) {
+	    /* Avoid information disclosure, use a default title */
+	    $title = 'Gallery';
+	} else {
+	    list ($ret, $root) = GalleryCoreApi::loadEntitiesById($rootId);
+	    if ($ret) {
+		return $ret;
+	    }
+	    $title = $root->getTitle();
 	}
-	$title = $root->getTitle();
 
 	/* Setup the headers for the Registry file */
 	header("Cache-control: private");

@@ -109,6 +109,10 @@ class DatabaseSetupStep extends InstallStep {
 		}
 		$dbPlatformType = 'mssql';
 		break;
+	    default:
+		$this->_config['type'] = 'mysqlt';
+		$dbPlatformType = 'mysql';
+		$templateData['error']['invalidDbType'] = 1;
 	}
 
 	if (!empty($_POST['action']) && $_POST['action'] == 'save') {

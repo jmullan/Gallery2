@@ -73,33 +73,6 @@ class ShowItemView extends GalleryView {
 	    return array(null, array('redirectUrl' => $redirect));
 	}
 
-	/* Make sure we have permission to view this item */
-	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.view');
-	if ($ret) {
-	    if ($ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
-		list ($ret2, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
-		if ($ret2) {
-		    return array($ret, null);
-		}
-		if ($isAnonymous) {
-		    /* Redirect to login view */
-		    return array(null, array('redirect' => $gallery->getConfig('loginRedirect')));
-		}
-		/* Try to redirect to default album */
-		list ($ret2, $rootId) = GalleryCoreApi::getDefaultAlbumId();
-		if ($ret2) {
-		    return array($ret, null);
-		}
-		if ($item->getId() == $rootId) {
-		    /* No permission on root album; redirect to login view */
-		    return array(null, array('redirect' => $gallery->getConfig('loginRedirect')));
-		}
-		return array(null, array('redirect' =>
-		    array('view' => 'core.ShowItem', 'itemId' => $rootId)));
-	    }
-	    return array($ret, null);
-	}
-
 	/*
 	 * Don't increment the view count for anything but the first page of the album so that we
 	 * don't count each individual page views as an album view.  This only applies to

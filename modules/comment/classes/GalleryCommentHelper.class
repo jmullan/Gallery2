@@ -135,6 +135,12 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	if ($ret) {
 	    return array($ret, null, null);
 	}
+	list ($ret, $viewItemAclIds) =
+	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+	$aclIds = array_intersect($viewItemAclIds, $aclIds);
 	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
 	if (empty($aclIds)) {
@@ -257,9 +263,16 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
      */
     function getAddComment(&$item, &$form) {
 	/* Make sure we have permission to add a comment */
-	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'comment.add');
+	list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
 	if ($ret) {
 	    return array($ret, null);
+	}
+	if (empty($permissions['core.view'])) {
+	    /* Avoid information disclosure, act as if the item didn't exist. */
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+	}
+	if (empty($permissions['comment.add'])) {
+	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 	}
 
 	if ($form['formName'] != 'AddComment') {

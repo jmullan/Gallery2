@@ -35,7 +35,7 @@ class CommentModule extends GalleryModule {
 	$this->setId('comment');
 	$this->setName($gallery->i18n('Comments'));
 	$this->setDescription($gallery->i18n('User commenting system'));
-	$this->setVersion('1.1.3.1'); /* Update upgrade() function below too */
+	$this->setVersion('1.1.3.2'); /* Update upgrade() function below too */
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
 	$this->setCallbacks('registerEventListeners|getItemLinks|getItemSummaries|' .
 			    'getSiteAdminViews|getItemAdminViews');
@@ -148,6 +148,7 @@ class CommentModule extends GalleryModule {
 
 	case '1.1.2':
 	case '1.1.3':
+	case '1.1.3.1':
 
 	case 'end of upgrade path':
 	    /*

@@ -147,7 +147,7 @@ class WebDavTest extends GalleryTestCase {
 		$ret = GalleryCoreApi::addUserPermission(
 		    $this->_album->getId(), $anonymousUserId, $permission, true);
 		if ($ret) {
-		    return $ret;
+		    return $this->failWithStatus($ret);
 		}
 	    }
 	}
@@ -168,7 +168,7 @@ class WebDavTest extends GalleryTestCase {
 	    if (!($ret->getErrorCode() & $errorCode)) {
 		$this->fail(sprintf('Wrong error code (expected %s)',
 		    GalleryStatus::getErrorCodeConstants($errorCode)));
-		return $ret;
+		return $this->failWithStatus($ret);
 	    }
 	} else {
 	    $this->fail($failMessage);
@@ -1733,7 +1733,7 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 204 No Content'), $this->_headers);
@@ -1742,7 +1742,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$ret = WebDavHelper::checkLocks($lock['path']);
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
     }
 

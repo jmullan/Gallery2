@@ -345,6 +345,21 @@ class GalleryRemoteController extends GalleryController {
 	    }
 
 	    $albumIds = array_unique(array_merge($albumIds1, $albumIds2));
+
+	    if (!empty($albumIds)) {
+		/** @todo Use fetchAllItemIds with multiple permissions once the API is available */
+		list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems($albumIds);
+		if ($ret) {
+		    return $ret;
+		}
+		$filteredIds = array();
+		foreach ($albumIds as $id) {
+		    if (!empty($permissions[$id]['core.view'])) {
+			$filteredIds[] = $id;
+		    }
+		}
+		$albumIds = $filteredIds;
+	    }
 	} else {
 	    /* find and load all albums that can be viewed */
 	    list ($ret, $albumIds) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem');
@@ -422,7 +437,7 @@ class GalleryRemoteController extends GalleryController {
 	$response->setProperty('debug_time_generate',
 			       round(array_sum(explode(' ', microtime())) - $start, 3) . 's');
 
-	$perm = GalleryCoreApi::hasItemPermission($rootId, 'core.addAlbumItem');
+	list ($ret, $perm) = GalleryCoreApi::hasItemPermission($rootId, 'core.addAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -496,6 +511,11 @@ class GalleryRemoteController extends GalleryController {
 	    $parentId = $form['set_albumName'];
 	} else {
 	    return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
+	}
+
+	$ret = $this->_assertHasViewPermission($parentId);
+	if ($ret) {
+	    return $ret;
 	}
 
 	/* Make sure we have permission do edit this item */
@@ -645,6 +665,11 @@ class GalleryRemoteController extends GalleryController {
 
 	$itemId = $form['set_albumName'];	  /* TODO: Eliminate this throwback to G1 */
 
+	$ret = $this->_assertHasViewPermission($itemId);
+	if ($ret) {
+	    return $ret;
+	}
+
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.addAlbumItem');
 	if ($ret) {
@@ -707,6 +732,11 @@ class GalleryRemoteController extends GalleryController {
 	} else {
 	    /* list the root album */
 	    $albumId = $rootId;
+	}
+
+	$ret = $this->_assertHasViewPermission($albumId);
+	if ($ret) {
+	    return $ret;
 	}
 
 	/* check that the item is an album */
@@ -956,6 +986,11 @@ class GalleryRemoteController extends GalleryController {
 	    }
 	}
 
+	$ret = $this->_assertHasViewPermission($albumId);
+	if ($ret) {
+	    return $ret;
+	}
+
 	$biggestDerivative = $maxSize = 0;
 
 	/* Find the derivative preferences for the album */
@@ -1029,6 +1064,11 @@ class GalleryRemoteController extends GalleryController {
 
 	$itemId = $form['itemId'];
 
+	$ret = $this->_assertHasViewPermission($itemId);
+	if ($ret) {
+	    return $ret;
+	}
+
 	/* Increment the view count */
 	$ret = GalleryCoreApi::incrementItemViewCount($itemId);
 	if ($ret) {
@@ -1066,6 +1106,11 @@ class GalleryRemoteController extends GalleryController {
 	}
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($id);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = $this->_assertHasViewPermission($id);
 	if ($ret) {
 	    return $ret;
 	}
@@ -1154,6 +1199,21 @@ class GalleryRemoteController extends GalleryController {
 	$response->setProperty('status_text', 'image-properties successful.');
 
 	return null;
+    }
+
+    /**
+     * Assert that the active user can view the specified item.
+     * Otherwize, avoid information disclosure by acting as if the item didn't exist.
+     * @param int $itemId
+     * @return GalleryStatus
+     */
+    function _assertHasViewPermission($itemId) {
+	list ($ret, $canView) = GalleryCoreApi::hasItemPermission($itemId, 'core.view');
+	if ($ret) {
+	    return $ret;
+	}
+	/* Avoid information disclosure, act as if the item didn't exist. */
+	return $canView ? null : GalleryCoreApi::error(ERROR_MISSING_OBJECT);
     }
 }
 
