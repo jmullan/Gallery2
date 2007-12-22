@@ -45,6 +45,14 @@ class SlideshowView extends GalleryView {
 	    if ($ret) {
 		return array($ret, null);
 	    }
+	    list ($ret, $canView) = GalleryCoreApi::hasItemPermission($item->getId(), 'core.view');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    if (!$canView) {
+		/* Avoid information disclosure, act as if the item didn't exist. */
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+	    }
 	    if (!$item->getCanContainChildren()) {
 		/* Photo: do slideshow of parent album, start at this photo */
 		$startId = $item->getId();
@@ -52,6 +60,15 @@ class SlideshowView extends GalleryView {
 		    GalleryCoreApi::loadEntitiesById($item->getParentId(), 'GalleryItem');
 		if ($ret) {
 		    return array($ret, null);
+		}
+		list ($ret, $canView) =
+		    GalleryCoreApi::hasItemPermission($item->getId(), 'core.view');
+		if ($ret) {
+		    return array($ret, null);
+		}
+		if (!$canView) {
+		    /* Avoid information disclosure, act as if the item didn't exist. */
+		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 		}
 	    }
 	    $SlideShow['item'] = (array)$item;
@@ -101,6 +118,7 @@ class SlideshowView extends GalleryView {
 	    );                      /* 5:  >1280x1024 */
 	    $this->init = 1;
 	}
+	$checkViewPermission = true;
 	if (is_array($item)) {
 	    $childIds = $item;
 	} else {
@@ -108,14 +126,23 @@ class SlideshowView extends GalleryView {
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
+	    $checkViewPermission = false;
 	}
 	$itemList = array();
 	$childItems = array();
 	if (!empty($childIds)) {
 	    $gallery->guaranteeTimeLimit(30);
-	    $ret = GalleryCoreApi::studyPermissions($childIds);
+	    list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems($childIds);
 	    if ($ret) {
 		return array($ret, null, null);
+	    }
+	    if ($checkViewPermission) {
+		foreach ($childIds as $i => $id) {
+		    if (!isset($permissions[$id]['core.view'])) {
+			/* Avoid information disclosure, act as if the item didn't exist. */
+			return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null, null);
+		    }
+		}
 	    }
 	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds, 'GalleryItem');
 	    if ($ret) {
@@ -162,15 +189,8 @@ class SlideshowView extends GalleryView {
 		}
 
 	    } else if (GalleryUtilities::isA($child, 'GalleryPhotoItem')) {
-
-		list ($ret, $permissions) =
-		    GalleryCoreApi::getPermissions($childId);
-		if ($ret) {
-		    return array($ret, null, null);
-		}
-
 		$images = array();
-		if (isset($permissions['core.viewSource'])) {
+		if (isset($permissions[$childId]['core.viewSource'])) {
 		    /* Full size; check for preferred copy */
 		    if (isset($preferredFullImages[$childId])) {
 			$images[] = $preferredFullImages[$childId];
@@ -178,7 +198,7 @@ class SlideshowView extends GalleryView {
 			$images[] = $child;
 		    }
 		}
-		if (isset($permissions['core.viewResizes']) &&
+		if (isset($permissions[$childId]['core.viewResizes']) &&
 			isset($resizedImages[$childId])) {
 		    foreach ($resizedImages[$childId] as $resize) {
 			$images[] = $resize;
