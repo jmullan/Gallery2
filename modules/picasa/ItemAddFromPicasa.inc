@@ -300,8 +300,9 @@ class ItemAddFromPicasa extends ItemAddPlugin {
 	foreach ($photos as $j => $importAlbumItem) {
 	    $gallery->guaranteeTimeLimit(30);
 	    $filepath = $picasaXmlPath . str_replace('/', $slash, $importAlbumItem['path']);
-	    $filename = $importAlbumItem['name'];
-	    list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
+	    $sanitizedFilename = $filename = $importAlbumItem['name'];
+	    GalleryUtilities::sanitizeInputValues($sanitizedFilename);
+	    list ($base, $extension) = GalleryUtilities::getFileNameComponents($sanitizedFilename);
 	    $filecaption = PicasaImportHelper::convertHtml($markupType, $importAlbumItem['caption'],
 		    $sourceEncoding);
 	    $filetitle = ($form['set']['title'] == 'filename') ? $base
@@ -323,7 +324,7 @@ class ItemAddFromPicasa extends ItemAddPlugin {
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    $status['pictureImportSuccess'][$filename] = $newItem->getId();
+	    $status['pictureImportSuccess'][$sanitizedFilename] = $newItem->getId();
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($importLockIds);

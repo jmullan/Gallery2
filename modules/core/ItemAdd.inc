@@ -254,8 +254,10 @@ class ItemAddController extends GalleryController {
 	foreach ($list as $filename) {
 	    $path = "$dir/$filename";
 	    if ($this->_platform->is_dir($path)) {
-		list ($ret, $album) =
-		    GalleryCoreApi::createAlbum($parentId, $filename, $filename, '', '', '');
+		$title = $filename;
+		GalleryUtilities::sanitizeInputValues($title);
+		list ($ret, $album) = GalleryCoreApi::createAlbum(
+		    $parentId, $filename, $title, '', '', '');
 		if ($ret) {
 		    return $ret;
 		}
@@ -288,8 +290,10 @@ class ItemAddController extends GalleryController {
 	    }
 	    if ($titleMode == 'file') {
 		$title = $filename;
+		GalleryUtilities::sanitizeInputValues($title);
 	    } else if ($titleMode == 'base') {
 		list ($title) = GalleryUtilities::getFileNameComponents($filename);
+		GalleryUtilities::sanitizeInputValues($title);
 	    } else {
 		$title = $archiveItem->getTitle();
 	    }
@@ -299,8 +303,10 @@ class ItemAddController extends GalleryController {
 	    if ($ret) {
 		return $ret;
 	    }
-	    $addedFiles[] = array('fileName' => $filename, 'id' => $newItem->getId(),
-				  'warnings' => array());
+ 	    $sanitizedFilename = $filename;
+ 	    GalleryUtilities::sanitizeInputValues($sanitizedFilename);
+ 	    $addedFiles[] = array('fileName' => $sanitizedFilename, 'id' => $newItem->getId(),
+  				  'warnings' => array());
 	}
 
 	return null;

@@ -138,7 +138,7 @@ class WebDavTest extends GalleryTestCase {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Set permissions as admin (applyToChildren requires core.changePermissions) */
@@ -446,7 +446,7 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('path', $path);
@@ -466,7 +466,7 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 207 Multi-Status',
@@ -506,24 +506,24 @@ class WebDavTest extends GalleryTestCase {
     	list ($ret, $subItem) = $this->_createRandomDataItem($this->_subAlbum->getId(),
 	    'test/file');
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $subSubAlbum) = $this->_createRandomAlbum($this->_subAlbum->getId());
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $itemPath) = $this->_item->fetchLogicalPath();
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $subAlbumPath) = $this->_subAlbum->fetchLogicalPath();
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('path', $path);
@@ -543,7 +543,7 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 207 Multi-Status',
@@ -671,6 +671,82 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals('new summary', $this->_item->getSummary());
 	$this->assertEquals('new description', $this->_item->getDescription());
 	$this->assertEquals('new keywords', $this->_item->getKeywords());
+    }
+
+    function testProppatchWithXss() {
+	if (!function_exists('stream_wrapper_register')) {
+	    return $this->skip();
+	}
+
+	$ret = $this->_becomeGuestUserWithPermission(array('core.edit'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'PROPPATCH';
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	$this->_streams['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
+<D:propertyupdate xmlns:D="DAV:" xmlns:G="http://gallery2.org/dav/props/">
+  <D:set>
+    <D:prop>
+      <D:displayname><![CDATA[new<script> title]]></D:displayname>
+      <G:summary><![CDATA[new<script> summary]]></G:summary>
+      <G:description><![CDATA[new<script> description]]></G:description>
+      <G:keywords><![CDATA[new<script> keywords]]></G:keywords>
+    </D:prop>
+  </D:set>
+</D:propertyupdate>';
+
+	$this->_platform->_streams['php://input'] = $this->_platform->fopen('test://input', 'rb');
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 207 Multi-Status',
+		'content-type' => 'Content-Type: text/xml; charset="utf-8"'),
+	    $this->_headers);
+
+	$path = ltrim($path, '/');
+	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
+<D:multistatus xmlns:D="DAV:">
+  <D:response xmlns:G="http://gallery2.org/dav/props/">
+    <D:href>' . $this->_getHref($path) . '</D:href>
+    <D:propstat>
+      <D:prop>
+        <D:displayname>new&lt;script&gt; title</D:displayname>
+        <G:summary>new&lt;script&gt; summary</G:summary>
+        <G:description>new&lt;script&gt; description</G:description>
+        <G:keywords>new&lt;script&gt; keywords</G:keywords>
+      </D:prop>
+      <D:status>HTTP/1.1 200 OK</D:status>
+    </D:propstat>
+  </D:response>
+</D:multistatus>
+'), split("\r?\n", $output));
+
+	list ($ret, $this->_item) = $this->_item->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('new&lt;script&gt; title', $this->_item->getTitle());
+	$this->assertEquals('new&lt;script&gt; summary', $this->_item->getSummary());
+	$this->assertEquals('new&lt;script&gt; description', $this->_item->getDescription());
+	$this->assertEquals('new&lt;script&gt; keywords', $this->_item->getKeywords());
     }
 
     function testProppatchWithoutEditPermission() {

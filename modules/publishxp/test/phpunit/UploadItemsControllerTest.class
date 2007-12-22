@@ -85,9 +85,40 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	}
 
 	$this->assertEquals($this->_parent->getId(), $entity->getParentId());
+	$this->assertEquals('Foo_dat', $entity->getPathComponent());
 	$this->assertEquals('test/file', $entity->getMimeType());
 	$this->assertEquals('Foo.dat', $entity->getTitle());
 	$this->assertEquals('', $entity->getSummary(), 'summary');
+	$this->assertEquals('', $entity->getDescription(), 'description');
+    }
+
+    function testUploadItemsXssFilename() {
+	GalleryUtilities::putRequestVariable('form[action][uploadItem]', 1);
+	GalleryUtilities::putRequestVariable('form[albumId]', $this->_parent->getId());
+	GalleryUtilities::putRequestVariable('form[setCaptions]', 1);
+	$_FILES['userFile']['type'] = 'test/file';
+	$_FILES['userFile']['tmp_name'] = __FILE__;
+	$_FILES['userFile']['name'] = 'Foo<script>Bar.dat';
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'publishxp.UploadedItem'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+
+	$entityCounter =& GalleryTestCase::getEntityCounter();
+	$id = $entityCounter->getRecentEntityId('GalleryUnknownItem');
+	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals($this->_parent->getId(), $entity->getParentId());
+	$this->assertEquals('test/file', $entity->getMimeType());
+	/** @todo: this is not optimal.. the path should be 'Foo_script_Bar_dat' */
+	$this->assertEquals('Foo_lt_script_gt_Bar_dat', $entity->getPathComponent());
+	$this->assertEquals('Foo&lt;script&gt;Bar.dat', $entity->getTitle(), 'title');
+	$this->assertEquals('Foo&lt;script&gt;Bar.dat', $entity->getSummary(), 'summary');
 	$this->assertEquals('', $entity->getDescription(), 'description');
     }
 

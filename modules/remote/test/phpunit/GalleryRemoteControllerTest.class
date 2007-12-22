@@ -518,7 +518,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$this->_controller->setOptionInstances(array());
 
 	$_FILES[GalleryUtilities::prefixFormVariable('userfile')] =
-	    array('name' => 'testfile.txt',
+	    array('name' => 'test<script>file.txt',
 		  'type' => 'text/plain',
 		  'tmp_name' => __FILE__,
 		  'error' => 0,
@@ -541,7 +541,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals('testfile.txt', $newItem->getPathComponent());
+	$this->assertEquals('test_lt_script_gt_file.txt', $newItem->getPathComponent());
 	$this->assertEquals('caption', $newItem->getTitle());
     }
 
@@ -779,11 +779,11 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	/* Make sure the the view count is 1 */
 	list ($ret, $imageViewCount) = GalleryCoreApi::fetchItemViewCount($image->getId());
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 	list ($ret, $albumViewCount) = GalleryCoreApi::fetchItemViewCount($album->getId());
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(1, $imageViewCount);
 	$this->assertEquals(1, $albumViewCount);

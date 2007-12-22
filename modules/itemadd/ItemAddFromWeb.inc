@@ -84,6 +84,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 		    }
 
 		    list ($base) = GalleryUtilities::getFileNameComponents($fileName);
+		    GalleryUtilities::sanitizeInputValues($base);
 		    $title = (isset($form['set']['title']) && $form['set']['title']) ? $base : '';
 		    $summary = (isset($form['set']['summary'])
 			     && $form['set']['summary']) ? $base : '';
@@ -101,6 +102,8 @@ class ItemAddFromWeb extends ItemAddPlugin {
 			return array($ret, null, null);
 		    }
 
+		    $sanitizedUrl = $url;
+		    GalleryUtilities::sanitizeInputValues($url);
 		    $status['addedFiles'][] = array('fileName' => $url,
 						    'id' => $newItem->getId(),
 						    'warnings' => array());

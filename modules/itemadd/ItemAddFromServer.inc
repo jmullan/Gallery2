@@ -179,7 +179,9 @@ class ItemAddFromServer extends ItemAddPlugin {
 	    return $ret;
 	}
 
-	$status['addedFiles'][] = array('fileName' => GalleryCoreApi::convertToUtf8($fileName),
+	$safeFilename = GalleryCoreApi::convertToUtf8($fileName);
+	GalleryUtilities::sanitizeInputValues($safeFilename);
+	$status['addedFiles'][] = array('fileName' => $safeFilename,
 					'id' => $newItem->getId(),
 					'warnings' => array());
 
@@ -204,6 +206,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	/* Create new Album */
 	$dirName = basename($path);
 	$dirNameUtf8 = GalleryCoreApi::convertToUtf8($dirName);
+	GalleryUtilities::sanitizeInputValues($dirNameUtf8);
 	$dirTitle = $textFields['title'] ? $dirNameUtf8 : null;
 	$dirSummary = $textFields['summary'] ? $dirNameUtf8 : null;
 	$dirDescription = $textFields['description'] ? $dirNameUtf8 : null;

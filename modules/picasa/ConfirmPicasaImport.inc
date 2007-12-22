@@ -144,10 +144,12 @@ class ConfirmPicasaImportController extends GalleryController {
 	$gallery->guaranteeTimeLimit(30);
 	$newAlbumInstanceId = false;
 
+	$sanitizedAlbumName = $picasaAlbum['albumName'];
+	GalleryUtilities::sanitizeInputValues($sanitizedAlbumName);
 	/* We definitely need notices before each album */
 	$templateAdapter->updateProgressBar(
 	    $module->translate('Importing albums'),
-	    $picasaAlbum['albumName'], $numberOfItemsImported / $totalItemsToImport);
+	    $sanitizedAlbumName, $numberOfItemsImported / $totalItemsToImport);
 
 	$desiredname = $platform->legalizePathComponent($picasaAlbum['albumName']);
 	$k = 0;
@@ -229,8 +231,8 @@ class ConfirmPicasaImportController extends GalleryController {
 
 	    $itemsCreated[] = $newAlbumInstance->getId();
 
-	    $finishedAlbums[$picasaAlbum['albumName']] = $newAlbumInstanceId;
-	    $status['albumImportSuccess'][$picasaAlbum['albumName']] = $newAlbumInstanceId;
+	    $finishedAlbums[$sanitizedAlbumName] = $newAlbumInstanceId;
+	    $status['albumImportSuccess'][$sanitizedAlbumName] = $newAlbumInstanceId;
 	    $status['albumId'] = $newAlbumInstanceId;
 	}
 	/*
@@ -256,15 +258,16 @@ class ConfirmPicasaImportController extends GalleryController {
 	foreach ($photos as $j => $importAlbumItem) {
 	    $gallery->guaranteeTimeLimit(30);
 	    $filepath = $picasaXmlPath . str_replace('/', $slash, $importAlbumItem['path']);
-	    $filename = $importAlbumItem['name'];
+	    $sanitizedFilename = $filename = $importAlbumItem['name'];
+	    GalleryUtilities::sanitizeInputValues($sanitizedFilename);
 	    $filecaption = PicasaImportHelper::convertHtml($markupType, $importAlbumItem['caption'],
 		$sourceEncoding);
 	    $templateAdapter->updateProgressBar(
 		$module->translate('Importing photos'),
-		$picasaAlbum['albumName'] . ' ' . $filename,
+		$sanitizedAlbumName . ' ' . $sanitizedFilename,
 		$numberOfItemsImported / $totalItemsToImport);
 	    list ($base, $extension) =
-		GalleryUtilities::getFileNameComponents($filename);
+		GalleryUtilities::getFileNameComponents($sanitizedFilename);
 	    list ($ret, $mimeType) =
 		GalleryCoreApi::convertExtensionToMime($extension);
 	    if ($ret) {
@@ -281,7 +284,7 @@ class ConfirmPicasaImportController extends GalleryController {
 	    if ($ret) {
 		return $ret;
 	    }
-	    $status['pictureImportSuccess'][$filename] = $newItem->getId();
+	    $status['pictureImportSuccess'][$sanitizedFilename] = $newItem->getId();
 
 	}
 
