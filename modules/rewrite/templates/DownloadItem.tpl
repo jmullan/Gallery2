@@ -9,6 +9,6 @@
   </head>
   <body>
     <p>{g->image image=$image item=$item}</p>
-    <p><a href="{g->url}">{$gallery.title|markup:strip}</a></p>
+    <p><a href="{g->url}">{$galleryTitle|markup:strip}</a></p>
   </body>
 </html>

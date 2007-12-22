@@ -364,9 +364,12 @@ class RewriteModuleExtras {
 	case '1.1.13.1':
 	case '1.1.13.2':
 	    /* .mo file migration */
+	case '1.1.13.3':
+	    /* Gallery 2.2.4 security release */
 	case '1.1.14':
 	case '1.1.15':
 	    /* Refactored to new event registration from core API 7.34 */
+	case '1.1.16':
 
 	case 'end of upgrade path':
 	    break;
