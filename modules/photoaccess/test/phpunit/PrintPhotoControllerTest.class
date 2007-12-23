@@ -278,7 +278,7 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
  * @package PhotoAccess
  * @subpackage PHPUnit
  */
-class PrintPhotoControllerTestUrlGenerator {
+class PrintPhotoControllerTestUrlGenerator extends GalleryUrlGenerator {
     function generateUrl($params=array(), $options=array()) {
 	$lines = array();
 	foreach ($params as $key => $value) {
