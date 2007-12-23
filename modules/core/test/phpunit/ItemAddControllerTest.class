@@ -168,14 +168,16 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddControllerTestPluginSuccess');
 
+ 	$isUnix = strncasecmp(PHP_OS, 'win', 3);
 	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemAddConfirmation',
 					    'itemId' => $this->_album->getId()),
 			    $results['redirect'], 'redirect');
-	$this->assertEquals(array('an error', 'an error', 'an error', 'an error', 'an error'),
+	$this->assertEquals(array_fill(0, $isUnix ? 5 : 3, 'an error'),
 			    $results['error'], 'error');
-	$this->assertEquals(5, count($results['status']['addedFiles']), 'added 4 items');
+	$this->assertEquals($isUnix ? 5 : 3, count($results['status']['addedFiles']),
+			    'added wrong # of items');
 	$addedFiles = $results['status']['addedFiles'];
 
 	/*
@@ -184,19 +186,30 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	 */
 	usort($addedFiles, $sortAddedFilesFunc);
 
-	$this->assertEquals(array('blah.ext',
-				  'foo&lt;body onload=alert(item_xss)&gt;.ext',
-				  'foo-' . $item->getId(),
-				  'foo.ext',
-				  'foo.ext'),
-			    array($addedFiles[0]['fileName'], $addedFiles[1]['fileName'],
-				  $addedFiles[2]['fileName'], $addedFiles[3]['fileName'],
-				  $addedFiles[4]['fileName']), 'files');
+	$expected = array();
+	$expected[] = 'blah.ext';
+	if ($isUnix) {
+	    $expected[] = 'foo&lt;body onload=alert(item_xss)&gt;.ext';
+	}
+	$expected[] = 'foo-' . $item->getId();
+	if ($isUnix) {
+	    $expected[] = 'foo.ext';
+	}
+	$expected[] = 'foo.ext';
+
+	/* Ugh.  Drop one from the actual to match the expected */
+	$actual = array();
+	for ($i = 0; $i < count($expected); $i++) {
+	    $actual[] = $addedFiles[$i]['fileName'];
+	}
+	$this->assertEquals($expected, $actual, 'files');
 	$this->assertEquals(array('a warning'), $addedFiles[0]['warnings'], 'warning 1');
 	$this->assertEquals(array('a warning'), $addedFiles[1]['warnings'], 'warning 2');
 	$this->assertEquals(array('a warning'), $addedFiles[2]['warnings'], 'warning 3');
-	$this->assertEquals(array('a warning'), $addedFiles[3]['warnings'], 'warning 4');
-	$this->assertEquals(array('a warning'), $addedFiles[4]['warnings'], 'warning 5');
+	if ($isUnix) {
+	    $this->assertEquals(array('a warning'), $addedFiles[3]['warnings'], 'warning 4');
+	    $this->assertEquals(array('a warning'), $addedFiles[4]['warnings'], 'warning 5');
+	}
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_album);
 	if ($ret) {
@@ -248,9 +261,25 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
  	    return $this->failWithStatus($ret);
  	}
 
- 	$this->assertEquals('foo&lt;body onload=alert(item_xss)&gt;', $item->getTitle());
- 	$this->assertEquals('hoho', $item->getSummary());
- 	$this->assertEquals('foo_body onload_alert_item_xss___ext', $item->getPathComponent());
+ 	$isUnix = strncasecmp(PHP_OS, 'win', 3);
+ 	if ($isUnix) {
+ 	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById(
+ 		array($addedItems[1]['id'], $addedItems[2]['id']),
+ 		'GalleryItem');
+ 	    if ($ret) {
+ 		return $ret;
+ 	    }
+
+ 	    /**
+ 	     * On Windows, this file can't be created to begin with because it can't handle
+ 	     * the < and > in the filename.
+ 	     * @todo switch to using a mock platform so that we can test this properly on Windows
+ 	     */
+
+	    $this->assertEquals('foo&lt;body onload=alert(item_xss)&gt;', $item->getTitle());
+	    $this->assertEquals('hoho', $item->getSummary());
+	    $this->assertEquals('foo_body onload_alert_item_xss___ext', $item->getPathComponent());
+	}
     }
 
     function testHandleRequestWithErrors() {
@@ -372,11 +401,21 @@ class ItemAddControllerTestToolkit extends GalleryToolkit {
 	}
 
 	$platform->copy(__FILE__, $destFilename . '/foo.ext');
-	$platform->copy(__FILE__, $destFilename . '/foo<body onload=alert(item_xss)>.ext');
 	$platform->mkdir($destFilename . '/subdir');
-	$platform->copy(__FILE__, $destFilename . '/subdir/blah.ext');
-	$platform->mkdir($destFilename . '/foo<body onload=alert(album_xss)>bar');
-	$platform->copy(__FILE__, $destFilename . '/foo<body onload=alert(album_xss)>bar/foo.ext');
+	$platform->copy(__FILE__, $destFilename . '/subdir' . '/blah.ext');
+
+	/**
+	 * Windows can't handle < and > in filenames so the next 3 ops will fail.  They'd fail in
+	 * production, too so at least for now this is a sane test.
+	 * @todo switch to using a mock platform so that we can test this properly on Windows
+	 */
+	$isUnix = strncasecmp(PHP_OS, 'win', 3);
+	if ($isUnix) {
+	    $platform->copy(__FILE__, $destFilename . '/foo<body onload=alert(item_xss)>.ext');
+	    $platform->mkdir($destFilename . '/foo<body onload=alert(album_xss)>bar');
+	    $platform->copy(
+		__FILE__, $destFilename . '/foo<body onload=alert(album_xss)>bar' . '/foo.ext');
+	}
 
 	return array(null, $mimeType, $context);
     }
