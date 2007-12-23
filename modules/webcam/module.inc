@@ -30,7 +30,7 @@ class WebCamModule extends GalleryModule {
 	$this->setId('webcam');
 	$this->setName($gallery->i18n('WebCam'));
 	$this->setDescription($gallery->i18n('Support periodically updated images like a webcam'));
-	$this->setVersion('1.1.3'); /* Update upgrade() function below too */
+	$this->setVersion('1.1.4'); /* Update upgrade() function below too */
 	$this->_templateVersion = 1;
 	$this->setGroup('import', $gallery->i18n('Import'));
 	$this->setCallbacks('getSiteAdminViews');
@@ -48,7 +48,8 @@ class WebCamModule extends GalleryModule {
 	if ($ret) {
 	    return $ret;
 	}
-	foreach (array('duration' => 600 /* 10 minutes */) as $key => $value) {
+	foreach (array('duration' => 600 /* 10 minutes */,
+		       'fromweb' => 'admin') as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret) {
@@ -114,6 +115,8 @@ class WebCamModule extends GalleryModule {
 		/* .mo file migration */
 	    case '1.1.1':
 	    case '1.1.2':
+	    case '1.1.3':
+		/* Limiting file:// to admins and from URL to trusted people */
 
 	    case 'end of upgrade path':
 		break;
