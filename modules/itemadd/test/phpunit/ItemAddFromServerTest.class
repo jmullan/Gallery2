@@ -552,7 +552,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 
 	/* Force some private variables that the plugin normally has at this point */
 	$this->_plugin->_platform = $platform;
-	$this->_plugin->_localServerDirList = array('/');
+	$this->_plugin->_localServerDirList = array($baseDir);
 
 	list ($ret, $id) = $this->_plugin->addDirectory(
 	    $this->_rootAlbum->getId(), $baseDir . 'good<script>evil_dir', false,
