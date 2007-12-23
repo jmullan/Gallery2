@@ -35,6 +35,15 @@ class ItemAddWebCam extends ItemAddPlugin {
 
 	$status = array();
 	$error = array();
+
+	list ($ret, $hasPermission) = $this->isAppropriate();
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+	if (!$hasPermission) {
+	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null, null);
+	}
+
 	if (isset($form['action']['checkUrl'])) {
 	    /* Delegate back to the same view */
 	} else if (isset($form['action']['addWebCam'])) {
@@ -144,6 +153,13 @@ class ItemAddWebCam extends ItemAddPlugin {
 	}
 
 	return array(null, 'modules/webcam/templates/ItemAddWebCam.tpl', 'modules_webcam');
+    }
+
+    /**
+     * @see ItemAddPlugin::isAppropriate
+     */
+    function isAppropriate() {
+	return GalleryCoreApi::isUserInSiteAdminGroup();
     }
 
     /**

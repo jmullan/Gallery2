@@ -131,7 +131,7 @@ class DigibugCartPluginTest extends GalleryTestCase {
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	} else {
-	    GalleryUtilities::putRequestVariable('returnUrl', 'http://test.com/testUrl');
+	    GalleryUtilities::putRequestVariable('returnUrl', $returnUrl);
 	    ob_start();
 	    $ret = $view->renderImmediate(array(), array());
 	    $form = ob_get_contents();
@@ -139,7 +139,7 @@ class DigibugCartPluginTest extends GalleryTestCase {
 	    if ($ret) {
 		$this->failWithStatus($ret);
 	    }
-	    $this->assert(strpos($form, '"return_url" value="http://test.com/testUrl"'),
+	    $this->assert(strpos($form, '"return_url" value="' . $returnUrl . '"'),
 			  'return url');
 	    $this->assert(strpos($form, '"num_images" value="4"'),
 		'form should include 4 photos: qty 1 of item 0, none of item 1 ' .

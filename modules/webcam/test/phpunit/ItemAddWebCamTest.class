@@ -49,6 +49,12 @@ class ItemAddWebCamTest extends ItemAddPluginTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
+	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'webcam');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+
 	list ($ret, $this->_item) = $this->_createRandomDataItem(
 	    $this->_album->getId(), 'image/test',
 	    array('onLoadHandlers' => '|WebCam|'),
@@ -57,7 +63,7 @@ class ItemAddWebCamTest extends ItemAddPluginTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
-	$ret = GalleryCoreApi::setPluginParameter('module', 'webcam',
+	$ret = $this->_module->setParameter('module', 'webcam',
 	    'imageUrl', 'http://test.com/test.jpg', $this->_item->getId());
 	if ($ret) {
 	    print $ret->getAsHtml();
@@ -70,7 +76,7 @@ class ItemAddWebCamTest extends ItemAddPluginTestCase {
 		return $this->failWithStatus($ret);
 	}
 
-	$ret = GalleryCoreApi::setPluginParameter('module', 'webcam', 'duration', '-100');
+	$ret = $this->_module->setParameter('module', 'webcam', 'duration', '-100');
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
@@ -94,6 +100,30 @@ class ItemAddWebCamTest extends ItemAddPluginTestCase {
 	parent::tearDown();
     }
 
+    function testIsAppropriateForAdmin() {
+	list ($ret, $isAppropriate) = $this->_plugin->isAppropriate();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(true, $isAppropriate);
+    }
+
+    function testIsAppropriateForRegisteredUser() {
+	global $gallery;
+
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->_markForCleanup($user);
+	$gallery->setActiveUser($user);
+	list ($ret, $isAppropriate) = $this->_plugin->isAppropriate();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(false, $isAppropriate);
+    }
+
     function testCheckUrl() {
 	GalleryUtilities::putRequestVariable('form[action][checkUrl]', 1);
 	GalleryUtilities::putRequestVariable('form[imageUrl]', 'test');
@@ -113,6 +143,15 @@ class ItemAddWebCamTest extends ItemAddPluginTestCase {
 	$this->assertEquals(array('fileName', 'id', 'warnings'),
 			    array_keys($results[1]['addedFiles'][0]), 'key');
 	$this->assertEquals('test.jpg', $results[1]['addedFiles'][0]['fileName'], 'fileName');
+    }
+
+    function testAddWebCamCallsIsAppropriate() {
+	$ret = $this->_becomeGuestUser();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$results = $this->handleRequest($this->_album, ERROR_PERMISSION_DENIED);
+	$this->assertEquals(array(null, null), $results);
     }
 
     function testAddWebCamAltHeader() {
