@@ -47,7 +47,8 @@ class WebCamModule extends GalleryModule {
 	if ($ret) {
 	    return $ret;
 	}
-	foreach (array('duration' => 600 /* 10 minutes */) as $key => $value) {
+	foreach (array('duration' => 600 /* 10 minutes */,
+		       'fromweb' => 'admin') as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret) {

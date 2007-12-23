@@ -34,6 +34,15 @@ class ItemAddWebCam extends ItemAddPlugin {
 	global $gallery;
 
 	$status = $error = array();
+
+    	list ($ret, $hasPermission) = $this->isAppropriate();
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+	if (!$hasPermission) {
+	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null, null);
+	}
+
 	if (isset($form['action']['checkUrl'])) {
 	    /* Delegate back to the same view */
 	} else if (isset($form['action']['addWebCam'])) {
@@ -44,11 +53,16 @@ class ItemAddWebCam extends ItemAddPlugin {
 	    GalleryUtilities::unsanitizeInputValues($url, false);
 	    $urlComponents = parse_url($url);
 
+	    list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+
 	    if ($urlComponents['scheme'] == 'http') {
 		$tmpFile = $platform->tempnam($tmpDir, 'webcam');
 		list ($successfullyCopied, $response, $headers) =
 		    GalleryCoreApi::fetchWebFile($url, $tmpFile);
-	    } else if ($urlComponents['scheme'] == 'file') {
+	    } else if ($isAdmin && $urlComponents['scheme'] == 'file') {
 		$tmpFile = $urlComponents['path'];
 		$successfullyCopied = $platform->file_exists($tmpFile);
 	    } else {
@@ -142,18 +156,41 @@ class ItemAddWebCam extends ItemAddPlugin {
 	}
 
 	if (isset($form['action']['checkUrl'])) {
+	    list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
 	    if (empty($form['imageUrl'])) {
 		$form['error']['imageUrl']['missing'] = 1;
 	    } else {
 		$urlComponents = parse_url($form['imageUrl']);
 		if (empty($urlComponents['scheme'])
-			|| !in_array($urlComponents['scheme'], array('http', 'file'))) {
+			|| !in_array($urlComponents['scheme'], array('http', 'file'))
+			|| ($urlComponents['scheme'] == 'file' && !$isAdmin)) {
 		    $form['error']['imageUrl']['invalid'] = 1;
 		}
 	    }
 	}
 
 	return array(null, 'modules/webcam/templates/ItemAddWebCam.tpl', 'modules_webcam');
+    }
+
+    /**
+     * @see ItemAddPlugin::isAppropriate
+     */
+    function isAppropriate() {
+	list ($ret, $param) = GalleryCoreApi::getPluginParameter('module', 'webcam', 'fromweb');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$isAdmin = false;
+	if ($param == 'admin') {
+	    list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
+	return array(null, $param == 'on' || ($isAdmin && $param == 'admin'));
     }
 
     /**

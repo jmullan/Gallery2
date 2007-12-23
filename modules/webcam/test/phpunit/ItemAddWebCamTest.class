@@ -49,6 +49,12 @@ class ItemAddWebCamTest extends ItemAddPluginTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
+	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'webcam');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+
 	list ($ret, $this->_item) = $this->_createRandomDataItem(
 	    $this->_album->getId(), 'image/test',
 	    array('onLoadHandlers' => '|WebCam|'),
@@ -57,7 +63,7 @@ class ItemAddWebCamTest extends ItemAddPluginTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
-	$ret = GalleryCoreApi::setPluginParameter('module', 'webcam',
+	$ret = $this->_module->setParameter(
 	    'imageUrl', 'http://test.com/test.jpg', $this->_item->getId());
 	if ($ret) {
 	    print $ret->getAsHtml();
@@ -70,7 +76,7 @@ class ItemAddWebCamTest extends ItemAddPluginTestCase {
 		return $this->failWithStatus($ret);
 	}
 
-	$ret = GalleryCoreApi::setPluginParameter('module', 'webcam', 'duration', '-100');
+	$ret = $this->_module->setParameter('duration', '-100');
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
@@ -92,6 +98,62 @@ class ItemAddWebCamTest extends ItemAddPluginTestCase {
 	}
 
 	parent::tearDown();
+    }
+
+    function testIsAppropriateOff() {
+	$ret = $this->_module->setParameter('fromweb', 'off');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $isAppropriate) = $this->_plugin->isAppropriate();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(false, $isAppropriate, 'off');
+    }
+
+    function testIsAppropriateAdminForAdmin() {
+	$ret = $this->_module->setParameter('fromweb', 'admin');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $isAppropriate) = $this->_plugin->isAppropriate();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(true, $isAppropriate, 'admin for admin');
+    }
+
+    function testIsAppropriateAdminForGuest() {
+	$ret = $this->_module->setParameter('fromweb', 'admin');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = $this->_becomeGuestUser();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $isAppropriate) = $this->_plugin->isAppropriate();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(false, $isAppropriate, 'admin for guest');
+    }
+
+    function testIsAppropriateOn() {
+	$ret = $this->_module->setParameter('fromweb', 'on');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = $this->_becomeGuestUser();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $isAppropriate) = $this->_plugin->isAppropriate();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(true, $isAppropriate, 'on');
     }
 
     function testCheckUrl() {
@@ -122,6 +184,42 @@ class ItemAddWebCamTest extends ItemAddPluginTestCase {
 	}
     }
 
+    function testCheckUrlAsNormalUser() {
+	global $gallery;
+
+	/* Make sure the request isn't blocked because of the "fromweb" setting */
+	$ret = $this->_module->setParameter('fromweb', 'on');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = $this->_becomeGuestUser();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_album->getId(), $gallery->getActiveUserId(), 'core.addDataItem');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('form[action][checkUrl]', 1);
+	$template = null;
+	foreach (array('file://hoho' => array('imageUrl' => array('invalid' => 1)),
+		       'http://blah' => array()) as $url => $error) {
+	    $form = array('action' => array('checkUrl' => 1), 'formName' => 'ItemAddWebCam',
+			  'imageUrl' => $url);
+	    list ($ret, $tpl, $l10Domain) =
+		$this->_plugin->loadTemplate($template, $form, $this->_album);
+	    if ($ret) {
+		$this->fail($url);
+		return $this->failWithStatus($ret);
+	    }
+
+	    $this->assertEquals($error, isset($form['error']) ? $form['error'] : array(), $url);
+	}
+    }
+
     function testAddWebCam() {
 	GalleryUtilities::putRequestVariable('form[action][addWebCam]', 1);
 	GalleryUtilities::putRequestVariable('form[imageUrl]', 'http://test.com/test.jpg');
@@ -133,6 +231,15 @@ class ItemAddWebCamTest extends ItemAddPluginTestCase {
 	$this->assertEquals(array('fileName', 'id', 'warnings'),
 			    array_keys($results[1]['addedFiles'][0]), 'key');
 	$this->assertEquals('test.jpg', $results[1]['addedFiles'][0]['fileName'], 'fileName');
+    }
+
+    function testAddWebCamCallsIsAppropriate() {
+	$ret = $this->_module->setParameter('fromweb', 'off');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$results = $this->handleRequest($this->_album, ERROR_PERMISSION_DENIED);
+	$this->assertEquals(array(null, null), $results);
     }
 
     function testAddWebCamAltHeader() {
@@ -187,6 +294,33 @@ class ItemAddWebCamTest extends ItemAddPluginTestCase {
 	$this->assertEquals(array('fileName', 'id', 'warnings'),
 			    array_keys($results[1]['addedFiles'][0]), 'key');
 	$this->assertEquals('test.jpg', $results[1]['addedFiles'][0]['fileName'], 'fileName');
+    }
+
+    function testAddWebCamFileOnlyAllowedForSiteAdmins() {
+	global $gallery;
+
+	/* Make sure the request isn't blocked because of the "fromweb" setting */
+	$ret = $this->_module->setParameter('fromweb', 'on');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = $this->_becomeGuestUser();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_album->getId(), $gallery->getActiveUserId(), 'core.addDataItem');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('form[action][addWebCam]', 1);
+	GalleryUtilities::putRequestVariable('form[imageUrl]', 'file:///tmp/test.jpg');
+
+	$results = $this->handleRequest($this->_album);
+	$this->assertEquals(array('form[error][imageUrl][invalid]'), $results[0], 'error');
+	$this->assertEquals(array(), $results[1], 'status');
     }
 
     function testAddWebCamXssUrl() {
