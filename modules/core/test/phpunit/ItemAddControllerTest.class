@@ -174,7 +174,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 					    'subView' => 'core.ItemAddConfirmation',
 					    'itemId' => $this->_album->getId()),
 			    $results['redirect'], 'redirect');
-	$this->assertEquals(array('an error', 'an error', 'an error'),
+	$this->assertEquals(array_fill(0, $isUnix ? 5 : 3, 'an error'),
 			    $results['error'], 'error');
 	$this->assertEquals($isUnix ? 5 : 3, count($results['status']['addedFiles']),
 			    'added wrong # of items');
