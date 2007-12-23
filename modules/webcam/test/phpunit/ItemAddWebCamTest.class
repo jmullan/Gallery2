@@ -63,7 +63,7 @@ class ItemAddWebCamTest extends ItemAddPluginTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
-	$ret = $this->_module->setParameter('module', 'webcam',
+	$ret = $this->_module->setParameter(
 	    'imageUrl', 'http://test.com/test.jpg', $this->_item->getId());
 	if ($ret) {
 	    print $ret->getAsHtml();
@@ -76,7 +76,7 @@ class ItemAddWebCamTest extends ItemAddPluginTestCase {
 		return $this->failWithStatus($ret);
 	}
 
-	$ret = $this->_module->setParameter('module', 'webcam', 'duration', '-100');
+	$ret = $this->_module->setParameter('duration', '-100');
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
