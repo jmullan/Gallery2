@@ -346,9 +346,10 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 		  'itemId' => $this->_album->getId()),
 	    true);
 
+	$isUnix = strncasecmp(PHP_OS, 'win', 3);
 	$status = $this->_getStatusFromProgressBar();
 	$addedItems = $status['addedFiles'];
-	$this->assertEquals(7, count($addedItems), 'added 7 items');
+	$this->assertEquals($isUnix ? 7 : 4, count($addedItems), 'added wrong # of items');
 
 	/*
 	 * Sort the added files list by filename because we can't guarantee
@@ -364,14 +365,20 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	    $this->assertEquals(array('a warning'), $addedItem['warnings'],
 				"warning $i - item not processed by ItemAddOption");
 	}
-	$this->assertEquals(
-	    array('blah.ext',
-		  'foo&lt;body onload=alert(album_xss)&gt;bar',
-		  'foo&lt;body onload=alert(item_xss)&gt;.ext',
-		  'foo-' . $item->getId(),
-		  'foo.ext', 'foo.ext',
-		  'subdir'),
-	    $itemNames, 'files');
+
+	$expected = array();
+	$expected[] = 'blah.ext';
+	if ($isUnix) {
+	    $expected[] = 'foo&lt;body onload=alert(album_xss)&gt;bar';
+	    $expected[] = 'foo&lt;body onload=alert(item_xss)&gt;.ext';
+	}
+	$expected[] = 'foo-' . $item->getId();
+	$expected[] = 'foo.ext';
+	if ($isUnix) {
+	    $expected[] = 'foo.ext';
+	}
+	$expected[] = 'subdir';
+	$this->assertEquals($expected, $itemNames, 'files');
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_album);
 	if ($ret) {
@@ -423,15 +430,25 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	    create_function('$a, $b', 'return strcmp($a[\'fileName\'], $b[\'fileName\']);');
 	usort($addedItems, $sortAddedFilesFunc);
 
-	list ($ret, $items) = GalleryCoreApi::loadEntitiesById(
-	    array($addedItems[1]['id'], $addedItems[2]['id']),
-	    'GalleryItem');
-	if ($ret) {
-	    return $ret;
-	}
+	$isUnix = strncasecmp(PHP_OS, 'win', 3);
+	if ($isUnix) {
+	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById(
+		array($addedItems[1]['id'], $addedItems[2]['id']),
+		'GalleryItem');
+	    if ($ret) {
+		return $ret;
+	    }
 
-	$this->assertEquals('foo&lt;body onload=alert(album_xss)&gt;bar', $items[0]->getTitle());
-	$this->assertEquals('foo&lt;body onload=alert(item_xss)&gt;', $items[1]->getTitle());
+	    /**
+	     * On Windows, this file can't be created to begin with because it can't handle
+	     * the < and > in the filename.
+	     * @todo switch to using a mock platform so that we can test this properly on Windows
+	     */
+	    $this->assertEquals(
+		'foo&lt;body onload=alert(album_xss)&gt;bar', $items[0]->getTitle());
+	    $this->assertEquals(
+		'foo&lt;body onload=alert(item_xss)&gt;', $items[1]->getTitle());
+	}
     }
 
     function testHandleRequestWithProgressBarAutoRedirectOnError() {
@@ -724,11 +741,21 @@ class ItemAddControllerTestToolkit extends GalleryToolkit {
 	}
 
 	$platform->copy(__FILE__, $destFilename . '/foo.ext');
-	$platform->copy(__FILE__, $destFilename . '/foo<body onload=alert(item_xss)>.ext');
 	$platform->mkdir($destFilename . '/subdir');
-	$platform->copy(__FILE__, $destFilename . '/subdir/blah.ext');
-	$platform->mkdir($destFilename . '/foo<body onload=alert(album_xss)>bar');
-	$platform->copy(__FILE__, $destFilename . '/foo<body onload=alert(album_xss)>bar/foo.ext');
+	$platform->copy(__FILE__, $destFilename . '/subdir' . '/blah.ext');
+
+	/**
+	 * Windows can't handle < and > in filenames so the next 3 ops will fail.  They'd fail in
+	 * production, too so at least for now this is a sane test.
+	 * @todo switch to using a mock platform so that we can test this properly on Windows
+	 */
+	$isUnix = strncasecmp(PHP_OS, 'win', 3);
+	if ($isUnix) {
+	    $platform->copy(__FILE__, $destFilename . '/foo<body onload=alert(item_xss)>.ext');
+	    $platform->mkdir($destFilename . '/foo<body onload=alert(album_xss)>bar');
+	    $platform->copy(
+		__FILE__, $destFilename . '/foo<body onload=alert(album_xss)>bar' . '/foo.ext');
+	}
 
 	return array(null, $mimeType, $context);
     }
