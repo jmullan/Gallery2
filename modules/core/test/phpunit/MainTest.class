@@ -48,6 +48,8 @@ class MainTest extends GalleryTestCase {
 	    return $ret;
 	}
 
+	$this->_saveSession = $gallery->_session;
+
 	$gallery->_phpVm = new MainTestPhpVm();
 	$gallery->_session = new GallerySession();
 	$gallery->setUrlGenerator($this->_urlGenerator);
@@ -59,7 +61,6 @@ class MainTest extends GalleryTestCase {
 
     function tearDown() {
 	global $gallery;
-	$gallery = $this->_saveGallery;
 	$gallery->_session = $this->_saveSession;
 
 	list ($ret, $languageCode) = $gallery->getActiveLanguageCode();
