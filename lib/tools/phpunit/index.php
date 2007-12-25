@@ -189,7 +189,7 @@ class GalleryTestResult extends TestResult {
 	$nRun = $this->countTests();
 	$nFailures = $this->failureCount();
 
-	print '<script text="text/javascript">hideStatus();</script>';
+	print '<script text="text/javascript">completeStatus();</script>';
 
 	if ($nFailures) print("</ol>\n");
 	if (!isset($compactView)) {

@@ -2,9 +2,8 @@
 <html>
   <head>
     <title>Gallery Unit Tests</title>
-    <STYLE TYPE="text/css">
-      <?php include ("stylesheet.css"); ?>
-    </STYLE>
+    <script type="text/javascript" src="../../../lib/yui/utilities.js"></script>
+    <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
   </head>
   <body>
   <?php if (!isset($compactView)): ?>
@@ -17,12 +16,13 @@
         document.forms[0].submit();
       }
     </script>
-    <div id="status" style="display: none;">
+    <div id="status" style="position: absolute; right: 0; top: 0; display: none; background: white;">
       <div class="header">Run Status</div>
       <div class="body">
 	Pass: <span id="pass_count">&nbsp;</span>, Fail <span id="fail_count">&nbsp;</span>, Skip: <span id="skip_count">&nbsp;</span>, Total: <span id="total_count">&nbsp;</span> <br/>
+        Elapsed time: <span id="elapsed_time">&nbsp;</span> <br/>
 	Estimated time remaining: <span id="estimated_time_remaining">&nbsp;</span> <br/>
-	Memory Usage: <span id="used_memory">&nbsp;</span> (<?php print (0 < ini_get('memory_limit')) ? ini_get('memory_limit') : 0; ?> allowed)
+	Memory Usage: <span id="used_memory">&nbsp;</span> (<?php print (0 < ini_get('memory_limit')) ? ini_get('memory_limit') + "allowed": "Unlimited"; ?>)
       </div>
     </div>
 
@@ -269,10 +269,20 @@
 
       function showStatus() {
 	document.getElementById("status").style.display = 'block';
+	window.onscroll = function() {
+	new YAHOO.util.Anim(
+	  'status',
+	  { top: { to: YAHOO.util.Dom.getDocumentScrollTop() } },
+	  .5, YAHOO.util.Easing.easeIn).animate();
+	};
       }
 
-      function hideStatus() {
-	document.getElementById("status").style.display = 'none';
+      function completeStatus() {
+	if (failCount > 0) {
+	  YAHOO.util.Dom.addClass('status', 'fail');
+        } else {
+	  YAHOO.util.Dom.addClass('status', 'pass');
+        }
       }
 
       function updateStats(pass, fail, skip, usedMemory, force) {
@@ -297,6 +307,7 @@
 	var estimatedRemainingTime = (1 - completionPercent) * estimatedTotalTime;
 	estimatedRemainingTime = Math.round(estimatedRemainingTime);
 	estimatedTimeRemainingEl.innerHTML = estimatedRemainingTime + " seconds";
+        elapsedEl.innerHTML = Math.round(elapsed) + " seconds";
       }
 
       var startTime = new Date().getTime() / 1000;
@@ -306,6 +317,7 @@
       var failCountEl = document.getElementById('fail_count');
       var skipCountEl = document.getElementById('skip_count');
       var estimatedTimeRemainingEl = document.getElementById('estimated_time_remaining');
+      var elapsedEl = document.getElementById('elapsed_time');
       var usedMemoryEl = document.getElementById('used_memory');
       document.getElementById('total_count').innerHTML = totalCount;
       updateStats(0, 0, 0, 0, 1);
