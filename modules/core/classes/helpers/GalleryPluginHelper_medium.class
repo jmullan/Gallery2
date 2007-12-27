@@ -127,20 +127,19 @@ class GalleryPluginHelper_medium {
 	    }
 
 	    $platform =& $gallery->getPlatform();
-	    foreach(GalleryCoreApi::getPluginBaseDirs() as $pluginsBaseDir) {
-		if ($dir = $platform->opendir($pluginsBaseDir . $pluginsDir)) {
-		    while (($file = $platform->readdir($dir)) != false) {
-			$path = $pluginsBaseDir . $pluginsDir . $file;
-			if (preg_match('/^(\.|CVS)/', $file)) {
-			    continue;
-			}
-
-			if ($platform->is_file($path . '/' . $pluginFile)) {
-			    $pluginIds[] = $file;
-			}
+	    $pluginsPath = GalleryCoreApi::getCodeBasePath($pluginsDir);
+	    if ($dir = $platform->opendir($pluginsPath)) {
+		while (($file = $platform->readdir($dir)) != false) {
+		    $path = $pluginsPath . $file;
+		    if (preg_match('/^(\.|CVS)/', $file)) {
+			continue;
 		    }
-		    $platform->closedir($dir);
+
+		    if ($platform->is_file($path . '/' . $pluginFile)) {
+			$pluginIds[] = $file;
+		    }
 		}
+		$platform->closedir($dir);
 	    }
 	    GalleryDataCache::put($cacheKey, $pluginIds);
 	}

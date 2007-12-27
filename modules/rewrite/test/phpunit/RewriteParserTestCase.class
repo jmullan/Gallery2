@@ -612,9 +612,9 @@ class RewriteParserMockPlatform extends GalleryPlatform {
     }
 
     function is_writeable($file) {
-	$pluginBaseDirs = GalleryCoreApi::getPluginBaseDirs();
+	$pluginBaseDir = GalleryCoreApi::getCodeBasePath();
 	if (strpos($file, '/.htaccess') !== false ||
-		$file == $pluginBaseDirs['base']  || strpos($file, '\httpd.ini') !== false) {
+		$file == $pluginBaseDir  || strpos($file, '\httpd.ini') !== false) {
 	    return $this->_isWriteable;
 	}
 

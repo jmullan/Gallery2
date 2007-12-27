@@ -359,7 +359,6 @@ class GalleryPluginHelper_simple {
 
 		$platform =& $gallery->getPlatform();
 
-		$pluginBaseDirs = GalleryCoreApi::getPluginBaseDirs();
 		$pluginBaseIndexFile = sprintf(
 		    '%sindex.%ss', $gallery->getConfig('data.gallery.plugins'), $pluginType);
 
@@ -386,39 +385,38 @@ class GalleryPluginHelper_simple {
 		$frameworkParams[] =
 		    ($pluginType == 'module') ? 'requiredModuleApi' : 'requiredThemeApi';
 
-		foreach ($pluginBaseDirs as $pluginBaseDir) {
-		    if ($dir = $platform->opendir($pluginBaseDir . $pluginsDir)) {
-			while ($pluginId = $platform->readdir($dir)) {
-			    if ($pluginId{0} == '.') {
-				continue;
-			    }
-			    if (!$platform->is_dir($pluginBaseDir . $pluginsDir . $pluginId)) {
-				continue;
-			    }
+		$pluginBasePath = GalleryCoreApi::getCodeBasePath($pluginsDir);
+		if ($dir = $platform->opendir($pluginBasePath)) {
+		    while ($pluginId = $platform->readdir($dir)) {
+			if ($pluginId{0} == '.') {
+			    continue;
+			}
+			if (!$platform->is_dir($pluginBasePath . $pluginId)) {
+			    continue;
+			}
 
-			    $path = $pluginBaseDir . $pluginsDir . $pluginId . '/' . $pluginFile;
-			    if ($platform->file_exists($path)) {
-				$plugins[$pluginId]['available'] = 1;
+			$path = $pluginBasePath . $pluginId . '/' . $pluginFile;
+			if ($platform->file_exists($path)) {
+			    $plugins[$pluginId]['available'] = 1;
 
-				foreach ($frameworkParams as $paramName) {
-				    list ($ret, $plugins[$pluginId][$paramName]) =
-					GalleryPluginHelper_simple::getParameter(
-					    $pluginType, $pluginId, '_' . $paramName, 0, true);
-				    if ($ret) {
-					return array($ret, null);
-				    }
+			    foreach ($frameworkParams as $paramName) {
+				list ($ret, $plugins[$pluginId][$paramName]) =
+				    GalleryPluginHelper_simple::getParameter(
+					$pluginType, $pluginId, '_' . $paramName, 0, true);
+				if ($ret) {
+				    return array($ret, null);
+				}
 
-				    /* Separate out the major/minor version. */
-				    if (!strncmp($paramName, 'required', 8)) {
-					$tmp = explode(',', $plugins[$pluginId][$paramName]);
-					$plugins[$pluginId][$paramName] = (count($tmp) < 2)
-					    ? array(-1, -1) : array((int)$tmp[0], (int)$tmp[1]);
-				    }
+				/* Separate out the major/minor version. */
+				if (!strncmp($paramName, 'required', 8)) {
+				    $tmp = explode(',', $plugins[$pluginId][$paramName]);
+				    $plugins[$pluginId][$paramName] = (count($tmp) < 2)
+					? array(-1, -1) : array((int)$tmp[0], (int)$tmp[1]);
 				}
 			    }
 			}
-			$platform->closedir($dir);
 		    }
+		    $platform->closedir($dir);
 		}
 
 		if ($pluginType == 'module') {

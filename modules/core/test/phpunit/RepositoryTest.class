@@ -325,28 +325,22 @@ class RepositoryTest extends GalleryTestCase {
 	     * Set up the platform so that it returns both testModule and testTheme only in the
 	     * first plugin base directory. This way there won't be duplication in the plugin
 	     * list.
-	     *
-	     * When GalleryCoreApi::getPluginBaseDirs() goes away this can get simplified
-	     * considerably.
 	     */
 	    $platform = new UnitTestPlatform();
 	    foreach (array('module', 'theme') as $pluginType) {
 		$firstBaseDirectory = true;
-		foreach (GalleryCoreApi::getPluginBaseDirs() as $baseDir) {
-		    $path = $baseDir . $pluginType . 's/';
-		    $platform->setReply('opendir', array($path), 'fh');
+		$path = GalleryCoreApi::getCodeBasePath($pluginType . 's/');
+		$platform->setReply('opendir', array($path), 'fh');
 
-		    if ($firstBaseDirectory) {
-			$firstBaseDirectory = false;
+		if ($firstBaseDirectory) {
+		    $firstBaseDirectory = false;
 
-			$platform->setReply('readdir', array('fh'),  'test' . ucfirst($pluginType));
-			$platform->setReply('is_file', array(sprintf('%stest%s/%s.inc', $path,
-							     ucfirst($pluginType), $pluginType)),
-					    true);
-		    }
-		    $platform->setReply('readdir', array('fh'), false);
-		    $platform->setReply('closedir', array('fh'), true);
+		    $platform->setReply('readdir', array('fh'),  'test' . ucfirst($pluginType));
+		    $platform->setReply('is_file', array(sprintf('%stest%s/%s.inc', $path,
+							 ucfirst($pluginType), $pluginType)), true);
 		}
+		$platform->setReply('readdir', array('fh'), false);
+		$platform->setReply('closedir', array('fh'), true);
 	    }
 	    $gallery->setPlatform($platform);
 
