@@ -153,7 +153,6 @@ class NotificationItemAdminControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	$activeUser = $gallery->getActiveUser();
 	$activeUserId = $gallery->getActiveUserId();
 
 	$storage->setReply('getMapEntry',
@@ -188,7 +187,6 @@ class NotificationItemAdminControllerTest extends GalleryControllerTestCase {
 
 	$itemId = (string)$this->_testAlbum->getId();
 
-	$activeUser = $gallery->getActiveUser();
 	$activeUserId = $gallery->getActiveUserId();
 
 	$storage->setReply('getMapEntry',
@@ -251,7 +249,6 @@ class NotificationItemAdminControllerTest extends GalleryControllerTestCase {
 
 	$itemId = (string)$this->_testAlbum->getId();
 
-	$activeUser =& $gallery->getActiveUser();
 	$activeUserId = $gallery->getActiveUserId();
 
 	$storage->setReply('getMapEntry',
