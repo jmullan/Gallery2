@@ -90,7 +90,7 @@
         <?php foreach (array_keys($incorrectDevEnv) as $key): ?>
         <tr>
           <td> <?php print $key ?> </td>
-          <td> <?php print $incorrectDevEnv[$key][1] ?> </td>
+          <td> <?php print wordwrap($incorrectDevEnv[$key][1], 45, "<br>", true) ?> </td>
           <td> <?php print join(' <b>or</b> ', $incorrectDevEnv[$key][0]) ?> </td>
         </tr>
         <?php endforeach; ?>
