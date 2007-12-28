@@ -335,11 +335,10 @@ class RepositoryTest extends GalleryTestCase {
 		if ($firstBaseDirectory) {
 		    $firstBaseDirectory = false;
 
-			$platform->setReply('readdir', array('fh'),  'test' . ucfirst($pluginType));
-			$platform->setReply('is_file', array(sprintf('%stest%s/%s.inc', $path,
-							     ucfirst($pluginType), $pluginType)),
+		    $platform->setReply('readdir', array('fh'),  'test' . ucfirst($pluginType));
+		    $platform->setReply('is_file', array(sprintf('%stest%s/%s.inc', $path,
+							 ucfirst($pluginType), $pluginType)),
 					    true);
-		    }
 		}
 		$platform->setReply('readdir', array('fh'), false);
 		$platform->setReply('closedir', array('fh'), true);
