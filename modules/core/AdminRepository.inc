@@ -79,6 +79,10 @@ class AdminRepositoryController extends GalleryController {
 		return array($ret, null);
 	    }
 
+	    /* Remove the default repositories from the data cache */
+	    $cacheKey = 
+		'GalleryRepositories::getRepositories::' . serialize(array()) . 'GalleryRepository';
+	    GalleryDataCache::remove($cacheKey);
 	    list ($ret, $repositories) = $this->_getRepositories();
 	    if ($ret) {
 		return array($ret, null);

@@ -67,28 +67,35 @@ class GalleryRepository {
      * @static
      */
     function getRepositories($sources=array(), $repositoryClassName='GalleryRepository') {
-	if (empty($sources)) {
-	    list ($ret, $sources) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'core.repositories');
-	    if ($ret) {
-		return array($ret, null, null);
-	    }
-	    $sources = array_keys(unserialize($sources));
-	}
-
-	$repositories = array();
-	$errorCount = 0;
-	foreach ($sources as $source) {
-	    $repositories[$source] = new $repositoryClassName;
-	    $ret = $repositories[$source]->init($source);
-	    if ($ret) {
-		if ($ret->getErrorCode() & ERROR_BAD_PARAMETER) {
-		    unset($repositories[$source]);
-		    $errorCount++;
-		} else {
+	$cacheKey = 
+	    'GalleryRepositories::getRepositories::' . serialize($sources) . $repositoryClassName;
+	if (!GalleryDataCache::containsKey($cacheKey)) {
+	    if (empty($sources)) {
+		list ($ret, $sources) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'core.repositories');
+		if ($ret) {
 		    return array($ret, null, null);
 		}
+		$sources = array_keys(unserialize($sources));
 	    }
+
+	    $repositories = array();
+	    $errorCount = 0;
+	    foreach ($sources as $source) {
+		$repositories[$source] = new $repositoryClassName;
+		$ret = $repositories[$source]->init($source);
+		if ($ret) {
+		    if ($ret->getErrorCode() & ERROR_BAD_PARAMETER) {
+			unset($repositories[$source]);
+			$errorCount++;
+		    } else {
+			return array($ret, null, null);
+		    }
+		}
+	    }
+	    GalleryDataCache::put($cacheKey, array($repositories, $errorCount));
+	} else {
+	    list ($repositories, $errorCount) = GalleryDataCache::get($cacheKey);
 	}
 
 	return array(null, $repositories, $errorCount);

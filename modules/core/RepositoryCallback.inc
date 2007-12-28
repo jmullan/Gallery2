@@ -75,6 +75,11 @@ class RepositoryCallbackView extends GalleryView {
 	    if ($ret) {
 		return $ret;
 	    }
+
+	    /* Remove the default repositories from the data cache */
+	    $cacheKey = 
+		'GalleryRepositories::getRepositories::' . serialize(array()) . 'GalleryRepository';
+	    GalleryDataCache::remove($cacheKey);
 	}
 	return null;
     }

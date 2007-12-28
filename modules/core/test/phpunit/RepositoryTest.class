@@ -335,9 +335,11 @@ class RepositoryTest extends GalleryTestCase {
 		if ($firstBaseDirectory) {
 		    $firstBaseDirectory = false;
 
-		    $platform->setReply('readdir', array('fh'),  'test' . ucfirst($pluginType));
-		    $platform->setReply('is_file', array(sprintf('%stest%s/%s.inc', $path,
-							 ucfirst($pluginType), $pluginType)), true);
+			$platform->setReply('readdir', array('fh'),  'test' . ucfirst($pluginType));
+			$platform->setReply('is_file', array(sprintf('%stest%s/%s.inc', $path,
+							     ucfirst($pluginType), $pluginType)),
+					    true);
+		    }
 		}
 		$platform->setReply('readdir', array('fh'), false);
 		$platform->setReply('closedir', array('fh'), true);
@@ -1227,9 +1229,14 @@ class RepositoryTest extends GalleryTestCase {
 	}
 
 	/* 'broken' returns an error, 'works' is valid */
-	$this->assertEquals(
-	    array('works' => new RepositoryTest_GalleryRepository()), $repositories);
-	$this->assertEquals(1, $repositoryErrors);
+	$this->assertEquals(array('works' => new RepositoryTest_GalleryRepository()), $repositories,
+	    'Returned repositories didn\'t match');
+	$this->assertEquals(1, $repositoryErrors, 'Returned error count didn\'t match');
+
+	list ($cachedRepositories, $cachedErrorCount) = GalleryDataCache::get($cacheKey);
+	$this->assertEquals(array('works' => new RepositoryTest_GalleryRepository()), 
+	    $cachedRepositories, 'Cached repositories didn\'t match');
+	$this->assertEquals(1, $cachedErrorCount, 'Cached error count didn\'t match');
     }
 
     function testGetPluginUpgradeInfoForBasePackageUpgrade() {
