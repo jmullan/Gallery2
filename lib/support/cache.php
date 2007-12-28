@@ -65,7 +65,7 @@ function clearPageCache() {
     global $gallery;
     $storage =& $gallery->getStorage();
 
-    $ret = GalleryCoreApi::removeAllMapEntries('GalleryCacheMap');
+    $ret = GalleryCoreApi::removeAllMapEntries('GalleryCacheMap', true);
     if ($ret) {
 	$status = array(array('error', 'Error deleting page cache!'));
     } else {
