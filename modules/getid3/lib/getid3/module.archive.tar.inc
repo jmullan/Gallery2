@@ -20,7 +20,7 @@ class getid3_tar {
 		$ThisFileInfo['fileformat'] = 'tar';
 		$ThisFileInfo['tar']['files'] = array();
 
-		$unpack_header = 'a100fname/a8mode/a8uid/a8gid/a12size/a12mtime/a8chksum/a1typflag/a100lnkname/a6magic/a2ver/a32uname/a32gname/a8devmaj/a8devmin/a155/prefix';
+		$unpack_header = 'a100fname/a8mode/a8uid/a8gid/a12size/a12mtime/a8chksum/a1typflag/a100lnkname/a6magic/a2ver/a32uname/a32gname/a8devmaj/a8devmin/a155prefix';
 		$null_512k = str_repeat("\0", 512); // end-of-file marker
 
 		@fseek($fd, 0);
