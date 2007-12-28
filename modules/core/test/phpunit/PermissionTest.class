@@ -169,8 +169,10 @@ class PermissionTest extends GalleryTestCase {
 
 	/* Verify the event */
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	$event->setData(array('userId' => $userId, 'itemId' => $this->_albums[0]->getId()));
-	$this->assertEquals($event, $listener->getEvent());
+	$event->setData(array('userId' => $userId, 'itemId' => $this->_albums[0]->getId(),
+			      'permission' => 'core.edit', 'applyToChildren' => 0,
+			      'changeType' => 'add'));
+	$this->assertEquals($event, $listener->getEvent(), 'event test 1');
 	$this->assert($listener->reset(), 'eventlist1');
 
 	/* Add group permission to just this item */
@@ -182,9 +184,10 @@ class PermissionTest extends GalleryTestCase {
 
 	/* Verify the event */
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	$event->setData(array('userId' => $groupEventUserId,
-			      'itemId' => $this->_albums[0]->getId()));
-	$this->assertEquals($event, $listener->getEvent());
+	$event->setData(array('userId' => $groupEventUserId, 'itemId' => $this->_albums[0]->getId(),
+			      'permission' => 'core.edit', 'applyToChildren' => 0,
+			      'changeType' => 'add'));
+	$this->assertEquals($event, $listener->getEvent(), 'event test 2');
 	$this->assert($listener->reset(), 'eventlist2');
 
 	/* Add entity permission to this item */
@@ -206,8 +209,10 @@ class PermissionTest extends GalleryTestCase {
 
 	/* Verify the event */
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	$event->setData(array('userId' => $userId, 'itemId' => $this->_albums[0]->getId()));
-	$this->assertEquals($event, $listener->getEvent());
+	$event->setData(array('userId' => $userId, 'itemId' => $this->_albums[0]->getId(),
+			      'permission' => 'core.viewAll', 'applyToChildren' => 1,
+			      'changeType' => 'add'));
+	$this->assertEquals($event, $listener->getEvent(), 'event test 4');
 	$this->assert($listener->reset(), 'eventlist4');
 
 	/* Add group permission to this item and its children */
@@ -219,9 +224,10 @@ class PermissionTest extends GalleryTestCase {
 
 	/* Verify the event */
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	$event->setData(array('userId' => $groupEventUserId,
-			      'itemId' => $this->_albums[0]->getId()));
-	$this->assertEquals($event, $listener->getEvent());
+	$event->setData(array('userId' => $groupEventUserId, 'itemId' => $this->_albums[0]->getId(),
+			      'permission' => 'core.delete', 'applyToChildren' => 1,
+			      'changeType' => 'add'));
+	$this->assertEquals($event, $listener->getEvent(), 'event test 5');
 	$this->assert($listener->reset(), 'eventlist5');
 
 	/* Add another group permission to this item and its children */
@@ -233,9 +239,10 @@ class PermissionTest extends GalleryTestCase {
 
 	/* Verify the event */
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	$event->setData(array('userId' => $groupEventUserId,
-			      'itemId' => $this->_albums[0]->getId()));
-	$this->assertEquals($event, $listener->getEvent());
+	$event->setData(array('userId' => $groupEventUserId, 'itemId' => $this->_albums[0]->getId(),
+			      'permission' => 'core.viewResizes', 'applyToChildren' => 1,
+			      'changeType' => 'add'));
+	$this->assertEquals($event, $listener->getEvent(), 'event test 6');
 	$this->assert($listener->reset(), 'eventlist6');
 
 	/* Retrieve permissions and compare */
@@ -355,7 +362,9 @@ class PermissionTest extends GalleryTestCase {
 			      'itemIdsAndBits' => array($this->_albums[0]->getId() => $viewBits)));
 	$this->assertEquals($event, $listener->getEvent(), 'removeUserPermission, not recursive');
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	$event->setData(array('userId' => $userId, 'itemId' => $this->_albums[0]->getId()));
+	$event->setData(array('userId' => $userId, 'itemId' => $this->_albums[0]->getId(),
+			      'permission' => 'core.view', 'applyToChildren' => false,
+			      'changeType' => 'remove'));
 	$this->assertEquals($event, $listener->getEvent(), 'removeUserPermission, not recursive');
 	$this->assert($listener->reset(), 'eventlist7');
 
@@ -378,8 +387,9 @@ class PermissionTest extends GalleryTestCase {
 			      array($this->_albums[0]->getId() => $editBits)));
 	$this->assertEquals($event, $listener->getEvent(), 'removeGroupPermission, not recursive');
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	$event->setData(array('userId' => $groupEventUserId,
-			      'itemId' => $this->_albums[0]->getId()));
+	$event->setData(array('userId' => $groupEventUserId, 'itemId' => $this->_albums[0]->getId(),
+			      'permission' => 'core.edit', 'applyToChildren' => false,
+			      'changeType' => 'remove'));
 	$this->assertEquals($event, $listener->getEvent(), 'removeGroupPermission, not recursive');
 	$this->assert($listener->reset(), 'eventlist8');
 
@@ -424,7 +434,9 @@ class PermissionTest extends GalleryTestCase {
 			      'itemIdsAndBits' => $itemIdsAndBits));
 	$this->assertEquals($event, $listener->getEvent(), 'removeUserPermission, recursive');
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	$event->setData(array('userId' => $userId, 'itemId' => $this->_albums[0]->getId()));
+	$event->setData(array('userId' => $userId, 'itemId' => $this->_albums[0]->getId(),
+			      'permission' => 'core.viewAll', 'applyToChildren' => true,
+			      'changeType' => 'remove'));
 	$this->assertEquals($event, $listener->getEvent(), 'removeUserPermission, recursive');
 	$this->assert($listener->reset(), 'eventlist10');
 
@@ -452,8 +464,9 @@ class PermissionTest extends GalleryTestCase {
 			      'itemIdsAndBits' => $itemIdsAndBits));
 	$this->assertEquals($event, $listener->getEvent(), 'removeGroupPermission, recursive');
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	$event->setData(array('userId' => $groupEventUserId,
-			      'itemId' => $this->_albums[0]->getId()));
+	$event->setData(array('userId' => $groupEventUserId, 'itemId' => $this->_albums[0]->getId(),
+			      'permission' => 'core.delete', 'applyToChildren' => true,
+			      'changeType' => 'remove'));
 	$this->assertEquals($event, $listener->getEvent(), 'removeGroupPermission, recursive');
 
 	/* Finally retrieve permissions after the remove calls and compare */
