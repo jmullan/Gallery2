@@ -3,7 +3,7 @@ if (!defined('G2_SUPPORT')) { return; }
 
 function getCaches() {
     $dirs = array(
-	'cached pages' => array(true, 'clearPageCache', array(), 'Cached HTML pages'),
+	'cached_pages' => array(true, 'clearPageCache', array(), 'Cached HTML pages'),
 	'entity' => array(true, 'clearG2dataDir', array('cache/entity'), 'Albums and photo data'),
 	'module' => array(true, 'clearG2dataDir', array('cache/module'), 'Module settings'),
 	'theme' => array(true, 'clearG2dataDir', array('cache/theme'), 'Theme settings'),
@@ -12,11 +12,21 @@ function getCaches() {
 	'tmp' => array(true, 'clearG2dataDir', array('tmp'), 'Temporary directory'),
 	'repository' => array(true, 'clearG2dataDir', array('cache/repository'),
 			      'Downloadable Plugin Cache'),
-	'log' => array(false, 'clearInstallUpgradeLogs', array(), 'Install/Upgrade log files'),
+	'log' => array(
+	    false, 'clearInstallUpgradeLogs', array(),
+	    'Install/Upgrade log files <span class="subtext important">' .
+	    '(can\'t be recovered!)</span>'),
 	'derivative' => array(
 	    false, 'clearG2dataDir', array('cache/derivative'),
-	    'Thumbnails and resizes <span class="subtext">(expensive to rebuild)</span>')
+	    'Thumbnails and resizes <span class="subtext important">(expensive to rebuild)</span>')
 	);
+
+    if (!empty($_COOKIE['g2cache'])) {
+	$set = array_flip(explode(',', $_COOKIE['g2cache']));
+	foreach ($dirs as $key => $ignored) {
+	    $dirs[$key][0] = isset($set[$key]);
+	}
+    }
     return $dirs;
 }
 
@@ -120,6 +130,7 @@ function clearInstallUpgradeLogs() {
 }
 
 $status = array();
+$caches = getCaches();
 if (isset($_REQUEST['clear']) && isset($_REQUEST['target'])) {
     require_once(dirname(__FILE__) . '/../../embed.php');
     $ret = GalleryEmbed::init(array('fullInit' => false));
@@ -128,7 +139,7 @@ if (isset($_REQUEST['clear']) && isset($_REQUEST['target'])) {
 	global $gallery;
 	$gallery->initEmptySession();
     }
-    $caches = getCaches();
+    $remember = array();
     foreach ($_REQUEST['target'] as $key => $ignored) {
 	/* Make sure the dir is legit */
 	if (!array_key_exists($key, $caches)) {
@@ -139,11 +150,13 @@ if (isset($_REQUEST['clear']) && isset($_REQUEST['target'])) {
 	$func = $caches[$key][1];
 	$args = $caches[$key][2];
 	$status = array_merge($status, call_user_func_array($func, $args));
+	$remember[] = $key;
     }
     $ret = GalleryEmbed::done();
     if ($ret) {
 	$status[] = array('error', 'Error completing transaction!');
     }
+    $_COOKIE['g2cache'] = join(',', $remember);
 }
 ?>
 <html>
