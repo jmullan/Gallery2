@@ -1094,6 +1094,34 @@ class StorageTest extends GalleryTestCase {
 	}
 	$this->assert(!empty($entityInfo), 'empty result on second call');
     }
+
+    function testRemoveAllMapEntriesTransactional() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$ret = $storage->removeAllMapEntries('GalleryTest2Map');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(
+	    array(array(sprintf('DELETE FROM %sTest2Map', $storage->_tablePrefix), array())),
+	    $this->_results);
+    }
+
+    function testRemoveAllMapEntriesNonTransactional() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$ret = $storage->removeAllMapEntries('GalleryTest2Map', true);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(
+	    array(array(sprintf('TRUNCATE %sTest2Map', $storage->_tablePrefix), array())),
+	    $this->_getNonTransactionalResults());
+    }
 }
 
 class StorageTestDB {
