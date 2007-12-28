@@ -1119,17 +1119,31 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     /**
      * @see GalleryStorage::removeAllMapEntries
      */
-    function removeAllMapEntries($mapName) {
-	$ret = $this->_dbInit(true);
-	if ($ret) {
-	    return $ret;
+    function removeAllMapEntries($mapName, $useNonTransactionalConnection=false,
+				 $useTruncate=false) {
+	if ($useNonTransactionalConnection && $this->_gs->isTransactional()) {
+	    list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
+	    if ($ret) {
+		return $ret;
+	    }
+	} else {
+	    $ret = $this->_dbInit(true);
+	    if ($ret) {
+		return $ret;
+	    }
+	    $db = $this->_gs->_db;
 	}
 
-	list ($tableName) = $this->_gs->_translateTableName($mapName);
-	$query = 'DELETE FROM ' . $tableName;
+	list ($tableName, $unused) = $this->_gs->_translateTableName($mapName);
+	if ($useTruncate && (!$this->_gs->isTransactional() || $useNonTransactionalConnection)) {
+	    /* TRUNCATE is only safe outside of a transaction in most databases. */
+	    $query = 'TRUNCATE ' . $tableName;
+	} else {
+	    $query = 'DELETE FROM ' . $tableName;
+	}
 
 	$this->_gs->_traceStart();
-	$recordSet = $this->_gs->_db->Execute($query);
+	$recordSet = $db->Execute($query);
 	$this->_gs->_traceStop();
 	if ($recordSet === false) {
 	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
@@ -1281,7 +1295,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    $upgradeInfo[] = 'Schema:1.1';
 
 	    return $this->configureStore($moduleId, $upgradeInfo);
-	}	    
+	}
 
 	if ($canStoreTableInfo) {
 	    $mapInfo = $this->_getTableInfo($moduleId, 'map');
@@ -2209,7 +2223,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    }
 	}
 
-	return null; 
+	return null;
     }
 }
 ?>

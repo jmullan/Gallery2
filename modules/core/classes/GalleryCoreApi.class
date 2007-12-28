@@ -86,7 +86,7 @@ class GalleryCoreApi {
      * - remove GalleryRepository::getLanguageDescription
      */
     function getApiVersion() {
-	return array(7, 43);
+	return array(7, 44);
     }
 
     /**
@@ -130,7 +130,7 @@ class GalleryCoreApi {
 	return GalleryFactoryHelper_medium::registerFactoryImplementationForRequest(
 		$classType, $className, $implId, $implPath, $implModuleId, $hints);
     }
-    
+
     /**
      * Create a new instance of the given type based on the hint(s) provided
      *
@@ -223,7 +223,7 @@ class GalleryCoreApi {
     function updateFactoryDefinitionHints($classType, $implId, $hints) {
 	GalleryCoreApi::requireOnce(
 	    'modules/core/classes/helpers/GalleryFactoryHelper_medium.class');
-	return 
+	return
 	    GalleryFactoryHelper_medium::updateFactoryDefinitionHints($classType, $implId, $hints);
     }
 
@@ -2947,13 +2947,16 @@ class GalleryCoreApi {
      * Remove ALL entries from this map.. use with caution!
      *
      * @param string $mapName
+     * @param bool $useNonTransactionalConnection (optional) set to true if we should do this
+     *             operation outside of a transaction (which will let some databases use the
+     *             TRUNCATE statement).
      * @return GalleryStatus a status code
      */
-    function removeAllMapEntries($mapName) {
+    function removeAllMapEntries($mapName, $useNonTransactionalConnection=false) {
 	global $gallery;
 
 	$storage =& $gallery->getStorage();
-	$ret = $storage->removeAllMapEntries($mapName);
+	$ret = $storage->removeAllMapEntries($mapName, $useNonTransactionalConnection);
 	if ($ret) {
 	    return $ret;
 	}

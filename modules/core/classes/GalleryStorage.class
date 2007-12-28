@@ -537,11 +537,14 @@ class GalleryStorage {
      * Remove ALL entries from a map.  Use with caution!
      *
      * @param string $mapName the map we're working on
+     * @param bool $useNonTransactionalConnection (optional) set to true if we should do this
+     *             operation outside of a transaction (which will let some databases use the
+     *             TRUNCATE statement).
      * @return GalleryStatus a status code
      */
-    function removeAllMapEntries($mapName) {
+    function removeAllMapEntries($mapName, $useNonTransactionalConnection=false) {
 	$extras =& $this->_getExtras();
-	return $extras->removeAllMapEntries($mapName);
+	return $extras->removeAllMapEntries($mapName, $useNonTransactionalConnection, true);
     }
 
     /**
@@ -1445,7 +1448,7 @@ class GalleryStorage {
     }
 
     /**
-     * Test whether the current connection and non transactional connection are still valid.  If 
+     * Test whether the current connection and non transactional connection are still valid.  If
      * the connections are not valid then reconnect the connection.
      * @return GalleryStatus
      */

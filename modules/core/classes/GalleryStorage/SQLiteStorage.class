@@ -50,6 +50,15 @@ class SQLiteStorage extends GalleryStorage {
     }
 
     /**
+     * @see GalleryStorage::removeAllMapEntries
+     */
+    function removeAllMapEntries($mapName, $useNonTransactionalConnection=false) {
+	$extras =& $this->_getExtras();
+	/* SQLite does not support TRUNCATE */
+	return $extras->removeAllMapEntries($mapName, $useNonTransactionalConnection, false);
+    }
+
+    /**
      * @see GalleryStorage::getFunctionsSql
      */
     function getFunctionSql($functionName, $args) {
