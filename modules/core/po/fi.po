@@ -16,17 +16,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
-# 
+#
 # Previous translators:
 # - 2007 Erkka Hakkarainen <erkka.hakkarainen@pp.inet.fi>
 # - 2007 Jyrki Heinonen <jyrki.heinonen@gmail.com>
-# 
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.22\n"
+"Project-Id-Version: Gallery: Core 1.2.25\n"
 "POT-Creation-Date: 2003-05-16 09:41+0300\n"
-"PO-Revision-Date: 2007-03-10 09:46+0200\n"
-"Last-Translator: Jyrki Heinonen <jyrki.heinonen@gmail.com>\n"
+"PO-Revision-Date: 2007-11-25 15:32+0200\n"
+"Last-Translator: Tuomo Lahti <tuomo.lahti@gmail.com>\n"
 "Language-Team: Finnish <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -282,16 +282,14 @@ msgstr "Tämä on Gallerian etusivu"
 msgid "Converting MySQL data to UTF8"
 msgstr "Muutetaan MySQL tietoja UTF8 merkistöön"
 
-#, fuzzy
 msgid "Adding items"
-msgstr "lisää kuvia"
+msgstr "Lisää kohteita"
 
-#, fuzzy
 msgid "Processing items"
-msgstr "Käsitellään kohde %d/%d"
+msgstr "Käsitellään kohteita"
 
 msgid "Extracting archive"
-msgstr ""
+msgstr "Puretaan paketti"
 
 msgid "add items"
 msgstr "lisää kuvia"
@@ -590,7 +588,7 @@ msgid "Performance"
 msgstr "Suorituskyky"
 
 msgid "Event Logs"
-msgstr ""
+msgstr "Tapahtumaloki"
 
 msgid "Toolkit Priority"
 msgstr "Työkalujen Tärkeysjärjestys"
@@ -654,9 +652,8 @@ msgstr "Tietokanta muutettu UTF8 merkistöön"
 msgid "No conversion required"
 msgstr "Konversiota ei tarvita"
 
-#, fuzzy
 msgid "Backup the database"
-msgstr "Optimoi tietokanta"
+msgstr "Varmuuskopioi tietokanta"
 
 msgid ""
 "Backup all your Gallery data (item data, users, comments, etc.) to a single file in your "
@@ -664,9 +661,12 @@ msgid ""
 "your Gallery installation needs to be set into maintenance mode, as this is not done "
 "automatically."
 msgstr ""
+"Varmuuskopioi Gallerian tiedot (tiedot,käyttäjät,kommentit,jne) yhteen tiedostoon. Tämä "
+"varmuuskopio EI sisällä kuvatiedostoja. Ennen varmuuskopion tekemistä sinun täytyy asettaa "
+"Galleria ylläpitotilaan koska tilan muutosta ei tehdä automaattisesti."
 
 msgid "Backing up Gallery Database"
-msgstr ""
+msgstr "Varmuuskopioi Gallerian tietokanta"
 
 #, fuzzy
 msgid "Exporting..."
@@ -674,7 +674,7 @@ msgstr "Valmistellaan..."
 
 #, c-format
 msgid "Database backup completed and the backup file is located at: %s"
-msgstr ""
+msgstr "Tietokannan varmuuskopio onnistui, varmuuskopio sijaitsee: %s "
 
 msgid "Delete user sessions"
 msgstr "Poista käyttäjäsessiot"
@@ -1101,7 +1101,7 @@ msgstr ""
 
 #, c-format
 msgid "Unable to load table description for \"%s\", no data will be exported."
-msgstr ""
+msgstr "Ei voida ladata taulun kuvausta taululle \"%s\", tietoja ei voida tuoda."
 
 msgid ""
 "Unable to find the XML parser.  The PHP XML parsing extension must be loaded.  Terminating "
@@ -1110,23 +1110,23 @@ msgstr ""
 
 #, c-format
 msgid "The exported file is not the correct version. Expecting %s recieved %s."
-msgstr ""
+msgstr "Väärä vientitiedoston versio. Odotettu %s saatu %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to close import file: %s"
-msgstr "Ei voi poistaa hakemistoa: %s"
+msgstr "Ei voi sulkea tuontitiedostoa: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to open import file: %s"
-msgstr "Ei voi poistaa hakemistoa: %s"
+msgstr "Ei voi avata tuontitiedostoa: %s"
 
 #, c-format
 msgid "Import file doesn't exist: %s"
-msgstr ""
+msgstr "Tuontitiedostoa ei ole: %s"
 
 #, c-format
 msgid "Plugin %s is not currently available."
-msgstr ""
+msgstr "Lisäosa %s ei ole juuri nyt saatavilla"
 
 #, c-format
 msgid "The available version of plugin \"%s\" may not be compatible with the imported version."
@@ -1664,28 +1664,23 @@ msgid_plural "%d failed login attempts since the last successful login."
 msgstr[0] "%d epäonnistunut kirjaantumisyritys sitten viimeisen onnistuneen kirjautumisen."
 msgstr[1] "%d epäonnistunutta kirjaantumisyritystä sitten viimeisen onnistuneen kirjautumisen."
 
-#, fuzzy
 msgid "Recent Events"
-msgstr "Nollaa katselukerrat"
+msgstr "Viimeaikaiset tapahtumat"
 
 msgid "Type"
 msgstr ""
 
-#, fuzzy
 msgid "Location"
-msgstr "Toiminto"
+msgstr "Sijainti"
 
-#, fuzzy
 msgid "Client"
-msgstr "lista"
+msgstr "Asiakas"
 
-#, fuzzy
 msgid "No events have been reported yet."
-msgstr "Yhtään pakettia ei ole valittu."
+msgstr "Yhtäkään tapahtumaa ei ole vielä raportoitu"
 
-#, fuzzy
 msgid "Event Details"
-msgstr "Virheen Yksityiskohdat"
+msgstr "Tapahtuman yksityiskohdat"
 
 #, fuzzy
 msgid "User Id"
@@ -1695,17 +1690,14 @@ msgstr "Käyttäjä"
 msgid "Referer"
 msgstr "Järjestä uudelleen"
 
-#, fuzzy
 msgid "Details"
-msgstr "Oletukset"
+msgstr "Tarkennukset"
 
-#, fuzzy
 msgid "no summary"
-msgstr "Yhteenveto"
+msgstr "ei yhteenvetoa"
 
-#, fuzzy
 msgid "An error occurred while retrieving the event log entry details."
-msgstr "Tapahtui virhe tietokannan kanssa."
+msgstr "Tapahtui virhe noudettaessa tapahtuman tarkempaa kuvausta."
 
 msgid "Group Management"
 msgstr "Ryhmien Hallinta"
@@ -1772,7 +1764,7 @@ msgid "System Maintenance"
 msgstr "Järjestelmän Ylläpito"
 
 msgid "Gallery must be in maintenance mode before the task can be run."
-msgstr ""
+msgstr "Galleria täytyy olla ylläpitotilassa ennenkuin tehtävä voidaan suorittaa."
 
 #, c-format
 msgid "Completed %s task successfully."
@@ -1783,21 +1775,19 @@ msgid "The %s task failed to complete successfully."
 msgstr "Tehtävä %s epäonnistui"
 
 msgid "Maintenance Mode has been turned on."
-msgstr ""
+msgstr "Ylläpitotila on päällä."
 
 msgid "Maintenance Mode has been turned off."
-msgstr ""
+msgstr "Ylläpitotila on pois päältä."
 
-#, fuzzy
 msgid "Maintenance Mode"
-msgstr "Ylläpito"
+msgstr "Ylläpitotila"
 
 msgid "Restrict user access to the system while maintenance is being performed."
-msgstr ""
+msgstr "Rajoita käyttäjien pääsy järjestelmään kunnes ylläpitotoimet on suoritettu."
 
-#, fuzzy
 msgid "Maintenance Mode Url"
-msgstr "Ylläpito"
+msgstr "Ylläpitotilan URL"
 
 msgid ""
 "The Maintenance Mode Url specifies where requests will be redirected when access to the site "
@@ -1811,11 +1801,10 @@ msgid ""
 msgstr ""
 
 msgid "For example: /maintenance.html"
-msgstr ""
+msgstr "Esimerkiksi: /ylläpito.html"
 
-#, fuzzy
 msgid "Set"
-msgstr "Asetus"
+msgstr "Aseta"
 
 msgid "Task name"
 msgstr "Tehtävä"
@@ -1995,7 +1984,7 @@ msgid "This plugin will be uninstalled and its files will be deleted permanently
 msgstr "Tämän moduulin asennus poistetaan ja sen tiedostot tuhotaan."
 
 msgid "The files of this plugin will be deleted permanently."
-msgstr ""
+msgstr "Tämän lisäosan tiedostot poistetaan lopullisesti."
 
 msgid "disabled(__COUNT__)"
 msgstr "disabloi(__COUNT__)"
@@ -2105,7 +2094,7 @@ msgstr ""
 
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
-msgstr ""
+msgstr "Paketin lataus epäonnistui lisäosalle %s: "
 
 #, fuzzy, c-format
 msgid ""
@@ -2120,6 +2109,8 @@ msgid ""
 "Some plugins could not be automatically upgraded because they are in use.  Please return to "
 "the %sPlugins%s page and click the upgrade link for each of the following plugins:"
 msgstr ""
+"Joitain lisäosia ei voitu päivittäää automaattisesti koska ne olivat käytössä. Palaa %"
+"sLisäosien%s sivulle ja valitse päivityslinkki seuraaville lisäosille:"
 
 msgid "The repository index has been successfully updated."
 msgstr "Varaston (repository) indeksin päivitys onnistui."
@@ -2224,9 +2215,9 @@ msgstr ""
 "kautta. Päivitys saattaa rikkoa joitakin käyttämiäsi moduleita, mutta korvaavia versioita "
 "saattaa tulla tilalle. Tässä näet päivitysohjeet:"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%sDownload%s the new Gallery package"
-msgstr "%sLataa%s Gallery:n ydin"
+msgstr "%sLataa%s uusi Galleria:n ydin"
 
 #, c-format
 msgid "Read the %supgrade instructions%s and perform the upgrade"
@@ -2790,13 +2781,12 @@ msgstr "Edellinen Sivu"
 msgid "Next Page"
 msgstr "Seuraava Sivu"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Do you really want to delete %s?"
-msgstr "Haluatko poistaa __PLUGIN__?"
+msgstr "Haluatko todella poistaa %s?"
 
-#, fuzzy
 msgid "Delete more items..."
-msgstr "Poista Kohde"
+msgstr "Poista muita kohteita..."
 
 msgid "There was a problem processing your request."
 msgstr "Pyyntösi toteutuksessa oli ongelma."
@@ -3451,9 +3441,9 @@ msgstr "kuva"
 msgid "color"
 msgstr "väri"
 
-#, fuzzy, c-format
+#, c-format
 msgid "You can also use the %scolor name%s for example: %sYour Text%s"
-msgstr "Voit myös käyttää %svärin nimi%s esim: %s"
+msgstr "Voit myös käyttää %svärin nimi%s esim: %sSinun Teksti%s"
 
 msgid "Configuration Error: Missing Theme"
 msgstr "Konfigurointivirhe: Puuttuva Teema"
@@ -3817,6 +3807,9 @@ msgstr "&laquo; kohteen toiminnot &raquo;"
 
 msgid "Go"
 msgstr "Siirry"
+
+msgid "WARNING: block $type doesn't exist."
+msgstr ""
 
 msgid "next"
 msgstr "seuraava"

@@ -16,14 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Installer 2.3\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-11-19 07:50-0800\n"
-"PO-Revision-Date: 2006-03-17 19:29+0300\n"
-"Last-Translator: Konstantin Ivanov <Continental@vollen.ru>\n"
+"PO-Revision-Date: 2007-12-11 17:57+0300\n"
+"Last-Translator: Ser Moro <webber@morozov-sm.ru>\n"
 "Language-Team: Russian <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -90,9 +90,8 @@ msgstr "Установка базы данных"
 msgid "You must have the MySQL PHP module installed"
 msgstr "У Вас должен быть установлен модуль MySQL PHP"
 
-#, fuzzy
 msgid "You must have the MySQL Improved PHP module installed"
-msgstr "У Вас должен быть установлен модуль MySQL PHP"
+msgstr "У Вас должен быть установлен модуль MySQL Improved PHP"
 
 msgid "You must have the ibm_db2 PHP module installed"
 msgstr "У Вас должен быть установлен модуль  ibm_db2 PHP"
@@ -103,13 +102,12 @@ msgstr "У Вас должен быть установлен модуль Postgr
 msgid "You must have the Oracle OCI8 PHP module installed"
 msgstr "У Вас должен быть установлен модуль Oracle OCI8 PHP "
 
-#, fuzzy
 msgid "You must have the Component Object Model(COM) PHP module installed"
-msgstr "У Вас должен быть установлен модуль Oracle OCI8 PHP "
+msgstr "У Вас должен быть установлен модуль COM PHP "
 
 #, fuzzy
 msgid "You must have the PHP Data Object(PDO) PHP module installed"
-msgstr "У Вас должен быть установлен модуль Oracle OCI8 PHP "
+msgstr "У Вас должен быть установлен модуль COM PHP "
 
 #, c-format
 msgid "You must specify a column prefix (we recommend %s)"
@@ -202,13 +200,11 @@ msgstr ""
 "Невозможно загрузить G2 API. Пожалуйста, очистите  базу данных Галереи и папку хранилища "
 "Галереи вручную."
 
-#, fuzzy
 msgid "MySQL (v3.23.34a and newer)"
-msgstr "MySQL with Transactions (v3.23.34a или новее)"
+msgstr "MySQL (v3.23.34a или новее)"
 
-#, fuzzy
 msgid "MySQL (versions before v3.23.34a)"
-msgstr "MySQL (все версии)"
+msgstr "MySQL (версии до v3.23.34a)"
 
 msgid "PostgreSQL v7.x and newer"
 msgstr "PostgreSQL v7.x и выше"
@@ -219,14 +215,14 @@ msgstr "Oracle (9i и выше)"
 msgid "IBM DB2 (v9.x and newer)"
 msgstr "IBM DB2 (v9.x и выше)"
 
-#, fuzzy
 msgid "Microsoft SQL Server 2005 and newer"
-msgstr "PostgreSQL v7.x и выше"
+msgstr "Microsoft SQL Server 2005 или новее"
 
 msgid "SQLite v3.x (Experimental!)"
 msgstr ""
 
-msgid "Unknown DB type or no known tables information."
+#, fuzzy
+msgid "Unknown database type or no known tables information."
 msgstr "Неизвестный тип базы данных или неизвестная информация о таблицах."
 
 #, c-format
@@ -237,17 +233,19 @@ msgstr "Невозможно найти неиспользуемый table prefi
 msgid "Could not open schema file: \"%s\"."
 msgstr "Невозможно открыть файл схемы \"%s\"."
 
+#, fuzzy
 msgid ""
-"Failed to create a DB test sequence.Check the returned error message and README.html for "
-"missing privileges and clean up the database."
+"Failed to create a database test sequence.Check the returned error message and README.html "
+"for missing privileges and clean up the database."
 msgstr ""
 "Невозможно создать тестовую последовательность DB. Проверьте возвращаемое сообщение об "
 "ошибке и  посмотрите файл README.html на предмет пропущенных привилегий, а так же очистите "
 "базу данных."
 
+#, fuzzy
 msgid ""
-"Test failed to drop a DB test sequence.Check the returned error message and README.html for "
-"missing privileges and clean up the database."
+"Test failed to drop a database test sequence.Check the returned error message and README."
+"html for missing privileges and clean up the database."
 msgstr ""
 "Тест не удался и-за невозможности удалить (drop) тестовую последовательность DB. Проверьте "
 "возвращаемое сообщение об ошибке и  посмотрите файл README.html на предмет пропущенных "
@@ -293,9 +291,8 @@ msgstr "Невозможно выполнить транзакцию базы д
 msgid "Core module is only partially installed."
 msgstr "Основной модуль (ядро) установлен только частично."
 
-#, fuzzy
 msgid "Install Plugins"
-msgstr "Шаги инсталляции"
+msgstr "Установка плагинов"
 
 msgid "Unable to initialize our Gallery session"
 msgstr "Невозможно инициализировать сессию Галереи"
@@ -340,15 +337,15 @@ msgstr "Выполение проверки системы"
 msgid "PHP version &gt;= 4.3.0 or &gt;= 5.0.4"
 msgstr "PHP версия >= 4.1.0 или >= 5.0.4"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or newer. You have PHP version "
 "%s installed. Contact your webserver administrator to request an upgrade, available at the %"
 "sPHP website%s."
 msgstr ""
 "Ошибка: Галерее 2 необходим PHP версии 4.1.0 или выше или 5.0.4 или выше. У вас установлен "
-"PHP версии %s. Обратитесь к администратору Вашего веб-сервера с просьбой обновления, "
-"доступного на %sPHP website%s."
+"PHP версии %s. Обратитесь к администратору Вашего веб сервера с просьбой обновить версию "
+"PHP, доступную на %sPHP website%s."
 
 msgid "PHP Version"
 msgstr "Версия PHP"
@@ -421,17 +418,17 @@ msgstr ""
 "повреждению данных."
 
 msgid "Filesystem Operations"
-msgstr ""
+msgstr "Файловые операции"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Essential filesystem operations are disabled in your PHP by the "
 "<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
 "Gallery will run. These functions are missing: %s."
 msgstr ""
-"Предупреждение: Функция putenv() отключена в Вашем PHP в разделе <b>disabled_functions</b> "
-"в  php.ini. Галерея может функционировать без данной настройки, но на некоторые редких "
-"системах Галерея не сможет быть запущена на другом языке, чем системный язык и Английский. "
+"Ошибка:  В вашей конфигурации PHP отключены важные файловые операции. Это определено в "
+"параметре <b>disabled_functions</b> в файле php.ini. Вы должны разрешить выполнение этих "
+"функций перед тем как как стартует Галерея. Вот эти  функции: %s."
 
 msgid "Memory limit"
 msgstr "Memory limit"
@@ -463,15 +460,15 @@ msgstr ""
 msgid "Maximum upload size"
 msgstr "Maximum upload size"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
 "(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
 "uploading bigger files."
 msgstr ""
-"Предупреждение: Ваш PHP сконфигурирован таким образом, чтобы ограничивать размер загружаемых "
-"файлов до %sb (параметр <b>upload_max_filesize</b> в php.ini). Вы должны увеличить "
-"предельное значение для того, чтобы разрешить загрузку файлов больших размеров."
+"Предупреждение: Ваш PHP сконфигурирован на ограничение размера загружаемых файлов до %sb "
+"(параметр <b>upload_max_filesize</b> в файле php.ini). Вы должны увеличить предельное "
+"значение для  загрузки файлов больших размеров."
 
 msgid "Maximum POST size"
 msgstr "Maximum POST size"
@@ -518,7 +515,7 @@ msgstr ""
 msgid "Zend compatibility mode"
 msgstr "Zend compatibility mode"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Warning: Your PHP is configured with Zend ze1_compatibility_mode which can cause PHP to "
 "crash.  Click %shere%s to test your PHP.  If you see \"SUCCESS\" then your PHP is ok.  If "
@@ -526,22 +523,22 @@ msgid ""
 "proceeding."
 msgstr ""
 "Предупреждение: Ваш PHP сконфигурирован с Zend ze1_compatibility_mode, что может привести к "
-"сбою PHP. Нажмите %sздесь%s, чтобы протестировать Ваш PHP. Если Вы видите (\"УСПЕШНО\") "
-"\"SUCCESS\", значит Ваш PHP в порядке.  Если Вы получили сообщение об ошибке или остались "
-"без ответа, тогда Вы должн выключить ze1_compatibility_mode перед тем как продолжить."
+"сбою PHP. Нажмите <a href=\"%s\">здесь</a>, чтобы протестировать Ваш PHP. Если Вы видите "
+"(\"УСПЕШНО\") \"SUCCESS\", значит Ваш PHP в порядке.  Если Вы получили сообщение об ошибке "
+"или остались без ответа, тогда Вы должн выключить ze1_compatibility_mode перед тем как "
+"продолжить."
 
 msgid "putenv() allowed"
 msgstr "putenv() allowed"
 
-#, fuzzy
 msgid ""
 "Warning: The putenv() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
 "Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
-"Предупреждение: Функция putenv() отключена в Вашем PHP в разделе <b>disabled_functions</b> "
-"в  php.ini. Галерея может функционировать без данной настройки, но на некоторые редких "
-"системах Галерея не сможет быть запущена на другом языке, чем системный язык и Английский. "
+"Предупреждение: Функция putenv() отключена в вашем PHP в разделе <b>disabled_functions</b> "
+"в  php.ini. Галерея может работать без этой функции, но на некоторые редких системах Галерея "
+"не сможет быть запущена на другом языке, кроме системного и английского языков ."
 
 msgid "Output buffering disabled"
 msgstr "Буфферизация выходных данных отключена"
@@ -568,11 +565,11 @@ msgid "Test skipped due to other errors."
 msgstr "Тест пропушен в виду других ошибок."
 
 msgid "Theme available"
-msgstr ""
+msgstr "Тема доступна"
 
 #, c-format
 msgid "Error: There must be at least one theme in the %s folder!"
-msgstr ""
+msgstr "Ошибка: Должна быть хотя бы 1 тема в папке  %s!"
 
 msgid "Manifest missing or inaccessible."
 msgstr "Manifest отсутствует или недоступен."
@@ -737,17 +734,21 @@ msgid ""
 "Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config."
 "php</i>.  You must make sure that the webserver will be able to write to it."
 msgstr ""
+"Перед тем как продолжить, вы должны создать файл с именем <i>config.php</i> в папке <b>%s</"
+"b>. Вы должны быть уверены, что веб сервер разрешит запись в эту папку."
 
 msgid "Unix (with shell access)"
 msgstr "Unix (shell доступ)"
 
 msgid "On Windows, you shouldn't have to do anything special."
-msgstr ""
+msgstr "Под Windows вы не должны делать что-то специально."
 
 msgid ""
 "When you've created this file and set the permissions properly, you can proceed.  If there's "
 "a problem, we'll tell you what to fix."
 msgstr ""
+"Если вы создали этот файл и разрешили соответствующий доступ к нему, можете продолжить. "
+"Будут проблемы - мы вам поможем."
 
 msgid "Create config file"
 msgstr "Создать конфигурационный файл"
@@ -829,13 +830,15 @@ msgstr "База данных успешно установлена."
 msgid "Finished!"
 msgstr "Завершено!"
 
-# , fuzzy
+# Remove additional text and links in this translation
+#, fuzzy
 msgid ""
 "Congratulations! Your Gallery 2 install is complete! See... that wasn't so hard, was it? Now "
 "it's time to upload some photos!"
 msgstr ""
 "Поздравляем! Инсталляция Вашей Галереи 2 успешно завершена! Как оказалось, это не было очень "
-"трудным. Особую благодарность выражаем, который выполнил перевод Галереи на русский язык. А  "
+"трудным. Особую благодарность выражаем <a href=\"http://www.konstantinivanov.info\" target="
+"\"_blank\">Константину Иванову</a>, который выполнил перевод Галереи на русский язык. А  "
 "теперь самое время загрузить немного фотографий в Вашу Галерею!"
 
 msgid "Go to my Gallery!"
@@ -995,35 +998,37 @@ msgstr "Инсталляция завершена на %d%%"
 msgid "Redo this step"
 msgstr "Повторно выполнить этот шаг"
 
-# , fuzzy
+# Remove additional text and links in this translation
+#, fuzzy
 msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
-msgstr "Галерея: <strong>Ваши фотографии</strong> на <strong>Вашем веб-сайте</strong>"
+msgstr ""
+"Перевод на русский язык: <a href=\"http://www.konstantinivanov.info\" target=\"_blank"
+"\">Константин Иванов</a>. Галерея: <strong>Ваши фотографии</strong> на <strong>Вашем веб-"
+"сайте</strong> :: <a href=\"http://www.gallery2.ru\" target=\"_blank\">www.gallery2.ru</a>"
 
 #, c-format
 msgid "Missing files (%d)"
 msgstr "Отсутствуют файлов (%d)"
 
-#, fuzzy
 msgid ""
 "Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
 "be safe to ignore these."
 msgstr ""
-"Комментарий: Вы запустили Галерею из CVS, поэтому недавно удаленные файлы могут всплыть "
+"Комментарий: Вы запустили Галерею из SVN(CVS), поэтому недавно удаленные файлы могут всплыть "
 "здесь. Игнорирование этого, возможно, будет безопасным."
 
 #, c-format
 msgid "Modified files (%d)"
 msgstr "Модифицицированных файлов (%d)"
 
-#, fuzzy
 msgid ""
 "Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
 "probably ignore these, but to be safe you should make sure that you do 'svn update' before "
 "continuing."
 msgstr ""
-"Комментарий: Вы запустили Галерею из CVS, поэтому некоторые модификации файлов вполне "
-"ожидаемы. Возможно, Вы можете игнорировать это, но для обеспечения безопасности Вы должны "
-"убедиться, что Вы запустили  'cvs update -Pd' перед тем, как продолжить."
+"Комментарий: Вы запустили Галерею из SVN(CVS), поэтому некоторые  файлы могут быть изменены. "
+"Возможно, Вы можете игнорировать это, но для обеспечения безопасности Вы должны убедиться, "
+"что Вы запускали  'svn(cvs) update' перед тем, как продолжить."
 
 #, c-format
 msgid "Old files (%d)"
@@ -1093,12 +1098,18 @@ msgid ""
 "directories.  You must choose a directory under one of these, or you must modify the "
 "<b>open_basedir</b> setting in your PHP configuration to allow a new directory."
 msgstr ""
+"Папка, имя которой вы ввели не существует, или доступ к ней запрещён веб сервером. Вот "
+"папки, к которым разрешен доступ. Вы должны выбрать папку внутри одной из них или изменить "
+"<b>open_basedir</b> параметр в вашей  PHP конфигурации для получения доступа к новой папке."
 
 msgid ""
 "If your multisite install is in a different virtual host, you should contact your system "
 "administrator and request that they configure your <b>open_basedir</b> setting so that your "
 "virtual hosts can access each other."
 msgstr ""
+"Если вы устанавливаете Галерею на несколько разных виртуальных хостов, вы должны попросить "
+"ваших сисадминов настроить параметр <b>open_basedir</b> так, чтобы виртуальные хосты имели "
+"доступ друг к другу."
 
 msgid "The directory you entered does not exist"
 msgstr "Введенная Вами директория не существует"
@@ -1201,21 +1212,28 @@ msgid ""
 "directory outside of the %sdocument root%s directory or add a random string to the end of "
 "the directory name (e.g. %s)."
 msgstr ""
+"Галерее нужна папка для хранения ваших изображений. Папка, которую вы выбрали будет "
+"работать, но её положение и (или) слишком простое имя не обеспечивают хорошей защиты. "
+"Выберите другую папку за пределами %sdocument root%s папки или добавьте случайную строку к "
+"имени папки (например, %s)."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "For maximum security you should pick a directory that is not %sweb accessible%s. If this is "
 "not possible, specify a randomized name for this directory."
 msgstr ""
-"Для максимальной защиты Вы должны выбрать директорию, которая не будет доступна через веб."
+"Для максимальной защиты вы должны выбрать папку, которая не будет а %sдоступна из интернет%"
+"s. По возможности выберите случайное, достаточно длинное, имя для этой папки"
 
 msgid ""
 "If you choose a randomized name or prefer to stick with the specified directory, please "
 "confirm your choice."
 msgstr ""
+"Если вы выбрали случайное имя или предпочитаете управлять этой специфической папкой, "
+"пожалуйста подтвердите ваш выбор."
 
 msgid "Yes, please omit the security check:"
-msgstr ""
+msgstr "Да, пожалуйста пропустите проверку безопасности:"
 
 msgid ""
 "This is a multisite installation. Remember that each multisite requires its own storage "
@@ -1243,14 +1261,13 @@ msgstr "Введенная Вами директория доступна тол
 msgid "There was an error creating the directory structure within the storage directory."
 msgstr "Возникла ошибка во время создании структуры папок в Вашей директории хранилища."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Your storage directory is %sweb accessible%s."
-msgstr "Директория хранилища успешно установлена"
+msgstr "Папка хранилища  %sдоступна из интернет%s."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to verify that the storage directory is not %sweb accessible%s."
-msgstr ""
-"Для максимальной защиты Вы должны выбрать директорию, которая не будет доступна через веб."
+msgstr "Невозможно проверить, что папка хранилища не %sдоступна из интернет%s."
 
 msgid "Directory path:"
 msgstr "Путь к директории:"
@@ -1271,16 +1288,15 @@ msgstr ""
 msgid "Unix (with ftp access)"
 msgstr "Unix (ftp доступ)"
 
-#, fuzzy
 msgid ""
 "Note that ftp servers and clients vary so these instructions may not work for you. Consult "
 "the manual for your FTP client or talk to a system administrator for help with this if you "
 "have problems."
 msgstr ""
-"Обратите внимание, что ftp серверы и клиенты могут отличаться, поэтому данные инструкции "
+"Обратите внимание, что ftp серверы и клиенты бывают разные, поэтому данные инструкции "
 "возможно не будут работать у Вас. Обратитеть к документации Вашего ftp-клиента или "
 "поговорите с системным администратором, чтобы Вам оказали поддержку в случае возникновения "
-"сложностей"
+"сложностей."
 
 msgid ""
 "In some web hosting environments, the paths that you see in the shell or via FTP are not the "
@@ -1397,3 +1413,115 @@ msgstr "Вперед"
 
 msgid "Begin Installation&raquo;"
 msgstr "Начать инсталляцию&raquo;"
+
+#, fuzzy
+#~ msgid "MSSQL (2005 and newer)"
+#~ msgstr "MySQL with Transactions (v3.23.34a или новее)"
+
+#~ msgid "Installed Gallery Core successfully"
+#~ msgstr "Основной модуль Галереи (ядро) успешно инсталлирован"
+
+#~ msgid ""
+#~ "Congratulations, we've successfully installed the Gallery framework.  However, most of "
+#~ "the really cool features from Gallery come from additional modules that you can install "
+#~ "and configure.  The next step will take you through the process of selecting modules to "
+#~ "install so that you can tune Gallery to do exactly what you want."
+#~ msgstr ""
+#~ "Поздравляем, мы успешно инсталлировали основную часть Галереи. Однако, большинство из "
+#~ "дейсвительно интересных функций в Галерее доступно вместе с дополнительными модулями, "
+#~ "которые Вы можете установить и сконфигурировать. Следующий шаг позволит Вам перейти к "
+#~ "процессу выбора модулей для инсталляции, так что Вы сможете подстроить Галерею выполнять "
+#~ "те функции, которые хотите."
+
+#~ msgid "Install More Modules"
+#~ msgstr "Инсталляция других модулей"
+
+#~ msgid ""
+#~ "Before we can proceed, you should create a file in your <b>%s</b> directory called "
+#~ "<i>config.php</i>.  You must make sure that the webserver will be able to write to it.  "
+#~ "If you're on unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have "
+#~ "to do anything special.  When you've created this file and set the permissions properly, "
+#~ "you can proceed.  If there's a problem, we'll tell you what to fix."
+#~ msgstr ""
+#~ "Перед тем как продолжить, Вы должны создать файл в Вашей <b>%s</b> папке под названием "
+#~ "<i>config.php</i>. Вы должны удостовериться, что веб-сервер будет иметь возможность "
+#~ "записывать в него. Если Вы используйете unix, попробуйте команду <i>chmod 666 config.php</"
+#~ "i>. Если Windows, Вы не должны делать что-то специального. Как только Вы создадите данный "
+#~ "файл и установите правильные разрешения, Вы можете продолжить. Если возникнут проблемы, "
+#~ "мы сообщим Вам, что необходимо будет исправить."
+
+#~ msgid "Install Other Modules"
+#~ msgstr "Инсталляция других модулей"
+
+#~ msgid ""
+#~ "Gallery needs a directory to store your images. The directory we chose for you will work, "
+#~ "but is web accessible."
+#~ msgstr ""
+#~ "Галерея требуется дирекорию, где будут храниться Ваши изображения. Директория, которая "
+#~ "будет Вам предложена, будет работать, но в тоже время будет доступна через веб."
+
+#~ msgid "mkdir %s"
+#~ msgstr "mkdir %s"
+
+#~ msgid "chmod 777 %s"
+#~ msgstr "chmod 777 %s"
+
+#~ msgid "cd %s"
+#~ msgstr "cd %s"
+
+#~ msgid "PostgreSQL v6.x (not well tested)"
+#~ msgstr "PostgreSQL v6.x (недостаточно хорошо протестировано)"
+
+#~ msgid "chmod 644 %s"
+#~ msgstr "chmod 644 %s"
+
+#~ msgid "chmod 755 %s"
+#~ msgstr "chmod 755 %s"
+
+#~ msgid ""
+#~ "Gallery needs to store data in a directory on your server. It will use this directory to "
+#~ "store your images as well as other important data. For security, we suggest that you "
+#~ "place this directory <b>outside</b> of your web site so that it cannot be browsed "
+#~ "directly via the web. This is necessary if you wish to have your images accessible only "
+#~ "via Gallery [%s]. Note that the default path provided below is inside the webserver area. "
+#~ "This is because we are unable to reliably guess a directory outside of your web site. You "
+#~ "should update it with a secure location, such as a path under your user home directory, "
+#~ "if possible. If you access your site via FTP, you might not have this option."
+#~ msgstr ""
+#~ "Галерее необходимо хранить данные в директории на Вашем сервере. Она будет использовать "
+#~ "данную директорию для хранения Ваших изображений, а так же другой важной информации. В "
+#~ "целях безопасности мы предлагаем расположить данную директорию <b>за пределами</b> Вашего "
+#~ "веб-сайта, чтобы было невозможно просматривать ее напрямую через веб-сервер. Это "
+#~ "необходимо, если Вы хотите, чтобы Ваши изображения были доступны только через Галерею [%"
+#~ "s]. Обратите внимание, что путь ниже, который указан по умолчанию, находится внутри "
+#~ "области веб-сервера. Это только потому, что мы не можем предположить с большой степенью "
+#~ "вероятности директорию за пределами Вашего веб-сайта. Вы должны изменить это на более "
+#~ "надежное месторасположение, например, на уровень ниже вашей home директории, если это "
+#~ "возможно. Если Вы имеет доступ к Вашему сайту по FTP, скорее всего вы не можете "
+#~ "воспользоваться данной опцией."
+
+#~ msgid ""
+#~ "Your webserver needs to be able to write to this directory. Permission systems vary from "
+#~ "host to host. You can set a very relaxed set of permissions on this directory to get "
+#~ "Gallery working, but if you're concerned about security you should consult your system "
+#~ "adminstrator to figure out how to make this as secure as possible. To get it working, you "
+#~ "can follow these examples."
+#~ msgstr ""
+#~ "Требуется, чтобы Ваш веб-сервер имел доступ на запись в эту директорию. Системы "
+#~ "разрешений варьируются в зависимости от провайдера. Вы можете установить максимальные "
+#~ "разрешения на данную директорию, чтобы позволить Галерее функционировать, но если Вы "
+#~ "заботитесь о вопросах безопасности, Вы должны проконсультироваться с Вашим системным "
+#~ "администратором, чтобы выяснить, как сделать ее максимально защищенной. Чтобы заставить "
+#~ "это работать, Вы можете следовать следующими примерам."
+
+#~ msgid "This is sometimes known as an <b>image firewall</b>."
+#~ msgstr "Под этим подразумевается термин <b>image firewall</b> (защита изображений)"
+
+#~ msgid "Finished"
+#~ msgstr "Завершение"
+
+#~ msgid "Installation Status"
+#~ msgstr "Статус инсталляции"
+
+#~ msgid "SQL test file \"%s\" not found."
+#~ msgstr "Тестовый файл SQL \"%s\" не найден."
