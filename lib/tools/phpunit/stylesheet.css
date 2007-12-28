@@ -123,6 +123,8 @@ tr.skip td {
 div#status {
   float: right;
   border: 2px solid blue;
+  border-top: 1px solid blue;
+  border-bottom: 1px solid blue;
   margin: 5px;
 }
 
@@ -131,24 +133,47 @@ div#status .header {
   background:#a6caf0;
   font-size: 18px;
   padding: 2px;
+  text-align: center;
+  border-top: 1px solid blue;
+  border-bottom: 1px solid blue;
+}
+
+div#status .toggle {
+  font-size: 12px;
+  text-align: right;
+  cursor: pointer;
+}
+
+div#status span.fakelink {
+  color: blue;
+  text-decoration: underline;
 }
 
 div#status.fail {
   border: 2px solid #cc0000;
+  border-top: 1px solid #cc0000;
+  border-bottom: 1px solid #cc0000;
 }
 
 div#status.fail .header {
   background:#ff6666;
+  border-top: 1px solid #cc0000;
+  border-bottom: 1px solid #cc0000;
 }
 
 div#status.pass {
   border: 2px solid #006600;
+  border-top: 1px solid #006600;
+  border-bottom: 1px solid #006600;
 }
 
 div#status.pass .header {
   background:#66CC66;
+  border-top: 1px solid #006600;
+  border-bottom: 1px solid #006600;
 }
 
 div#status .body {
-  padding: 3px;
+  padding: 0px 3px 0px 3px;
+  line-height: 1.2em;
 }

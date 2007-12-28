@@ -263,11 +263,15 @@ class GalleryTestResult extends TestResult {
 	return $buf;
     }
 
-    function _endTest($test) {
-
+    function _startTest($test) {
 	if ($this->fRunTests == 1) {
 	    print '<script text="text/javascript">showStatus();</script>';
 	}
+	printf('<script type="text/javascript">runningTest("%s");</script>', $test->name());
+	flush();
+    }
+
+    function _endTest($test) {
 	$failure = $extra = '';
 	$usedMemory = (function_exists('memory_get_usage')) ? memory_get_usage() : '"unknown"';
 

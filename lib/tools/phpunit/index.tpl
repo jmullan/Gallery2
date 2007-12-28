@@ -16,13 +16,24 @@
         document.forms[0].submit();
       }
     </script>
-    <div id="status" style="position: absolute; right: 0; top: 0; display: none; background: white;">
+    <div id="status" style="position: absolute; right: 0; top: 0; background: white; display: none">
       <div class="header">Run Status</div>
       <div class="body">
 	Pass: <span id="pass_count">&nbsp;</span>, Fail <span id="fail_count">&nbsp;</span>, Skip: <span id="skip_count">&nbsp;</span>, Total: <span id="total_count">&nbsp;</span> <br/>
         Elapsed time: <span id="elapsed_time">&nbsp;</span> <br/>
 	Estimated time remaining: <span id="estimated_time_remaining">&nbsp;</span> <br/>
 	Memory Usage: <span id="used_memory">&nbsp;</span> (<?php print (0 < ini_get('memory_limit')) ? ini_get('memory_limit') + "allowed": "Unlimited"; ?>)
+      </div>
+      <div id="show_more" class="header toggle" onclick="showMoreStatus()">
+	<span class="fakelink">more</span>
+      </div>
+      <div id="more" class="body" style="display: none">
+	Test running: <span id="test_running">none</span> <br/>
+        Last update: <span id="last_update_interval">not running</span> <br/>
+      </div>
+      <div id="show_less" class="header toggle" onclick="showLessStatus()" style="display: none">
+	<span class="fakelink">less</span>
+      </div>
       </div>
     </div>
 
@@ -275,6 +286,8 @@
 	  { top: { to: YAHOO.util.Dom.getDocumentScrollTop() } },
 	  .5, YAHOO.util.Easing.easeIn).animate();
 	};
+	running = true;
+	setTimeout('updateMoreBox()', 0);
       }
 
       function completeStatus() {
@@ -283,6 +296,8 @@
         } else {
 	  YAHOO.util.Dom.addClass('status', 'pass');
         }
+	running = false;
+	runningTest('none');
       }
 
       function updateStats(pass, fail, skip, usedMemory, force) {
@@ -308,6 +323,42 @@
 	estimatedRemainingTime = Math.round(estimatedRemainingTime);
 	estimatedTimeRemainingEl.innerHTML = estimatedRemainingTime + " seconds";
         elapsedEl.innerHTML = Math.round(elapsed) + " seconds";
+	lastUpdateTime = new Date().getTime() / 1000;
+      }
+
+      function updateMoreBox() {
+	var lastUpdateEl = document.getElementById('last_update_interval');
+	var testRunningEl = document.getElementById('test_running');
+
+	var lastText = 'not running';
+	var runningText = 'none';
+	if (running) {
+          var now = new Date().getTime() / 1000;
+	  lastText = Math.round(100 * (now - lastUpdateTime)) / 100 + ' seconds ago';
+	}
+
+	lastUpdateEl.innerHTML = lastText;
+	testRunningEl.innerHtml = runningText;
+
+	if (running) {
+	  setTimeout('updateMoreBox()', 500 + Math.random() * 500);
+	}
+      }
+
+      function showMoreStatus() {
+	YAHOO.util.Dom.setStyle('show_more', 'display', 'none');
+	YAHOO.util.Dom.setStyle('more', 'display', 'block');
+	YAHOO.util.Dom.setStyle('show_less', 'display', 'block');
+      }
+
+      function showLessStatus() {
+	YAHOO.util.Dom.setStyle('show_more', 'display', 'block');
+	YAHOO.util.Dom.setStyle('more', 'display', 'none');
+	YAHOO.util.Dom.setStyle('show_less', 'display', 'none');
+      }
+
+      function runningTest(testName) {
+	document.getElementById('test_running').innerHTML = testName;
       }
 
       var startTime = new Date().getTime() / 1000;
@@ -319,7 +370,9 @@
       var estimatedTimeRemainingEl = document.getElementById('estimated_time_remaining');
       var elapsedEl = document.getElementById('elapsed_time');
       var usedMemoryEl = document.getElementById('used_memory');
+      var running = false;
       document.getElementById('total_count').innerHTML = totalCount;
+      updateMoreBox();
       updateStats(0, 0, 0, 0, 1);
     </script>
 
