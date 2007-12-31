@@ -182,7 +182,12 @@ class CoreModuleExtras {
 	    $gallery->debug(sprintf('Locktype %s selected', $flockType));
 	    /* Initial install.  Make sure all our module parameters are set. */
 	    $gallery->debug('Set core module parameters');
+
 	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryTranslator.class');
+	    list ($ret, $defaultLanguage) = $gallery->getActiveLanguageCode();
+	    if ($ret) {
+		$defaultLanguage = GalleryTranslator::getLanguageCodeFromRequest();
+	    }
 	    foreach (array('permissions.directory' => '0755',
 			   'permissions.file' => '0644',
 			   'exec.expectedStatus' => '0',
@@ -190,7 +195,7 @@ class CoreModuleExtras {
 			   'default.orderBy' => 'orderWeight',
 			   'default.orderDirection' => '1',
 			   'default.theme' => 'matrix',
-			   'default.language' => GalleryTranslator::getLanguageCodeFromRequest(),
+			   'default.language' => $defaultLanguage,
 			   'language.useBrowserPref' => '0',
 			   'default.newAlbumsUseDefaults' => 'false',
 			   'session.lifetime' => 21 * 86400, /* Three weeks */

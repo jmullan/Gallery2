@@ -41,8 +41,20 @@ class WelcomeStep extends InstallStep {
     }
 
     function loadTemplateData(&$templateData) {
+	global $translator;
+
 	$templateData['totalSteps'] = count($GLOBALS['steps']) - 1;
 	$templateData['bodyFile'] = 'Welcome.html';
+	if (isset($translator)) {
+	    list ($supportedLanguages) = $translator->getLanguageData();
+	    $templateData['languages'] = array();
+	    foreach ($supportedLanguages as $lang => $list) {
+		foreach ($list as $country => $data) {
+		    $code = $lang . '_' . $country;
+		    $templateData['languages'][$code] = $data['description'];
+		}
+	    }
+	}
     }
 
     function isOptional() {
