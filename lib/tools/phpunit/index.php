@@ -52,6 +52,7 @@ require_once('UnitTestPhpVm.class');
 require_once('UnitTestUrlGenerator.class');
 require_once('MockTemplateAdapter.class');
 require_once('UnitTestTemplate.class');
+require_once('UnitTestRepository.class');
 
 @ini_set('output_buffering', 0);
 
