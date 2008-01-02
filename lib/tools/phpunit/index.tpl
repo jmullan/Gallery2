@@ -17,22 +17,27 @@
       }
     </script>
     <div id="status" style="position: absolute; right: 0; top: 0; background: white; display: none">
-      <div class="header">Run Status</div>
+      <div class="header">
+	Run Status
+	<div style="position: absolute; right: 0px; display: inline">
+	  <img class="toggle" onclick="hideStatus()" src="cancel.png">
+	</div>
+      </div>
       <div class="body">
 	Pass: <span id="pass_count">&nbsp;</span>, Fail <span id="fail_count">&nbsp;</span>, Skip: <span id="skip_count">&nbsp;</span>, Total: <span id="total_count">&nbsp;</span> <br/>
         Elapsed time: <span id="elapsed_time">&nbsp;</span> <br/>
 	Estimated time remaining: <span id="estimated_time_remaining">&nbsp;</span> <br/>
 	Memory Usage: <span id="used_memory">&nbsp;</span> (<?php print (0 < ini_get('memory_limit')) ? ini_get('memory_limit') + "allowed": "Unlimited"; ?>)
       </div>
-      <div id="show_more" class="header toggle" onclick="showMoreStatus()">
-	<span class="fakelink">more</span>
+      <div id="show_more" class="header toggle">
+	<img src="add.png" onclick="showMoreStatus()">
       </div>
       <div id="more" class="body" style="display: none">
 	Test running: <span id="test_running">none</span> <br/>
         Last update: <span id="last_update_interval">not running</span> <br/>
       </div>
-      <div id="show_less" class="header toggle" onclick="showLessStatus()" style="display: none">
-	<span class="fakelink">less</span>
+      <div id="show_less" class="header toggle" style="display: none">
+	<img src="../../../modules/icons/iconpacks/silk/delete.png" onclick="showLessStatus()">
       </div>
       </div>
     </div>
@@ -343,6 +348,10 @@
 	if (running) {
 	  setTimeout('updateMoreBox()', 500 + Math.random() * 500);
 	}
+      }
+
+      function hideStatus() {
+	YAHOO.util.Dom.setStyle('status', 'display', 'none');
       }
 
       function showMoreStatus() {
