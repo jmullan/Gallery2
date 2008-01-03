@@ -150,7 +150,8 @@ class CombinedJavascriptTest extends GalleryImmediateViewTestCase {
 	$gallery->_phpVm->setReply('header', array('Content-Encoding: gzip', null), null);
 	$gallery->_phpVm->setReply(
 	    'header', array('Cache-Control: private, x-gzip-ok="public"', null), null);
-	$gallery->_phpVm->setReply('header', array('Content-type: text/javascript', null), null);
+	$gallery->_phpVm->setReply(
+	    'header', array('Content-type: text/javascript; charset=UTF-8', null), null);
 	$gallery->_phpVm->setReply(
 	    'header', array('Last-Modified: Thu, 01 Jan 1970 00:00:01 GMT', null), null);
 	$gallery->_phpVm->setReply(
@@ -174,7 +175,8 @@ class CombinedJavascriptTest extends GalleryImmediateViewTestCase {
 	GalleryUtilities::putRequestVariable('key', '123');
 	$gallery->_phpVm->setReply('function_exists', array('getallheaders'), false);
 	$gallery->_phpVm->setReply('header', array('Cache-Control: public', null), null);
-	$gallery->_phpVm->setReply('header', array('Content-type: text/javascript', null), null);
+	$gallery->_phpVm->setReply(
+	    'header', array('Content-type: text/javascript; charset=UTF-8', null), null);
 	$gallery->_phpVm->setReply(
 	    'header', array('Last-Modified: Thu, 01 Jan 1970 00:00:01 GMT', null), null);
 	$gallery->_phpVm->setReply(

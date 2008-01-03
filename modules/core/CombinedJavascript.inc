@@ -95,7 +95,7 @@ class CombinedJavascriptView extends GalleryView {
 	}
 
 	if (isset($cacheData)) {
-	    $phpVm->header('Content-type: text/javascript');
+	    $phpVm->header('Content-type: text/javascript; charset=UTF-8');
 	    $phpVm->header('Last-Modified: ' . $gallery->getHttpDate(1));
 	    $phpVm->header('Expires: ' . $gallery->getHttpDate(2147483647));
 
