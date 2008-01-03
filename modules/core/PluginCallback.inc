@@ -336,7 +336,7 @@ class PluginCallbackView extends GalleryView {
 		}
 
 		$path = sprintf(
-		    "%s/%ss/%s", dirname(dirname(dirname(__FILE__))), $pluginType, $pluginId);
+		    "%s%ss/%s", GalleryCoreApi::getCodeBasePath(), $pluginType, $pluginId);
 		$success = @$platform->recursiveRmdir($path);
 		if (!$success) {
 		    $result['status'] = 'fail';

@@ -444,7 +444,7 @@ class ThemeTestView extends GalleryView {
  */
 class ThemeTestPlatform extends GalleryPlatform {
     function opendir($path) {
-	if (strpos($path, '/themes/') !== false) {
+	if (strpos($path, 'themes/') !== false) {
 	    $this->_list = array();
 	    if ($dir = parent::opendir($path)) {
 		while (false !== ($file = parent::readdir($dir))) {
@@ -459,7 +459,7 @@ class ThemeTestPlatform extends GalleryPlatform {
     }
 
     function is_dir($path) {
-	if (strpos($path, '/themes/themetest') !== false) {
+	if (strpos($path, 'themes/themetest') !== false) {
 	    return true;
 	}
 

@@ -128,7 +128,7 @@ class GalleryFactoryHelper_medium {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
-	$baseDir = GalleryCoreApi::getPluginBaseDir('module', $implModuleId);
+	$baseDir = GalleryCoreApi::getCodeBasePath();
 	if (!$platform->file_exists($baseDir . $implPath)) {
 	    return GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__,
 					"Bad implementation path: $baseDir$implPath");

@@ -408,8 +408,7 @@ class PluginCallbackTest extends GalleryTestCase {
 
 	$this->_platform->setReply(
 	    'recursiveRmdir',
-	    array(dirname(dirname(dirname(dirname(dirname(__FILE__))))) .
-		  '/modules/PluginCallbackControllerTest'),
+	    array(GalleryCoreApi::getCodeBasePath('modules/PluginCallbackControllerTest')),
 	    true);
 
 	$this->_testPlugin->setResult('isActive', array(null, true));
@@ -437,9 +436,7 @@ class PluginCallbackTest extends GalleryTestCase {
 
 	$this->_platform->setReply(
 	    'recursiveRmdir',
-	    array(dirname(dirname(dirname(dirname(dirname(__FILE__))))) .
-		  '/modules/PluginCallbackControllerTest'),
-	    false);
+	    array(GalleryCoreApi::getCodeBasePath('modules/PluginCallbackControllerTest')), false);
 
 	$this->_testPlugin->setResult('isActive', array(null, false));
 	$this->_testPlugin->setResult('uninstall', null);

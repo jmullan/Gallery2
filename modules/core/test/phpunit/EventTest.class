@@ -38,8 +38,8 @@ class EventTest extends GalleryTestCase {
 	   return $ret;
 	}
 
-	$this->_platform = new EventTestPlatform();
-	$gallery->setPlatform($this->_platform);
+	$gallery->setPlatform(new EventTestPlatform());
+	$this->_platform =& $gallery->getPlatform();
 
 	/* Register a new module */
 	GalleryDataCache::reset();
@@ -243,7 +243,7 @@ class EventTestEventListener /* extends GalleryEventListener */ {
 class EventTestPlatform extends GalleryPlatform {
 
     function opendir($path) {
-	if (substr($path, -9) == '/modules/') {
+	if (substr($path, -8) == 'modules/') {
 	    $this->_list = array();
 	    if (($handle = parent::opendir($path)) !== false) {
 		while (($name = parent::readdir($handle)) !== false) {
@@ -258,8 +258,11 @@ class EventTestPlatform extends GalleryPlatform {
     }
 
     function is_dir($path) {
-	if (substr($path, -18) == '/modules/eventtest'
-		&& substr($path, -31) != '/plugins_data/modules/eventtest') {
+	global $gallery;
+	static $ignorePath;
+	$ignorePath = $gallery->getConfig('data.gallery.plugins_data') . 'modules/eventtest';
+	if (substr($path, -17) == 'modules/eventtest'
+		&& $path != $ignorePath) {
 	    return true;
 	}
 
@@ -284,7 +287,7 @@ class EventTestPlatform extends GalleryPlatform {
     }
 
     function file_exists($path) {
-	if (substr($path, -29) == '/modules/eventtest/module.inc') {
+	if (substr($path, -28) == 'modules/eventtest/module.inc') {
 	    return true;
 	}
 

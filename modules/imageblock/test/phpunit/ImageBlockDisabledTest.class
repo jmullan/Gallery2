@@ -136,8 +136,7 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	    return array($ret, null, null);
 	}
 
-	$imagePath = GalleryCoreApi::getPluginBaseDir('module', 'core')
-	    . 'modules/core/test/data/test1.gif';
+	$imagePath = GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.gif');
 	list ($ret, $photo, $thumbId) = $this->_addPhoto($album->getId(), $imagePath);
 	if ($ret) {
 	    return array($ret, null, null);

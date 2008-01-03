@@ -56,13 +56,12 @@ class ExifExtractorTest extends GalleryTestCase {
 	    return ($ret);
 	}
 	$photoIds = array();
-	$corePrefix = GalleryCoreApi::getPluginBaseDir('module', 'core');
-	$exifPrefix = GalleryCoreApi::getPluginBaseDir('module', 'exif');
-	$imagePaths = array($exifPrefix . 'modules/exif/test/data/CanonS30.small.jpg',
-			    $corePrefix . 'modules/core/test/data/test2.gif',
-			    $exifPrefix . 'modules/exif/test/data/CanonS30.small.jpg',
-			    $exifPrefix . 'modules/exif/test/data/iptc-irfanview.jpg',
-			    $corePrefix . 'modules/core/test/data/test1.jpg');
+	$g2Base = GalleryCoreApi::getCodeBasePath();
+	$imagePaths = array($g2Base . 'modules/exif/test/data/CanonS30.small.jpg',
+			    $g2Base . 'modules/core/test/data/test2.gif',
+			    $g2Base . 'modules/exif/test/data/CanonS30.small.jpg',
+			    $g2Base . 'modules/exif/test/data/iptc-irfanview.jpg',
+			    $g2Base . 'modules/core/test/data/test1.jpg');
 
 	for ($i = 0; $i < count($imagePaths); $i++) {
 	    list ($ret, $photoId) = $this->_addPhoto(

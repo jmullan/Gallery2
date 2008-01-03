@@ -559,8 +559,8 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	    return $ret;
 	}
 
-	$moduleBase = GalleryCoreApi::getCodeBasePath()
-	    . 'modules/AdminRepositoryDownloadControllerTest';
+	$moduleBase = 
+	    GalleryCoreApi::getCodeBasePath('modules/AdminRepositoryDownloadControllerTest');
 	$platform = new UnitTestPlatform();
 	$platform->setReply('is_dir', array("$moduleBase/locale/aa"), true);
 	$platform->setReply('is_writeable', array("$moduleBase/locale/aa"), true);

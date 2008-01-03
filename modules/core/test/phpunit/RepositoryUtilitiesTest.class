@@ -165,8 +165,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
     function testGetLanguageBaseRevision() {
 	global $gallery;
 
-	$stringsPath = sprintf('%stestPlugins/testModule/po/strings.raw',
-		GalleryCoreApi::getPluginBaseDir('testPlugin', 'testModule'));
+	$stringsPath = GalleryCoreApi::getCodeBasePath('testPlugins/testModule/po/strings.raw');
 	$stringsContents = '# $' . 'Id: strings.raw 13933 2006-07-08 23:55:12Z bharat $';
 
 	$platform = new UnitTestPlatform();

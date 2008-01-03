@@ -1162,7 +1162,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 	$sqlFile = sprintf('%smodules/%s/classes/GalleryStorage/schema.tpl',
-	    GalleryCoreApi::getPluginBaseDir('module', $moduleId), $moduleId);
+	    GalleryCoreApi::getCodeBasePath(), $moduleId);
 
 	if ($platform->file_exists($sqlFile)) {
 	    $sqlData = $platform->file($sqlFile);

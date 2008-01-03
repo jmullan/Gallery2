@@ -82,8 +82,7 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
-	$dataFile = GalleryCoreApi::getPluginBaseDir('module', 'core')
-	    . 'modules/core/test/data/test1.gif';
+	$dataFile = GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.gif');
 	$rand = rand();
 	$targetName = sprintf('phpunit_%s.gif', $rand);
 	$expectedName = sprintf('phpunit_%s_gif', $rand);
@@ -218,8 +217,7 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
-	$dataFile = GalleryCoreApi::getPluginBaseDir('module', 'core')
-	    . 'modules/core/test/data/test1.gif';
+	$dataFile = GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.gif');
 	$rand = rand();
 	$targetName = sprintf('phpunit_%s.php', $rand);
 	$expectedName = sprintf('phpunit_%s_php', $rand);
@@ -267,8 +265,7 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	/* Start with admin user.. */
 	$gallery->setActiveUser($this->_saveUser);
 
-	$dataFile = GalleryCoreApi::getPluginBaseDir('module', 'core')
-	    . 'modules/core/test/data/test1.gif';
+	$dataFile = GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.gif');
 	$rand = rand();
 	$targetName = sprintf('phpunit_%s.gif', $rand);
 	$expectedName = sprintf('phpunit_%s_gif', $rand);

@@ -226,7 +226,7 @@ class IsapiRewriteHelperMockPlatform extends GalleryPlatform {
     }
 
     function is_dir($path) {
-	if ($path == '/phpunit/test') {
+	if ($path == 'phpunit/test') {
 	    return true;
 	}
 
@@ -321,7 +321,7 @@ class IsapiRewriteHelperMockPlatform extends GalleryPlatform {
     function is_writeable($file) {
 	if (strpos($file, 'httpd.ini') !== false) {
 	    return $this->_isWriteable;
-	} else if ($file == '/phpunit/gallery2') {
+	} else if ($file == 'phpunit/gallery2') {
 	    return false;
 	}
 

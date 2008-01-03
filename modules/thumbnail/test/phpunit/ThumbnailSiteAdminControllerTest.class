@@ -77,8 +77,7 @@ class ThumbnailSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[name][1]', 'test.jpg');
 	GalleryUtilities::putRequestVariable('form[type][1]', 'image/jpeg');
 	GalleryUtilities::putRequestVariable('form[tmp_name][1]',
-	    GalleryCoreApi::getPluginBaseDir('module', 'core')
-		. 'modules/core/test/data/test1.jpg');
+	    GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.jpg'));
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
@@ -94,8 +93,7 @@ class ThumbnailSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[name][1]', 'test.gif');
 	GalleryUtilities::putRequestVariable('form[type][1]', 'image/gif');
 	GalleryUtilities::putRequestVariable('form[tmp_name][1]',
-	    GalleryCoreApi::getPluginBaseDir('module', 'core')
-		. 'modules/core/test/data/test1.gif');
+	    GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.gif'));
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
@@ -112,8 +110,7 @@ class ThumbnailSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[name][1]', 'test.jpg');
 	GalleryUtilities::putRequestVariable('form[type][1]', 'image/jpeg');
 	GalleryUtilities::putRequestVariable('form[tmp_name][1]',
-	    GalleryCoreApi::getPluginBaseDir('module', 'core')
-		. 'modules/core/test/data/test1.jpg');
+	    GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.jpg'));
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',

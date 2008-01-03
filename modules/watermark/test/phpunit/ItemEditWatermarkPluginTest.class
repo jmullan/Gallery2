@@ -43,7 +43,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	/* Create a watermark */
 	$this->_watermark = new WatermarkImage();
 	$ret = $this->_watermark->create(
-	    GalleryCoreApi::getPluginBaseDir('module', 'core') . 'modules/core/test/data/test1.gif',
+	    GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.gif'),
 	    'image/gif', 'phpunit_' . rand() . '.gif');
 	if ($ret) {
 	    return $ret;

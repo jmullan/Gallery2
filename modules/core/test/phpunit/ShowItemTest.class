@@ -54,8 +54,7 @@ class ShowItemTest extends GalleryTestCase {
 	}
 
 	GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
-	$this->_template =
-	    new GalleryTemplate(dirname(dirname(dirname(dirname(dirname(__FILE__))))));
+	$this->_template = new GalleryTemplate(GalleryCoreApi::getCodeBasePath());
     }
 
     function _testViewCount($itemId) {

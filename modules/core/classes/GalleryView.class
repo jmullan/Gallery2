@@ -172,7 +172,7 @@ class GalleryView {
 
 	$viewClassName = $class . 'View';
 	if (!class_exists($viewClassName)) {
-	    $moduleBaseDir = GalleryCoreApi::getPluginBaseDir('module', $module);
+	    $moduleBaseDir = GalleryCoreApi::getCodeBasePath();
 	    $moduleDir = 'modules/' . $module . '/';
 	    $fileName = $moduleDir . $class . '.inc';
 

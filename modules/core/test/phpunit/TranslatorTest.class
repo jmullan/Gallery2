@@ -416,7 +416,7 @@ class TranslatorTest extends GalleryTestCase {
 	$platform = new UnitTestPlatform();
 
 	$gallery->setConfig('data.gallery.locale', '/g2data/locale/');
-	$modulePath = GalleryCoreApi::getCodeBasePath() . 'modules/TranslatorTest/';
+	$modulePath = GalleryCoreApi::getCodeBasePath('modules/TranslatorTest/');
 	$poPath = "${modulePath}po/";
 	$platform->setReply('glob', array("${poPath}*.mo", null), array("${poPath}aa.mo"));
 	$platform->setReply('file_exists', array('/g2data/locale/aa/LC_MESSAGES/'), true);
@@ -440,7 +440,7 @@ class TranslatorTest extends GalleryTestCase {
 	$platform = new UnitTestPlatform();
 
 	$gallery->setConfig('data.gallery.locale', '/g2data/locale/');
-	$modulePath = GalleryCoreApi::getCodeBasePath() . 'modules/TranslatorTest/';
+	$modulePath = GalleryCoreApi::getCodeBasePath('modules/TranslatorTest/');
 	$poPath = "${modulePath}po/";
 	$platform->setReply('glob', array("${poPath}*.mo", null), array());
 	$platform->setReply('glob',
@@ -468,7 +468,7 @@ class TranslatorTest extends GalleryTestCase {
 	$platform = new UnitTestPlatform();
 
 	$gallery->setConfig('data.gallery.locale', '/g2data/locale/');
-	$modulePath = GalleryCoreApi::getCodeBasePath() . 'modules/TranslatorTest/';
+	$modulePath = GalleryCoreApi::getCodeBasePath('modules/TranslatorTest/');
 	$poPath = "${modulePath}po/";
 	$platform->setReply('glob', array("${poPath}*.mo", null), array("${poPath}aa.mo"));
 

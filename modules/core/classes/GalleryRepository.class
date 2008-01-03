@@ -619,7 +619,7 @@ class GalleryRepository {
 
 	/* Make sure output directory exists. */
 	$pluginOutputDir = sprintf(
-	    '%s/%ss/%s/', dirname(dirname(dirname(dirname(__FILE__)))), $pluginType, $pluginId);
+	    '%s%ss/%s/', GalleryCoreApi::getCodeBasePath(), $pluginType, $pluginId);
 	if (!$platform->file_exists($pluginOutputDir)
 		&& !$platform->mkdir($pluginOutputDir)) {
 	    $ret = GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
@@ -675,7 +675,7 @@ class GalleryRepository {
 	$pluginType = $descriptor['pluginType'];
 	$pluginId = $descriptor['pluginId'];
 	$pluginOutputDir = sprintf(
-	    '%s/%ss/%s/', dirname(dirname(dirname(dirname(__FILE__)))), $pluginType, $pluginId);
+	    '%s%ss/%s/', GalleryCoreApi::getCodeBasePath(), $pluginType, $pluginId);
 
 	if ($platform->file_exists($pluginOutputDir)) {
 	    if (!$platform->is_writeable($pluginOutputDir) ||
@@ -730,7 +730,7 @@ class GalleryRepository {
 	$pluginType = $descriptor['pluginType'];
 	$pluginId = $descriptor['pluginId'];
 	$pluginOutputDir = sprintf(
-	    '%s/%ss/%s/', dirname(dirname(dirname(dirname(__FILE__)))), $pluginType, $pluginId);
+	    '%s%ss/%s/', GalleryCoreApi::getCodeBasePath(), $pluginType, $pluginId);
 
 	$platform =& $gallery->getPlatform();
 	foreach ($descriptor['contents']['files'] as $filePath => $metaData) {
@@ -783,8 +783,7 @@ class GalleryRepository {
 	}
 
 	$platform =& $gallery->getPlatform();
-	$g2base = dirname(dirname(dirname(dirname(__FILE__))));
-	$pluginDir = sprintf('%s/%ss/%s', $g2base, $pluginType, $pluginId);
+	$pluginDir = sprintf('%s%ss/%s', GalleryCoreApi::getCodeBasePath(), $pluginType, $pluginId);
 	$manifestPath = "$pluginDir/MANIFEST";
 
 	if (!$platform->file_exists($manifestPath)) {

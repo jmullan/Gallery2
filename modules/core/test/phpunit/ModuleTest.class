@@ -720,7 +720,7 @@ class ModuleTestPlatform extends GalleryPlatform {
     }
 
     function opendir($path) {
-	if (strpos($path, '/modules/') !== false) {
+	if (strpos($path, 'modules/') !== false) {
 	    $this->_list = array();
 	    if ($dir = parent::opendir($path)) {
 		while (false !== ($file = parent::readdir($dir))) {

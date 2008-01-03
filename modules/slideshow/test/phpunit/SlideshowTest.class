@@ -103,12 +103,10 @@ class SlideshowTest extends GalleryTestCase {
 	    return $ret;
 	}
 	$photoData = array();
-	$prefix = GalleryCoreApi::getPluginBaseDir('module', 'core')
-	    . 'modules/core/test/data/test';
+	$prefix = GalleryCoreApi::getCodeBasePath('modules/core/test/data/test');
 	$imagePaths = array($prefix . '1.gif', $prefix . '2.gif',
 	    $prefix . '[3].gif', $prefix . '4.gif',
-	    GalleryCoreApi::getPluginBaseDir('module', 'exif')
-		. 'modules/exif/test/data/CanonS30.small.jpg');
+	    GalleryCoreApi::getCodeBasePath('modules/exif/test/data/CanonS30.small.jpg'));
 	$imageSizes = array(array(62,75), array(200,178), array(120,54),
 			    array(366,292), array(38,50));
 	for ($i = 0; $i < 10; $i++) {

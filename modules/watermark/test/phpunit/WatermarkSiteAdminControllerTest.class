@@ -99,8 +99,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[name][1]', $this->_randomName);
 	GalleryUtilities::putRequestVariable('form[type][1]', 'image/jpeg');
 	GalleryUtilities::putRequestVariable('form[tmp_name][1]',
-	    GalleryCoreApi::getPluginBaseDir('module', 'core')
-		. 'modules/core/test/data/test1.jpg');
+	    GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.jpg'));
 
 	$results = $this->handleRequest();
 	$counter =& GalleryTestCase::getEntityCounter();
@@ -129,8 +128,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	    GalleryUtilities::putRequestVariable('form[name][1]', $this->_randomName);
 	    GalleryUtilities::putRequestVariable('form[type][1]', 'image/jpeg');
 	    GalleryUtilities::putRequestVariable('form[tmp_name][1]',
-		GalleryCoreApi::getPluginBaseDir('module', 'core')
-		    . 'modules/core/test/data/test1.jpg');
+		GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.jpg'));
 
 	    $results = $this->handleRequest();
 	    $counter =& GalleryTestCase::getEntityCounter();
@@ -161,8 +159,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[type][1]', 'image/jpeg');
 	GalleryUtilities::putRequestVariable('form[type][1]', 'application/octet-stream');
 	GalleryUtilities::putRequestVariable('form[tmp_name][1]',
-	    GalleryCoreApi::getPluginBaseDir('module', 'core')
-		. 'modules/core/test/data/test1.jpg');
+	    GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.jpg'));
 
 	$results = $this->handleRequest();
 	$counter =& GalleryTestCase::getEntityCounter();
@@ -194,8 +191,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[name][1]', $this->_randomName);
 	GalleryUtilities::putRequestVariable('form[type][1]', 'image/jpeg');
 	GalleryUtilities::putRequestVariable('form[tmp_name][1]',
-	    GalleryCoreApi::getPluginBaseDir('module', 'core')
-		. 'modules/core/test/data/test1.jpg');
+	    GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.jpg'));
 
 	$results = $this->handleRequest();
 	$counter =& GalleryTestCase::getEntityCounter();
@@ -244,8 +240,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[name][1]', $this->_randomName);
 	GalleryUtilities::putRequestVariable('form[type][1]', 'image/jpeg');
 	GalleryUtilities::putRequestVariable('form[tmp_name][1]',
-	    GalleryCoreApi::getPluginBaseDir('module', 'core')
-		. 'modules/core/test/data/test1.jpg');
+	    GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.jpg'));
 
 	$results = $this->handleRequest();
 	$counter =& GalleryTestCase::getEntityCounter();

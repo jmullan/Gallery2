@@ -64,7 +64,7 @@ class GalleryPluginHelper_simple {
 		    $gallery->debug('Class not defined, trying to include it.');
 		}
 
-		$pluginBaseDir = GalleryCoreApi::getPluginBaseDir($pluginType, $pluginId);
+		$pluginBaseDir = GalleryCoreApi::getCodeBasePath();
 		$pluginFile = sprintf('%ss/%s/%s.inc', $pluginType, $pluginId, $pluginType);
 
 		GalleryCoreApi::requireOnce(

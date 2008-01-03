@@ -1042,16 +1042,13 @@ class GalleryTheme extends GalleryPlugin {
      */
     function preloadBlock(&$template, $blockId, $blockParams=array()) {
 	global $gallery;
-	static $g2Base;
 	static $pluginStatus;
-	if (!isset($g2Base)) {
-	    $g2Base = dirname(dirname(dirname(dirname(__FILE__))));
+	if (!isset($pluginStatus)) {
 	    list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	    if ($ret) {
 		return $ret;
 	    }
 	}
-
 	list ($module, $blockName) = explode('.', $blockId);
 	if (empty($pluginStatus[$module]['active'])) {
 	    return null;
@@ -1059,7 +1056,7 @@ class GalleryTheme extends GalleryPlugin {
 
 	$path = "modules/$module/Preloads.inc";
 	$platform =& $gallery->getPlatform();
-	if ($platform->file_exists("$g2Base/$path")) {
+	if ($platform->file_exists(GalleryCoreApi::getCodeBasePath($path))) {
 	    GalleryCoreApi::requireOnce($path);
 	    $className = $module . 'Preloads';
 	    $instance = new $className;

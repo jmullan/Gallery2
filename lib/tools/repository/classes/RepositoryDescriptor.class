@@ -142,12 +142,11 @@ class RepositoryDescriptor extends RepositoryObject {
 
 	/* Get file meta data. */
 	$platform =& $gallery->getPlatform();
-	$pluginBaseDir = GalleryCoreApi::getPluginBaseDir($pluginType, $this->_pluginId);
 
 	/* Don't force the _pluginDir, so that tests can override it */
 	if (!isset($this->_pluginDir)) {
-	    $this->_pluginDir = $platform->realpath(
-		sprintf('%s%ss/%s', $pluginBaseDir, $pluginType, $this->_pluginId)) . '/';
+	    $this->_pluginDir = $platform->realpath(sprintf('%s%ss/%s/', 
+		GalleryCoreApi::getCodeBasePath(), $pluginType, $this->_pluginId));
 	}
 
 	if (!$platform->file_exists($this->_pluginDir . 'MANIFEST')) {
@@ -208,8 +207,8 @@ class RepositoryDescriptor extends RepositoryObject {
 	$manifestFile = $pluginDir . 'MANIFEST';
 	GalleryUtilities::readIndividualManifest($manifestFile, $manifest);
 
-	$g2Base = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
-	$ignoreOffset = strlen(substr($pluginDir, strlen($g2Base) + 1));
+	$g2Base = GalleryCoreApi::getCodeBasePath();
+	$ignoreOffset = strlen(substr($pluginDir, strlen($g2Base)));
 
 	$manifestContents =
 	    $this->filterManifestForBasePackage($platform->file_get_contents($manifestFile));

@@ -373,7 +373,7 @@ class GalleryTemplate {
      */
     function resourceGetTemplateBaseDir($templateName, &$smarty) {
 	if (preg_match('/^(module|theme)s\/(.+)(\/.+)/iU', $templateName, $pluginId)) {
-	    return GalleryCoreApi::getPluginBaseDir($pluginId[1], $pluginId[2]) . '/';
+	    return GalleryCoreApi::getCodeBasePath();
 	} else {
 	    return $smarty->template_dir . '/';
 	}

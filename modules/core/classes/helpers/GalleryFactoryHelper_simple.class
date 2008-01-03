@@ -166,8 +166,7 @@ class GalleryFactoryHelper_simple {
 
 	    $platform =& $gallery->getPlatform();
 	    if (!$platform->file_exists(
-		GalleryCoreApi::getPluginBaseDir(
-		'module', $registry['pluginIds'][$classType][$className]) . $relativePath)) {
+		GalleryCoreApi::getCodeBasePath($relativePath))) {
 		return array(GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__,
 						  "Invalid path: $relativePath"),
 			     null);

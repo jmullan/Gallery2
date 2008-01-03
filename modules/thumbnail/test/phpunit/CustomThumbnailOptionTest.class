@@ -104,8 +104,7 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	$form = array('name' => array(1 => 'test.gif'),
 		      'type' => array(1 => 'image/gif'),
 		      'tmp_name' => array(1 =>
-			    GalleryCoreApi::getPluginBaseDir('module', 'core')
-				. 'modules/core/test/data/test1.jpg'));
+			    GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.jpg')));
 
 	list ($error, $warning) = $this->_handleRequestAfterEdit($form, $this->_item);
 	$this->assertEquals(array('form[CustomThumbnailOption][error][imageMime]'), $error);
@@ -117,8 +116,7 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	$form = array('name' => array(1 => 'test.jpg'),
 		      'type' => array(1 => 'image/jpeg'),
 		      'tmp_name' => array(1 =>
-			    GalleryCoreApi::getPluginBaseDir('module', 'core')
-				. 'modules/core/test/data/test1.jpg'));
+			    GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.jpg')));
 
 	$result = $this->_handleRequestAfterEdit($form, $this->_item);
 	$this->assertEquals(array(array(), array()), $result);
@@ -163,8 +161,7 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	$form = array('name' => array(1 => 'test.jpg'),
 		      'type' => array(1 => 'image/jpeg'),
 		      'tmp_name' => array(1 =>
-			    GalleryCoreApi::getPluginBaseDir('module', 'core')
-				. 'modules/core/test/data/test1.jpg'));
+			    GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.jpg')));
 
 	$result = $this->_handleRequestAfterEdit($form, $this->_item);
 	$this->assertEquals(array(array(), array()), $result);
@@ -218,8 +215,7 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	$form = array('name' => array(1 => 'test.jpg'),
 		      'type' => array(1 => 'image/jpeg'),
 		      'tmp_name' => array(1 =>
-			    GalleryCoreApi::getPluginBaseDir('module', 'core')
-				. 'modules/core/test/data/test1.jpg'));
+			    GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.jpg')));
 
 	$result = $this->_handleRequestAfterEdit($form, $this->_image);
 	$this->assertEquals(array(array(), array()), $result);
@@ -277,8 +273,7 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	$form = array('name' => array(1 => 'test.jpg'),
 		      'type' => array(1 => 'application/unknown'),
 		      'tmp_name' => array(1 =>
-			    GalleryCoreApi::getPluginBaseDir('module', 'core')
-				. 'modules/core/test/data/test1.jpg'));
+			    GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.jpg')));
 
 	$result = $this->_handleRequestAfterEdit($form, $this->_album);
 	$this->assertEquals(array(array(), array()), $result);
@@ -335,8 +330,7 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	$form = array('name' => array(1 => 'test.jpg'),
 		      'type' => array(1 => 'image/jpeg'),
 		      'tmp_name' => array(1 =>
-			    GalleryCoreApi::getPluginBaseDir('module', 'core')
-				. 'modules/core/test/data/test1.jpg'));
+			    GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.jpg')));
 
 	$result = $this->_handleRequestAfterEdit($form, $album);
 	$this->assertEquals(array(array(), array()), $result);
@@ -380,8 +374,7 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	$form = array('name' => array(1 => 'test.jpg'),
 		      'type' => array(1 => 'image/jpeg'),
 		      'tmp_name' => array(1 =>
-			    GalleryCoreApi::getPluginBaseDir('module', 'core')
-				. 'modules/core/test/data/test1.jpg'));
+			    GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.jpg')));
 
 	$result = $this->_handleRequestAfterEdit($form, $this->_album);
 	$this->assertEquals(array(array(), array()), $result);
@@ -414,8 +407,7 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	/* Verify filename is truncated to fit in db column; don't want db/filesystem mismatch */
 	$filename = '1234567891123456789212345678931234567894123456789512345678961234567897'
 	    . '123456789812345678991234567890123456789112345678921234567893.jpg';
-	$testfile = GalleryCoreApi::getPluginBaseDir('module', 'core')
-	    . 'modules/core/test/data/test1.jpg';
+	$testfile = GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.jpg');
 
 	list ($ret, $thumbnailId) = ThumbnailHelper::addItem(null, $this->_item->getId(),
 		$filename, $testfile, 'image/jpeg');
@@ -436,8 +428,7 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	$form = array('name' => array(1 => 'test.jpg'),
 		      'type' => array(1 => 'image/jpeg'),
 		      'tmp_name' => array(1 =>
-			    GalleryCoreApi::getPluginBaseDir('module', 'core')
-				. 'modules/core/test/data/test1.jpg'));
+			    GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.jpg')));
 
 	$result = $this->_handleRequestAfterEdit($form, $this->_item);
 	$this->assertEquals(array(array(), array()), $result);
@@ -452,8 +443,7 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	$form = array('name' => array(1 => 'TEST.jpg'),
 		      'type' => array(1 => 'image/jpeg'),
 		      'tmp_name' => array(1 =>
-			    GalleryCoreApi::getPluginBaseDir('module', 'core')
-				. 'modules/core/test/data/test1.jpg'));
+			    GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.jpg')));
 
 	$result = $this->_handleRequestAfterEdit($form, $this->_image);
 	$this->assertEquals(array(array(), array()), $result);

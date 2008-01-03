@@ -793,7 +793,7 @@ class RepositoryTest extends GalleryTestCase {
 	$platform = new UnitTestPlatform();
 
 	/* Package download. */
-	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+	$modules = GalleryCoreApi::getCodeBasePath('modules');
 	$platform->setReply('file_exists', array("$modules/testModule/"), true);
 	$platform->setReply('file_put_contents',
 	    array($testPackagePath, serialize(array($testPackageUrl))), true);
@@ -842,7 +842,7 @@ class RepositoryTest extends GalleryTestCase {
     function testPreVerifyPackageModuleNotInstalled() {
 	global $gallery;
 
-	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+	$modules = GalleryCoreApi::getCodeBasePath('modules');
 	$testDescriptor = $this->_getDescriptorForPreVerifyPackageTests();
 
 	$platform = new UnitTestPlatform();
@@ -859,7 +859,7 @@ class RepositoryTest extends GalleryTestCase {
     function testPreVerifyPackageModuleAlreadyInstalledAndWriteable() {
 	global $gallery;
 
-	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+	$modules = GalleryCoreApi::getCodeBasePath('modules');
 	$testDescriptor = $this->_getDescriptorForPreVerifyPackageTests();
 
 	$platform = new UnitTestPlatform();
@@ -882,7 +882,7 @@ class RepositoryTest extends GalleryTestCase {
     function testPreVerifyPackageModuleNotOverwriteable() {
 	global $gallery;
 
-	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+	$modules = GalleryCoreApi::getCodeBasePath('modules');
 	$testDescriptor = $this->_getDescriptorForPreVerifyPackageTests();
 
 	$platform = new UnitTestPlatform();
@@ -905,7 +905,7 @@ class RepositoryTest extends GalleryTestCase {
     function testPreVerifyPackageMissingOneDirectory() {
 	global $gallery;
 
-	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+	$modules = GalleryCoreApi::getCodeBasePath('modules');
 	$testDescriptor = $this->_getDescriptorForPreVerifyPackageTests();
 
 	$platform = new UnitTestPlatform();
@@ -928,7 +928,7 @@ class RepositoryTest extends GalleryTestCase {
     function testPreVerifyPackageMissingOneFile() {
 	global $gallery;
 
-	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+	$modules = GalleryCoreApi::getCodeBasePath('modules');
 	$testDescriptor = $this->_getDescriptorForPreVerifyPackageTests();
 
 	$platform = new UnitTestPlatform();
@@ -953,7 +953,7 @@ class RepositoryTest extends GalleryTestCase {
     function testPreVerifyPackageModuleContainsFileInPlaceOfADirectory() {
 	global $gallery;
 
-	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+	$modules = GalleryCoreApi::getCodeBasePath('modules');
 	$testDescriptor = $this->_getDescriptorForPreVerifyPackageTests();
 
 	$platform = new UnitTestPlatform();
@@ -978,7 +978,7 @@ class RepositoryTest extends GalleryTestCase {
     function testPreVerifyPackageNonWriteableModuleDir() {
 	global $gallery;
 
-	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+	$modules = GalleryCoreApi::getCodeBasePath('modules');
 	$gallery->setConfig('data.gallery.plugins', '/');
 	$testDescriptor = $this->_getDescriptorForPreVerifyPackageTests();
 
@@ -997,7 +997,7 @@ class RepositoryTest extends GalleryTestCase {
     function testVerifyPackageIntegrity() {
 	global $gallery;
 
-	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+	$modules = GalleryCoreApi::getCodeBasePath('modules');
 	$gallery->setConfig('data.gallery.plugins', 'plugins/');
 	$testDescriptor = array(
 	    'pluginType' => 'module',
@@ -1043,7 +1043,7 @@ class RepositoryTest extends GalleryTestCase {
 
 	$repository = new GalleryRepository();
 	$repository->_utilities = new RepositoryTestUtilitiesForScanPlugin();
-	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+	$modules = GalleryCoreApi::getCodeBasePath('modules');
 
 	$platform = new UnitTestPlatform();
 	$platform->setReply('file_exists', array($modules . '/RepositoryTest/MANIFEST'), true);
@@ -1098,7 +1098,7 @@ class RepositoryTest extends GalleryTestCase {
 
 	$repository = new GalleryRepository();
 	$repository->_utilities = new RepositoryTestUtilitiesForScanPlugin();
-	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+	$modules = GalleryCoreApi::getCodeBasePath('modules');
 
 	$platform = new UnitTestPlatform();
 	$platform->setReply('file_exists', array($modules . '/RepositoryTest/MANIFEST'), true);
@@ -1137,7 +1137,7 @@ class RepositoryTest extends GalleryTestCase {
 
 	$repository = new GalleryRepository();
 	$repository->_utilities = new RepositoryTestUtilitiesForScanPlugin();
-	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+	$modules = GalleryCoreApi::getCodeBasePath('modules');
 
 	$platform = new UnitTestPlatform();
 	$platform->setReply('file_exists', array($modules . '/RepositoryTest/MANIFEST'), true);
@@ -1192,7 +1192,7 @@ class RepositoryTest extends GalleryTestCase {
 
 	$repository = new GalleryRepository();
 	$repository->_utilities = null;  /* this should fail without needing utilities */
-	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+	$modules = GalleryCoreApi::getCodeBasePath('modules');
 
 	$platform = new UnitTestPlatform();
 	$platform->setReply(
@@ -1227,6 +1227,8 @@ class RepositoryTest extends GalleryTestCase {
 	    return $ret;
 	}
 
+	$cacheKey = 'GalleryRepositories::getRepositories::' . serialize(array('works', 'broken')) 
+	    . 'RepositoryTest_GalleryRepository';
 	/* 'broken' returns an error, 'works' is valid */
 	$this->assertEquals(array('works' => new RepositoryTest_GalleryRepository()), $repositories,
 	    'Returned repositories didn\'t match');
