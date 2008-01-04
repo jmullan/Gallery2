@@ -24,6 +24,8 @@ class ADODB_pdo_sqlite extends ADODB_pdo {
         var $hasInsertID = true;
         var $hasGenID = true;
         var $_genSeqSQL = "create table %s (id integer)";
+        var $_genSeqCountSQL = 'select count(*) from %s';
+        var $_genSeq2SQL = 'insert into %s values(%s)';
         var $_dropSeqSQL = 'drop table %s';
         var $_stmt = false;
 
@@ -145,7 +147,10 @@ class ADODB_pdo_sqlite extends ADODB_pdo {
 				@$this->Execute(sprintf($this->_genSeqSQL ,$seq));
 				$start -= 1;
 				$num = '0';
-				$ok = $this->Execute("insert into $seq values($start)");
+				$cnt = $this->GetOne(sprintf($this->_genSeqCountSQL,$seq));
+				if (!$cnt) {
+					$ok = $this->Execute(sprintf($this->_genSeq2SQL,$seq,$start));
+				}
 				if (!$ok) return false;
 			}
 			$this->Execute("update $seq set id=id+1");
