@@ -162,16 +162,28 @@
 {if !$AdminRepository.writeable.modules || !$AdminRepository.writeable.themes}
 <div class="gbBlock">
   <h3>{g->text text="Configure your Gallery"}</h3>
-  <p class="giDescription">
-    {g->text text="Before you can proceed, you have to change some permissions so that Gallery can install plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"}
-  </p>
-  <p class="gcBackground1" style="border-width: 1px; border-style: dotted; padding: 4px">
-    <b>
-      cd gallery2<br/>
-      {if !$AdminRepository.writeable.modules}chmod 777 modules<br/>{/if}
-      {if !$AdminRepository.writeable.themes}chmod 777 themes<br/>{/if}
-    </b>
-  </p>
+  {if $AdminRepository.OS == 'unix'}
+    <p class="giDescription">
+      {g->text text="Before you can proceed, you have to change some permissions so that Gallery can install plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"}
+    </p>
+    <p class="gcBackground1" style="border-width: 1px; border-style: dotted; padding: 4px">
+      <b>
+        cd {$AdminRepository.basePath}<br/>
+        {if !$AdminRepository.writeable.modules}chmod -R 777 modules<br/>{/if}
+        {if !$AdminRepository.writeable.themes}chmod -R 777 themes<br/>{/if}
+      </b>
+    </p>
+  {else}
+    <p class="giDescription">
+      {g->text text="Before you can proceed, please insure the following directories and sub-directories are writable, so that Gallery can install plugins for you:"}
+    </p>
+    <p class="gcBackground1" style="border-width: 1px; border-style: dotted; padding: 4px">
+      <b>
+        {if !$AdminRepository.writeable.modules}{$AdminRepository.basePath}/modules<br/>{/if}
+        {if !$AdminRepository.writeable.themes}{$AdminRepository.basePath}/themes<br/>{/if}
+      </b>
+    </p>
+  {/if}
   <p class="giDescription">
     {g->text text="If you have trouble changing permissions, ask your system administrator for assistance.  When you've fixed the permissions, click the Continue button to proceed."}
   </p>
@@ -265,8 +277,8 @@
 	<td>
 	  <div style="height: 16px" class="icon-plugin-{if
 	   $plugin.locked}locked" title="{g->text text="Locked Plugin"}"
-	  {elseif !$plugin.isCompatible}incompatible" title="{g->text text="Incompatible Plugin"}"
-	  {elseif $plugin.isUpgradeable}upgrade title="{g->text text="Upgrade Available"}"
+	  {elseif !$plugin.isCompatible || $plugin.isDowngraded}incompatible" title="{g->text text="Incompatible Plugin"}"
+	  {elseif $plugin.isUpgradeable}upgrade" title="{g->text text="Upgrade Available"}"
 	  {else}download"{/if}/>
 	</td>
 
@@ -303,7 +315,7 @@
 	</td>
 
 	<td>
-          {if $plugin.locked || !$plugin.isCompatible}
+          {if $plugin.locked || !$plugin.isCompatible || $plugin.isDowngraded}
             &nbsp;
           {else}{strip}
           <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminRepositoryDownload" arg3="pluginType=`$plugin.type`" arg4="pluginId=`$pluginId`"}">

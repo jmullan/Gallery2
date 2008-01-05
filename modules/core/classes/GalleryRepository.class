@@ -362,6 +362,8 @@ class GalleryRepository {
 	    } else {
 		$groupLabel = $core->translate('General');
 	    }
+	    
+	    $isDowngraded =  version_compare($localVersion, $plugin['header']['version'], '>');
 
 	    list ($providedCoreApiVersion, $providedPluginApiVersion) =
 		$this->_utilities->getProvidedApis($pluginType, $coreApis);
@@ -381,6 +383,7 @@ class GalleryRepository {
 			'core' => implode('.', $providedCoreApiVersion),
 			'plugin' => implode('.', $providedPluginApiVersion))),
 		'locked' => $locked,
+		'isDowngraded' => $isDowngraded,
 		'isUpgradeable' => $isUpgradeable);
 	}
 

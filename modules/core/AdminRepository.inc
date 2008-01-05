@@ -311,6 +311,8 @@ class AdminRepositoryView extends GalleryView {
 	    $AdminRepository['showIncompatible'] = 1;
 	}
 
+	$AdminRepository['OS'] = strncasecmp(PHP_OS, 'win', 3) ? 'unix' : 'winnt';
+
 	$AdminRepository['isCoreUpgradeAvailable'] = false;
 	$AdminRepository['upgradesAvailable'] = false;
 	foreach ($repositories as $source => $repository) {
@@ -386,10 +388,10 @@ class AdminRepositoryView extends GalleryView {
 	    uasort($AdminRepository['browseData'], array($this, 'pluginSort'));
 	}
 
-	$baseName = dirname(dirname(dirname(__FILE__)));
+	$AdminRepository['basePath'] = dirname(dirname(dirname(__FILE__)));
 	$AdminRepository['writeable'] = array(
-	    'modules' => $platform->is_writeable("$baseName/modules"),
-	    'themes' => $platform->is_writeable("$baseName/themes"));
+	    'modules' => $platform->is_writeable($AdminRepository['basePath'] . '/modules'),
+	    'themes' => $platform->is_writeable($AdminRepository['basePath'] .'/themes'));
 	$AdminRepository['authToken'] = $session->getAuthToken();
 
 	/* Render the HTML body */
