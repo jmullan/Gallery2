@@ -67,8 +67,8 @@ class GalleryRepository {
      * @static
      */
     function getRepositories($sources=array(), $repositoryClassName='GalleryRepository') {
-	$cacheKey = 
-	    'GalleryRepositories::getRepositories::' . serialize($sources) . $repositoryClassName;
+	$cacheKey = 'GalleryRepository::getRepositories(' . join('|', $sources) .
+	    ",$repositoryClassName)";
 	if (!GalleryDataCache::containsKey($cacheKey)) {
 	    if (empty($sources)) {
 		list ($ret, $sources) =
@@ -99,6 +99,17 @@ class GalleryRepository {
 	}
 
 	return array(null, $repositories, $errorCount);
+    }
+
+    /**
+     * Clear the cached version of the repositories saved by a call to getRepositories()
+     *
+     * @static
+     */
+    function clearRepositoryCache($sources=array(), $repositoryClassName='GalleryRepository') {
+	$cacheKey = 'GalleryRepository::getRepositories(' . join('|', $sources) .
+	    ",$repositoryClassName)";
+	GalleryDataCache::remove($cacheKey);
     }
 
     /**
@@ -650,11 +661,11 @@ class GalleryRepository {
 	return array(null, $descriptor);
     }
 
-    /** 
+    /**
      * @see GalleryRepositoryUtilities::downloadSourceFiles
      */
     function downloadSourceFiles($pluginType, $pluginId, $pluginDownloadData, $callback=null) {
-	return $this->_utilities->downloadSourceFiles($pluginType, $pluginId, $pluginDownloadData, 
+	return $this->_utilities->downloadSourceFiles($pluginType, $pluginId, $pluginDownloadData,
 	    $callback);
     }
 
@@ -741,15 +752,15 @@ class GalleryRepository {
 		    $checksum = strlen($metaData['hash']) == 32
 			? md5($contents)
 			: sprintf("%u", crc32($contents));
- 
+
 		    if (!$platform->file_exists($filePath)) {
 			$errorMessage = "'$filePath' doesn't exist.";
-		    } else if (!in_array($platform->filesize($filePath), 
+		    } else if (!in_array($platform->filesize($filePath),
 					 array($metaData['bytes'], $metaData['bytes_crlf']))) {
 			$errorMessage = "Size of '$filePath' did not match package descriptor.";
 		    } else if (false === $contents) {
 			$errorMessage = "Couldn't read '$filePath'.";
-		    } else if (!in_array($checksum, 
+		    } else if (!in_array($checksum,
 					 array($metaData['hash'], $metaData['hash_crlf']))) {
 			$errorMessage = "Integrity check failed for '$filePath'.";
 		    }

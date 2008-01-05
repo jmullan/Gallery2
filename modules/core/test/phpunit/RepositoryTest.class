@@ -1020,7 +1020,7 @@ class RepositoryTest extends GalleryTestCase {
 			    array("$modules/testModule/moduleFile1"), "moduleFile1");
 	$platform->setReply('file_exists', array("$modules/testModule/moduleFile1"), true);
 	$platform->setReply('filesize', array("$modules/testModule/moduleFile1"), 1337);
-	
+
 
 	/* moduleFile2 */
 	$platform->setReply('file_get_contents',
@@ -1220,24 +1220,28 @@ class RepositoryTest extends GalleryTestCase {
 	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
 
-    function testGetRepositories() {
+    function testGetRepositoriesAndClearCache() {
 	list ($ret, $repositories, $repositoryErrors) = GalleryRepository::getRepositories(
 	    array('works', 'broken'), 'RepositoryTest_GalleryRepository');
 	if ($ret) {
 	    return $ret;
 	}
 
-	$cacheKey = 'GalleryRepositories::getRepositories::' . serialize(array('works', 'broken')) 
-	    . 'RepositoryTest_GalleryRepository';
 	/* 'broken' returns an error, 'works' is valid */
 	$this->assertEquals(array('works' => new RepositoryTest_GalleryRepository()), $repositories,
 	    'Returned repositories didn\'t match');
 	$this->assertEquals(1, $repositoryErrors, 'Returned error count didn\'t match');
 
+	$cacheKey =
+	    'GalleryRepository::getRepositories(works|broken,RepositoryTest_GalleryRepository)';
 	list ($cachedRepositories, $cachedErrorCount) = GalleryDataCache::get($cacheKey);
-	$this->assertEquals(array('works' => new RepositoryTest_GalleryRepository()), 
+	$this->assertEquals(array('works' => new RepositoryTest_GalleryRepository()),
 	    $cachedRepositories, 'Cached repositories didn\'t match');
 	$this->assertEquals(1, $cachedErrorCount, 'Cached error count didn\'t match');
+
+	GalleryRepository::clearRepositoryCache(
+	    array('works', 'broken'), 'RepositoryTest_GalleryRepository');
+	$this->assert(!GalleryDataCache::containsKey($cacheKey), 'key should be deleted');
     }
 
     function testGetPluginUpgradeInfoForBasePackageUpgrade() {
