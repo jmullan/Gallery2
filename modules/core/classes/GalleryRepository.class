@@ -362,7 +362,7 @@ class GalleryRepository {
 	    } else {
 		$groupLabel = $core->translate('General');
 	    }
-	    
+
 	    $isDowngraded =  version_compare($localVersion, $plugin['header']['version'], '>');
 
 	    list ($providedCoreApiVersion, $providedPluginApiVersion) =
@@ -755,6 +755,21 @@ class GalleryRepository {
 		    $checksum = strlen($metaData['hash']) == 32
 			? md5($contents)
 			: sprintf("%u", crc32($contents));
+
+		    /**
+		     * hash_crlf and bytes_crlf were introduced in r17072 (2.3) so they don't
+		     * exist in older packages.  Set them to null if they don't exist so that we
+		     * don't get errors below.
+		     *
+		     * @todo: remove this when all of our DP packages have been generated these
+		     * fields.
+		     */
+		    if (empty($metaData['hash_crlf'])) {
+			$metaData['hash_crlf'] = null;
+		    }
+		    if (empty($metaData['bytes_crlf'])) {
+			$metaData['bytes_crlf'] = null;
+		    }
 
 		    if (!$platform->file_exists($filePath)) {
 			$errorMessage = "'$filePath' doesn't exist.";
