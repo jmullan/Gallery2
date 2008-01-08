@@ -230,16 +230,16 @@ class CoreModule extends GalleryModule {
 		    && $childCounts[$itemId] > 0) {
 	    	$next = next($items);
 		$params = array('view' => 'core.ItemAdmin',
-					   'subView' => 'core.ItemDelete',
-					   'itemId' => $itemId,
-					   'return' => 1);
+				'subView' => 'core.ItemDelete',
+				'itemId' => $itemId,
+				'return' => 1);
 		/* First item on the page will be in the list for deletion */
 		if ($next) {
 		    $params['anchorId'] = $next->getId();
 		}
 
 		$links[$itemId][] = array('text' => $this->_translate('Delete Items'),
-					   'params' => $params);
+					  'params' => $params);
 	    }
 	}
 
