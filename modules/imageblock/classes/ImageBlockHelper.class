@@ -521,6 +521,15 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    return array($ret, null);
 	}
 
+	if ($order == 'random') {
+	    $where[] = '[ImageBlockCacheMap::random] > ?';
+	    list ($ret, $minMax) = ImageBlockHelper::getRandomKeyRange();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    $data[] = ImageBlockHelper::getRandomKey($minMax[0], $minMax[1]);
+	}
+
 	if ($order == 'viewed' || isset($parentId)) {
 	    $select[] = '[GalleryItemAttributesMap::viewCount]';
 	    $from[] = '[GalleryItemAttributesMap]';
@@ -601,11 +610,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 
 	switch ($order) {
 	case 'random':
-	    $storage =& $gallery->getStorage();
-	    list ($ret, $orderBy) = $storage->getFunctionSql('RAND', array());
-	    if ($ret) {
-		return array($ret, null);
-	    }
+	    $orderBy = '[ImageBlockCacheMap::random] ASC';
 	    break;
 	case 'recent':
 	    $orderBy = '[ImageBlockCacheMap::itemTimestamp] DESC';
@@ -676,7 +681,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	INSERT INTO
 	  [ImageBlockCacheMap]
 	SELECT DISTINCT
-	  ?, ?, [GalleryEntity::creationTimestamp], [GalleryEntity::id]
+	  ?, ?, [GalleryEntity::creationTimestamp], [GalleryEntity::id], NULL
 	FROM
 	  [GalleryEntity], [%s], [GalleryAccessSubscriberMap],
 	  [GalleryChildEntity], [GalleryDerivative]
@@ -707,6 +712,58 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	$ret = $storage->execute(sprintf($query, 'GalleryAlbumItem', 'GalleryAlbumItem'), $data);
 	if ($ret) {
 	    return $ret;
+	}
+
+	$ret = ImageBlockHelper::_populateRandomKey();
+	if ($ret) {
+	    return $ret;
+	}
+
+	return null;
+    }
+
+    /**
+     * Update the ImageBlockCacheMap, setting all null random keys to a random value.
+     * @param $statusMonitor (optional) A callback
+     */
+    function _populateRandomKey($statusMonitor=null) {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageblock');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$query = '
+	SELECT [ImageBlockCacheMap::itemId]
+	  FROM [ImageBlockCacheMap]
+	 WHERE [ImageBlockCacheMap::random] IS NULL';
+
+	list ($ret, $results) = $storage->search($query);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$totalRecords = $results->resultCount();
+	if ($totalRecords > 0) {
+	    $current = 0;
+	    $step = (int)ceil($totalRecords * .10);
+	    $statusText = $module->translate('Updating Random Keys');
+	    while ($row = $results->nextResult()) {
+		$ret = $storage->updateMapEntry('ImageBlockCacheMap', array('itemId' => $row[0]), 
+		    array('random' => ImageBlockHelper::getRandomKey()));
+		if ($ret) {
+		    return $ret;
+		}
+		if ((++$current) % $step == 0) {
+		    $gallery->guaranteeTimeLimit(30);
+		    if (!empty($status)) {
+			call_user_func_array($status,
+					     array($statusText, '', $current / $totalRecords));
+		    }
+		}
+	    }
 	}
 
 	return null;
@@ -946,6 +1003,50 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    $result = (bool)$rec[0];
 	}
 	return array(null, $result);
+    }
+
+    /**
+     * Get a random number that can be used to search later
+     * @param  int $min(optional) the minimum number to generate (default: 0)
+     * @param  int $max(optional) the maximim number to generate (default: 2147483647)
+     * @return int a number between 0 and 2147483647.
+     */
+    function getRandomKey($min=0, $max=2147483647) {
+	static $initialized = false;
+
+	if (!$initialized && version_compare(phpversion(), '4.2.0') < 0) {
+	    list($usec, $sec) = explode(' ', microtime());
+	    srand($sec + $usec * 100000);
+	    $initialized = true;
+	}
+	return rand(0, 2147483647);
+    }
+
+    /**
+     * Determine the highest and lowest numbers currently in the random index.
+     *
+     * @return array GalleryStatus a status code
+     *		     array int Minimum value of the random number to be genereated
+     *			   int Maximum value of the random number to be generated
+     */
+    function getRandomKeyRange() {
+	global $gallery;
+	$storage = $gallery->getStorage();
+
+	$query = 'SELECT MIN([ImageBlockCacheMap::random]), MAX([ImageBlockCacheMap::random])'
+		 . ' FROM [ImageBlockCacheMap]'
+		 . ' WHERE [ImageBlockCacheMap::random] IS NOT NULL';
+
+	list ($ret, $results) = $storage->search($query);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	if ($row = $results->nextResult()) {
+	    $min = $row[0];
+	    $max = $row[1];
+	}
+	return array(null, array($min, $max));
     }
 }
 ?>

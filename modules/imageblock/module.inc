@@ -32,7 +32,7 @@ class ImageBlockModule extends GalleryModule {
 	$this->setId('imageblock');
 	$this->setName($gallery->i18n('Image Block'));
 	$this->setDescription($gallery->i18n('Random, Most Recent or Most Viewed Photo or Album'));
-	$this->setVersion('1.1.5');
+	$this->setVersion('1.1.6');
 	$this->_templateVersion = 1;
 	$this->setGroup('blocks', $gallery->i18n('Blocks'));
 	$this->setCallbacks('getSiteAdminViews');
@@ -66,9 +66,9 @@ class ImageBlockModule extends GalleryModule {
      */
     function upgrade($currentVersion) {
 	global $gallery;
+	$storage =& $gallery->getStorage();
 
 	if (!empty($currentVersion) && version_compare($currentVersion, '1.0.1', '<')) {
-	    $storage =& $gallery->getStorage();
 	    $ret = $storage->configureStore($this->getId(), array('ImageBlockCacheMap:1.0'));
 	    if ($ret) {
 		return $ret;
@@ -97,6 +97,17 @@ class ImageBlockModule extends GalleryModule {
 	    }
 	}
 
+	if (!empty($currentVersion) && version_compare($currentVersion, '1.1.5', '<=')) {
+	    GalleryCoreApi::requireOnce('modules/imageblock/classes/ImageBlockHelper.class');
+	    $ret = $storage->configureStore($this->getId(), array('ImageBlockCacheMap:1.1'));
+	    if ($ret) {
+		return $ret;
+	    }
+	    $ret = ImageBlockHelper::_populateRandomKey();
+	    if ($ret) {
+		return $ret;
+	    }
+	}
 	return null;
     }
 
