@@ -1851,7 +1851,7 @@ class CoreModuleExtras {
 
 	    /* Clear the cache data since we changed the blob encoding */
 	    $gallery->guaranteeTimeLimit(60);
-	    $ret = GalleryCoreApi::removeAllMapEntries('GalleryCacheMap');
+	    $ret = GalleryCoreApi::removeAllMapEntries('GalleryCacheMap', true);
 	    if ($ret) {
 		return $ret;
 	    }
@@ -2135,6 +2135,10 @@ class CoreModuleExtras {
 	    /* Added ConvertDatabaseToUtf8Task */
 	case '1.1.20':
 	    /* Add column isEmpty to CacheMap */
+	    $ret = GalleryCoreApi::removeAllMapEntries('GalleryCacheMap', true);
+	    if ($ret) {
+		return $ret;
+	    }
 	    $ret = $storage->configureStore($module->getId(), array('GalleryCacheMap:1.0'));
 	    if ($ret) {
 		return $ret;
@@ -2452,7 +2456,7 @@ class CoreModuleExtras {
 		fclose($fh);
 	    }
 	case '1.2.24':
-	    /* Combined YUI libraries into a single file */ 
+	    /* Combined YUI libraries into a single file */
 
 	case 'end of upgrade path':
 	    /*
@@ -3428,7 +3432,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 		    if ($converted) {
 			/* Clear any cache data since it may be in the wrong character set*/
 			$gallery->guaranteeTimeLimit(60);
-			$ret = GalleryCoreApi::removeAllMapEntries('GalleryCacheMap');
+			$ret = GalleryCoreApi::removeAllMapEntries('GalleryCacheMap', true);
 			if ($ret) {
 			    return array($ret, null);
 			}
