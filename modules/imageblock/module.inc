@@ -36,7 +36,7 @@ class ImageBlockModule extends GalleryModule {
 	$this->_templateVersion = 1;
 	$this->setGroup('blocks', $gallery->i18n('Blocks'));
 	$this->setCallbacks('getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 34));
+	$this->setRequiredCoreApi(array(7, 44));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
@@ -99,11 +99,11 @@ class ImageBlockModule extends GalleryModule {
 
 	if (!empty($currentVersion) && version_compare($currentVersion, '1.1.5', '<=')) {
 	    GalleryCoreApi::requireOnce('modules/imageblock/classes/ImageBlockHelper.class');
-	    $ret = $storage->configureStore($this->getId(), array('ImageBlockCacheMap:1.1'));
+	    $ret = $storage->removeAllMapEntries('ImageBlockCacheMap', true);
 	    if ($ret) {
 		return $ret;
 	    }
-	    $ret = ImageBlockHelper::_populateRandomKey();
+	    $ret = $storage->configureStore($this->getId(), array('ImageBlockCacheMap:1.1'));
 	    if ($ret) {
 		return $ret;
 	    }
