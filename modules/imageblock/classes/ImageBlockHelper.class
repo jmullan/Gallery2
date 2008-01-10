@@ -724,16 +724,11 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 
     /**
      * Update the ImageBlockCacheMap, setting all null random keys to a random value.
-     * @param $statusMonitor (optional) A callback
+     * @return GalleryStatus a status code
      */
-    function _populateRandomKey($statusMonitor=null) {
+    function _populateRandomKey() {
 	global $gallery;
 	$storage =& $gallery->getStorage();
-
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageblock');
-	if ($ret) {
-	    return $ret;
-	}
 
 	$query = '
 	SELECT [ImageBlockCacheMap::itemId]
@@ -749,7 +744,6 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	if ($totalRecords > 0) {
 	    $current = 0;
 	    $step = (int)ceil($totalRecords * .10);
-	    $statusText = $module->translate('Updating Random Keys');
 	    while ($row = $results->nextResult()) {
 		$ret = $storage->updateMapEntry('ImageBlockCacheMap', array('itemId' => $row[0]), 
 		    array('random' => ImageBlockHelper::getRandomKey()));
@@ -758,10 +752,6 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		}
 		if ((++$current) % $step == 0) {
 		    $gallery->guaranteeTimeLimit(30);
-		    if (!empty($status)) {
-			call_user_func_array($status,
-					     array($statusText, '', $current / $totalRecords));
-		    }
 		}
 	    }
 	}
