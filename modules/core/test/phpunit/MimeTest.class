@@ -45,6 +45,10 @@ class MimeTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$ret = GalleryCoreApi::addMimeType('ttt', 'test/test3', false);
+	if ($ret) {
+	    return $ret;
+	}
     }
 
     function tearDown() {
@@ -54,6 +58,11 @@ class MimeTest extends GalleryTestCase {
 	}
 
 	$ret = GalleryCoreApi::removeMimeType(array('extension' => 'mimetest'));
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::removeMimeType(array('mimeType' => 'test/test3'));
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
@@ -70,6 +79,33 @@ class MimeTest extends GalleryTestCase {
 	    return $ret;
 	}
 	$this->assertEquals('test/test', $mimeType);
+    }
+
+    function testDetermineMimeType() {
+	list ($ret, $mimeType) = GalleryCoreApi::determineMimeType('xxx', 'test/test2');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals('test/test', $mimeType, 'Expected MimeType of test/test');
+
+	list ($ret, $mimeType) = GalleryCoreApi::determineMimeType('XXX', 'test/test2');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals('test/test', $mimeType, 'Upper case should still produce test/test');
+
+	list ($ret, $mimeType) = GalleryCoreApi::determineMimeType('abc', 'test/test2');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals('application/unknown', $mimeType, 
+	    'Expected MimeType of application/unknown');
+
+	list ($ret, $mimeType) = GalleryCoreApi::determineMimeType('abc', 'test/test3');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals('test/test3', $mimeType, 'Expected MimeType of test/test3');
     }
 
     function testConvertExtensionToMime() {

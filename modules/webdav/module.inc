@@ -31,12 +31,12 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 
 	$this->setId('webdav');
 	$this->setName($gallery->i18n('WebDAV'));
-	$this->setVersion('1.0.6'); /* Update upgrade() too! */
+	$this->setVersion('1.0.7'); /* Update upgrade() too! */
 	$this->_templateVersion = 1;
 	$this->setDescription($gallery->i18n('Mount Gallery on your desktop.'));
 	$this->setGroup('interfaces', $gallery->i18n('Remote Interfaces'));
 	$this->setCallbacks('getItemLinks|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 39));
+	$this->setRequiredCoreApi(array(7, 45));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
@@ -159,6 +159,8 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	case '1.0.4':
 	    /* Refactored to new event registration from core API 7.34 */
 	case '1.0.5':
+	case '1.0.6':
+	    /* Require minimum core API 7.45 */
 
 	case 'end of upgrade path':
 	    break;

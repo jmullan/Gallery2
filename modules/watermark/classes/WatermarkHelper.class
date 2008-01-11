@@ -405,22 +405,11 @@ class WatermarkHelper {
      * @return string mime type
      */
     function determineMimeType(&$form) {
-	/* Get the mime type from the upload info. */
-	$mimeType = $form['type'][1];
-
-	/*
-	 * If we don't get useful data from that or its a type we don't
-	 * recognize, take a swing at it using the file name.
-	 */
-	if ($mimeType != 'application/octet-stream' && $mimeType != 'application/unknown') {
-	    list ($ret, $mimeExtensions) = GalleryCoreApi::convertMimeToExtensions($mimeType);
-	}
-	if (empty($mimeExtensions)) {
-	    $extension = GalleryUtilities::getFileExtension($form['name'][1]);
-	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
-	    if ($ret) {
-		$mimeType = 'application/unknown';
-	    }
+	/* Get the mime type. */
+	$extension = GalleryUtilities::getFileExtension($form['tmp_name'][1]);
+	list ($ret, $mimeType) = GalleryCoreApi::determineMimeType($extension, $form['type'][1]);
+	if ($ret) {
+	    $mimeType = 'application/unknown';
 	}
 	return $mimeType;
     }

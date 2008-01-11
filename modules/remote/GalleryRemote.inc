@@ -537,23 +537,11 @@ class GalleryRemoteController extends GalleryController {
 	    return null;
 	}
 
-	/* Get the mime type from the upload info. */
-	$mimeType = $file['type'];
-
-	/*
-	 * If we don't get useful data from that or its a type we don't
-	 * recognize, take a swing at it using the file name.
-	 */
-	/* Note, if $ret is in error, then $mimeExtensions is empty anyway */
-	list ($ret, $mimeExtensions) = GalleryCoreApi::convertMimeToExtensions($mimeType);
-	if ($mimeType == 'application/octet-stream' ||
-	    $mimeType == 'application/unknown' ||
-	    empty($mimeExtensions)) {
-	    $extension = GalleryUtilities::getFileExtension($file['name']);
-	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
-	    if ($ret) {
-		return $ret;
-	    }
+	/* Get the mime type. */
+	$extension = GalleryUtilities::getFileExtension($file['name']);
+	list ($ret, $mimeType) = GalleryCoreApi::determineMimeType($extension, $file['type']);
+	if ($ret) {
+	    $mimeType = 'application/unknown';
 	}
 
 	if (isset($form['force_filename'])) {

@@ -93,30 +93,14 @@ class UploadItemsController extends GalleryController {
 		$gallery->debug("Source encoding from Windows client: $sourceEncoding");
 	    }
 	    $file['name'] = GalleryCoreApi::convertToUtf8($file['name'], $sourceEncoding);
-	    /*
-	     * Get the mime type from the upload info.  If we don't get useful data from that
-	     * or its a type we don't recognize, take a swing at it using the file name.
-	     */
-	    $mimeType = $file['type'];
-	    if (!empty($mimeType)) {
-		list ($ret, $exts) = GalleryCoreApi::convertMimeToExtensions($mimeType);
-		if ($ret) {
-		    GalleryCoreApi::releaseLocks($lockIds);
-		    return array($ret, null);
-		}
+
+	    /* Get the mime type. */
+	    $extension = GalleryUtilities::getFileExtension($file['name']);
+	    list ($ret, $mimeType) = GalleryCoreApi::determineMimeType($extension, $file['type']);
+	    if ($ret) {
+		$mimeType = 'application/unknown';
 	    }
 
-	    if (empty($mimeType) ||
-		    $mimeType == 'application/octet-stream' ||
-		    $mimeType == 'application/unknown' ||
-		    empty($exts)) {
-		$extension = GalleryUtilities::getFileExtension($file['name']);
-		list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
-		if ($ret) {
-		    GalleryCoreApi::releaseLocks($lockIds);
-		    return array($ret, null);
-		}
-	    }
 	    $title = basename($file['name']);
 	    $caption = '';
 	    $description = '';

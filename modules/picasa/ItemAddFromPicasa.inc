@@ -55,23 +55,14 @@ class ItemAddFromPicasa extends ItemAddPlugin {
 		      'tmp_name' => $form['tmp_name']['picasaZipPath'],
 		      'size' => $form['size']['picasaZipPath']);
 
-		/* Get the mime type from the upload info. */
-		$mimeType = $file['type'];
-
-		/*
-		 * If we don't get useful data from that or its a type we don't
-		 * recognize, take a swing at it using the file name.
-		 */
-		list ($ret, $mimeExtensions) =
-		    GalleryCoreApi::convertMimeToExtensions($mimeType);
-		if ($mimeType == 'application/octet-stream' ||
-			$mimeType == 'application/unknown' || empty($mimeExtensions)) {
-		    $extension = GalleryUtilities::getFileExtension($file['name']);
-		    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
-		    if ($ret) {
-			$mimeType = 'application/unknown';
-		    }
+		/* Get the mime type. */
+		$extension = GalleryUtilities::getFileExtension($file['name']);
+		list ($ret, $mimeType) = 
+			GalleryCoreApi::determineMimeType($extension, $file['type']);
+		if ($ret) {
+		    $mimeType = 'application/unknown';
 		}
+
 		list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation($mimeType, 'extract');
 		if ($ret) {
 		    return array($ret, null, null);

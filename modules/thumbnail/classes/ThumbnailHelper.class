@@ -213,19 +213,13 @@ class ThumbnailHelper {
      */
     function addItem($mimeType, $parentId,
 		     $filename, $tmpfile, $fileMimeType, $knownSize=array(), $item=null) {
-	/*
-	 * If we don't get useful data from the form or its a type we don't
-	 * recognize, take a swing at it using the file name.
-	 */
-	list ($ret, $mimeExtensions) = GalleryCoreApi::convertMimeToExtensions($fileMimeType);
-	if ($fileMimeType == 'application/octet-stream'
-		|| $fileMimeType == 'application/unknown' || empty($mimeExtensions)) {
-	    $extension = GalleryUtilities::getFileExtension($filename);
-	    list ($ret, $fileMimeType) = GalleryCoreApi::convertExtensionToMime($extension);
-	    if ($ret) {
-		$fileMimeType = 'application/unknown';
-	    }
+	/* Get the mime type. */
+	$extension = GalleryUtilities::getFileExtension($filename);
+	list ($ret, $fileMimeType) = GalleryCoreApi::determineMimeType($extension, $fileMimeType);
+	if ($ret) {
+	    $mimeType = 'application/unknown';
 	}
+
 	if ($fileMimeType != 'image/jpeg') {
 	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_FILE_TYPE), null);
 	}

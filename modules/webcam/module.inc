@@ -30,11 +30,11 @@ class WebCamModule extends GalleryModule {
 	$this->setId('webcam');
 	$this->setName($gallery->i18n('WebCam'));
 	$this->setDescription($gallery->i18n('Support periodically updated images like a webcam'));
-	$this->setVersion('1.1.4'); /* Update upgrade() function below too */
+	$this->setVersion('1.1.5'); /* Update upgrade() function below too */
 	$this->_templateVersion = 1;
 	$this->setGroup('import', $gallery->i18n('Import'));
 	$this->setCallbacks('getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 27));
+	$this->setRequiredCoreApi(array(7, 45));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
@@ -117,6 +117,8 @@ class WebCamModule extends GalleryModule {
 	    case '1.1.2':
 	    case '1.1.3':
 		/* Limiting file:// to admins and from URL to trusted people */
+	    case '1.1.4':
+		/* Require minimum core API 7.45 */
 
 	    case 'end of upgrade path':
 		break;

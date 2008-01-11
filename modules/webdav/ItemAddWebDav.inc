@@ -53,16 +53,11 @@ class ItemAddWebDav extends ItemAddPlugin {
 	    return array($ret, null, null);
 	}
 
-	/* If the mime type is unknown try to get a mime type from the file name */
-	list ($ret, $mimeExtensions) = GalleryCoreApi::convertMimeToExtensions($mimeType);
-	if ($mimeType == 'application/octet-stream'
-		|| $mimeType == 'application/unknown'
-		|| empty($mimeExtensions)) {
-	    $extension = GalleryUtilities::getFileExtension(basename($path));
-	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
-	    if ($ret) {
-		$mimeType = 'application/unknown';
-	    }
+	/* Get the mime type. */
+	$extension = GalleryUtilities::getFileExtension(basename($path));
+	list ($ret, $mimeType) = GalleryCoreApi::determineMimeType($extension, $mimeType);
+	if ($ret) {
+	    $mimeType = 'application/unknown';
 	}
 
 	list ($ret, $itemId) = GalleryCoreApi::fetchItemIdByPath($path);

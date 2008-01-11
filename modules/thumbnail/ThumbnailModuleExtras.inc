@@ -334,6 +334,8 @@ class ThumbnailModuleExtras {
 	case '1.0.10':
 	case '1.0.11':
 	    /* Refactored to new event registration from core API 7.34 */
+	case '1.0.12':
+	    /* Require minimum core API 7.45 */
 
 	case 'end of upgrade path':
 	    /*

@@ -31,11 +31,11 @@ class PicasaModule extends GalleryModule {
 	$this->setId('picasa');
 	$this->setName($gallery->i18n('Picasa'));
 	$this->setDescription($gallery->i18n('Import for Picasa 2 XML-Exports'));
-	$this->setVersion('1.0.8');
+	$this->setVersion('1.0.9');
 	$this->_templateVersion = 1;
 	$this->setGroup('import', $this->translate('Import'));
 	$this->setCallbacks('getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 27));
+	$this->setRequiredCoreApi(array(7, 45));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 

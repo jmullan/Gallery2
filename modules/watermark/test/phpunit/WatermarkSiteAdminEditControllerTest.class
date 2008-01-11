@@ -196,10 +196,10 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
     }
 
     function testReplaceImageWrongType() {
-	$this->_replaceImageTest('test/blah');
+	$this->_replaceImageTest('test/blah', 'zzz');
     }
 
-    function _replaceImageTest($postMimeType) {
+    function _replaceImageTest($postMimeType, $ext='yyy') {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
@@ -225,19 +225,19 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	if (!$platform->copy(__FILE__, $derivativeFile)) {
 	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
 	}
-	$ret = GalleryCoreApi::addMimeType($ext = 'ut' . rand(100, 999), 'test/file', false);
+	$ret = GalleryCoreApi::addMimeType('yyy', 'test/file', false);
 	if ($ret) {
 	    return $ret;
 	}
 
+	$sourceFile = dirname(dirname(__FILE__)) . '/data/UserWatermarkControllerTestFile.' . $ext;
 	GalleryUtilities::putRequestVariable('watermarkId', $this->_watermark->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[watermarkName]', $this->_watermark->getName());
 	GalleryUtilities::putRequestVariable('form[xPercentage]', '50.00');
 	GalleryUtilities::putRequestVariable('form[yPercentage]', '80.00');
 	GalleryUtilities::putRequestVariable('form[whichDerivative][thumbnail]', 'on');
-	GalleryUtilities::putRequestVariable('form[tmp_name][1]',
-		$sourceFile = dirname(__FILE__) . '/UserWatermarkEditControllerTest.class');
+	GalleryUtilities::putRequestVariable('form[tmp_name][1]', $sourceFile);
 	GalleryUtilities::putRequestVariable('form[type][1]', $postMimeType);
 	GalleryUtilities::putRequestVariable('form[name][1]', 'file.class');
 
@@ -253,7 +253,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 		    'error' => array('form[error][mimeType][mismatch]'));
 	$this->assertEquals($expected, $results);
 
-	$ret = GalleryCoreApi::removeMimeType(array('extension' => $ext));
+	$ret = GalleryCoreApi::removeMimeType(array('extension' => 'yyy'));
 	if ($ret) {
 	    return ($ret);
 	}

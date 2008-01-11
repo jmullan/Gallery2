@@ -86,7 +86,7 @@ class GalleryCoreApi {
      * - remove GalleryRepository::getLanguageDescription
      */
     function getApiVersion() {
-	return array(7, 44);
+	return array(7, 45);
     }
 
     /**
@@ -2544,6 +2544,20 @@ class GalleryCoreApi {
 	return GalleryChildEntityHelper_simple::buildItemQuery($baseTable, $baseIdColumn,
 		$baseQuery, $orderBy, $orderDirection, $class, $requiredPermission,
 		$linkableOnly, $userId);
+    }
+
+    /**
+     * Determine the proper mime type given the file extension and mime type from the request
+     *
+     * @param string $extension a file extension
+     * @param string $requestMimeType
+     * @return array GalleryStatus a status code
+     *               string a mime type (application/unknown if no known mapping)
+     */
+    function determineMimeType($extension, $requestMimeType) {
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryMimeTypeHelper_simple.class');
+	return GalleryMimeTypeHelper_simple::determineMimeType($extension, $requestMimeType);
     }
 
     /**

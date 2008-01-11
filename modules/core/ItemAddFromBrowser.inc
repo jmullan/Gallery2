@@ -64,27 +64,15 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 			$file['caption'] = GalleryUtilities::htmlSafe($file['caption'], true);
 		    }
 
-		    /* Get the mime type from the upload info. */
-		    $mimeType = $file['type'];
-
-		    /*
-		     * If we don't get useful data from that or its a type we don't
-		     * recognize, take a swing at it using the file name.
-		     */
-		    list ($ret, $mimeExtensions) =
-			GalleryCoreApi::convertMimeToExtensions($mimeType);
-		    if ($mimeType == 'application/octet-stream' ||
-			    $mimeType == 'application/unknown' ||
-			    empty($mimeExtensions)) {
-			$extension = GalleryUtilities::getFileExtension($file['name']);
-			list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
-			if ($ret) {
-			    $mimeType = 'application/unknown';
-			}
-		    }
-
 		    $filename = basename($file['name']);
 		    list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
+
+		    list ($ret, $mimeType) = 
+			GalleryCoreApi::determineMimeType($extension, $file['type']);
+		    if ($ret) {
+			$mimeType = 'application/unknown';
+		    }
+
 		    $title = ($form['set']['title'] == 'filename') ? $base
 			   : (($form['set']['title'] == 'caption') ? $file['caption'] : '');
 		    $summary = empty($form['set']['summary']) ? '' : $file['caption'];

@@ -29,6 +29,28 @@
 class GalleryMimeTypeHelper_simple {
 
     /**
+     * @see GalleryCoreApi::determineMimeType
+     */
+    function determineMimeType($extension, $requestMimeType) {
+	list ($ret, $mimetype) = GalleryMimeTypeHelper_simple::convertExtensionToMime($extension);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	if ($mimetype == 'application/unknown') {
+	    list ($ret, $mimeExtensions) = 
+		GalleryMimeTypeHelper_simple::convertMimeToExtensions($requestMimeType);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    if (!empty($mimeExtensions)) {
+		$mimetype = $requestMimeType;
+	    }
+	}
+	return array(null, $mimetype);
+    }
+
+    /**
      * @see GalleryCoreApi::convertExtensionToMime
      */
     function convertExtensionToMime($extension) {
