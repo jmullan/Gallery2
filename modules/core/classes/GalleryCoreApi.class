@@ -2550,11 +2550,11 @@ class GalleryCoreApi {
      * Determine the proper mime type given the file and mime type from the request
      *
      * @param string $fileName the file name to determine the mime type for
-     * @param string $requestMimeType
+     * @param string $requestMimeType (optional)
      * @return array GalleryStatus a status code
      *               string a mime type (application/unknown if no known mapping)
      */
-    function determineMimeType($fileName, $requestMimeType) {
+    function determineMimeType($fileName, $requestMimeType=null) {
 	GalleryCoreApi::requireOnce(
 	    'modules/core/classes/helpers/GalleryMimeTypeHelper_simple.class');
 	return GalleryMimeTypeHelper_simple::determineMimeType($fileName, $requestMimeType);

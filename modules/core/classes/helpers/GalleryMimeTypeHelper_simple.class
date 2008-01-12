@@ -31,14 +31,14 @@ class GalleryMimeTypeHelper_simple {
     /**
      * @see GalleryCoreApi::determineMimeType
      */
-    function determineMimeType($fileName, $requestMimeType) {
+    function determineMimeType($fileName, $requestMimeType=null) {
 	$extension = GalleryUtilities::getFileExtension($fileName);
     	list ($ret, $mimetype) = GalleryMimeTypeHelper_simple::convertExtensionToMime($extension);
 	if ($ret) {
 	    return array($ret, null);
 	}
 
-	if ($mimetype == 'application/unknown') {
+	if ($mimetype == 'application/unknown' && !empty($requestMimeType)) {
 	    list ($ret, $mimeExtensions) = 
 		GalleryMimeTypeHelper_simple::convertMimeToExtensions($requestMimeType);
 	    if ($ret) {

@@ -117,6 +117,14 @@ class MimeTest extends GalleryTestCase {
 	$this->assertEquals('test/test3', $mimeType, 'Expected MimeType of test/test3');
     }
 
+    function testDetermineMimeTypeWithoutRequestMimeType() {
+	list ($ret, $mimeType) = GalleryCoreApi::determineMimeType('file.xxxxunknown');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals('application/unknown', $mimeType);
+    }
+
     function testConvertExtensionToMime() {
 	list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime('xxx');
 	if ($ret) {
