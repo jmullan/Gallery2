@@ -65,12 +65,12 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 		    }
 
 		    $filename = basename($file['name']);
-		    list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
+		    $base = GalleryUtilities::getFileBase($filename);
 
-		    list ($ret, $mimeType) = 
-			GalleryCoreApi::determineMimeType($extension, $file['type']);
+		    list ($ret, $mimeType) =
+			GalleryCoreApi::determineMimeType($filename, $file['type']);
 		    if ($ret) {
-			$mimeType = 'application/unknown';
+			return array($ret, null, null);
 		    }
 
 		    $title = ($form['set']['title'] == 'filename') ? $base

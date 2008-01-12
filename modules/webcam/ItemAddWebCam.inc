@@ -95,10 +95,11 @@ class ItemAddWebCam extends ItemAddPlugin {
 		}
 
 		/* Get the mime type. */
-		list ($base, $extension) = GalleryUtilities::getFileNameComponents($basename);
-		list ($ret, $mimeType) = GalleryCoreApi::determineMimeType($extension, $mimeType);
+		$base = GalleryUtilities::getFileBase($basename);
+		list ($ret, $fileMimeType) =
+		    GalleryCoreApi::determineMimeType($basename, $mimeType);
 		if ($ret) {
-		    $mimeType = 'application/unknown';
+		    return array($ret, null);
 		}
 
 		$title = $basename;

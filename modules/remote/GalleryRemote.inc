@@ -538,10 +538,10 @@ class GalleryRemoteController extends GalleryController {
 	}
 
 	/* Get the mime type. */
-	$extension = GalleryUtilities::getFileExtension($file['name']);
-	list ($ret, $mimeType) = GalleryCoreApi::determineMimeType($extension, $file['type']);
+	list ($ret, $mimeType) =
+	    GalleryCoreApi::determineMimeType($file['name'], $file['type']);
 	if ($ret) {
-	    $mimeType = 'application/unknown';
+	    return $ret;
 	}
 
 	if (isset($form['force_filename'])) {

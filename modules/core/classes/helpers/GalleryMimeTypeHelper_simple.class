@@ -31,8 +31,9 @@ class GalleryMimeTypeHelper_simple {
     /**
      * @see GalleryCoreApi::determineMimeType
      */
-    function determineMimeType($extension, $requestMimeType) {
-	list ($ret, $mimetype) = GalleryMimeTypeHelper_simple::convertExtensionToMime($extension);
+    function determineMimeType($fileName, $requestMimeType) {
+	$extension = GalleryUtilities::getFileExtension($fileName);
+    	list ($ret, $mimetype) = GalleryMimeTypeHelper_simple::convertExtensionToMime($extension);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -44,7 +45,11 @@ class GalleryMimeTypeHelper_simple {
 		return array($ret, null);
 	    }
 	    if (!empty($mimeExtensions)) {
-		$mimetype = $requestMimeType;
+		list ($ret, $mimetype) = 
+		    GalleryMimeTypeHelper_simple::convertExtensionToMime($mimeExtensions[0]);
+		if ($ret) {
+		    return array($ret, null);
+		}
 	    }
 	}
 	return array(null, $mimetype);

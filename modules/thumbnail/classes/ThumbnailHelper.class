@@ -214,10 +214,10 @@ class ThumbnailHelper {
     function addItem($mimeType, $parentId,
 		     $filename, $tmpfile, $fileMimeType, $knownSize=array(), $item=null) {
 	/* Get the mime type. */
-	$extension = GalleryUtilities::getFileExtension($filename);
-	list ($ret, $fileMimeType) = GalleryCoreApi::determineMimeType($extension, $fileMimeType);
+	list ($ret, $fileMimeType) =
+	    GalleryCoreApi::determineMimeType($filename, $fileMimeType);
 	if ($ret) {
-	    $mimeType = 'application/unknown';
+	    return array($ret, null);
 	}
 
 	if ($fileMimeType != 'image/jpeg') {
