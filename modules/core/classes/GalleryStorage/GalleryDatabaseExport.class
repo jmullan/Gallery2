@@ -681,6 +681,7 @@ class GalleryDatabaseExport {
     function _openBackupFileForWriting($fileName=null) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
+	$storage =& $gallery->getStorage();
 
 	if (empty($fileName)) {
 	    $dirName = $gallery->getConfig('data.gallery.backup');
@@ -691,7 +692,9 @@ class GalleryDatabaseExport {
 	    }
 
 	    $storeConfig = $gallery->getConfig('storage.config');
-	    $fileName = $dirName . $storeConfig['database'] . '_' . date('Y_m_d_Hi') . '.xml';
+	    $databaseName = $storage->getType() == 'sqlite'
+		? basename($storeConfig['database']) : $storeConfig['database'];
+	    $fileName = $dirName . $databaseName . '_' . date('Y_m_d_Hi') . '.xml';
 	}
 
 	$handle = $platform->fopen($fileName, 'w');
