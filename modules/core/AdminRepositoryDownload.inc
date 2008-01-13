@@ -52,7 +52,7 @@ class AdminRepositoryDownloadController extends GalleryController {
 	$pluginType = $form['pluginType'];
 	$pluginId = $form['pluginId'];
 
-	if (!preg_match('/theme|module/', $pluginType)) {
+	if (!in_array($pluginType, array('theme', 'module'))) {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					       "Invalid plugin type [$pluginType]"),
 			 null);
