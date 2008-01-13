@@ -95,8 +95,7 @@ class UploadItemsController extends GalleryController {
 	    $file['name'] = GalleryCoreApi::convertToUtf8($file['name'], $sourceEncoding);
 
 	    /* Get the mime type. */
-	    list ($ret, $mimeType) =
-		GalleryCoreApi::determineMimeType($file['name'], $file['type']);
+	    list ($ret, $mimeType) = GalleryCoreApi::getMimeType($file['name'], $file['type']);
 	    if ($ret) {
 		return array($ret, null);
 	    }

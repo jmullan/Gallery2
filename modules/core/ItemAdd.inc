@@ -498,10 +498,9 @@ class ItemAddController extends GalleryController {
 		}
 		$newItem =& $album;
 	    } else {
-		$extension = GalleryUtilities::getFileExtension($filename);
-		list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+		list ($ret, $mimeType) = GalleryCoreApi::getMimeType($filename);
 		if ($ret) {
-		    $mimeType = 'application/unknown';
+		    return $ret;
 		}
 		if ($titleMode == 'file') {
 		    $title = $filename;

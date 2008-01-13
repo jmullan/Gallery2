@@ -56,8 +56,7 @@ class ItemAddFromPicasa extends ItemAddPlugin {
 		      'size' => $form['size']['picasaZipPath']);
 
 		/* Get the mime type. */
-		list ($ret, $mimeType) =
-		    GalleryCoreApi::determineMimeType($file['name'], $file['type']);
+		list ($ret, $mimeType) = GalleryCoreApi::getMimeType($file['name'], $file['type']);
 		if ($ret) {
 		    return array($ret, null, null);
 		}

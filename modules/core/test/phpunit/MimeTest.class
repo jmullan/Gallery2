@@ -81,22 +81,22 @@ class MimeTest extends GalleryTestCase {
 	$this->assertEquals('test/test', $mimeType);
     }
 
-    function testDetermineMimeTypeExtensionIsValid() {
-	list ($ret, $mimeType) = GalleryCoreApi::determineMimeType('file.xxx', 'test/test2');
+    function testGetMimeTypeExtensionIsValid() {
+	list ($ret, $mimeType) = GalleryCoreApi::getMimeType('file.xxx', 'test/test2');
 	if ($ret) {
 	    return $ret;
 	}
 	$this->assertEquals('test/test', $mimeType, 'Expected MimeType of test/test');
 
-	list ($ret, $mimeType) = GalleryCoreApi::determineMimeType('file.XXX', 'test/test2');
+	list ($ret, $mimeType) = GalleryCoreApi::getMimeType('file.XXX', 'test/test2');
 	if ($ret) {
 	    return $ret;
 	}
 	$this->assertEquals('test/test', $mimeType, 'Upper case should still produce test/test');
     }
 
-    function testDetermineMimeTypeExtensionAndMimeTypeUndefined() {
-	list ($ret, $mimeType) = GalleryCoreApi::determineMimeType('file.abc', 'test/test2');
+    function testGetMimeTypeExtensionAndMimeTypeUndefined() {
+	list ($ret, $mimeType) = GalleryCoreApi::getMimeType('file.abc', 'test/test2');
 	if ($ret) {
 	    return $ret;
 	}
@@ -104,21 +104,21 @@ class MimeTest extends GalleryTestCase {
 	    'Expected MimeType of application/unknown');
     }
 
-    function testDetermineMimeTypeUsedMimeType() {
+    function testGetMimeTypeUsedMimeType() {
 	list ($ret, $mimeData) = GalleryMimeTypeHelper_simple::_getMimeData();
 	if ($ret) {
 	    return $ret;
 	}
 
-	list ($ret, $mimeType) = GalleryCoreApi::determineMimeType('file.abc', 'TEST/TEST3');
+	list ($ret, $mimeType) = GalleryCoreApi::getMimeType('file.abc', 'TEST/TEST3');
 	if ($ret) {
 	    return $ret;
 	}
 	$this->assertEquals('test/test3', $mimeType, 'Expected MimeType of test/test3');
     }
 
-    function testDetermineMimeTypeWithoutRequestMimeType() {
-	list ($ret, $mimeType) = GalleryCoreApi::determineMimeType('file.xxxxunknown');
+    function testGetMimeTypeWithoutRequestMimeType() {
+	list ($ret, $mimeType) = GalleryCoreApi::getMimeType('file.xxxxunknown');
 	if ($ret) {
 	    return $ret;
 	}

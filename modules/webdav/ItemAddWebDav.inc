@@ -54,9 +54,9 @@ class ItemAddWebDav extends ItemAddPlugin {
 	}
 
 	/* Get the mime type. */
-	list ($ret, $mimeType) = GalleryCoreApi::determineMimeType(basename($path), $mimeType);
+	list ($ret, $mimeType) = GalleryCoreApi::getMimeType(basename($path), $mimeType);
 	if ($ret) {
-	    return array($ret, null);
+	    return array($ret, null, null);
 	}
 
 	list ($ret, $itemId) = GalleryCoreApi::fetchItemIdByPath($path);

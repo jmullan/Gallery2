@@ -369,6 +369,12 @@ class ImageUploadHelper {
 	    return $status;
 	}
 
+	list ($ret, $mimeType) = GalleryCoreApi::getMimeType($file['tmp_name'], $mimeType);
+	if ($ret) {
+	    $gallery->debug('ERROR: Failed to query mime type.');
+	    return $status;
+	}
+
 	list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission($albumId, 'core.view');
 	if ($ret) {
 	    $gallery->debug('ERROR: Failed to query view permissions.');

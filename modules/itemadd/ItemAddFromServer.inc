@@ -291,8 +291,8 @@ class ItemAddFromServer extends ItemAddPlugin {
      */
     function addItem($parentId, $file, $useSymlink, $textFields, &$status, &$error) {
 	$fileName = basename($file);
-	list ($base, $extension) = GalleryUtilities::getFileNameComponents($fileName);
-	list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+	$base = GalleryUtilities::getFileBase($fileName);
+	list ($ret, $mimeType) = GalleryCoreApi::getMimeType($fileName);
 	if ($ret) {
 	    return $ret;
 	}

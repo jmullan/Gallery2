@@ -415,10 +415,15 @@ class ItemAddFromWeb extends ItemAddPlugin {
 	}
 
 	if (!empty($headers['Content-Type'])) {
-	    return array(null, $headers['Content-Type'], $fileName);
+	    list ($ret, $mimeType) =
+		GalleryCoreApi::getMimeType('ignored', $headers['Content-Type']);
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+	    return array(null, $mimeType, $fileName);
 	}
 
-	return array(null, null, $fileName);
+	return array(null, 'application/unknown', $fileName);
     }
 
     /**
@@ -444,7 +449,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    if (empty($mimeType)) {
+	    if (empty($mimeType) || $mimeType == 'application/unknown') {
 		return array(null, null);
 	    }
 
