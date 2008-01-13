@@ -481,6 +481,7 @@ class RepositoryTest extends GalleryTestCase {
 				   'provided' => array(
 				       'core' => $coreApiString, 'plugin' => $moduleApiString)),
 		    'locked' => 0,
+		    'isDowngraded' => false,
 		    'isUpgradeable' => true))), array(
 
 	    /* Compatible, locally available, upgradeable but also locked */
@@ -506,6 +507,7 @@ class RepositoryTest extends GalleryTestCase {
 				   'provided' => array(
 				       'core' => $coreApiString, 'plugin' => $moduleApiString)),
 		    'locked' => 1,
+		    'isDowngraded' => false,
 		    'isUpgradeable' => true))), array(
 
 	    /* Incompatible, locally unavailable, no action. */
@@ -530,6 +532,7 @@ class RepositoryTest extends GalleryTestCase {
 				   'provided' => array(
 				       'core' => $coreApiString, 'plugin' => $moduleApiString)),
 		    'locked' => 0,
+		    'isDowngraded' => false,
 		    'isUpgradeable' => false))), array(
 
 	    /* Compatible, locally available, no action (all packages up-to-date). */
@@ -539,6 +542,7 @@ class RepositoryTest extends GalleryTestCase {
 		'plugins' => array('module' => array('testModule' => $testModule))),
 	    'isCompatible' => true,
 	    'isAvailable' => true,
+	    'isDowngraded' => false,
 	    'installedPackages' => array(
 		'base' => array('version' => '1.0.0', 'build' => '44444', 'locked' => 0),
 		'lang-en_US' => array('version' => '22222', 'build' => '66666', 'locked' => 0),
@@ -559,6 +563,7 @@ class RepositoryTest extends GalleryTestCase {
 				   'provided' => array(
 				       'core' => $coreApiString, 'plugin' => $moduleApiString)),
 		    'locked' => 0,
+		    'isDowngraded' => false,
 		    'isUpgradeable' => false))));
 
 	$i = 0;
