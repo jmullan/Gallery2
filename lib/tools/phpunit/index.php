@@ -28,13 +28,101 @@ include('../../support/security.inc');
 include('../../../bootstrap.inc');
 require_once('../../../init.inc');
 
-/*
+$testReportDir = $gallery->getConfig('data.gallery.base') . 'test/';
+
+$priorRuns = array();
+$glob = glob("${testReportDir}*");
+if ($glob) {
+    foreach ($glob as $filename) {
+	if (preg_match('/run-(\d+).html$/', $filename, $matches)) {
+	    $priorRuns[] = array('key' => $matches[1],
+				 'size' => filesize($filename),
+				 'date' => strftime('%Y/%m/%d-%H:%M:%S', filectime($filename)));
+	}
+    }
+}
+
+if (!empty($_GET['run'])) {
+    list ($action, $run) = explode(':', $_GET['run']);
+    $run = preg_replace('[\D]', '', $run);
+    $runFile = "${testReportDir}run-$run.html";
+    switch($action) {
+    case 'frame':
+	include(dirname(__FILE__) . '/runframe.tpl');
+	exit;
+
+    case 'show':
+	readfile($runFile);
+	exit;
+
+    case 'deleteall':
+	foreach ($priorRuns as $pr) {
+	    unlink("${testReportDir}run-$pr[key].html");
+	}
+	header('Location: index.php');
+	exit;
+	break;
+
+    case 'delete':
+	if (file_exists($runFile)) {
+	    unlink($runFile);
+	}
+	header('Location: index.php');
+	break;
+    }
+}
+
+/**
  * Load up main.php so that tests that want _GalleryMain can get to it.  Do it now, though so that
  * we don't mangle the $gallery object during test runs.
+ *
+ * @todo figure out a way to only do this if we're going to run a test that wants to exercise
+ *       _GalleryMain
  */
 ob_start();
 require_once('../../../main.php');
 ob_end_clean();
+
+/**
+ *
+ * This is an output interceptor that allows us to save the HTML output from our test run in the
+ * g2data directory.  We only save the output when there's a filter value set which indicates that
+ * there's an actual test run in progress.
+ */
+function PhpUnitOutputInterceptor($message) {
+    global $gallery;
+    global $testReportDir;
+
+    if (isset($_GET['filter'])) {
+	if (!file_exists($testReportDir)) {
+	    mkdir($testReportDir);
+	}
+
+	static $fd;
+	if (!isset($fd)) {
+	    $fd = fopen("${testReportDir}run-" . date('YmdHis') . '.html', 'wb+');
+	}
+
+ 	static $replaced;
+  	if (empty($replaced) && strstr($message, '<!--base_href-->')) {
+  	    $replaced = true;
+   	    fwrite($fd,
+		   str_replace(
+		       '<!--base_href-->',
+		       @sprintf('<base href="http://%s:%d/%s/">',
+				$_SERVER['HTTP_HOST'], $_SERVER['SERVER_PORT'],
+				dirname($_SERVER['SCRIPT_NAME'])),
+		       $message));
+  	} else {
+ 	    fwrite($fd, $message);
+ 	}
+    }
+
+    return $message;
+}
+
+@ini_set('output_buffering', 0);
+ob_start('PhpUnitOutputInterceptor', 256);
 
 require_once('phpunit.inc');
 require_once('GalleryTestCase.class');
@@ -53,8 +141,6 @@ require_once('UnitTestUrlGenerator.class');
 require_once('MockTemplateAdapter.class');
 require_once('UnitTestTemplate.class');
 require_once('UnitTestRepository.class');
-
-@ini_set('output_buffering', 0);
 
 function PhpUnitGalleryMain(&$testSuite, $filter) {
     $ret = GalleryInitFirstPass();
@@ -278,7 +364,9 @@ class GalleryTestResult extends TestResult {
 
 	if ($test->wasSkipped()) {
 	    global $compactView;
-	    if (isset($compactView)) return;
+	    if (isset($compactView)) {
+		return;
+	    }
 	    $class = 'Skipped';
 	    $text = 'r.cells[4].lastChild.nodeValue="SKIP";';
 	    $extra = 'r.className="skip";';
@@ -425,6 +513,7 @@ print "<pre>";
 print $gallery->getDebugBuffer();
 print "</pre>";
  */
+
 include(dirname(__FILE__) . '/index.tpl');
 
 /* Compact any ACLs that were created during this test run */
@@ -442,4 +531,6 @@ if ($ret) {
     print $ret->getAsHtml();
     return;
 }
+
+ob_end_flush();
 ?>

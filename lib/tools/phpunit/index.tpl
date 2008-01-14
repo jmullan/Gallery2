@@ -2,12 +2,15 @@
 <html>
   <head>
     <title>Gallery Unit Tests</title>
+    <!--base_href-->
     <script type="text/javascript" src="../../../lib/yui/utilities.js"></script>
     <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
-  </head>
-  <body>
-  <?php if (!isset($compactView)): ?>
-    <script type="text/javascript" language="javascript">
+
+    <script type="text/javascript">
+      function toggle(id) {
+        var display = YAHOO.util.Dom.getStyle(id, 'display');
+        YAHOO.util.Dom.setStyle(id, 'display', display == 'block' ? 'none' : 'block');
+      }
       function setFilter(value) {
         document.forms[0].filter.value=value;
       }
@@ -15,7 +18,12 @@
         setFilter(failedTestFilter);
         document.forms[0].submit();
       }
+      function skip(i) {
+      }
     </script>
+  </head>
+  <body>
+  <?php if (!isset($compactView)): ?>
     <div id="status" style="position: absolute; right: 0; top: 0; background: white; display: none">
       <div class="header">
 	Run Status
@@ -60,36 +68,6 @@
     </div>
     <?php endif; ?>
 
-    <script type="text/javascript">
-      examplesVisible = false;
-      function toggleFilterExamples() {
-        myList = document.getElementById('help_and_examples');
-        myIndicator = document.getElementById('filter_examples_toggle_indicator');
-        if (examplesVisible) {
-	  myList.style.display = 'none';
-	  myIndicator.innerHTML = '+';
-	} else {
-	  myList.style.display = 'inline';
-	  myIndicator.innerHTML = '-';
-	}
-	examplesVisible = !examplesVisible;
-      }
-
-      modulesListingVisible = false;
-      function toggleModulesListing() {
-        myList = document.getElementById('modules_listing');
-        myIndicator = document.getElementById('modules_listing_toggle_indicator');
-        if (modulesListingVisible) {
-          myList.style.display = 'none';
-          myIndicator.innerHTML = '+';
-        } else {
-          myList.style.display = 'inline';
-          myIndicator.innerHTML = '-';
-        }
-        modulesListingVisible = !modulesListingVisible;
-      }
-    </script>
-
     <?php if (sizeof($incorrectDevEnv) > 0): ?>
     <div style="float: right; width: 500px; border: 2px solid red; padding: 3px">
       <h2 style="margin: 0px"> Development Environment Warning </h2>
@@ -114,7 +92,7 @@
     </div>
     <?php endif; ?>
 
-    <h2>Filter</h2>
+    <h2>Filter (<span onclick="toggle('help_and_examples')" class="fakelink">Help/Examples</span>) </h2>
     <div class="section">
       <form>
 	<?php if (isset($sessionKey)): ?>
@@ -128,16 +106,9 @@
 	<?php endif; ?>
 
 	<br/>
-        <span id="filter_examples_toggle"
-          href="#"
-          onclick="toggleFilterExamples()">
-          Help/Examples
-          <span id="filter_examples_toggle_indicator"
-            style="padding-left: .3em; padding-right: 0.3em; border: solid #a6caf0; border-width: 1px; background: #eee">+</span>
-        </span>
-
+	<h2>
+        </h2>
         <div id="help_and_examples" style="display: none">
-         <br/>
 	  Enter a regular expression string to restrict testing to classes containing
           that text in their class name or test method.  If you use an exclamation before a
           module/class/test name(s) encapsulated in parenthesis and separated with bars, this will
@@ -187,25 +158,20 @@
       </form>
     </div>
 
-    <h2>Modules</h2>
-
-    <div class="section" style="width: 100%">
-      <?php
+    <?php
       $activeCount = 0;
       foreach ($moduleStatusList as $moduleId => $moduleStatus) {
         if (!empty($moduleStatus['active'])) {
           $activeCount++;
         }
       }
-      ?>
-      <?php printf("%d active, %d total", $activeCount, sizeof($moduleStatusList)); ?>
-      <span onclick="toggleModulesListing()" id="modules_listing_toggle_indicator"
-            style="padding-left: .3em; padding-right: 0.3em; border: solid #a6caf0; border-width: 1px; background: #eee">+</span>
-      <br/>
+    ?>
+    <h2>
+      <span onclick="toggle('modules_listing')" class="fakelink">Modules (<?php printf("%d active, %d total", $activeCount, sizeof($moduleStatusList)); ?>)</span>
+    </h2>
+    <div class="section" style="width: 100%">
       <table cellspacing="1" cellpadding="1" border="0"
-        width="800" align="center" class="details"
-        id="modules_listing"
-        style="display: none">
+	width="800" class="details" id="modules_listing" style="display: none">
         <tr>
           <th> Module Id </th>
           <th> Active </th>
@@ -227,6 +193,41 @@
       </table>
     </div>
   <?php endif; /* compactView */ ?>
+
+  <?php if ($priorRuns): ?>
+    <h2>
+      <span onclick="toggle('prior_runs')" class="fakelink">Prior Runs (<?php print count($priorRuns)?>)</span>
+    </h2>
+    <div id="prior_runs" style="display: none">
+      <table cellspacing="1" cellpadding="1" border="0"	width="800" class="details">
+	<tr>
+	  <th> Date </th>
+	  <th> File Size </th>
+	  <th> Action </th>
+	</tr>
+	<?php foreach ($priorRuns as $run): ?>
+	<tr>
+	  <td style="width: 100px">
+	    <a href="index.php?run=frame:<?php print $run['key']?>"><?php print $run['date'] ?></a>
+	  </td>
+	  <td style="width: 100px">
+	    <?php print $run['size'] ?> bytes
+	  </td>
+	  <td style="width: 100px">
+	    <a href="index.php?run=delete:<?php print $run['key']?>">delete</a>
+	  </td>
+	</tr>
+	<?php endforeach; ?>
+	<tr>
+	  <td colspan="3">
+	    <center>
+	      <h3> <a href="?run=deleteall:">Delete All</a></h3>
+	    </center>
+	  </td>
+	</tr>
+      </table>
+    </div>
+  <?php endif; /* $priorRuns */ ?>
 
   <h2>Test Results</h2>
 
