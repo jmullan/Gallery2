@@ -44,7 +44,7 @@ if ($glob) {
 
 if (!empty($_GET['run'])) {
     list ($action, $run) = explode(':', $_GET['run']);
-    $run = preg_replace('[\D]', '', $run);
+    $run = substr($run, 0, strspn($run, '0123456789'));
     $runFile = "${testReportDir}run-$run.html";
     switch($action) {
     case 'frame':
@@ -52,8 +52,13 @@ if (!empty($_GET['run'])) {
 	exit;
 
     case 'show':
-	readfile($runFile);
+	if (file_exists($runFile)) {
+	    readfile($runFile);
+	} else {
+	    print "<H1>No prior run with id $run</H1>";
+	}
 	exit;
+
 
     case 'deleteall':
 	foreach ($priorRuns as $pr) {
