@@ -74,5 +74,23 @@ class WebDavControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
     }
+
+    function testSpecialCharactersInFileName() {
+	$_SERVER['REQUEST_METHOD'] = 'propfind';
+	$_SERVER['HTTP_USER_AGENT'] = 'SOME USER AGENT STRING';
+
+	GalleryUtilities::putRequestVariable('path', '@dir/Black&White');
+
+	$results = $this->handleRequest();
+	$originalPath = GalleryUtilities::getRequestVariables('originalPath');
+	$path = GalleryUtilities::getRequestVariables('path');
+	$this->assertEquals(array('delegate' => array('view' => 'webdav.WebDav'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+
+	$this->assertEquals('@dir/Black&amp;White', $originalPath, 'Unexpected Original Path');
+	$this->assertEquals('_dir/Black_White', $path, 'Unexpected New Path');
+    }
 }
 ?>
