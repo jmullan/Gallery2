@@ -260,7 +260,18 @@ class GalleryRepositoryIndex {
 	 */
 	$data = $this->_index[$pluginType . 's'][$pluginId];
 	if (!empty($data['header']['stringsRevision'])) {
-	    return array(null, $data['languages'][$data['header']['stringsRevision']]);
+	    $stringRevision = $data['header']['stringsRevision'];
+	    $languages = GalleryCoreApi::getSupportedLanguages();
+	    $languageData = array();
+	    foreach ($data['languages'][$stringRevision] as $langCode => $version) {
+		list ($language, $country) = explode ('_', $langCode . '_');
+		$installed = empty($country) ? !empty($languages[$language]) 
+					     : !empty($languages[$language][$country]);
+		if ($installed) {
+		    $languageData[$langCode] = $version;
+		}
+	    }
+	    return array(null, $languageData);
 	} else {
 	    return array(null, array());
 	}

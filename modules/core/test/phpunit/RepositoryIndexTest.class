@@ -395,6 +395,31 @@ class RepositoryIndexTest extends GalleryTestCase {
 	}
     }
 
+    function testGetAvailableLanguagesInPluginFiltered() {
+	$cacheKey = 'GalleryTranslator::SupportedLanguages';
+	GalleryDataCache::put($cacheKey, array('en' => array('US' => array('US English'))));
+
+	$testCases = array(
+	     array(
+		 'pluginType' => 'module',
+		 'pluginId' => 'testModule',
+		 'languages' => array('en_US' => '33333')),
+	     array(
+		 'pluginType' => 'theme',
+		 'pluginId' => 'testTheme',
+		 'languages' => array('en_US' => '33333')));
+
+	foreach ($testCases as $case) {
+	    list ($ret, $languages) =
+		$this->_index->getAvailableLanguagesInPlugin($case['pluginType'],
+							     $case['pluginId']);
+	    if ($ret) {
+		return ($ret);
+	    }
+	    $this->assertEquals($case['languages'], $languages);
+	}
+    }
+
     function testContainsPlugin() {
 	$testCases = array(array('pluginType' => 'module', 'pluginId' => 'testModule'),
 			   array('pluginType' => 'theme', 'pluginId' => 'testTheme'),
