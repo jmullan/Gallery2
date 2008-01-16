@@ -19,6 +19,8 @@
  */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepository.class');
+GalleryCoreApi::requireOnce(
+    'modules/core/classes/AdminRepositoryDownloadAndInstallController.class');
 
 /**
  * This controller will handle an administration request for a module
@@ -27,7 +29,7 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepository.class');
  * @author Jozef Selesi <selesi at gmail dot com>
  * @version $Revision$
  */
-class AdminRepositoryController extends GalleryController {
+class AdminRepositoryController extends AdminRepositoryDownloadAndInstallController {
 
     /**
      * Get the repositories, but allow tests to inject their own version.
@@ -112,21 +114,11 @@ class AdminRepositoryController extends GalleryController {
 	    if (empty($packages)) {
 		$status['noUpgradeAvailable'] = 1;
 	    } else {
-		/*
-		 * Start upgrade process and show progress bar.
-		 *
-		 * performDownloadAndInstallation used to live in this controller, so we'd just
-		 * call it directly.  But it got refactored into AdminRepositoryDownloadController
-		 * so for now, just call it there.
-		 *
-		 * @todo: refactor it into a common base class
-		 */
-
+		/* Start upgrade process and show progress bar. */
 		GalleryCoreApi::requireOnce('modules/core/AdminRepositoryDownload.inc');
-		$controller = new AdminRepositoryDownloadController();
 		$templateAdapter =& $gallery->getTemplateAdapter();
 		$templateAdapter->registerTrailerCallback(
-		    array($controller, 'performDownloadAndInstallation'),
+		    array($this, 'performDownloadAndInstallation'),
 		    array($packages, array(), $repositories));
 		$delegate['view'] = 'core.ProgressBar';
 	    }
