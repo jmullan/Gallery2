@@ -149,5 +149,31 @@ class LanguageTest extends GalleryControllerTestCase {
 	$this->assertEquals($expected, $supportedLanguages);
 	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
+
+    function testGetSupportedLanguageHasExceptionForChineseDefaultCountry() {
+	global $gallery;
+	$gallery->setPlatform(new UnitTestPlatform());
+	$platform =& $gallery->getPlatform();
+
+	list ($languageData) = GalleryTranslator::getLanguageData();
+	$expected['en']['US'] = $languageData['en']['US'];
+	$expected['pt']['BR'] = $languageData['pt']['BR'];
+	$expected['pt']['PT'] = $languageData['pt']['PT'];
+	$expected['zh']['CN'] = $languageData['zh']['CN'];
+	$expected['zh']['TW'] = $languageData['zh']['TW'];
+
+	$gallery->setConfig('data.gallery.locale', '/g2data/');
+	$platform->setReply('glob', array('/g2data/*', null),
+	    array('.', '..', 'pt_BR', 'pt', 'zh_CN', 'zh_TW'));
+	$platform->setReply('is_dir', array('pt_BR'), true);
+	$platform->setReply('is_dir', array('pt'), true);
+	$platform->setReply('is_dir', array('zh_CN'), true);
+	$platform->setReply('is_dir', array('zh_TW'), true);
+
+	$supportedLanguages = GalleryCoreApi::getSupportedLanguages();
+
+	$this->assertEquals($expected, $supportedLanguages);
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
 }
 ?>
