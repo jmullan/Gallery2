@@ -294,13 +294,91 @@ class TemplateAdapterTest extends GalleryTestCase {
 
 	$this->assertEquals(
 	    array('<script type="text/javascript" ' .
-		  'src="http://gallery2|href=main.php?foo=bar"></script>',
+		  'src="http://gallery2|view=core.CombinedJavascript|key=MD5KEY"></script>',
 		  '<script type="text/javascript" ' .
-		  'src="http://gallery2|view=core.CombinedJavascript|key=MD5KEY"></script>'),
+		  'src="http://gallery2|href=main.php?foo=bar"></script>'),
 	    $output);
 
 	$this->assert($gallery->_phpVm->isComplete());
 	$this->assert($gallery->_platform->isComplete());
+    }
+
+    function testCombineJavascriptFilesWithDynamic() {
+	global $gallery;
+	$gallery->_phpVm = new UnitTestPhpVm();
+	$gallery->_platform = new UnitTestPlatform();
+	$gallery->_urlGenerator = new UnitTestUrlGenerator();
+	GalleryDataCache::setFileCachingEnabled(true);
+	$gallery->setConfig('data.gallery.cache', '/cache/');
+
+	$this->_buildPlatformResponses('path/file1.js', 'MD5KEY', 'ONE');
+	$this->_buildPlatformResponses('path/file2.txt', 'MD5KEY2', 'FOUR');
+
+	$templateAdapter = new GalleryTemplateAdapter();
+	$templateAdapter->_combineJavascriptFiles(
+	    array('path/file1.js', 'main.php?foo=bar', 'path/file2.txt'),
+	    $output);
+
+	$expected = array('');
+	$this->assertEquals(
+	    array('<script type="text/javascript" '
+		    . 'src="http://gallery2|view=core.CombinedJavascript|key=MD5KEY"></script>',
+		  '<script type="text/javascript" '
+		    . 'src="http://gallery2|href=main.php?foo=bar"></script>',
+		  '<script type="text/javascript" '
+		    .  'src="http://gallery2|view=core.CombinedJavascript|key=MD5KEY2"></script>'),
+	    $output);
+
+	$this->assert($gallery->_phpVm->isComplete());
+	$this->assert($gallery->_platform->isComplete());
+    }
+
+    function testCombineJavascriptFilesUseYuiUtilities() {
+	global $gallery;
+	$gallery->_phpVm = new UnitTestPhpVm();
+	$gallery->_platform = new UnitTestPlatform();
+	$gallery->_urlGenerator = new UnitTestUrlGenerator();
+	GalleryDataCache::setFileCachingEnabled(true);
+	$gallery->setConfig('data.gallery.cache', '/cache/');
+
+	$this->_buildPlatformResponses('lib/yui/utilities.js', 'MD5KEY', 'THREE');
+
+	$templateAdapter = new GalleryTemplateAdapter();
+	$templateAdapter->_combineJavascriptFiles(
+	    array('lib/yui/yahoo-dom-event.js', 'lib/yui/utilities.js'),
+	    $output);
+
+	$expected = array('');
+	$this->assertEquals(
+	    array('<script type="text/javascript" '
+		    . 'src="http://gallery2|view=core.CombinedJavascript|key=MD5KEY"></script>'),
+	    $output);
+
+	$this->assert($gallery->_phpVm->isComplete());
+	$this->assert($gallery->_platform->isComplete());
+    }
+
+    function _buildPlatformResponses($filename, $md5Key, $content) {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$base = GalleryCoreApi::getCodeBasePath();
+	$platform->setReply('file_exists', array($base . $filename), true);
+	$platform->setReply(
+	    'stat', array($base . $filename), array(7 => 7, 9 => 9));
+	$gallery->_phpVm->setReply('md5', array($filename . ' 7 9,'), $md5Key);
+	$platform->setReply('file_exists', 
+	    array('/cache/module/_all/0/0/CombinedJavascript_' . $md5Key . '.inc'), false);
+	$platform->setReply('file_get_contents', array($base . $filename), $content);
+	$gallery->_phpVm->setReply('function_exists', array('gzencode'), false);
+	$platform->setReply('file_exists', array('/cache/module/_all/0/0'), true);
+	$platform->setReply('is_dir', array('/cache/module/_all/0/0'), true);
+	$length = strlen($content);
+	$platform->setReply(
+	    'atomicWrite',
+	    array('/cache/module/_all/0/0/CombinedJavascript_' . $md5Key . '.inc', '|s:' . $length 
+		. ':"' . $content . '";'),
+	    true);
     }
 
     function testItemLink() {
@@ -334,7 +412,7 @@ class TemplateAdapterTest extends GalleryTestCase {
 			    $this->_mockUrlGenerator->_calls, 3);
 	$this->_mockUrlGenerator->_calls = array();
     }
-    
+
     /* With compile check, i.e., just checking tpl file */
     function testMissingBlockWithCompileCheck() {
 	$this->_setupAdapterWithMocks();

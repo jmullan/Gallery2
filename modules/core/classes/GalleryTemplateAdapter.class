@@ -410,12 +410,26 @@ class GalleryTemplateAdapter {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 	$urlGenerator =& $gallery->getUrlGenerator();
-	$phpVm = $gallery->getPhpVm();
 
 	$filteredFiles = array();
 	$key = '';
 	$codeBase = GalleryCoreApi::getCodeBasePath();
 	$pattern = '<script type="text/javascript" src="%s"></script>';
+
+	/* Special case utilities.js is superset of yahoo-dom-event.js */
+	/** @todo move this check into GalleryTemplate::javascript */
+	$yde = array_search('lib/yui/yahoo-dom-event.js', $files);
+	if ($yde !== false) {
+	    $util = array_search('lib/yui/utilities.js', $files);
+	    if ($util !== false) {
+		if ($yde < $util) {
+		    $files[$yde] = $files[$util];
+		    unset($files[$util]);
+		} else {
+		    unset($files[$yde]);
+		}
+	    }
+	}
 	foreach ($files as $file) {
 	    /*
 	     * Don't do caching if it's a dynamic request, for which we use the quick and dirty
@@ -429,56 +443,63 @@ class GalleryTemplateAdapter {
 		$key .= "$file $stats[7] $stats[9],";
 		$filteredFiles[] = $file;
 	    } else {
+		if ($filteredFiles) {
+		    /* Create a combined javascript file for what we have now */
+		    $output[] = sprintf($pattern,
+			$this->_buildCombinedJavascriptFileAndGenerateUrl($filteredFiles, $key));
+		    $filteredFiles = array();
+		    $key = '';
+		}
 		$output[] = sprintf(
 		    $pattern, $urlGenerator->generateUrl(array('href' => $file)));
 	    }
 	}
 
 	if ($filteredFiles) {
-	    $key = $phpVm->md5($key);
-	    $cacheFile = GalleryDataCache::getCachePath(
+	    $output[] = sprintf($pattern, $this->_buildCombinedJavascriptFileAndGenerateUrl(
+		$filteredFiles, $key));
+	}
+    }
+
+    /**
+     * Combine the specified files into a single file and store it in the disk cache with the key.
+     * @param array files to be combined
+     * @param array string to be used to generate the key
+     * @return string a url to retrieve the combined script file or null
+     */
+    function _buildCombinedJavascriptFileAndGenerateUrl($filteredFiles, $key) {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$phpVm = $gallery->getPhpVm();
+
+	$codeBase = GalleryCoreApi::getCodeBasePath();
+
+	$key = $phpVm->md5($key);
+	$cacheFile = GalleryDataCache::getCachePath(
+	    array('type' => 'module',
+		  'itemId' => 'CombinedJavascript_' . $key,
+		  'id' => '_all'));
+	if (!$platform->file_exists($cacheFile)) {
+	    $contents = '';
+	    foreach ($filteredFiles as $file) {
+		$contents .= $platform->file_get_contents($codeBase . $file);
+	    }
+	    GalleryDataCache::putToDisk(
 		array('type' => 'module',
 		      'itemId' => 'CombinedJavascript_' . $key,
-		      'id' => '_all'));
-	    if (!$platform->file_exists($cacheFile)) {
-		/*
-		 * Special case utilities.js is superset of yahoo-dom-event.js
-		 */
-		$yde = array_search('lib/yui/yahoo-dom-event.js', $filteredFiles);
-		if ($yde !== false) {
-		    $util = array_search('lib/yui/utilities.js', $filteredFiles);
-		    if ($util !== false) {
-			if ($yde < $util) {
-			    $filteredFiles[$yde] = $filteredFiles[$util];
-			    unset($filteredFiles[$util]);
-			} else {
-			    unset($filteredFiles[$yde]);
-			}
-		    }
-		}
-		$contents = '';
-		foreach ($filteredFiles as $file) {
-		    $contents .= $platform->file_get_contents($codeBase . $file);
-		}
-
+		      'id' => '_all'),
+		$contents);
+	    if ($phpVm->function_exists('gzencode')) {
 		GalleryDataCache::putToDisk(
 		    array('type' => 'module',
-			  'itemId' => 'CombinedJavascript_' . $key,
+			  'itemId' => 'CombinedJavascript_gzip_' . $key,
 			  'id' => '_all'),
-		    $contents);
-		if ($phpVm->function_exists('gzencode')) {
-		    GalleryDataCache::putToDisk(
-			array('type' => 'module',
-			      'itemId' => 'CombinedJavascript_gzip_' . $key,
-			      'id' => '_all'),
-			$phpVm->gzencode($contents, 9, FORCE_GZIP));
-		}
+		    $phpVm->gzencode($contents, 9, FORCE_GZIP));
 	    }
-
-	    $output[] = sprintf($pattern, $urlGenerator->generateUrl(
-				    array('view' => 'core.CombinedJavascript',
-					  'key' => $key)));
 	}
+	return $urlGenerator->generateUrl(
+	    array('view' => 'core.CombinedJavascript', 'key' => $key));
     }
 
     /**

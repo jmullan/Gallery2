@@ -2459,6 +2459,8 @@ class CoreModuleExtras {
 	    /* Combined YUI libraries into a single file */
 	case '1.2.25':
 	    /* Added GalleryCoreApi::determineMimeType */
+	case '1.2.26':
+	    /* Combined javascript fix. Changed version number to force clearing of the cache */
 
 	case 'end of upgrade path':
 	    /*
@@ -2798,6 +2800,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.23':
 	case '1.2.24':
 	case '1.2.25':
+	case '1.2.26':
 
 	case 'end of upgrade path':
 	    /*
