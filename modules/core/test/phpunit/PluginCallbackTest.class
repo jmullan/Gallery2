@@ -45,7 +45,6 @@ class PluginCallbackTest extends GalleryTestCase {
 
 	$this->_testPlugin = new PluginCallbackControllerTestPlugin();
 	$this->_callback = new PluginCallbackView();
-	$this->_callback->_repository = new PluginCallbackTestRepository();
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret) {
@@ -94,9 +93,6 @@ class PluginCallbackTest extends GalleryTestCase {
 		      'autoConfigure not called');
 	$this->assert($this->_testPlugin->wasCalled('activate'),
 		      'activate not called');
-	$this->assert($this->_callback->_repository->wasCalled(
-			  'scanPlugin', array('module', 'PluginCallbackControllerTest')),
-		      'GalleryRepository::scanPlugin was not called correctly');
     }
 
     function testInstallTheme() {
@@ -129,9 +125,6 @@ class PluginCallbackTest extends GalleryTestCase {
 		      'installOrUpgrade not called');
 	$this->assert($this->_testPlugin->wasCalled('autoConfigure'),
 		      'autoConfigure not called');
-	$this->assert($this->_callback->_repository->wasCalled(
-			  'scanPlugin', array('module', 'PluginCallbackControllerTest')),
-		      'GalleryRepository::scanPlugin was not called correctly');
     }
 
     function testInstallModuleThatReportsWrongAutoConfigureResult() {
@@ -156,9 +149,6 @@ class PluginCallbackTest extends GalleryTestCase {
 		      'autoConfigure not called');
 	$this->assert($this->_testPlugin->wasCalled('activate'),
 		      'activate not called');
-	$this->assert($this->_callback->_repository->wasCalled(
-			  'scanPlugin', array('module', 'PluginCallbackControllerTest')),
-		      'GalleryRepository::scanPlugin was not called correctly');
     }
 
     function testUpgradeModule() {
@@ -178,9 +168,6 @@ class PluginCallbackTest extends GalleryTestCase {
 		      'autoConfigure not called');
 	$this->assert($this->_testPlugin->wasCalled('activate'),
 		      'activate not called');
-	$this->assert($this->_callback->_repository->wasCalled(
-			  'scanPlugin', array('module', 'PluginCallbackControllerTest')),
-		      'GalleryRepository::scanPlugin was not called correctly');
     }
 
     function testUpgradeTheme() {
@@ -633,57 +620,6 @@ class PluginCallbackTest extends GalleryTestCase {
 	$gallery->_storage = $saveStorage;
     }
 
-    function testInstallIgnoresPluginScanErrors() {
-	GalleryUtilities::putRequestVariable('pluginType', 'module');
-	GalleryUtilities::putRequestVariable('pluginId', 'PluginCallbackControllerTest');
-
-	$this->_testPlugin->setResult('isActive', array(null, false));
-	$this->_testPlugin->setResult('installOrUpgrade', null);
-	$this->_testPlugin->setResult('autoConfigure', array(null, false));
-	$this->_callback->_repository =
-		new PluginCallbackTestRepository(GalleryCoreApi::error(
-			ERROR_PLATFORM_FAILURE | ERROR_BAD_PLUGIN | ERROR_BAD_PARAMETER));
-
-	$result = $this->_handleCallback('install');
-
-	$this->assertEquals(array('status' => 'success'), $result);
-	$this->assert($this->_testPlugin->wasCalled('installOrUpgrade'),
-		      'installOrUpgrade not called');
-	$this->assert($this->_testPlugin->wasCalled('autoConfigure'),
-		      'autoConfigure not called');
-	$this->assert($this->_callback->_repository->wasCalled(
-			  'scanPlugin', array('module', 'PluginCallbackControllerTest')),
-		      'GalleryRepository::scanPlugin was not called correctly');
-    }
-
-    function testInstallDoesNotIgnoreStorageError() {
-	GalleryUtilities::putRequestVariable('pluginType', 'module');
-	GalleryUtilities::putRequestVariable('pluginId', 'PluginCallbackControllerTest');
-
-	$this->_testPlugin->setResult('isActive', array(null, false));
-	$this->_testPlugin->setResult('installOrUpgrade', null);
-	$this->_testPlugin->setResult('autoConfigure', array(null, false));
-	$this->_callback->_repository =
-		new PluginCallbackTestRepository(GalleryCoreApi::error(ERROR_STORAGE_FAILURE));
-
-	$result = array();
-	$ret = $this->_callback->handleCallback('install', $result);
-	if ($ret && $ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
-	    /* Good, as expected */
-	} else if ($ret) {
-	    return ($ret);
-	} else {
-	    $this->fail('ERROR_STORAGE_FAILURE should not be ignored');
-	}
-
-	$this->assert($this->_testPlugin->wasCalled('installOrUpgrade'),
-		      'installOrUpgrade not called');
-	$this->assert($this->_testPlugin->wasCalled('autoConfigure'),
-		      'autoConfigure not called');
-	$this->assert($this->_callback->_repository->wasCalled(
-			  'scanPlugin', array('module', 'PluginCallbackControllerTest')),
-		      'GalleryRepository::scanPlugin was not called correctly');
-    }
 }
 
 class MockGalleryStatus {
@@ -814,30 +750,6 @@ class PluginCallbackControllerTestPlugin {
 
     function translate($string) {
 	return $string;
-    }
-}
-
-class PluginCallbackTestRepository {
-    var $_wasCalled;
-    var $_returnStatus;
-
-    function PluginCallbackTestRepository($returnStatus=null) {
-	$this->_returnStatus = $returnStatus;
-    }
-
-    function scanPlugin($pluginType, $pluginId) {
-	$this->_wasCalled['scanPlugin'][] = array($pluginType, $pluginId);
-
-	return $this->_returnStatus;
-    }
-
-    function wasCalled($function, $args) {
-	if (!isset($this->_wasCalled[$function])) {
-	    return false;
-	}
-
-	$call = array_pop($this->_wasCalled[$function]);
-	return ($call == $args);
     }
 }
 

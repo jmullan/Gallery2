@@ -2461,6 +2461,64 @@ class CoreModuleExtras {
 	    /* Added GalleryCoreApi::determineMimeType */
 	case '1.2.26':
 	    /* Combined javascript fix. Changed version number to force clearing of the cache */
+	case '1.2.27':
+	    /* Populate Plugin Map when a module is installed */
+	    $ret = $storage->checkPoint();
+	    if ($ret) {
+		return $ret;
+	    }
+	    foreach (array('module', 'theme') as $pluginType) {
+		list ($ret, $pluginList[$pluginType]) =
+		    GalleryCoreApi::fetchPluginList($pluginType);
+		if ($ret) {
+		    return $ret;
+	 	}
+	    }
+
+	    $supportedLanguages = GalleryCoreApi::getSupportedLanguages();
+	    $totalOperations = count($pluginList['module']) + count($pluginList['theme']);
+	    $currentOperation = 0;
+	    $upgradingMessageText = $module->translate('Creating Package Map');
+
+	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepository.class');
+	    if (!empty($repositories)) {
+		$repository = array_pop($repositories);
+	    } else {
+		$repository = new GalleryRepository();
+		$repository->init('bogus');
+	    }
+
+	    foreach (array('module', 'theme') as $pluginType) {
+		foreach (array_keys($pluginList[$pluginType]) as $pluginId) {
+		    $gallery->guaranteeTimeLimit(30);
+
+		    $ret = $statusMonitor->renderStatusMessage(
+			$upgradingMessageText, $pluginId, ++$currentOperation / $totalOperations);
+		    if ($ret) {
+			return $ret;
+		    }
+
+		    $ret = $repository->scanPlugin($pluginType, $pluginId);
+		    if ($ret && !($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
+			if ($gallery->getDebug()) {
+			    $gallery->debug_r($ret);
+			}
+		    } else if ($ret) {
+			return $ret;
+		    }
+		}
+	    }
+
+	    $ret = $statusMonitor->renderStatusMessage($upgradingMessageText, '', 1);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    /* We might have lost our database connection so check and reconnect */
+	    $ret = $storage->validateConnection();
+	    if ($ret) {
+		 return $ret;
+	    }
 
 	case 'end of upgrade path':
 	    /*

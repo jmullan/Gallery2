@@ -362,12 +362,6 @@ class GalleryPlugin {
 	    return $ret;
 	}
 
-	$ret = GalleryCoreApi::removeMapEntry('GalleryPluginMap',
-	    array('pluginType' => $this->getPluginType(), 'pluginId' => $this->getId()));
-	if ($ret) {
-	    return $ret;
-	}
-
 	$this->_flushPluginCache();
 
 	$event = GalleryCoreApi::newEvent('Gallery::UninstallPlugin');
@@ -434,6 +428,31 @@ class GalleryPlugin {
 	    }
 	}
 
+	/** @todo Change scanPlugin to be called as a static function or helper function */
+	GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepository.class');
+	list ($ret, $repositories) = GalleryRepository::getRepositories();
+	if ($ret) {
+	    return $ret;
+	}
+	if (!empty($repositories)) {
+	    $repository = array_pop($repositories);
+	} else {
+	    $repository = new GalleryRepository();
+	    $repository->init('bogus');
+	}
+	$ret = $repository->scanPlugin($this->getPluginType(), $this->getId());
+	if ($ret && !($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
+	    /*
+	     * Something is wrong with this plugin. Maybe it's a 3rd party plugin w/o MANIFEST
+	     * file, maybe it has no revisions in the po files, maybe the module.inc is foobar.
+	     * Just log and ignore it.
+	     */
+	    if ($gallery->getDebug()) {
+		$gallery->debug_r($ret);
+	    }
+	} else if ($ret) {
+	    return $ret;
+	}
 	$this->_flushPluginCache();
 
 	return null;

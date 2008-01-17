@@ -191,6 +191,63 @@ class PluginTest extends GalleryTestCase {
 	$this->assert($platform->isComplete(), $platform->getRemaining());
 	$this->assert($gallery->_storage->isComplete(), $gallery->_storage->getRemaining());
     }
+
+    function testInstallIgnoresPluginScanErrors() {
+	global $gallery;
+
+	GalleryDataCache::reset(true);
+
+	$plugin = new PluginTestPlugin();
+	$plugin->setPluginType('module');
+	$plugin->setId('plugintest');
+	$plugin->setVersion('1.0.0');
+	$plugin->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
+	$plugin->setRequiredModuleApi(GalleryModule::getApiVersion());
+
+	$cacheKey = 'GalleryRepository::getRepositories(,GalleryRepository)';
+
+	$testRepository = new UnitTestRepository();
+	$testRepository->setReply('scanPlugin', array('module', 'plugintest'), 
+	    GalleryCoreApi::error(ERROR_PLATFORM_FAILURE | ERROR_BAD_PLUGIN | ERROR_BAD_PARAMETER));
+	GalleryDataCache::put($cacheKey, array(array('released' => $testRepository), 0));
+
+	$ret = $plugin->installOrUpgrade();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($testRepository->isComplete(), $testRepository->getRemaining());
+    }
+
+    function testInstallDoesNotIgnoreStorageError() {
+	global $gallery;
+
+	GalleryDataCache::reset(true);
+
+	$plugin = new PluginTestPlugin();
+	$plugin->setPluginType('module');
+	$plugin->setId('plugintest');
+	$plugin->setVersion('1.0.0');
+	$plugin->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
+	$plugin->setRequiredModuleApi(GalleryModule::getApiVersion());
+
+	$cacheKey = 'GalleryRepository::getRepositories(,GalleryRepository)';
+
+	$testRepository = new UnitTestRepository();
+	$testRepository->setReply('scanPlugin', array('module','plugintest'), 
+	    GalleryCoreApi::error(ERROR_STORAGE_FAILURE));
+	GalleryDataCache::put($cacheKey, array(array('released' => $testRepository), 0));
+
+	$ret = $plugin->installOrUpgrade();
+	if ($ret && $ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
+	    /* Good, as expected */
+	} else if ($ret) {
+	    return $ret;
+	} else {
+	    $this->fail('Null error code is not correct');
+	}
+	$this->assert($testRepository->isComplete(), $testRepository->getRemaining());
+   }
 }
 
 class PluginTestCompatibleModule extends GalleryModule {
