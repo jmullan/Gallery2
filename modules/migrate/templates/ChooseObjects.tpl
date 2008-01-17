@@ -65,7 +65,7 @@
     <tr class="{cycle values="gbEven,gbOdd"}">
     {foreach name=users key=uid item=username from=$ChooseObjects.newUsers}
       <td>
-	<input type="checkbox" id="cbUser_{$uid}"{if $form.migrateUser.$uid} checked="checked"{/if}
+	<input type="checkbox" id="cbUser_{$uid}" {if $form.migrateUser.$uid}checked="checked" {/if}
 	 name="{g->formVar var="form[migrateUser][$uid]"}"/>
       </td><td>
 	<label for="cbUser_{$uid}"> {$username} </label>
@@ -143,7 +143,7 @@
   <div>
     <h4> {g->text text="URL Redirection"} </h4>
 
-    <input type="checkbox" id="cbUrlRedirect"{if !empty($form.urlRedirect)} checked="checked"{/if}
+    <input type="checkbox" id="cbUrlRedirect" {if !empty($form.urlRedirect)}checked="checked" {/if}
      name="{g->formVar var="form[urlRedirect]"}"/>
     <label for="cbUrlRedirect">
       {g->text text="Record G1-&gt;G2 mappings during import"}
@@ -153,7 +153,7 @@
   <div>
     <h4> {g->text text="Thumbnail generation"} </h4>
 
-    <input type="checkbox" id="cbThumb" {if !empty($form.generateThumbnails)} checked="checked"{/if}
+    <input type="checkbox" id="cbThumb" {if !empty($form.generateThumbnails)}checked="checked" {/if}
      name="{g->formVar var="form[generateThumbnails]"}"/>
     <label for="cbThumb">
       {g->text text="Normally Gallery will generate thumbnails the first time you look at them, then save them for subsequent views.  If you check this box, we'll create the thumbnails at migration time.  Migration will take longer but the first time you view an album will go much faster."}
@@ -257,8 +257,8 @@
 	<br/>
 	<input type="checkbox" id="cbDefaultDescription"
 	 name="{g->formVar var="form[set][defaultDescription]"}" style="margin-left:2em"
-	 {if !empty($form.set.defaultDescription)}checked="checked"
-	 {/if}{if $form.set.description!="custom"}disabled="disabled"{/if}/>
+	 {if !empty($form.set.defaultDescription)} checked="checked" {/if}
+	 {if $form.set.description!="custom"} disabled="disabled"{/if}/>
 	<label for="cbDefaultDescription">
 	  {g->text text="Default to same as summary if custom field not set"}
 	</label>
@@ -291,14 +291,15 @@
       {g->text text="Custom fields will not be imported.  Activate Custom Fields module to enable this option."}
     </p>
     {else}
-      <input type="checkbox" id="cbCustomFields"{if !empty($form.customFields)
-       } checked="checked"{/if} name="{g->formVar var="form[customFields]"}"/>
+      <input type="checkbox" id="cbCustomFields" {if !empty($form.customFields)}checked="checked" {/if} 
+             name="{g->formVar var="form[customFields]"}"/>
       <label for="cbCustomFields">
 	{g->text text="Import custom fields"}
       </label>
       <br/>
-      <input type="checkbox" id="cbSkipCustomItemFields"{if !empty($form.skipCustomItemFields)
-       } checked="checked"{/if} name="{g->formVar var="form[skipCustomItemFields]"}"/>
+      <input type="checkbox" id="cbSkipCustomItemFields"
+	{if !empty($form.skipCustomItemFields)} checked="checked" {/if} 
+	name="{g->formVar var="form[skipCustomItemFields]"}"/>
       <label for="cbSkipCustomItemFields">
 	{g->text text="Do not create Gallery 2 custom fields for fields selected above for title, summary or description"}
       </label>

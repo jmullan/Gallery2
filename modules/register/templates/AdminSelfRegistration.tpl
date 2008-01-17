@@ -52,7 +52,7 @@
     </td>
   </tr><tr>
     <td colspan="2">
-      <input type="checkbox" id="cbEmailAdmins"{if $form.emailadmins} checked="checked"{/if}
+      <input type="checkbox" id="cbEmailAdmins" {if $form.emailadmins}checked="checked" {/if}
        name="{g->formVar var="form[emailadmins]"}"/>
       <label for="cbEmailAdmins">
 	{g->text text="Email Site Administrators for all new registrations"}
@@ -67,7 +67,7 @@
     </td>
   </tr><tr>
     <td colspan="2">
-      <input type="checkbox" id="cbEmailUsers"{if $form.emailusers} checked="checked"{/if}
+      <input type="checkbox" id="cbEmailUsers" {if $form.emailusers}checked="checked" {/if}
        name="{g->formVar var="form[emailusers]"}"/>
       <label for="cbEmailUsers">
 	{g->text text="Email new users upon account activation"}

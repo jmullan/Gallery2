@@ -25,7 +25,7 @@
 	{g->text text="Show link for Latest Comments:"}
       </label>
     </td><td>
-      <input type="checkbox" id="cbLatest"{if $form.latest} checked="checked"{/if}
+      <input type="checkbox" id="cbLatest" {if $form.latest}checked="checked" {/if}
        name="{g->formVar var="form[latest]"}"/>
     </td>
   </tr><tr>
@@ -70,6 +70,7 @@
         {g->text text="Invalid API key."}
       </div>
       {/if}
+    </td>
   </tr></table>
   {if $CommentSiteAdmin.akismetActive}
   <input type="submit" class="inputTypeSubmit"

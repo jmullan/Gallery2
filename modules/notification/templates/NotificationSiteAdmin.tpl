@@ -39,7 +39,7 @@
   // ]]>
 </script>
 <div class="gbBlock gcBackground1">
-  <div class="yui-g"style="width:800px">
+  <div class="yui-g" style="width:800px">
     <div class="yui-g first" style="width:315px">
       <div class="yui-u first" style="width:150px">{g->text text="Description"}</div>
       <div class="yui-u" style="width:150px">{g->text text="Handler"}</div>
@@ -91,7 +91,7 @@
 	  <input type="checkbox" id="enable{$iteration}" name="{g->formVar var="form[notificationMap][$iteration][enabled]"}"
 		onclick="enablePublic({$iteration})"
 		{if $iteration >= $form.displayRows} disabled="disabled"{/if}
-		{if !empty($form.notificationMap[$iteration].enabled)}checked="checked"{/if}/>
+		{if !empty($form.notificationMap[$iteration].enabled)} checked="checked"{/if}/>
 	</div>
 	<div class="yui-u" style="width:80px; text-align:center">
 	  <input type="checkbox" id="public{$iteration}" name="{g->formVar var="form[notificationMap][$iteration][public]"}"

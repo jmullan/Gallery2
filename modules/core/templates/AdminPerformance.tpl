@@ -105,7 +105,7 @@
         {g->text text="Enable template caching"}
       </td>
       <td>
-        <input type="checkbox"{if $form.disableCompileCheck} checked="checked"{/if}
+        <input type="checkbox" {if $form.disableCompileCheck}checked="checked" {/if}
                name="{g->formVar var="form[disableCompileCheck]"}"/>
       </td>
     </tr>

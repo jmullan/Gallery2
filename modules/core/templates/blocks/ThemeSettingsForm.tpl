@@ -41,7 +41,7 @@
 	{elseif ($setting.type == 'checkbox')}
 	  <input type="checkbox" onclick="changeSetting('{$settingKey}')"
 		 name="{g->formVar var="form[key][$settingKey]"}"
-	   {if !empty($form.key.$settingKey)}checked="checked"{/if}/>
+	   {if !empty($form.key.$settingKey)} checked="checked"{/if}/>
 	{elseif ($setting.type == 'block-list')}
 	    <table>
 	      <tr>

@@ -128,7 +128,7 @@
     <td rowspan="7">{g->text text="Type of feed"}</td>
     <td>
       <input type="radio" name="{g->formVar var="form[feedType]"}"
-        value="photos" {if $EditFeed.feedType=='photos'}checked="checked"{/if}
+        value="photos" {if $EditFeed.feedType=='photos'}checked="checked" {/if}
         id="EditFeed_typePhotos" />
     </td><td>
       <label for="EditFeed_typePhotos">
@@ -141,7 +141,7 @@
   </tr><tr valign="top">
     <td>
       <input type="radio" name="{g->formVar var="form[feedType]"}"
-        value="album" {if $EditFeed.feedType=='album'}checked="checked"{/if}
+        value="album" {if $EditFeed.feedType=='album'}checked="checked" {/if}
         id="EditFeed_typeAlbum" />
     </td><td>
       <label for="EditFeed_typeAlbum">
@@ -154,7 +154,7 @@
   </tr><tr valign="top">
     <td>
       <input type="radio" name="{g->formVar var="form[feedType]"}"
-        value="photosRecursive" {if $EditFeed.feedType=='photosRecursive'}checked="checked"{/if}
+        value="photosRecursive" {if $EditFeed.feedType=='photosRecursive'}checked="checked" {/if}
         id="EditFeed_typePhotosRecursive" />
     </td><td>
       <label for="EditFeed_typePhotosRecursive">
@@ -362,7 +362,7 @@
     <td>{g->text text="Use image tag"}</td>
     <td>
       <input type="checkbox"
-        {if isset($EditFeed.useImage) && $EditFeed.useImage} checked="checked"{/if}
+        {if isset($EditFeed.useImage) && $EditFeed.useImage} checked="checked" {/if}
         name="{g->formVar var="form[useImage]"}"/> {g->text text="Include image tag"}
     </td>
     <td>
@@ -379,7 +379,7 @@
     <td>{g->text text="Use enclosures"}</td>
     <td>
       <input type="checkbox"
-        {if isset($EditFeed.useEnclosure) && $EditFeed.useEnclosure} checked="checked"{/if}
+        {if isset($EditFeed.useEnclosure) && $EditFeed.useEnclosure} checked="checked" {/if}
         name="{g->formVar var="form[useEnclosure]"}"/> {g->text text="Include enclosure tags"}
     </td>
     <td>
@@ -396,7 +396,7 @@
     <td>{g->text text="Use Media RSS"}</td>
     <td>
       <input type="checkbox"
-        {if isset($EditFeed.useMedia) && $EditFeed.useMedia} checked="checked"{/if}
+        {if isset($EditFeed.useMedia) && $EditFeed.useMedia} checked="checked" {/if}
         name="{g->formVar var="form[useMedia]"}"/> {g->text text="Include Media RSS tags"}
     </td>
     <td>
@@ -426,7 +426,7 @@
     <td>{g->text text="Cloud tag"}</td>
     <td>
       <input type="checkbox"
-        {if isset($EditFeed.useCloud) && $EditFeed.useCloud} checked="checked"{/if}
+        {if isset($EditFeed.useCloud) && $EditFeed.useCloud} checked="checked" {/if}
         name="{g->formVar var="form[useCloud]"}"/> {g->text text="Include the cloud tag"}
     </td>
     <td>

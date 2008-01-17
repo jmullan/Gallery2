@@ -97,10 +97,10 @@ function pickfield(s) {
 	  <input type="hidden" id="i.{$set.key}{$idx}"
 	   name="{g->formVar var="form[`$set.key`][index][$idx]"}" value="{$idx}"/>
 	</td><td style="text-align: center">
-	   <input type="checkbox" id="s.{$set.key}{$idx}"{if $item.summary} checked="checked"{/if}
+	   <input type="checkbox" id="s.{$set.key}{$idx}" {if $item.summary}checked="checked" {/if}
 	    name="{g->formVar var="form[`$set.key`][summary][$idx]"}"/>
 	</td><td style="text-align: center">
-	   <input type="checkbox" id="d.{$set.key}{$idx}"{if $item.detail} checked="checked"{/if}
+	   <input type="checkbox" id="d.{$set.key}{$idx}" {if $item.detail}checked="checked" {/if}
 	    name="{g->formVar var="form[`$set.key`][detail][$idx]"}"/>
 	</td><td>
 	  {if $idx > 0}

@@ -20,7 +20,7 @@
   <h4> {g->text text="MIME type: "} </h4>
 
   <input type="text" size="25" name="{g->formVar var="form[mimeType]"}" value="{$form.mimeType}"/>
-  <input type="checkbox"{if $form.viewable} checked="checked"{/if}
+  <input type="checkbox" {if $form.viewable}checked="checked" {/if}
    name="{g->formVar var="form[viewable]"}"/>
   {g->text text="Viewable?"}
   {if isset($form.error.mimeType.missing)}

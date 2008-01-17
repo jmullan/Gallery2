@@ -68,7 +68,7 @@
     {if $AdminFfmpeg.canWatermark} {g->text text="See sample at right."} {/if}
   </p>
   {if $AdminFfmpeg.canWatermark}
-    <input type="checkbox" id="cbWatermark"{if $form.useWatermark} checked="checked"{/if}
+    <input type="checkbox" id="cbWatermark" {if $form.useWatermark}checked="checked" {/if}
      name="{g->formVar var="form[useWatermark]"}" style="vertical-align: -5px"/>
     <label for="cbWatermark">
       {g->text text="Watermark new movie thumbnails"}

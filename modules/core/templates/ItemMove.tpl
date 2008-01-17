@@ -165,7 +165,7 @@
 	  &nbsp;
 	{/if}
       </td><td>
-	<input type="checkbox" id="cb_{$peerItemId}"{if $peer.selected} checked="checked"{/if}
+	<input type="checkbox" id="cb_{$peerItemId}" {if $peer.selected}checked="checked" {/if}
 	 name="{g->formVar var="form[selectedIds][$peerItemId]"}"/>
       </td><td>
 	<label for="cb_{$peerItemId}">

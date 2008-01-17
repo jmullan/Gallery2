@@ -25,7 +25,7 @@
   <table class="gbDataTable"><tr>
     <td style="text-align:right">
       <input type="checkbox" id="allowAlbumRating"
-	{if $form.allowAlbumRating} checked="checked"{/if}
+	{if $form.allowAlbumRating} checked="checked" {/if}
 	name="{g->formVar var="form[allowAlbumRating]"}"/>
     </td><td>
       <label for="allowAlbumRating">

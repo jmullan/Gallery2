@@ -13,7 +13,7 @@
 {/if}
 
 <div class="gbBlock">
-  <input type="checkbox" id="cbShowItemAdd"{if $form.showItemAdd} checked="checked"{/if}
+  <input type="checkbox" id="cbShowItemAdd" {if $form.showItemAdd}checked="checked" {/if}
    name="{g->formVar var="form[showItemAdd]"}"/>
   <label for="cbShowItemAdd">
     {g->text text="Show information about Gallery Remote in \"add items\" view"}

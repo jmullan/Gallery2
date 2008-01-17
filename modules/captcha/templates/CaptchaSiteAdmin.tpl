@@ -36,6 +36,7 @@
 
   <p class="giDescription">
     {g->text text="Medium security counts failures by a key value such as the username used in a login attempt.  This means after one username has too many failures then anyone, even the real account owner, must perform captcha validation for their next login.  Low security counts failures in the session.  This provides some protection against casual password guessers, but no protection against automated attacks."}
+  </p>
 </div>
 
 {if !empty($CaptchaSiteAdmin.options)}
@@ -59,22 +60,22 @@
     </td><td>
       {if in_array('HIGH', $option.choices)}
 	<input type="radio" name="{g->formVar var="form[level][`$optionId`]"}" value="HIGH"
-	 {if $option.value=='HIGH'}checked="checked"{/if}/>
+	 {if $option.value=='HIGH'} checked="checked"{/if}/>
       {/if}
     </td><td>
       {if in_array('MEDIUM', $option.choices)}
 	<input type="radio" name="{g->formVar var="form[level][`$optionId`]"}" value="MEDIUM"
-	 {if $option.value=='MEDIUM'}checked="checked"{/if}/>
+	 {if $option.value=='MEDIUM'} checked="checked"{/if}/>
       {/if}
     </td><td>
       {if in_array('LOW', $option.choices)}
 	<input type="radio" name="{g->formVar var="form[level][`$optionId`]"}" value="LOW"
-	 {if $option.value=='LOW'}checked="checked"{/if}/>
+	 {if $option.value=='LOW'} checked="checked"{/if}/>
       {/if}
     </td><td>
       {if in_array('OFF', $option.choices)}
 	<input type="radio" name="{g->formVar var="form[level][`$optionId`]"}" value="OFF"
-	 {if $option.value=='OFF'}checked="checked"{/if}/>
+	 {if $option.value=='OFF'} checked="checked"{/if}/>
       {/if}
     </td></tr>
     {/foreach}

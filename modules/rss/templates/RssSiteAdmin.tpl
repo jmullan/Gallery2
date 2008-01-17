@@ -148,7 +148,7 @@
   </p>
   <table><col width="1%"/><col width="1%"/><col width="50%"/><col width="48%"/>
     <tr><td>
-      <input type="checkbox"{if $form.allowSimpleFeed} checked="checked" {/if}
+      <input type="checkbox" {if $form.allowSimpleFeed}checked="checked" {/if}
         name="{g->formVar var="form[allowSimpleFeed]"}" id="Rss_allowSimpleFeed"/>
     </td><td colspan="2">
       <label for="Rss_allowSimpleFeed">
@@ -163,7 +163,7 @@
     </td></tr>
 
     <tr><td>
-      <input type="checkbox"{if $form.allowConfigurableFeed} checked="checked" {/if}
+      <input type="checkbox" {if $form.allowConfigurableFeed}checked="checked" {/if}
         onclick="refresh(this.form)"
         name="{g->formVar var="form[allowConfigurableFeed]"}" id="Rss_allowConfigurableFeed"/>
     </td><td colspan="3">
@@ -178,7 +178,7 @@
     </td></tr>
     <tr><td>
     </td><td>
-      <input type="checkbox"{if $form.allowPhotos} checked="checked"{/if}
+      <input type="checkbox" {if $form.allowPhotos}checked="checked" {/if}
         {if !$form.allowConfigurableFeed} disabled="disabled" {/if}
         name="{g->formVar var="form[allowPhotos]"}" id="Rss_allowPhotos"/>
     </td><td>
@@ -190,7 +190,7 @@
     </td></tr>
     <tr><td>
     </td><td>
-      <input type="checkbox"{if $form.allowAlbums} checked="checked"{/if}
+      <input type="checkbox" {if $form.allowAlbums}checked="checked" {/if}
         {if !$form.allowConfigurableFeed} disabled="disabled" {/if}
         name="{g->formVar var="form[allowAlbums]"}" id="Rss_allowAlbums"/>
     </td><td>
@@ -202,7 +202,7 @@
     </td></tr>
     <tr><td>
     </td><td>
-      <input type="checkbox"{if $form.allowPhotosRecursive} checked="checked"{/if}
+      <input type="checkbox" {if $form.allowPhotosRecursive}checked="checked" {/if}
         {if !$form.allowConfigurableFeed} disabled="disabled" {/if}
         name="{g->formVar var="form[allowPhotosRecursive]"}" id="Rss_allowPhotosRecursive"/>
     </td><td>
@@ -214,7 +214,7 @@
     </td></tr>
     <tr><td>
     </td><td>
-      <input type="checkbox"{if $form.allowCommentsPhoto} checked="checked"{/if}
+      <input type="checkbox" {if $form.allowCommentsPhoto}checked="checked" {/if}
         {if !$form.allowConfigurableFeed} disabled="disabled" {/if}
         name="{g->formVar var="form[allowCommentsPhoto]"}" id="Rss_allowCommentsPhoto"/>
     </td><td>
@@ -226,7 +226,7 @@
     </td></tr>
     <tr><td>
     </td><td>
-      <input type="checkbox"{if $form.allowCommentsAlbum} checked="checked"{/if}
+      <input type="checkbox" {if $form.allowCommentsAlbum}checked="checked" {/if}
         {if !$form.allowConfigurableFeed} disabled="disabled" {/if}
         name="{g->formVar var="form[allowCommentsAlbum]"}" id="Rss_allowCommentsAlbum"/>
     </td><td>
@@ -238,7 +238,7 @@
     </td></tr>
     <tr><td>
     </td><td>
-      <input type="checkbox"{if $form.allowCommentsRecursive} checked="checked"{/if}
+      <input type="checkbox" {if $form.allowCommentsRecursive}checked="checked" {/if}
         {if !$form.allowConfigurableFeed} disabled="disabled" {/if}
         name="{g->formVar var="form[allowCommentsRecursive]"}" id="Rss_allowCommentsRecursive"/>
     </td><td>
@@ -250,7 +250,7 @@
     </td></tr>
     <tr><td>
     </td><td>
-      <input type="checkbox"{if $form.allowPhotosRandom} checked="checked"{/if}
+      <input type="checkbox" {if $form.allowPhotosRandom}checked="checked" {/if}
         {if !$form.allowConfigurableFeed} disabled="disabled" {/if}
         name="{g->formVar var="form[allowPhotosRandom]"}" id="Rss_allowPhotosRandom"/>
     </td><td>
@@ -262,7 +262,7 @@
     </td></tr>
     <tr><td>
     </td><td>
-      <input type="checkbox"{if $form.allowPhotosRandomRecursive} checked="checked"{/if}
+      <input type="checkbox" {if $form.allowPhotosRandomRecursive}checked="checked" {/if}
         {if !$form.allowConfigurableFeed} disabled="disabled" {/if}
         name="{g->formVar var="form[allowPhotosRandomRecursive]"}" id="Rss_allowPhotosRandomRecursive"/>
     </td><td>
@@ -354,7 +354,7 @@
     <td rowspan="5">{g->text text="For albums"}</td>
     <td>
       <input type="radio" name="{g->formVar var="form[sfAlbumType]"}"
-        value="photos" {if $form.sfAlbumType=='photos'}checked="checked"{/if}
+        value="photos" {if $form.sfAlbumType=='photos'}checked="checked" {/if}
 	id="RssSiteAdmin_typePhotos" />
     </td><td>
       <label for="RssSiteAdmin_typePhotos">
@@ -366,7 +366,7 @@
   </tr><tr valign="top">
     <td>
       <input type="radio" name="{g->formVar var="form[sfAlbumType]"}"
-        value="album" {if $form.sfAlbumType=='album'}checked="checked"{/if}
+        value="album" {if $form.sfAlbumType=='album'}checked="checked" {/if}
 	id="RssSiteAdmin_typeAlbum" />
     </td><td>
       <label for="RssSiteAdmin_typeAlbum">
@@ -378,7 +378,7 @@
   </tr><tr valign="top">
     <td>
       <input type="radio" name="{g->formVar var="form[sfAlbumType]"}"
-        value="photosRecursive" {if $form.sfAlbumType=='photosRecursive'}checked="checked"{/if}
+        value="photosRecursive" {if $form.sfAlbumType=='photosRecursive'}checked="checked" {/if}
 	id="RssSiteAdmin_typePhotosRecursive" />
     </td><td>
       <label for="RssSiteAdmin_typePhotosRecursive">
@@ -394,7 +394,7 @@
         {g->text text="Limit the number of items per album"}
       </label>
       <input type="text" size="5" name="{g->formVar var="form[sfPhotosRecursiveLimit]"}"
-        {if isset($form.sfPhotosRecursiveLimit)}value="{$form.sfPhotosRecursiveLimit}"{/if}
+        {if isset($form.sfPhotosRecursiveLimit)} value="{$form.sfPhotosRecursiveLimit}" {/if}
 	id="RssSiteAdmin_typePhotosRecursiveLimit" />
       {if isset($form.error.sfPhotosRecursiveLimit)}
       <div class="giError">
@@ -407,7 +407,7 @@
   </tr><tr>
     <td>
       <input type="radio" name="{g->formVar var="form[sfAlbumType]"}"
-        value="commentsAlbum" {if $form.sfAlbumType=='commentsAlbum'}checked="checked"{/if}
+        value="commentsAlbum" {if $form.sfAlbumType=='commentsAlbum'}checked="checked" {/if}
 	id="RssSiteAdmin_typeCommentsAlbum" />
     </td><td>
       <label for="RssSiteAdmin_typeCommentsAlbum">
@@ -420,7 +420,7 @@
   <td></td>
     <td>
       <input type="radio" name="{g->formVar var="form[sfAlbumType]"}"
-        value="commentsRecursive" {if $form.sfAlbumType=='commentsRecursive'}checked="checked"{/if}
+        value="commentsRecursive" {if $form.sfAlbumType=='commentsRecursive'}checked="checked" {/if}
 	id="RssSiteAdmin_typeCommentsRecursive" />
     </td><td>
       <label for="RssSiteAdmin_typeCommentsRecursive">

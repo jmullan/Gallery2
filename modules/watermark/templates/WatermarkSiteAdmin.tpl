@@ -29,7 +29,7 @@
 <div class="gbBlock">
   <table class="gbDataTable"><tr>
     <td>
-      <input type="checkbox"{if $form.allowUserWatermarks} checked="checked"{/if}
+      <input type="checkbox" {if $form.allowUserWatermarks}checked="checked" {/if}
        name="{g->formVar var="form[allowUserWatermarks]"}" id="allowUserWatermarks"
        {if $form.forceDefaultWatermark}disabled="disabled"{/if}/>
     </td><td>
@@ -37,7 +37,7 @@
 	{g->text text="Allow users to upload their own watermark images"}
       </label>
     </td></tr><tr><td>
-      <input type="checkbox"{if $form.forceDefaultWatermark} checked="checked"{/if}
+      <input type="checkbox" {if $form.forceDefaultWatermark}checked="checked" {/if}
        name="{g->formVar var="form[forceDefaultWatermark]"}" id="forceDefaultWatermark"
        onclick="document.getElementById('allowUserWatermarks').disabled=this.checked"/>
     </td><td>
@@ -77,10 +77,10 @@
 	{g->text text="delete"}
       </a>
     </td><td style="text-align:center">
-      <input type="radio"{if $item.id == $form.hotlinkWatermarkId} checked="checked"{/if}
+      <input type="radio" {if $item.id == $form.hotlinkWatermarkId}checked="checked" {/if}
        name="{g->formVar var="form[hotlinkWatermarkId]"}" value="{$item.id}"/>
     </td><td style="text-align:center">
-      <input type="radio"{if $item.id == $form.defaultWatermarkId} checked="checked"{/if}
+      <input type="radio" {if $item.id == $form.defaultWatermarkId}checked="checked" {/if}
        name="{g->formVar var="form[defaultWatermarkId]"}" value="{$item.id}"/>
     </td>
   </tr>

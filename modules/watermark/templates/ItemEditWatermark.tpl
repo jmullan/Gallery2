@@ -89,21 +89,21 @@
   </div>
   {/if}
 
-  <input type="checkbox"{if isset($form.whichDerivative.preferred)} checked="checked"{/if}
+  <input type="checkbox" {if isset($form.whichDerivative.preferred)}checked="checked" {/if}
    name="{g->formVar var="form[whichDerivative][preferred]"}" id="cbFullSize"/>
   <label for="cbFullSize">
     {g->text text="Full size (won't damage the original file)"}
   </label>
   <br/>
 
-  <input type="checkbox"{if isset($form.whichDerivative.resize)} checked="checked"{/if}
+  <input type="checkbox" {if isset($form.whichDerivative.resize)}checked="checked" {/if}
    name="{g->formVar var="form[whichDerivative][resize]"}" id="cbResizes"/>
   <label for="cbResizes">
     {g->text text="Resizes"}
   </label>
   <br/>
 
-  <input type="checkbox"{if isset($form.whichDerivative.thumbnail)} checked="checked"{/if}
+  <input type="checkbox" {if isset($form.whichDerivative.thumbnail)}checked="checked" {/if}
    name="{g->formVar var="form[whichDerivative][thumbnail]"}" id="cbThumbnail"/>
   <label for="cbThumbnail">
     {g->text text="Thumbnail"}
@@ -115,8 +115,8 @@
 <div class="gbBlock">
   <h3> {g->text text="Step 4.  Subalbums"} </h3>
 
-  <input type="checkbox"{if isset($form.recursive)} checked="checked"{/if}
-   name="{g->formVar var="form[recursive]"}"/>
+  <input type="checkbox" {if isset($form.recursive)}checked="checked" {/if}
+   name="{g->formVar var="form[recursive]"}" id="cbRecursive"/>
   <label for="cbRecursive">
     {g->text text="Also apply watermark change to all subalbums"}
   </label>

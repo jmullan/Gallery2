@@ -108,27 +108,28 @@
   <h3>{g->text text="Help"}</h3>
   <p>{g->text text="Here are a selection of variables that affect slideshows."}</p>
   <table class="gbDataTable">
-    <tr><th>{g->text text="variable"}</th><th>{g->text text="values"}</th><th>{g->text text="help"}</th></tr>
-    <tr class="gbEven"><td>slideshowMaxPictures</td><td>100</td>
+    <tr><th>{g->text text="variable"}</th><th>{g->text text="values"}</th><th>{g->text text="help"}</th>
+    </tr><tr class="gbEven"><td>slideshowMaxPictures</td><td>100</td>
       <td>{g->text text="maximum number of pictures shown in one go"}</td>
-    <tr class="gbOdd"><td>slideshowRecursive</td><td>true/false</td>
+    </tr><tr class="gbOdd"><td>slideshowRecursive</td><td>true/false</td>
       <td>{g->text text="does slideshow display pictures inside sub-albums?"}</td>
-    <tr class="gbEven"><td>slideshowLowRez</td><td>true/false</td>
+    </tr><tr class="gbEven"><td>slideshowLowRez</td><td>true/false</td>
       <td>{g->text text="if true, will prevent the slideshow from downloading the full-resolution pictures"}</td>
-    <tr class="gbOdd"><td>slideshowLoop</td><td>true/false</td>
+    </tr><tr class="gbOdd"><td>slideshowLoop</td><td>true/false</td>
       <td>{g->text text="does slideshow loop when it gets to the end?"}</td>
-    <tr class="gbEven"><td>slideshowNoStretch</td><td>true/false</td>
+    </tr><tr class="gbEven"><td>slideshowNoStretch</td><td>true/false</td>
       <td>{g->text text="if true, pictures smaller than the screen won't be stretched"}</td>
-    <tr class="gbOdd"><td>slideshowPreloadAll</td><td>true/false</td>
+    </tr><tr class="gbOdd"><td>slideshowPreloadAll</td><td>true/false</td>
       <td>{g->text text="if true, the slideshow will download pictures before they're needed, which can speed up, but also may waste bandwidth"}</td>
-    <tr class="gbEven"><td>slideshowColor</td><td>0,0,0</td>
+    </tr><tr class="gbEven"><td>slideshowColor</td><td>0,0,0</td>
       <td>{g->text text="color of the slideshow background"}</td>
-    <tr class="gbOdd"><td>slideshowFontSize</td><td>30</td>
+    </tr><tr class="gbOdd"><td>slideshowFontSize</td><td>30</td>
       <td>{g->text text="size of text overlay"}</td>
-    <tr class="gbEven"><td>slideshowFontName</td><td>arial</td>
+    </tr><tr class="gbEven"><td>slideshowFontName</td><td>arial</td>
       <td>{g->text text="font of text overlay"}</td>
-    <tr class="gbOdd"><td>slideshowRandom</td><td>true/false</td>
+    </tr><tr class="gbOdd"><td>slideshowRandom</td><td>true/false</td>
       <td>{g->text text="should the pictures be shown in random order?"}</td>
+    </tr>
   </table>
   <p><a href="http://svn.sourceforge.net/viewvc/*checkout*/gallery/trunk/gallery_remote/defaults.properties" target="_blank">
 	{g->text text="Complete list of variables"}</a></p>

@@ -44,8 +44,7 @@
       {g->text text="summary"}
     {else}
       <a href="{g->url arg1="controller=exif.SwitchDetailMode"
-		arg2="mode=summary" arg3="return=true"}"
-	 onclick="return exifSwitchDetailMode({$exif.blockNum},{$item.id},'summary')">
+		arg2="mode=summary" arg3="return=true"}" onclick="return exifSwitchDetailMode({$exif.blockNum},{$item.id},'summary')">
 	{g->text text="summary"}
       </a>
     {/if}
@@ -54,8 +53,7 @@
       {g->text text="details"}
     {else}
       <a href="{g->url arg1="controller=exif.SwitchDetailMode"
-		arg2="mode=detailed" arg3="return=true"}"
-	 onclick="return exifSwitchDetailMode({$exif.blockNum},{$item.id},'detailed')">
+		arg2="mode=detailed" arg3="return=true"}" onclick="return exifSwitchDetailMode({$exif.blockNum},{$item.id},'detailed')">
 	{g->text text="details"}
       </a>
     {/if}

@@ -27,14 +27,14 @@
     {g->text text="The panorama viewer can be activated in two ways: the first allows album administrators to select individual images for panorama display (Panorama section in \"edit photo\"), overriding the normal display of the entire image.  The second method retains the normal image display but gives users an option in the \"item actions\" to view the image in the panorama viewer."}
   </p>
   <p style="line-height: 2.5em; margin-left: 1em">
-    <input type="checkbox" id="cbItemType"{if $form.itemType} checked="checked"{/if}
+    <input type="checkbox" id="cbItemType" {if $form.itemType}checked="checked" {/if}
      name="{g->formVar var="form[itemType]"}"/>
     <label for="cbItemType">
       {g->text text="Use applet to display wide images"}
     </label>
     <br/>
 
-    <input type="checkbox" id="cbItemLink"{if $form.itemLink} checked="checked"{/if}
+    <input type="checkbox" id="cbItemLink" {if $form.itemLink}checked="checked" {/if}
      name="{g->formVar var="form[itemLink]"}"/>
     <label for="cbItemLink">
       {g->text text="Add \"view panorama\" option in item actions for wide images"}

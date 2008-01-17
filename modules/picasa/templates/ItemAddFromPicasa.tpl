@@ -56,12 +56,12 @@
   &nbsp;
 
   {g->text text="Assign Picasa caption to:"}
-  <input type="checkbox" id="cbSummary"{if !empty($form.set.summary)} checked="checked"{/if}
+  <input type="checkbox" id="cbSummary" {if !empty($form.set.summary)}checked="checked" {/if}
    name="{g->formVar var="form[set][summary]"}"/>
   <label for="cbSummary"> {g->text text="Summary"} </label>
   &nbsp;
 
-  <input type="checkbox" id="cbDesc"{if !empty($form.set.description)} checked="checked"{/if}
+  <input type="checkbox" id="cbDesc" {if !empty($form.set.description)}checked="checked" {/if}
    name="{g->formVar var="form[set][description]"}"/>
   <label for="cbDesc"> {g->text text="Description"} </label>
 </div>

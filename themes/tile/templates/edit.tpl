@@ -52,7 +52,7 @@
     {/if}
   </td><td>
   {if isset($it.image)}
-    <input type="radio"{if $theme.param.backgroundId==$it.image.id} checked="checked"{/if}
+    <input type="radio" {if $theme.param.backgroundId==$it.image.id}checked="checked" {/if}
      name="{g->formVar var="form[backgroundId]"}" value="{$it.image.id}"/>
   {/if}
   </td><td>

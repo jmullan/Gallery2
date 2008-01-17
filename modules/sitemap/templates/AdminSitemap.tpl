@@ -27,6 +27,6 @@
       {g->text text="URL Rewrite Module"}</a>
   {/strip}{/capture}
   <p class="giDescription">
-    {g->text text="You can change the Sitemap url using the %s." arg1=$link} </p>
+    {g->text text="You can change the Sitemap url using the %s." arg1=$link}
   </p>
 </div>

@@ -48,7 +48,7 @@
     <td>
       <h4>{g->text text="Maintenance Mode"}</h4>
     </td><td align="left" valign="bottom">
-      <input type="checkbox"{if $AdminMaintenance.setMode.mode} checked="checked"{/if}
+      <input type="checkbox" {if $AdminMaintenance.setMode.mode}checked="checked" {/if}
 	     name="{g->formVar var="form[setMode][mode]}"
 	     onclick="BlockToggle('setMode-maintenance-url', 'not needed', 'table-row')"/>
     </td>
@@ -59,7 +59,7 @@
     </td>
   </tr>
   <tr id="setMode-maintenance-url" {if !$AdminMaintenance.setMode.mode}style="display: none"{/if}>
-    <td colspan=3>
+    <td colspan="3">
       <h4>{g->text text="Maintenance Mode Url"}</h4>
       <p class="giDescription">
         {g->text text="The Maintenance Mode Url specifies where requests will be redirected when access to the site has been restricted by the administrator."}

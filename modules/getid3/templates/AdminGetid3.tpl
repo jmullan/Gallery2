@@ -159,7 +159,7 @@
     {g->text text="When MP3s are added to Gallery check the ID3 title field and apply to:"}
   </p>
   <p class="giDescription">
-    <input type="checkbox" id="cbMp3Title"{if $form.item.mp3title} checked="checked"{/if}
+    <input type="checkbox" id="cbMp3Title" {if $form.item.mp3title}checked="checked" {/if}
      name="{g->formVar var="form[item][mp3title]"}"/>
     <label for="cbMp3Title">
       {g->text text="Title"}

@@ -4,8 +4,8 @@
  *}
 <div class="gbBlock">
   <table class="gbDataTable"><tr><td>
-    <input type="radio" id="rbAlbum"{if $form.linkType=='album'} checked="checked"{/if}
-     name="{g->formVar var="form[linkType]"}" value="album"}
+    <input type="radio" id="rbAlbum" {if $form.linkType=='album'}checked="checked" {/if}
+     name="{g->formVar var="form[linkType]"}" value="album"/>
   </td><td>
     <label for="rbAlbum">
       <b> {g->text text="Link to Album:"} </b> &nbsp;
@@ -75,8 +75,8 @@
     </div>
     {/if}
   </td></tr><tr><td>
-    <input type="radio" id="rbUrl"{if $form.linkType=='url'} checked="checked"{/if}
-     name="{g->formVar var="form[linkType]"}" value="url"}
+    <input type="radio" id="rbUrl" {if $form.linkType=='url'}checked="checked" {/if}
+     name="{g->formVar var="form[linkType]"}" value="url"/>
   </td><td>
     <label for="rbUrl">
       <b> {g->text text="Link to External URL:"} </b>

@@ -83,7 +83,7 @@
 
   <input type="checkbox" id="SizeLimit_KeepOriginal"
 	 name="{g->formVar var="form[SizeLimitOption][keepOriginal]"}"
-   {if $SizeLimitOption.keepOriginal} checked="checked"{/if}{if
+   {if $SizeLimitOption.keepOriginal} checked="checked" {/if}{if
     $SizeLimitOption.dimensionChoice == "unlimited" && $SizeLimitOption.sizeChoice == "unlimited"}
     disabled="disabled"{/if}/>
   <label for="SizeLimit_KeepOriginal">

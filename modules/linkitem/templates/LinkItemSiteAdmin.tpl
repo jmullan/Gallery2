@@ -19,14 +19,14 @@
 	{g->text text="Add small arrow watermark on thumbnails"}
       </label>
     </td><td>
-      <input type="checkbox" id="arrowWatermark"{if $form.arrowWatermark} checked="checked"{/if}
+      <input type="checkbox" id="arrowWatermark" {if $form.arrowWatermark}checked="checked" {/if}
        name="{g->formVar var="form[arrowWatermark]"}"/>
     </td></tr><tr><td>
       <label for="urlSnapshot">
 	{g->text text="Generate webpage snapshot for thumbnails of URL links"}
       </label>
     </td><td>
-      <input type="checkbox" id="urlSnapshot"{if $form.urlSnapshot} checked="checked"{/if}
+      <input type="checkbox" id="urlSnapshot" {if $form.urlSnapshot}checked="checked" {/if}
        name="{g->formVar var="form[urlSnapshot]"}"/>
     </td></tr><tr><td colspan="2">
       <label for="snapshotExec">

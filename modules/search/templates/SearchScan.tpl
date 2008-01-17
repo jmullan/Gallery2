@@ -53,7 +53,7 @@
 	  {foreach from=$moduleInfo.options key=optionId item=optionInfo}
 	  <input type="checkbox" id="cb_{$moduleId}_{$optionId}"
 	   name="{g->formVar var="form[options][$moduleId][$optionId]"}"
-	   {if isset($form.options.$moduleId.$optionId)}checked="checked"{/if}/>
+	   {if isset($form.options.$moduleId.$optionId)} checked="checked"{/if}/>
 	  <label for="cb_{$moduleId}_{$optionId}">
 	    {$optionInfo.description}
 	  </label>

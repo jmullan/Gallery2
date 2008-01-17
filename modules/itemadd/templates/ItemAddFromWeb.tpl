@@ -143,17 +143,17 @@
       {g->text text="Copy base filenames to:"}
       <br/>
 
-      <input type="checkbox" id="cbTitle"{if $form.set.title} checked="checked"{/if}
+      <input type="checkbox" id="cbTitle" {if $form.set.title}checked="checked" {/if}
        name="{g->formVar var="form[set][title]"}"/>
       <label for="cbTitle"> {g->text text="Title"} </label>
       &nbsp;
 
-      <input type="checkbox" id="cbSummary"{if $form.set.summary} checked="checked"{/if}
+      <input type="checkbox" id="cbSummary" {if $form.set.summary}checked="checked" {/if}
        name="{g->formVar var="form[set][summary]"}"/>
       <label for="cbSummary"> {g->text text="Summary"} </label>
       &nbsp;
 
-      <input type="checkbox" id="cbDescription"{if $form.set.description} checked="checked"{/if}
+      <input type="checkbox" id="cbDescription" {if $form.set.description}checked="checked" {/if}
        name="{g->formVar var="form[set][description]"}"/>
       <label for="cbDescription"> {g->text text="Description"} </label>
     </p>

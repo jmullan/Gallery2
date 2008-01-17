@@ -26,12 +26,12 @@
       {g->text text="Now that you have chosen the destination album, the following options can be used when adding the photos to Gallery."}
     </p>
 
-    <input type="checkbox" name="{g->formVar var="form[stripExtensions]"}" {if !empty($form.stripExtensions)}checked{/if}>
+    <input type="checkbox" name="{g->formVar var="form[stripExtensions]"}" {if !empty($form.stripExtensions)}checked="checked"{/if}/>
     {g->text text="Strip file extensions?"}
 
     <br/>
 
-    <input type="checkbox" name="{g->formVar var="form[setCaptions]"}" {if !empty($form.setCaptions)}checked{/if}>
+    <input type="checkbox" name="{g->formVar var="form[setCaptions]"}" {if !empty($form.setCaptions)}checked="checked"{/if}/>
     {g->text text="Set captions on the published items?"}
   </div>
 

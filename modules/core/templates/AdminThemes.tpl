@@ -164,7 +164,7 @@
 		{html_options options=$setting.choices selected=$form.key[$setting.key]}
 	      </select>
 	    {elseif ($setting.type == 'checkbox')}
-	      <input type="checkbox"{if !empty($setting.value)} checked="checked"{/if}
+	      <input type="checkbox" {if !empty($setting.value)}checked="checked" {/if}
 	       name="{g->formVar var="form[key][`$setting.key`]"}" />
 	    {elseif ($setting.type == 'block-list')}
 	      <table>

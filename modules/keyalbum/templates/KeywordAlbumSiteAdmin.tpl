@@ -35,19 +35,19 @@
     <td style="vertical-align:top;padding-top:6px"> {g->text text="Split keywords on"} </td>
     <td>
       <input type="checkbox" id="splitSemicolon" name="{g->formVar var="form[split][semicolon]"}"
-       {if !empty($form.split.semicolon)}checked="checked"{/if}/>
+       {if !empty($form.split.semicolon)} checked="checked"{/if}/>
       <label for="splitSemicolon">
 	{g->text text="Semicolons"}
       </label>
       &nbsp;
       <input type="checkbox" id="splitComma" name="{g->formVar var="form[split][comma]"}"
-       {if !empty($form.split.comma)}checked="checked"{/if}/>
+       {if !empty($form.split.comma)} checked="checked"{/if}/>
       <label for="splitComma">
 	{g->text text="Commas"}
       </label>
       &nbsp;
       <input type="checkbox" id="splitSpace" name="{g->formVar var="form[split][space]"}"
-       {if !empty($form.split.space)}checked="checked"{/if}/>
+       {if !empty($form.split.space)} checked="checked"{/if}/>
       <label for="splitSpace">
 	{g->text text="Spaces"}
       </label>

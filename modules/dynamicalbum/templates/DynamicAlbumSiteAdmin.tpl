@@ -56,7 +56,7 @@
       &nbsp; {g->text text="Override default with parameter %s=value where value is %s, %s or %s"
 		 arg1=$key arg2="data" arg3="all" arg4="album"}
     </td>
-  </td><tr>
+  </tr><tr>
     <td style="vertical-align: top; padding-top: 6px">
       {g->text text="Description"}
     </td><td>
@@ -70,14 +70,12 @@
     <td>
       {g->text text="Link"}
     </td><td>
-      <input type="checkbox" id="itemLinkDate"{if !empty($form.itemlink_date)
-       } checked="checked"{/if} name="{g->formVar var="form[itemlink_date]"}"/>
+      <input type="checkbox" id="itemLinkDate" {if !empty($form.itemlink_date)
+       } checked="checked" {/if} name="{g->formVar var="form[itemlink_date]"}"/>
       <label for="itemLinkDate">
 	{g->text text="Show Latest Updates link in each album"}
       </label>
     </td>
-  </tr><tr>
-    <td>
   </tr><tr>
     <td colspan="2"><h4> {g->text text="Popular Album"} </h4></td>
   </tr><tr>
@@ -120,8 +118,8 @@
     <td>
       {g->text text="Link"}
     </td><td>
-      <input type="checkbox" id="itemLinkViews"{if !empty($form.itemlink_views)
-       } checked="checked"{/if} name="{g->formVar var="form[itemlink_views]"}"/>
+      <input type="checkbox" id="itemLinkViews" {if !empty($form.itemlink_views)
+       } checked="checked" {/if} name="{g->formVar var="form[itemlink_views]"}"/>
       <label for="itemLinkViews">
 	{g->text text="Show Popular Items link in each album"}
       </label>
@@ -168,8 +166,8 @@
     <td>
       {g->text text="Link"}
     </td><td>
-      <input type="checkbox" id="itemLinkRandom"{if !empty($form.itemlink_random)
-       } checked="checked"{/if} name="{g->formVar var="form[itemlink_random]"}"/>
+      <input type="checkbox" id="itemLinkRandom" {if !empty($form.itemlink_random)
+       } checked="checked" {/if} name="{g->formVar var="form[itemlink_random]"}"/>
       <label for="itemLinkRandom">
 	{g->text text="Show Random Items link in each album"}
       </label>

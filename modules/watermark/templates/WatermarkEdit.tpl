@@ -72,17 +72,17 @@
   </p>
   {/if}
 
-  <input type="checkbox"{if isset($form.whichDerivative.preferred)} checked="checked"{/if}
+  <input type="checkbox" {if isset($form.whichDerivative.preferred)}checked="checked" {/if}
    name="{g->formVar var="form[whichDerivative][preferred]"}"/>
   {g->text text="Full size (won't damage the original file)"}
   <br/>
 
-  <input type="checkbox"{if isset($form.whichDerivative.resizes)} checked="checked"{/if}
+  <input type="checkbox" {if isset($form.whichDerivative.resizes)}checked="checked" {/if}
    name="{g->formVar var="form[whichDerivative][resizes]"}"/>
   {g->text text="Resizes"}
   <br/>
 
-  <input type="checkbox"{if isset($form.whichDerivative.thumbnail)} checked="checked"{/if}
+  <input type="checkbox" {if isset($form.whichDerivative.thumbnail)}checked="checked" {/if}
    name="{g->formVar var="form[whichDerivative][thumbnail]"}"/>
   {g->text text="Thumbnail"}
   <br/>

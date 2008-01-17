@@ -74,7 +74,7 @@
     <tr class="{cycle values="gbEven,gbOdd"}">
       <td>
 	{if ($user.can.remove)}
-	  <input type="checkbox" name="{g->formVar var="form[userIds][$userId]}">
+	  <input type="checkbox" name="{g->formVar var="form[userIds][$userId]}"/>
 	{/if}
       </td>
       <td>

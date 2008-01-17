@@ -12,7 +12,7 @@
   {if $ItemEditPhoto.editSizes.can.createResizes}
     {counter start=0 assign=index}
     {foreach from=$form.resizes item=resize}
-      <input type="checkbox"{if $form.resizes.$index.active} checked="checked"{/if}
+      <input type="checkbox" {if $form.resizes.$index.active}checked="checked" {/if}
        name="{g->formVar var="form[resizes][$index][active]"}"/>
       {g->dimensions formVar="form[resizes][$index]"
 		     width=$form.resizes.$index.width height=$form.resizes.$index.height}

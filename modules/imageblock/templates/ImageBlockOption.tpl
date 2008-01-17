@@ -7,7 +7,7 @@
 
   <input type="checkbox" id="ImageBlockOption_setDisabled"
    name="{g->formVar var="form[ImageBlockOption][setDisabled]"}"
-   {if $form.ImageBlockOption.setDisabled}checked="checked"{/if}/>
+   {if $form.ImageBlockOption.setDisabled} checked="checked"{/if}/>
   <label for="ImageBlockOption_setDisabled">
     {g->text text="Prevent this album from being displayed in the Image Block"}
   </label>
