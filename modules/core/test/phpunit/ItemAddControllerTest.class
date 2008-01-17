@@ -397,6 +397,109 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	$this->assert($item->getParentId() != $this->_album->getId(), 'should be in subalbum');
     }
 
+    function testHandleRequestWithProgressBarWithArchiveExtractNoAddAlbumPermission() {
+	global $gallery;
+
+	list ($ret, $archive) = $this->_createRandomDataItem(
+	    $this->_album->getId(), 'test/archive',
+	    array('pathComponent' => 'foo.zip', 'title' => 'foo', 'summary' => 'hoho'));
+	if ($ret) {
+	    return $ret;
+	}
+	list ($ret, $item) = GalleryTestCase::_createRandomDataItem($this->_album->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	/* Ensure that the active user is missing the core.addAlbumItem permission */
+	$ret = GalleryCoreApi::removeItemPermissions($this->_album->getId());
+	if ($ret) {
+	    return $ret;
+	}
+	foreach (array('core.view', 'core.addDataItem') as $permissionId) {
+	    $ret = GalleryCoreApi::addUserPermission(
+		$this->_album->getId(), $gallery->getActiveUserId(), $permissionId);
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
+	GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddControllerTestPluginSuccess');
+
+	$this->_controller->setOptionInstances(
+	    array('ItemAddTestOption' => new ItemAddTestOption(false)));
+
+	$ret = $this->handleRequestWithProgressBar(array(), $this->_album,
+						   new ItemAddControllerTestPluginSuccess());
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->_assertErrorFromProgressBar(null);
+	$this->_assertCompleteProgressBar(
+	    array('view' => 'core.ItemAdmin',
+		  'subView' => 'core.ItemAddConfirmation',
+		  'itemId' => $this->_album->getId()),
+	    true);
+
+	$isUnix = strncasecmp(PHP_OS, 'win', 3);
+	$status = $this->_getStatusFromProgressBar();
+	$addedItems = $status['addedFiles'];
+	$this->assertEquals($isUnix ? 6 : 3, count($addedItems), 'added wrong # of items');
+
+	/*
+	 * Sort the added files list by filename because we can't guarantee
+	 * the file order across platforms.
+	 */
+	$sortAddedFilesFunc =
+	    create_function('$a, $b', 'return strcmp($a[\'fileName\'], $b[\'fileName\']);');
+	usort($addedItems, $sortAddedFilesFunc);
+
+	$itemNames = array();
+	foreach ($addedItems as $i => $addedItem) {
+	    $itemNames[] = $addedItem['fileName'];
+	    $this->assertEquals(array('a warning'), $addedItem['warnings'],
+				"warning $i - item not processed by ItemAddOption");
+	}
+
+	/* All files from the archive should be added in a flat hierarchy, folders are ignored */
+	$expected = array();
+	$expected[] = 'blah.ext';
+	if ($isUnix) {
+	    $expected[] = 'foo&lt;body onload=alert(album_xss)&gt;bar';
+	    $expected[] = 'foo&lt;body onload=alert(item_xss)&gt;.ext';
+	}
+	$expected[] = 'foo-' . $item->getId();
+	$expected[] = 'foo.ext';
+	if ($isUnix) {
+	    $expected[] = 'foo.ext';
+	}
+	$this->assertEquals($expected, $itemNames, 'files');
+
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_album);
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assert(!in_array($archive->getId(), $childIds), 'archive item has not been deleted');
+	$this->assert(in_array($item->getId(), $childIds), 'normal item has been deleted');
+
+	list ($ret, $item) =
+	    GalleryCoreApi::loadEntitiesById($addedItems[0]['id'], 'GalleryDataItem');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals('blah', $item->getTitle(), 'title set with base filename');
+	$this->assertEquals('hoho', $item->getSummary(), 'summary set from archive');
+	$this->assertEquals($this->_album->getId(), $item->getParentId(),
+	    'should be in same album, not in subalbum');
+
+	list ($ret, $subAlbumIds) = GalleryCoreApi::fetchChildAlbumItemIds($this->_album);
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(array(), $subAlbumIds, 'no sub-albums should be created');
+    }
+
     function testHandleRequestWithXss() {
 	list ($ret, $archive) = $this->_createRandomDataItem(
 	    $this->_album->getId(), 'test/archive',

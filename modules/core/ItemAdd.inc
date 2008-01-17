@@ -399,6 +399,13 @@ class ItemAddController extends GalleryController {
 	$this->_templateAdapter->updateProgressBar($this->_extractingArchiveMessage, '', 0);
 	$gallery->guaranteeTimeLimit(120);
 
+	$parentId = $archiveItem->getParentId();
+	list ($ret, $hasAddAlbumPermission) =
+	    GalleryCoreApi::hasItemPermission($parentId, 'core.addAlbumItem');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
 	list ($ret, $file) = $archiveItem->fetchPath();
 	if ($ret) {
 	    return array($ret, null);
@@ -438,7 +445,7 @@ class ItemAddController extends GalleryController {
 
 	$addedFiles = array();
 	$ret = $this->_recursiveAddDir(
-	    $tmpDir, $archiveItem->getParentId(), $addedFiles, $archiveItem, $titleMode);
+	    $tmpDir, $parentId, $addedFiles, $archiveItem, $titleMode, $hasAddAlbumPermission);
 	@$this->_platform->recursiveRmdir($tmpDir);
 	@$this->_platform->unlink($base);
 	if ($ret) {
@@ -455,7 +462,8 @@ class ItemAddController extends GalleryController {
      * @return GalleryStatus a status code
      * @access private
      */
-    function _recursiveAddDir($dir, $parentId, &$addedFiles, &$archiveItem, $titleMode) {
+    function _recursiveAddDir($dir, $parentId, &$addedFiles, &$archiveItem, $titleMode,
+			      $canAddAlbums) {
 	global $gallery;
 
 	$list = array();
@@ -470,33 +478,43 @@ class ItemAddController extends GalleryController {
 	foreach ($list as $filename) {
 	    $path = "$dir/$filename";
 	    if ($this->_platform->is_dir($path)) {
-		$title = $filename;
-		GalleryUtilities::sanitizeInputValues($title);
-		list ($ret, $album) = GalleryCoreApi::createAlbum(
-		    $parentId, $filename, $title, '', '', '');
-		if ($ret) {
-		    return $ret;
+	    	if ($canAddAlbums) {
+		    $title = $filename;
+		    GalleryUtilities::sanitizeInputValues($title);
+		    list ($ret, $album) = GalleryCoreApi::createAlbum(
+			$parentId, $filename, $title, '', '', '');
+		    if ($ret) {
+			return $ret;
+		    }
+		    $ret = GalleryCoreApi::addUserPermission(
+			$album->getId(), $album->getOwnerId(), 'core.all', false);
+		    if ($ret) {
+			return $ret;
+		    }
+		    list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($album->getId());
+		    if ($ret) {
+			return $ret;
+		    }
+		    $ret = $this->_recursiveAddDir($path, $album->getId(), $addedFiles,
+			$archiveItem, $titleMode, $canAddAlbums);
+		    if ($ret) {
+			GalleryCoreApi::releaseLocks($lockId);
+			return $ret;
+		    }
+		    $ret = GalleryCoreApi::releaseLocks($lockId);
+		    if ($ret) {
+			return $ret;
+		    }
+		    $newItem =& $album;
+		} else {
+		    /* Flattening folder structure since we're not allowed to create albums. Adding files but ignoring directories.  */
+		    $ret = $this->_recursiveAddDir(
+			$path, $parentId, $addedFiles, $archiveItem, $titleMode, $canAddAlbums);
+		    if ($ret) {
+			return $ret;
+		    }
+		    $newItem = null;
 		}
-		$ret = GalleryCoreApi::addUserPermission($album->getId(), $album->getOwnerId(),
-							 'core.all', false);
-		if ($ret) {
-		    return $ret;
-		}
-		list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($album->getId());
-		if ($ret) {
-		    return $ret;
-		}
-		$ret = $this->_recursiveAddDir($path, $album->getId(),
-					       $addedFiles, $archiveItem, $titleMode);
-		if ($ret) {
-		    GalleryCoreApi::releaseLocks($lockId);
-		    return $ret;
-		}
-		$ret = GalleryCoreApi::releaseLocks($lockId);
-		if ($ret) {
-		    return $ret;
-		}
-		$newItem =& $album;
 	    } else {
 		list ($ret, $mimeType) = GalleryCoreApi::getMimeType($filename);
 		if ($ret) {
@@ -519,11 +537,12 @@ class ItemAddController extends GalleryController {
 		}
 	    }
 
-	    $sanitizedFilename = $filename;
-	    GalleryUtilities::sanitizeInputValues($sanitizedFilename);
-	    $addedFiles[] = array('fileName' => $sanitizedFilename, 'id' => $newItem->getId(),
-				  'warnings' => array());
-
+	    if ($newItem) {
+		$sanitizedFilename = $filename;
+		GalleryUtilities::sanitizeInputValues($sanitizedFilename);
+		$addedFiles[] = array('fileName' => $sanitizedFilename, 'id' => $newItem->getId(),
+				      'warnings' => array());
+	    }
 	    if (count($addedFiles) % 10 == 0) {
 		/* The percentage isn't accurate at all, we just keep the visual feedback going */
 		$this->_templateAdapter->updateProgressBar($this->_extractingArchiveMessage, '',
