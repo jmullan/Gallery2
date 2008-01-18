@@ -19,7 +19,16 @@
  */
 
 /**
- * Internationalization and Localization utilities
+ * Internationalization and Localization utilities.
+ * 
+ * Definitions:
+ * $locale - consists of ISO 3166 country codes and ISO 639 language codes i.e. en_US, en_GB, es_MX
+ * $language - the first portion of the locale
+ * $langCode - representation of the locale with the country portion removed if it is the default.
+ * 	       (i.e. en_US => en; en_GB => en_GB) in some cases the $langCode == $locale.  The
+ * 	       exception is the handling of chinese.  For political reasons there is no default
+ * 	       country and it's always represented by the full $locale (zh_CN or zh_TW)
+ * @todo go through and standardize the usage or remove the langCode usage and just use locale 
  * @package GalleryCore
  * @subpackage Classes
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -268,13 +277,12 @@ class GalleryTranslator {
 
     /**
      * Return the list of languages that we support.
-     * @param boolean $installation (optional) Is this part of the install. Default false
-     * @return array['language code']['country code'] =
+      * @return array['language code']['country code'] =
      *              array('description', 'right-to-left'?)
      * @deprecated Remove on next major api bump. Use GalleryCoreApi::getSupportedLanguages
      */
-    function getSupportedLanguages($installation=false) {
-	return GalleryCoreApi::getSupportedLanguages($installation);
+    function getSupportedLanguages() {
+	return GalleryCoreApi::getSupportedLanguages();
     }
 
     /**
@@ -553,6 +561,47 @@ class GalleryTranslator {
 	// $localized = "<font size=1 color=#C33>$domain/{$this->_languageCode}:</font>$localized";
 
 	return array(null, $localized);
+    }
+
+    /**
+     * Convert the locale to the language code
+     * @param string $locale The locale code to be converted (i.e. en_US, en_GB, etc.)
+     * @return array GalleryStatus a status code
+     * 		     string language code (i.e. en, en_GB, etc.)
+     */
+    function getLanguageCodeFromLocale($locale) {
+	list ($language, $country) = explode('_', $locale . '_' );
+	/* Don't apply default to Chinese for political correctness */
+	if ($language == 'zh') {
+	    return array(null, $locale);
+	}
+	list ($value, $defaultCountries) = $this->getLanguageData();
+	if (!isset($defaultCountries[$language])) {
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+				"No default country defined for \"$locale\"."), null, null);
+	}
+
+	return array(null, ($country == $defaultCountries[$language]) ? $language : $locale);
+    }
+
+    /**
+     * Determine the language and country given the language code (i.e. en, en_GB)
+     * @param string $langCode The language code to be converted.
+     * @return array GalleryStatus a status code
+     * 		     string language
+     * 		     string country
+     */
+    function getLanguageAndCountryFromLanguageCode($langCode) {
+	list ($language, $country) = explode('_', $langCode . '_');
+	if (empty($country)) {
+	    list ($value, $defaultCountries) = $this->getLanguageData();
+	    if (!isset($defaultCountries[$language])) {
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+				"No default country defined for \"$langCode\"."), null, null);
+	    }
+	    $country = $defaultCountries[$language];
+	}
+	return array(null, $language, $country);
     }
 }
 ?>

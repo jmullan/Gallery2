@@ -86,7 +86,7 @@ class GalleryCoreApi {
      * - remove GalleryRepository::getLanguageDescription
      */
     function getApiVersion() {
-	return array(7, 45);
+	return array(7, 46);
     }
 
     /**
@@ -3223,14 +3223,13 @@ class GalleryCoreApi {
 
     /**
      * Return the list of languages that we support.
-     * @param boolean $installation (optional) Is this part of the install. Default false
      * @return array['language code']['country code'] =
      *              array('description', 'right-to-left'?)
      */
-    function getSupportedLanguages($installation=false) {
+    function getSupportedLanguages() {
     	GalleryCoreApi::requireOnce(
 		'modules/core/classes/helpers/GalleryTranslatorHelper_medium.class');
-	return GalleryTranslatorHelper_medium::getSupportedLanguages($installation);
+	return GalleryTranslatorHelper_medium::getSupportedLanguages();
     }
 
     /**

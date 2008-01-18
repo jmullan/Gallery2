@@ -170,17 +170,14 @@ class GalleryTranslatorHelper_medium {
     /**
      * @see GalleryCoreApi::getSupportedLanguages
      */
-    function getSupportedLanguages($installation=false) {
+    function getSupportedLanguages() {
 	global $gallery;
 
 	$cacheKey = 'GalleryTranslator::SupportedLanguages';
 
-	if (!GalleryDataCache::containsKey($cacheKey) || $installation) {
+	if (!GalleryDataCache::containsKey($cacheKey)) {
 	    /* Get our language data */
 	    list ($supportedLanguages, $defaultCountry) = GalleryTranslator::getLanguageData();
-	    if ($installation) {
-		return $supportedLanguages;
-	    }
 
 	    $installedLanguages = array();
 	    $localeBase = $gallery->getConfig('data.gallery.locale');

@@ -612,5 +612,35 @@ class TranslatorTest extends GalleryTestCase {
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
+
+    function testGetLanguageCodeFromLocale() {
+	global $gallery;
+	$translator =& $gallery->getTranslator();
+
+	$this->assertEquals(array(null, 'en'), $translator->getLanguageCodeFromLocale('en_US'), 
+	    'en_US');
+	$this->assertEquals(array(null, 'en_GB'), $translator->getLanguageCodeFromLocale('en_GB'), 
+	    'en_GB');
+    }
+
+    function testGetLanguageCodeFromLocaleChinese() {
+	global $gallery;
+	$translator =& $gallery->getTranslator();
+
+	$this->assertEquals(array(null, 'zh_CN'), $translator->getLanguageCodeFromLocale('zh_CN'), 
+	    'zh_CN');
+	$this->assertEquals(array(null, 'zh_TW'), $translator->getLanguageCodeFromLocale('zh_TW'), 
+	    'zh_TW');
+    }
+
+    function testGetLanguageAndCountryFromLanguageCode() {
+	global $gallery;
+	$translator =& $gallery->getTranslator();
+
+	$this->assertEquals(array(null, 'en', 'US'), 
+	    $translator->getLanguageAndCountryFromLanguageCode('en'), 'en_US');
+	$this->assertEquals(array(null, 'en', 'GB'), 
+	    $translator->getLanguageAndCountryFromLanguageCode('en_GB'), 'en_GB');
+    }
 }
 ?>

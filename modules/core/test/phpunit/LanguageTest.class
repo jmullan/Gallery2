@@ -106,12 +106,6 @@ class LanguageTest extends GalleryControllerTestCase {
 	}
     }
 
-    function testGetSupportedLanguageInstall() {
-	list ($languageData) = GalleryTranslator::getLanguageData();
-	$supportedLanguages = GalleryCoreApi::getSupportedLanguages(true);
-	$this->assertEquals($languageData, $supportedLanguages, 'Language lists don\'t match');
-    }
-
     function testGetSupportedLanguageEnglishOnly() {
 	global $gallery;
 	$gallery->setPlatform(new UnitTestPlatform());
