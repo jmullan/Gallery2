@@ -40,13 +40,14 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
      * @return GalleryStatus a status code
      */
     function showAvailablePlugins() {
-	list ($ret, $plugins) = $this->getAvailablePluginList(array(
+	list ($ret, $plugins) = $this->getAvailablePluginList(array( 
 	    'package' => array('controller' => 'PackagePlugin', 'action' => 'packagePlugin')));
 	if ($ret) {
 	    return $ret;
 	}
 
-	$ret = $this->showView('PackagePlugin', array('plugins' => $plugins));
+	$ret = $this->showView('PackagePlugin', array( 
+	    'formVariablePrefix' => GALLERY_FORM_VARIABLE_PREFIX, 'plugins' => $plugins));
 	if ($ret) {
 	    return $ret;
 	}
