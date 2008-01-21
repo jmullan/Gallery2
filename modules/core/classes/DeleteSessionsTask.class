@@ -48,6 +48,7 @@ class DeleteSessionsTask extends MaintenanceTask {
 	global $gallery;
 	$templateAdapter =& $gallery->getTemplateAdapter();
 	$session =& $gallery->getSession();
+	$phpVm = $gallery->getPhpVm();
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
@@ -55,7 +56,7 @@ class DeleteSessionsTask extends MaintenanceTask {
 	}
 
 	/* Touch this admin session to ensure that we don't delete it */
-	$session->put('touch', time());
+	$session->put('touch', $phpVm->time());
 	$ret = $session->save();
 	if ($ret) {
 	    return array($ret, null, null);
@@ -74,8 +75,8 @@ class DeleteSessionsTask extends MaintenanceTask {
 
 	$templateAdapter->updateProgressBar($module->translate('Delete user sessions'), '', 0);
 
-	$data = array(time() - $inactivityTimeout, time() - $lifetime,
-		      $anonymousUserId, time() - (7 * 86400));
+	$data = array($phpVm->time() - $inactivityTimeout, $phpVm->time() - $lifetime,
+		      $anonymousUserId, $phpVm->time() - (7 * 86400));
 
 	$query = '
 	SELECT COUNT([GallerySessionMap::id])
@@ -88,7 +89,7 @@ class DeleteSessionsTask extends MaintenanceTask {
 	if ($ret) {
 	    return array($ret, null, null);
 	}
-	$result = $results->resultCount();
+	$result = $results->nextResult();
 	$total = $result[0];
 
 	if ($total) {
