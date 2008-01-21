@@ -578,7 +578,7 @@ class GalleryTranslator {
 	list ($value, $defaultCountries) = $this->getLanguageData();
 	if (!isset($defaultCountries[$language])) {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-				"No default country defined for \"$locale\"."), null, null);
+				"No default country defined for \"$locale\"."), null);
 	}
 
 	return array(null, ($country == $defaultCountries[$language]) ? $language : $locale);

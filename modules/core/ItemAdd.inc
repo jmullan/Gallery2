@@ -507,7 +507,10 @@ class ItemAddController extends GalleryController {
 		    }
 		    $newItem =& $album;
 		} else {
-		    /* Flattening folder structure since we're not allowed to create albums. Adding files but ignoring directories.  */
+		    /*
+		     * Flattening folder structure since we're not allowed to create albums.
+		     * Adding files but ignoring directories.
+		     */
 		    $ret = $this->_recursiveAddDir(
 			$path, $parentId, $addedFiles, $archiveItem, $titleMode, $canAddAlbums);
 		    if ($ret) {

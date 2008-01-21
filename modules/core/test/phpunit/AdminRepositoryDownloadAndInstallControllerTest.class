@@ -499,8 +499,8 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 	    return $ret;
 	}
 
-	$moduleBase = 
-	    GalleryCoreApi::getCodeBasePath('modules/AdminRepositoryDownloadAndInstallControllerTest');
+	$moduleBase = GalleryCoreApi::getCodeBasePath(
+	    'modules/AdminRepositoryDownloadAndInstallControllerTest');
 	$platform = new UnitTestPlatform();
 	$platform->setReply('is_dir', array("$moduleBase/locale/aa"), true);
 	$platform->setReply('is_writeable', array("$moduleBase/locale/aa"), true);
@@ -517,7 +517,8 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 
 	$ret = $this->_controller->performDownloadAndInstallation(
 	    array(),
-	    array('module' => array('AdminRepositoryDownloadAndInstallControllerTest' => array('aa'))),
+	    array('module' =>
+		array('AdminRepositoryDownloadAndInstallControllerTest' => array('aa'))),
 	    array('test' => $repository));
 	if ($ret) {
 	    return ($ret);
