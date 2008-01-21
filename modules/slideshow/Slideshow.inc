@@ -74,8 +74,7 @@ class SlideshowView extends GalleryView {
 	    $SlideShow['item'] = (array)$item;
 	}
 
-	list ($ret, $itemList, $start) =
-	    $this->buildSlideshow($item, $startId);
+	list ($ret, $itemList, $start) = $this->buildSlideshow($item, $startId);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -106,7 +105,7 @@ class SlideshowView extends GalleryView {
      * If $item parameter is a single object then build using all children
      * of that item; if an array then build using the ids in the array.
      */
-    function buildSlideshow($item, $startId = null, $recursive = false) {
+    function buildSlideshow($item, $startId=null, $recursive=false) {
 	global $gallery;
 	if (!isset($this->init)) {
 	    $this->sizeClasses = array(
