@@ -1004,7 +1004,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
     function getRandomKey($min=0, $max=2147483647) {
 	static $initialized = false;
 
-	if (!$initialized && version_compare(phpversion(), '4.2.0') < 0) {
+	if (!$initialized) {
 	    list($usec, $sec) = explode(' ', microtime());
 	    srand($sec + $usec * 100000);
 	    $initialized = true;
