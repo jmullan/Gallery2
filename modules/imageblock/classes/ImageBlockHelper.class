@@ -527,7 +527,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    $data[] = ImageBlockHelper::getRandomKey($minMax[0], $minMax[1]);
+	    /* We want that the returned integer is smaller than any number in the range */
+	    $data[] = ImageBlockHelper::getRandomKey($minMax[0], $minMax[1]) - 1;
 	}
 
 	if ($order == 'viewed' || isset($parentId)) {
@@ -1009,7 +1010,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    srand($sec + $usec * 100000);
 	    $initialized = true;
 	}
-	return $min == $max ? $min : rand($min+1, $max-1);
+	return rand($min, $max);
     }
 
     /**

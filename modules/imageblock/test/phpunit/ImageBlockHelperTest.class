@@ -392,5 +392,31 @@ class ImageBlockHelperTest extends GalleryTestCase {
 			    sprintf('Wrong image picked. Thumb id: %d, resize id: %d, item id: %d',
 				    $thumbnail->getId(), $resize->getId(), $photo->getId()));
     }
+
+    function testGetRandomKeyReturnsPositiveInteger() {
+	$this->assert(is_int($a = ImageBlockHelper::getRandomKey()), "$a must be integer");
+    }
+
+    function testGetRandomKeyInDefaultRange() {
+	$a = ImageBlockHelper::getRandomKey();
+	$this->assert(0 <= $a, "$a must be >= 0");
+	$b = ImageBlockHelper::getRandomKey();
+	$this->assert(2147483647 >= $b, "$a must be >= 2147483647");
+    }
+
+    function testGetRandomKeyWithRange() {
+	$a = ImageBlockHelper::getRandomKey(17, 30);
+	$this->assert($a <= 30 && $a >= 17, "$a is not in specified range");
+    }
+
+    function testGetRandomKeyWithMinimalRange() {
+	$a = ImageBlockHelper::getRandomKey(17, 17);
+	$this->assertEquals(17, $a);
+    }
+
+    function testGetRandomKeyWithSmallRange() {
+	$a = ImageBlockHelper::getRandomKey(25, 26);
+	$this->assert($a == 25 || $a == 26, "$a is outside of specified range");
+    }
 }
 ?>
