@@ -1009,7 +1009,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    srand($sec + $usec * 100000);
 	    $initialized = true;
 	}
-	return rand(0, 2147483647);
+	return rand($min, $max);
     }
 
     /**
