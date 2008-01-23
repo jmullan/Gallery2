@@ -976,6 +976,34 @@ class GalleryStorage {
     /**
      * Return a customized function for this database platform
      *
+     * Available functions:
+     *  - AS: Column alias Syntax, e.g. SELECT foo $as somename FROM BAR;
+     *  - AVG(statement): Aggregate function to average the values of the selected rows.
+     *  - BITAND($a, $b): Binary AND operation on two bit-sequences (or integers)
+     *  - BIT_OR(columnName): Binary OR operation of multiple bit-sequences (aggregate function)
+     *                        e.g. SELECT [::foo], BIT_OR([::bar]) FROM [BAZ] GROUP BY [::foo];
+     *       WARNING: Not all backends support BIT_OR.  Check the returned status for
+     *                ERROR_UNSUPPORTED_OPERATION and implement fallback code in PHP.
+     *  - CASE($condition0, $value0, $condition1, $value1, ..., $elseValue):
+     *             Conditional selection of a value, condition value (condition value)* else-value.
+     *  - CONCAT($string0, $string1, ...): Concatenate two or more strings
+     *  - LIKE(columnName, $string): SQL LIKE operator with SQL LIKE wildcards '_' and '%'.
+     *  - LIMIT($count, $query): Returns the same query with an intrinsic limit on the returned
+     *                           rows.
+     *       WARNING: This code is suboptimal for some backends (e.g. Oracle).
+     *                Instead use $gallery->search($query, $data,
+     *                                            array('limit' => array('count' => $count));
+     *  - MULTI_INSERT(tableName, $columnList, $rowCount): Generates the SQL to insert multiple rows
+     *                                                     with a single query.
+     *  - RAND($seed): Returns a random identifier that can be used for ORDER BY RAND().
+     *                 Most DBMS return a float in the range of 0.0 and 1.0, but some return an
+     *                 integer or even a database-specific uniqueidentifier. 
+     *       WARNING: $seed is optional and is not supported by all backends.
+     *  - SUBSTRING($str, $pos, $len): Returns a substring of $string starting from position $pos.
+     *                             $len is optional and limits the string to the specified length.
+     *  - UNIX_TIMESTAMP('2007-11-30 10:30:19'): Converts a database specific timestamp to a
+     *                                           unix timestamp
+     *
      * @param string $functionName
      * @param array $args mixed the function arguments
      * @return array GalleryStatus a status code
