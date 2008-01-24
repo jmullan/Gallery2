@@ -13,7 +13,7 @@
 {/g->addToTrailer}
 
 <div class="{$class}">
-  <form id="search_SearchBlock" action="{g->url}" method="post" onsubmit="return search_SearchBlock_checkForm()">
+  <form id="search_SearchBlock" action="{g->url}" method="GET" onsubmit="return search_SearchBlock_checkForm()">
     <div>
       {g->hiddenFormVars}
       <input type="hidden" name="{g->formVar var="view"}" value="search.SearchScan"/>
