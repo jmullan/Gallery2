@@ -352,8 +352,8 @@ class NetPbmToolkitTest extends GalleryTestCase {
 			array($netPbmPath . 'pnmflip', '-ccw'),
 			array($netPbmPath . 'pnmscale', '--quiet',
 			      '-xsize', 640, '-ysize', 480),
-			array($netPbmPath . 'pnmcomp', '-xoff=144',
-			      '-yoff=196', '-alpha=TEMPFILE', 'TEMPFILE')),
+			array($netPbmPath . 'pnmcomp', '-xoff=132',
+			      '-yoff=173', '-alpha=TEMPFILE', 'TEMPFILE')),
 		  'netpbm.mime' => 'image/png',
 		  'netpbm.metadata' => true),
 	    array('width' => 150, 'height' => 100)
@@ -804,7 +804,7 @@ class NetPbmToolkitTestPlatform extends WinNtPlatform {
 
 	if (serialize($cmd) == serialize(array(
 		array($this->_netPbmPath . 'pngtopnm', '--quiet', 'testPerformOperations10.png'),
-		array($this->_netPbmPath . 'pnmcomp', '-xoff=150', '-yoff=150',
+		array($this->_netPbmPath . 'pnmcomp', '-xoff=148', '-yoff=148',
 		      '-alpha=TEMPFILE', 'TEMPFILE'), /* Second TEMPFILE is the overlay file */
 		array($this->_netPbmPath . 'pnmtopng', '>', 'TEMPFILE')))) {
 	    return array(1, array(), array());
@@ -839,8 +839,8 @@ class NetPbmToolkitTestPlatform extends WinNtPlatform {
 		array($this->_netPbmPath . 'pnmflip', '-ccw'),
 		array($this->_netPbmPath . 'pnmscale', '--quiet',
 		      '-xsize', 640, '-ysize', 480),
-		array($this->_netPbmPath . 'pnmcomp', '-xoff=144',
-		      '-yoff=196', '-alpha=TEMPFILE', 'TEMPFILE'),
+		array($this->_netPbmPath . 'pnmcomp', '-xoff=132',
+		      '-yoff=173', '-alpha=TEMPFILE', 'TEMPFILE'),
 		array($this->_netPbmPath . 'pnmscale', '--quiet', '-xysize', 150, 150),
 		array($this->_netPbmPath . 'pnmtopng', '>', 'TEMPFILE')))) {
 	    return array(1, array(), array());

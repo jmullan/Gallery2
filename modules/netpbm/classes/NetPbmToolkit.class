@@ -334,8 +334,8 @@ class NetPbmToolkit extends GalleryToolkit {
 		}
 
 		/* Convert from percentages to pixels */
-		$compositeAlignX = (int)($compositeAlignX / 100 * $width);
-		$compositeAlignY = (int)($compositeAlignY / 100 * $height);
+		$compositeAlignX = (int)($compositeAlignX / 100 * ($width - $compositeWidth));
+		$compositeAlignY = (int)($compositeAlignY / 100 * ($height - $compositeHeight));
 
 		/* Clip to our bounding box */
 		$compositeAlignX = min($compositeAlignX, $width - $compositeWidth);
