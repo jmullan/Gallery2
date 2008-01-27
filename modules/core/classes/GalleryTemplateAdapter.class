@@ -365,16 +365,16 @@ class GalleryTemplateAdapter {
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$templateVars =& $smarty->get_template_vars();
 	$head = $templateVars['head'];
-	$output = array("\n");
+	$output = array('');
 
 	/* Title */
 	if (isset($head['title'])) {
-	    $output[] = '<title>' . $head['title'] . "</title>\n";
+	    $output[] = '<title>' . $head['title'] . "</title>";
 	}
 
 	/* Style */
 	foreach ($head['style'] as $path => $unused) {
-	    $output[] = sprintf('<link rel="stylesheet" type="text/css" href="%s"/>' . "\n",
+	    $output[] = sprintf('<link rel="stylesheet" type="text/css" href="%s"/>',
 				$urlGenerator->generateUrl(array('href' => $path)));
 	}
 
@@ -396,7 +396,14 @@ class GalleryTemplateAdapter {
 	/* This should help out users whose browsers are confused about the character set */
 	$output[] = '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>';
 
-	return implode('', $output);
+	/* Meta */
+	foreach ($head['meta'] as $meta) {
+	    $key = empty($meta['isHttpEquiv']) ? 'name' : 'http-equiv';
+	    $output[] = sprintf('<meta %s="%s" content="%s"/>',
+				$key, $meta['name'], $meta['content']);
+	}
+
+	return implode("\n", $output);
     }
 
     /**

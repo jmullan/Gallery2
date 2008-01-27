@@ -168,6 +168,19 @@ class GalleryTemplate {
     }
 
     /**
+     * Add a meta element to the <head> section
+     * @param unknown_type $name Value for the name (or http-equiv) attribute 
+     * @param unknown_type $content Value for the content attribute
+     * @param unknown_type $isHttpEquiv (optional) Whether this is a http-equiv element.
+     *                                             Default false. 
+     */
+    function meta($name, $content, $isHttpEquiv=false) {
+	$head =& $this->getVariableByReference('head');
+	$head['meta'][] = array('name' => $name, 'content' => $content,
+				'isHttpEquiv' => $isHttpEquiv);
+    }
+
+    /**
      * Render the properly localized template
      *
      * @param string $templateName
@@ -317,7 +330,8 @@ class GalleryTemplate {
 	}
 
 	$smarty->assign('head',
-			array('tpl' => array(), 'style' => array(), 'javascript' => array()));
+			array('tpl' => array(), 'style' => array(), 'javascript' => array(),
+			      'meta' => array()));
 
 	return $smarty;
     }
