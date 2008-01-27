@@ -78,7 +78,7 @@ class AdminRepositoryDownloadController extends AdminRepositoryDownloadAndInstal
 	    if (!empty($form['base'])) {
 		list($baseSource, $baseNewBuild) = explode(':', $form['base']);
 		if (empty($pluginPackages['base']['build']) ||
-		    $pluginPackages['base']['build'] != $baseNewBuild) {
+			$pluginPackages['base']['build'] != $baseNewBuild) {
 		    $installPackages[$baseSource][$pluginType][$pluginId]['base'] = 1;
 		}
 	    }
@@ -89,8 +89,8 @@ class AdminRepositoryDownloadController extends AdminRepositoryDownloadAndInstal
 		    list ($langSource, $langCode, $langNewVersion) = explode(':', $language);
 		    $langCode = 'lang-' . $langCode;
 		    if ($langSource == $baseSource &&
-			(empty($pluginPackages[$langCode]['build']) ||
-			 $pluginPackages[$langCode]['build'] != $langNewVersion)) {
+			    (empty($pluginPackages[$langCode]['build']) ||
+			    $pluginPackages[$langCode]['build'] != $langNewVersion)) {
 			$installPackages[$langSource][$pluginType][$pluginId][$langCode] = 1;
 		    }
 		    $selected[$pluginType][$pluginId][$langCode] = 1;
@@ -101,7 +101,7 @@ class AdminRepositoryDownloadController extends AdminRepositoryDownloadAndInstal
 		foreach ($form['languagesAvailable'] as $language) {
 		    list ($langSource, $langCode) = explode(':', $language);
 		    if ($langSource == $baseSource &&
-		        empty($selected[$pluginType][$pluginId]['lang-' . $langCode])) {
+			    empty($selected[$pluginType][$pluginId]['lang-' . $langCode])) {
 			$deleteLanguages[$pluginType][$pluginId][] = $langCode;
 		    }
 		}
