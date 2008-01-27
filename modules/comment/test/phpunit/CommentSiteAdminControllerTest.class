@@ -65,7 +65,7 @@ class CommentSiteAdminControllerTest extends GalleryControllerTestCase {
     function testCommentSiteAdminControllerSave() {
 	GalleryUtilities::putRequestVariable('form[latest]', 1);
 	GalleryUtilities::putRequestVariable('form[show]', '12');
-	GalleryUtilities::putRequestVariable('form[apiKey]', '3');
+	GalleryUtilities::putRequestVariable('form[apiKey]', '3abX');
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
 	$this->_controller->_akismet = new CommentSiteAdminControllerTest_FakeAkismetApi(true);
@@ -78,7 +78,7 @@ class CommentSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	foreach (array('comments.latest' => '1',
 		       'comments.show' => '12',
-		       'akismet.apiKey' => '3',
+		       'akismet.apiKey' => '3abX',
 		       'akismet.active' => '1') as $key => $expectedValue) {
 	    list ($ret, $value) =
 		GalleryCoreApi::getPluginParameter('module', 'comment', $key);
@@ -160,6 +160,22 @@ class CommentSiteAdminControllerTest extends GalleryControllerTestCase {
 	    }
 	    $this->assertEquals($expectedValue, $value, $key);
 	}
+    }
+
+    function testCommentSiteAdminControllerSaveAksimetKeyValidatedLocallyToo() {
+	GalleryUtilities::putRequestVariable('form[show]', '12');
+	GalleryUtilities::putRequestVariable('form[apiKey]', '3:15/s');
+	GalleryUtilities::putRequestVariable('form[action][save]', '1');
+
+	/* Ensure that the API key gets doesn't get rejected because of a remote server */
+	$this->_controller->_akismet = new CommentSiteAdminControllerTest_FakeAkismetApi(true);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'comment.CommentSiteAdmin'),
+				  'status' => array(),
+				  'error' => array('form[error][apiKey][invalid]')),
+			    $results);
     }
 
     function testCheckAllWithAkismet() {

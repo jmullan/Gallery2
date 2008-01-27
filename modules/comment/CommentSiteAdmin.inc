@@ -65,13 +65,20 @@ class CommentSiteAdminController extends GalleryController {
 	    }
 
 	    if (!empty($form['apiKey']) && $form['apiKey'] != $currentApiKey) {
-		list ($ret, $validApiKey) = $this->_akismet->verifyApiKey($form['apiKey']);
-		if ($ret) {
-		    return array($ret, null);
+		/* First validate locally (don't rely on remote server for input validation) */
+		if (!preg_match('/^[A-Za-z0-9]+$/', trim($form['apiKey']))) {
+		    $error[] = 'form[error][apiKey][invalid]';
 		}
 
-		if (!$validApiKey) {
-		    $error[] = 'form[error][apiKey][invalid]';
+		if (empty($error)) {
+		    list ($ret, $validApiKey) = $this->_akismet->verifyApiKey($form['apiKey']);
+		    if ($ret) {
+			return array($ret, null);
+		    }
+
+		    if (!$validApiKey) {
+			$error[] = 'form[error][apiKey][invalid]';
+		    }
 		}
 	    }
 
