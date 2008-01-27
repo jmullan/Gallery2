@@ -240,6 +240,11 @@ class GalleryView {
 	    return array($ret, null, null);
 	}
 
+	/* Ask search engines to not index (site|item|user) admin pages */
+	if ($this->getViewType() == VIEW_TYPE_ADMIN) {
+	    $template->meta('robots', 'noindex');
+	}
+
 	/* -------------------------------------------------- */
 	/* Load up the theme */
 	list ($ret, $theme, $params, $item) = $this->loadThemeAndParameters();
