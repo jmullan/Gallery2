@@ -2859,6 +2859,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.24':
 	case '1.2.25':
 	case '1.2.26':
+	case '1.2.27':
 
 	case 'end of upgrade path':
 	    /*
