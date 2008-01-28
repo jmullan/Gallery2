@@ -173,6 +173,10 @@ class PostgreSqlStorage extends GalleryStorage {
 	    $sql = sprintf('RANDOM(%s)', empty($args) ? '' : $args[0]);
 	    break;
 
+	case 'RANDOM_INTEGER':
+	    $sql = 'FLOOR(RANDOM() * 2147483647)';
+	    break;
+
 	case 'LIMIT':
 	    $sql = $args[1] . ' LIMIT ' . $args[0];
 	    break;

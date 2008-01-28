@@ -95,6 +95,10 @@ class OracleStorage extends GalleryStorage {
 	    $sql = 'DBMS_RANDOM.RANDOM';
 	    break;
 
+	case 'RANDOM_INTEGER':
+	    $sql = 'DBMS_RANDOM.VALUE(0, 2147483647)';
+	    break;
+
 	case 'LIMIT':
 	    $sql = 'SELECT * FROM (' . $args[1] . ') WHERE ROWNUM <= ' . $args[0];
 	    break;

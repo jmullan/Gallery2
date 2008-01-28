@@ -117,6 +117,10 @@ class MSSqlStorage extends GalleryStorage {
 	    $sql = sprintf('NEWID()');
 	    break;
 
+	case 'RANDOM_INTEGER':
+	    $sql = 'FLOOR(RAND() * 2147483647)';
+	    break;
+
 	case 'LIMIT':
 	    $sql = preg_replace('/^(\s*SELECT)(\s)/i', '$1 TOP ' . $args[0] . '$2', $args[1]);
 	    break;

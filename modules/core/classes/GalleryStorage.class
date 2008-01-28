@@ -999,6 +999,7 @@ class GalleryStorage {
      *                 Most DBMS return a float in the range of 0.0 and 1.0, but some return an
      *                 integer or even a database-specific uniqueidentifier. 
      *       WARNING: $seed is optional and is not supported by all backends.
+     *  - RANDOM_INTEGER(): Returns a random integer between 0 and 2^31-1 (2147483647)
      *  - SUBSTRING($str, $pos, $len): Returns a substring of $string starting from position $pos.
      *                             $len is optional and limits the string to the specified length.
      *  - UNIX_TIMESTAMP('2007-11-30 10:30:19'): Converts a database specific timestamp to a
@@ -1756,6 +1757,10 @@ class MySqlStorage extends GalleryStorage {
 
 	case 'RAND':
 	    $sql = sprintf('RAND(%s)', empty($args) ? '' : $args[0]);
+	    break;
+
+	case 'RANDOM_INTEGER':
+	    $sql = 'FLOOR(RAND() * 2147483647)';
 	    break;
 
 	case 'LIMIT':

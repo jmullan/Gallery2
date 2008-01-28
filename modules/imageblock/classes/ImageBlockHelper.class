@@ -678,11 +678,16 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	}
 	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
+	list ($ret, $randStatement) = $storage->getFunctionSql('RANDOM_INTEGER', array());
+	if ($ret) {
+	    return $ret;
+	}
+
 	$query = '
 	INSERT INTO
 	  [ImageBlockCacheMap]
 	SELECT DISTINCT
-	  ?, ?, [GalleryEntity::creationTimestamp], [GalleryEntity::id], NULL
+	  ?, ?, [GalleryEntity::creationTimestamp], [GalleryEntity::id], ' . $randStatement . '
 	FROM
 	  [GalleryEntity], [%s], [GalleryAccessSubscriberMap],
 	  [GalleryChildEntity], [GalleryDerivative]
@@ -713,48 +718,6 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	$ret = $storage->execute(sprintf($query, 'GalleryAlbumItem', 'GalleryAlbumItem'), $data);
 	if ($ret) {
 	    return $ret;
-	}
-
-	$ret = ImageBlockHelper::_populateRandomKey();
-	if ($ret) {
-	    return $ret;
-	}
-
-	return null;
-    }
-
-    /**
-     * Update the ImageBlockCacheMap, setting all null random keys to a random value.
-     * @return GalleryStatus a status code
-     */
-    function _populateRandomKey() {
-	global $gallery;
-	$storage =& $gallery->getStorage();
-
-	$query = '
-	SELECT [ImageBlockCacheMap::itemId]
-	  FROM [ImageBlockCacheMap]
-	 WHERE [ImageBlockCacheMap::random] IS NULL';
-
-	list ($ret, $results) = $storage->search($query);
-	if ($ret) {
-	    return $ret;
-	}
-
-	$totalRecords = $results->resultCount();
-	if ($totalRecords > 0) {
-	    $current = 0;
-	    $step = (int)ceil($totalRecords * .10);
-	    while ($row = $results->nextResult()) {
-		$ret = $storage->updateMapEntry('ImageBlockCacheMap', array('itemId' => $row[0]), 
-		    array('random' => ImageBlockHelper::getRandomKey()));
-		if ($ret) {
-		    return $ret;
-		}
-		if ((++$current) % $step == 0) {
-		    $gallery->guaranteeTimeLimit(30);
-		}
-	    }
 	}
 
 	return null;

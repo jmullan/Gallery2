@@ -1125,6 +1125,40 @@ class StorageTest extends GalleryTestCase {
 	    array(array($expectedQuery, array())),
 	    $this->_getNonTransactionalResults());
     }
+
+    function testSelectRandomInteger() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	/* Use a real SQL connection for this test */
+	$storage->_db = $this->_db;
+
+	list ($ret, $randStatement) = $storage->getFunctionSql('RANDOM_INTEGER', array());
+	if ($ret) {
+	    return $ret;
+	}
+
+	$query = "SELECT [::id], $randStatement FROM [GalleryEntity]";
+	$options['limit']['count'] = 2;
+	list ($ret, $searchResults) = $storage->search($query, array(), $options);
+	if ($ret) {
+	    return $ret;
+	}
+	$randomValues = array();
+	while (($result = $searchResults->nextResult()) !== false) {
+	    $randomValues[] = $result[1];
+	}
+
+	$this->assertEquals(2, count($randomValues), 'result count');
+	$rand1 = $randomValues[0];
+	$rand2 = $randomValues[1];
+	$this->assert($rand1 != $rand2, "$rand1 == $rand2");
+	foreach ($randomValues as $randValue) {
+	    $this->assert(((int)$randValue) >= 0 && ((int)$randValue) <= 2147483647,
+			  (int)$randValue . ' must be in the range 0..2147483647');
+	    $this->assert(preg_match('/^\d+$/', trim($randValue)),
+			  $randValue . ' must be an integer number');
+	}
+    }
 }
 
 class StorageTestDB {
