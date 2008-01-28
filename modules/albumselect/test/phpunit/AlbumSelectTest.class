@@ -254,7 +254,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	}
 	$cachePathInfo = array('type' => 'module-data',
 			       'module' => 'albumselect',
-			       'itemId' => $userId . '_' . $languageCode .
+			       'itemId' => $userId . '__' . $languageCode .
 			       '_' . substr(md5(serialize(array($callbackParams,
 								$rootAlbumId))), 0, 5));
 
@@ -363,6 +363,83 @@ class AlbumSelectTest extends GalleryTestCase {
 	$this->assert(preg_match('#^(http|/)#', $data['links']['prefix']),
 		      'URL prefix (' . $data['links']['prefix'] .
 		      ') is neither absolute nor server-relative');
+    }
+
+    function testAlbumSelectCacheWithSessionPermissions() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	GalleryDataCache::setFileCachingEnabled(true);
+	$smarty = new GallerySmarty();
+	$callbacks = new AlbumSelectCallbacks();
+
+	/* Make subalbum only visible through session permission */
+	$itemId = $this->_subalbum[2]->getId();
+	$ret = GalleryCoreApi::removeItemPermissions($itemId);
+	if ($ret) {
+	    return $ret;
+	}
+	$ret = GalleryCoreApi::addEntityPermission($itemId, $itemId, 'core.view');
+	if ($ret) {
+	    return $ret;
+	}
+	/* Clear the permission cache */
+	GalleryDataCache::reset();
+
+	/* First populate the cache for a normal user */	
+	$ret = $callbacks->callback(
+	    array(), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_assertAlbumTreeData(
+	    $smarty, 'test albums in tree, without session permissions (1)', false);
+
+	/* Then test with session permission */
+	$session->put(GALLERY_PERMISSION_SESSION_KEY, array($itemId));
+	/* Don't use GalleryDataCache::reset() this test is about caching */
+	GalleryDataCache::removeByPattern('[Aa]ccessList');
+	$ret = $callbacks->callback(
+	    array(), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_assertAlbumTreeData(
+	    $smarty, 'test albums in tree with session permissions', true);
+
+	/* Again without session permissions */
+	$session->put(GALLERY_PERMISSION_SESSION_KEY, array());
+	/* Don't use GalleryDataCache::reset() this test is about caching */
+	GalleryDataCache::removeByPattern('[Aa]ccessList');
+	$ret = $callbacks->callback(
+	    array(), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_assertAlbumTreeData(
+	    $smarty, 'test albums in tree, without session permissions (2)', false);
+    }
+
+    function _assertAlbumTreeData($smarty, $message, $withSubAlbum2=true) {
+	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumSelect'];
+	$this->assert(!empty($data['tree']), 'tree');
+	/* Test album and its subalbums should be last 3 (2) tree items: subalbums 1,(2,)3 */
+	$albumNode = count($data['tree']) - ($withSubAlbum2 ? 3 : 2);
+	$expected = array();
+	$expected[] = array('id' => $this->_album->getId(), 'nodeId' => $albumNode,
+			    'parentNode' => 0, 'depth' => 0);
+	$expected[] = array('id' => $this->_subalbum[1]->getId(), 'nodeId' => $albumNode + 1,
+			    'parentNode' => $albumNode, 'depth' => 1);
+	if ($withSubAlbum2) {
+	    $expected[] = array('id' => $this->_subalbum[2]->getId(), 'nodeId' => $albumNode + 2,
+				'parentNode' => $albumNode, 'depth' => 1);
+	}
+	$expected[] = array('id' => $this->_subalbum[3]->getId(),
+			    'nodeId' => $albumNode + ($withSubAlbum2 ? 3 : 2),
+			    'parentNode' => $albumNode, 'depth' => 1);
+	$this->assertEquals($expected,
+			    array_slice($data['tree'], ($withSubAlbum2 ? -4 : -3)),
+			    $message);
     }
 }
 
