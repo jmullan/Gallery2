@@ -394,5 +394,127 @@ class GalleryRepositoryUtilities {
 	}
 	return array(true, $contents);
     }
+
+    /**
+     * Download the specified packages.
+     * @param GalleryRepository $repository
+     * @param string $pluginType
+     * @param string $pluginId
+     * @param array $pluginDownloadData list of plugins to download
+     * @param array $callback information for progress bar updates
+     * @ret array GalleryStatus a status code
+     * 		  boolean a flag indicating the plugin should be re-activated
+     * 		  array string status messages indicating problems encounterd
+     */
+    function downloadPackagesForPlugin($repository, $pluginType, $pluginId, $pluginDownloadData, 
+				       &$callback) {
+	global $gallery;
+
+	$status = array();
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+
+	$packageUrls = $pluginDownloadData['files'];
+	$pluginName = $pluginDownloadData['name'];
+
+	$preparingText = $module->translate(array('text' => 'Preparing %s', 'arg1' => $pluginName));
+	$downloadingText = $module->translate(array('text' => 'Downloading %s', 
+	    'arg1' => $pluginName));
+
+	$percentage = ++$callback['current'] / $callback['total'];
+	call_user_func($callback['method'], $callback['title'], $preparingText, $percentage);
+
+	/*
+	 * Extract the descriptor and verify that all of our packages will unpack
+	 * safely before starting.
+	 */
+	$relativeDescriptorUrl = $packageUrls['descriptor'];
+	unset($packageUrls['descriptor']);
+
+	list ($ret, $descriptor) = $repository->downloadAndUnpack(
+	    $pluginType, $pluginId, 'descriptor', $relativeDescriptorUrl);
+	if ($ret) {
+	    if ($ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
+		/* XXX: storage failure means we failed to download the file properly */ 	 
+		$status['failedToDownload'][$pluginType][$pluginName] = $relativeDescriptorUrl;
+		return array(null, false, $status);
+	    }
+	    return array($ret, null, null);
+	}
+
+	$errors = array();
+	foreach (array_keys($packageUrls) as $packageName) {
+	    $gallery->guaranteeTimeLimit(30);
+
+	    if (++$callback['current'] % 5 == 0) {
+		$percentage = $callback['current'] / $callback['total'];
+		call_user_func($callback['method'], $callback['title'], $preparingText, 
+		    $percentage);
+	    }
+
+	    /* pre-verify here */
+	    $errors = array_merge(
+		$errors, $repository->preVerifyPackage($packageName, $descriptor));
+	}
+
+	$errors = array_unique($errors);
+	if ($errors) {
+	    $status['failedToInstall'][$pluginType][$pluginName] = $errors;
+	    return array(null, false, $status);
+	}
+
+	$percentage = $callback['current'] / $callback['total'];
+	call_user_func($callback['method'],
+	    $callback['title'], sprintf($downloadingText, $pluginName), $percentage);
+
+	$reactivatePlugin = false;
+	foreach ($packageUrls as $packageName => $relativePackageUrl) {
+	    $gallery->guaranteeTimeLimit(30);
+
+	    if (++$callback['current'] % 5 == 0) {
+		call_user_func($callback['method'],
+		    $callback['title'], sprintf($downloadingText, $pluginName), $percentage);
+	    }
+
+	    /* Download and unpack package. */
+	    list ($ret, $ignored) = $repository->downloadAndUnpack(
+		$pluginType, $pluginId, $packageName, $relativePackageUrl);
+	    if ($ret) {
+		if ($ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
+		    /* XXX: storage failure means we failed to download the file */
+		    $status['failedToDownload'][$pluginType][$pluginName][] = $relativePackageUrl;
+		    if ($packageName == 'base') {
+			return array(null, false, $status);
+		    } else {
+			continue;
+		    }
+		}
+		return array($ret, null, null);
+	    }
+
+	    /* Check the unpacked files' integrity. */
+	    $ret = $repository->verifyPackageIntegrity($packageName, $descriptor);
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+
+	    /* Update plugin package map. */
+	    list ($ret, $version, $build) = $repository->getPackageVersionAndBuild(
+		$pluginType, $pluginId, $packageName);
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+	    $ret = $repository->updatePackageMetaData(
+		$pluginType, $pluginId, $packageName, $version, $build, 0);
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+	    $reactivatePlugin |= $packageName == 'base';
+	}
+
+	return array(null, (bool)$reactivatePlugin, $status);
+    }
 }
 ?>

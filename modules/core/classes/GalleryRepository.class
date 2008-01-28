@@ -665,11 +665,11 @@ class GalleryRepository {
     }
 
     /**
-     * @see GalleryRepositoryUtilities::downloadSourceFiles
+     * @see GalleryRepositoryUtilities::downloadPackagesForPlugin
      */
-    function downloadSourceFiles($pluginType, $pluginId, $pluginDownloadData, $callback=null) {
-	return $this->_utilities->downloadSourceFiles($pluginType, $pluginId, $pluginDownloadData,
-	    $callback);
+    function downloadPackagesForPlugin($pluginType, $pluginId, $pluginDownloadData, &$callback) {
+	return $this->_utilities->downloadPackagesForPlugin($this, $pluginType, $pluginId,
+	    $pluginDownloadData, $callback);
     }
 
     /**

@@ -89,8 +89,8 @@ class UnitTestRepository extends MockObject {
 	    array($pluginType, $pluginId, $packageName, $relativePackageUrl));
     }
 
-    function downloadSourceFiles($pluginType, $pluginId, $pluginDownloadData, &$callback) {
-	return $this->_makeReply('downloadSourceFiles', 
+    function downloadPackagesForPlugin($pluginType, $pluginId, $pluginDownloadData, &$callback) {
+	return $this->_makeReply('downloadPackagesForPlugin', 
 	    array($pluginType, $pluginId, $pluginDownloadData, $callback));
     }
 
