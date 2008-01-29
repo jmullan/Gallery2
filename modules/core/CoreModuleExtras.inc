@@ -1569,6 +1569,12 @@ class CoreModuleExtras {
 		return $ret;
 	    }
 
+	    /* Checkpoint before starting a long filesystem-only task */
+	    $ret = $storage->checkPoint();
+	    if ($ret) {
+		return $ret;
+	    }
+
 	    if ($searchResults->resultCount() > 0) {
 		$derivativeIds = array();
 		while ($result = $searchResults->nextResult()) {
@@ -1607,6 +1613,13 @@ class CoreModuleExtras {
 		    }
 		}
 	    }
+
+	    /* We might have lost our database connection so check and reconnect */
+	    $ret = $storage->validateConnection();
+	    if ($ret) {
+		return $ret;
+	    }
+
 	case '1.0.16':
 	    /* Added 'not-null' to Entities.inc and Map.inc */
 	    $storageExtras =& $storage->_getExtras();
