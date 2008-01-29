@@ -30,7 +30,7 @@
        name="{g->formVar var="form[affiliateId]"}" value="{$form.affiliateId}"/>
 
       {if isset($form.error.affiliateId)}
-	<span class="giError"> {g->text text="Enter a numeric id"} </span>
+	<span class="giError"> {g->text text="Enter a valid affiliate id"} </span>
       {/if}
     </td></tr><tr><td>
       <label for="affiliateIdPass">
@@ -41,7 +41,7 @@
        name="{g->formVar var="form[affiliateIdPass]"}" value="{$form.affiliateIdPass}"/>
 
       {if isset($form.error.affiliateIdPass)}
-	<span class="giError"> {g->text text="Missing value"} </span>
+	<span class="giError"> {g->text text="Enter a valid affiliate password"} </span>
       {/if}
     </td></tr>
   </table>

@@ -38,16 +38,17 @@ class FotokastenSiteAdminController extends GalleryController {
 
 	$status = $error = array();
 	if (isset($form['action']['save'])) {
-	    if (empty($form['affiliateId']) || !is_numeric($form['affiliateId'])) {
+	    if (empty($form['affiliateId']) || !preg_match('/^\d+$/', trim($form['affiliateId']))) {
 		$error[] = 'form[error][affiliateId]';
 	    }
-	    if (empty($form['affiliateIdPass'])) {
+	    if (empty($form['affiliateIdPass'])
+		    || !preg_match('/^[A-Za-z0-9]+$/', trim($form['affiliateIdPass']))) {
 		$error[] = 'form[error][affiliateIdPass]';
 	    }
 	    if (empty($error)) {
 		foreach (array('affiliateId', 'affiliateIdPass') as $key) {
 		    $ret = GalleryCoreApi::setPluginParameter(
-			    'module', 'fotokasten', $key, $form[$key]);
+			    'module', 'fotokasten', $key, trim($form[$key]));
 		    if ($ret) {
 			return array($ret, null);
 		    }

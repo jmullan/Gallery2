@@ -99,16 +99,17 @@ class FotokastenSiteAdminControllerTest extends GalleryControllerTestCase {
 	    FOTOKASTEN_GALLERY_AFFILIATE_PASSWORD, $params['affiliateIdPass'], 'affiliateIdPass');
     }
 
-    function testFotokastenSiteAdminControllerSaveBadId() {
+    function testFotokastenSiteAdminControllerSaveBadValues() {
 	GalleryUtilities::putRequestVariable('form[affiliateId]', '123x');
-	GalleryUtilities::putRequestVariable('form[affiliateIdPass]', 'abcde12345');
+	GalleryUtilities::putRequestVariable('form[affiliateIdPass]', 'abc</(de12345');
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
 						'subView' => 'fotokasten.FotokastenSiteAdmin'),
 				  'status' => array(),
-				  'error' => array('form[error][affiliateId]')),
+				  'error' => array('form[error][affiliateId]',
+						   'form[error][affiliateIdPass]')),
 			    $results);
     }
 
