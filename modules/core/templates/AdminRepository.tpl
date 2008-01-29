@@ -25,27 +25,31 @@
     {/if}
   </h2>
   {if !empty($status.error.failedToDownload)}
-  {foreach name=plugin from=$status.error.failedToDownload key=pluginName item=failedFiles}
-  <h2 class="giError"> {g->text text="Failed to download the following packages for the %s plugin:" arg1=$pluginName}</h2>
-  <ul>
-  {foreach from=$failedFiles item=file}
-    <li class="giError"> {$file} </li>
-  {/foreach}
-  </ul>
-  {if !$smarty.foreach.plugin.last}<br/>{/if}
-  {/foreach}
+    {foreach name=pluginType from=$status.error.failedToDownload key=pluginType item=plugins}
+      {foreach name=plugin from=$plugins key=pluginName item=failedFiles}
+	<h2 class="giError"> {g->text text="Failed to download the following packages for the %s plugin:" arg1=$pluginName}</h2>
+	<ul>
+	  {foreach from=$failedFiles item=file}
+	    <li class="giError"> {$file} </li>
+	  {/foreach}
+	</ul>
+	{if !$smarty.foreach.pluginType.last}<br/>{/if}
+      {/foreach}
+    {/foreach}
   {/if}
 
   {if !empty($status.error.failedToInstall)}
-  {foreach name=plugin from=$status.error.failedToInstall key=pluginName item=failedFiles}
-  <h2 class="giError"> {g->text text="Failed to install the %s plugin because the following files/directories could not be modified:" arg1=$pluginName} </h2>
-  <ul>
-  {foreach from=$failedFiles item=file}
-    <li class="giError"> {$file} </li>
-  {/foreach}
-  </ul>
-  {if !$smarty.foreach.plugin.last}<br/>{/if}
-  {/foreach}
+    {foreach name=pluginType from=$status.error.failedToInstall key=pluginType item=plugins}
+      {foreach name=plugin from=$plugins key=pluginName item=failedFiles}
+	<h2 class="giError"> {g->text text="Failed to install the %s plugin because the following files/directories could not be modified:" arg1=$pluginName} </h2>
+	<ul>
+	  {foreach from=$failedFiles item=file}
+	    <li class="giError"> {$file} </li>
+	  {/foreach}
+	  </ul>
+	{if !$smarty.foreach.pluginType.last}<br/>{/if}
+      {/foreach}
+    {/foreach}
   {/if}
 
   {if !empty($status.error.cantUpgradeInUse)}

@@ -67,47 +67,24 @@ class AdminRepositoryDownloadAndInstallController extends GalleryController {
 	$templateAdapter->updateProgressBar($titleText, '', 0);
 
 	/* Create download file list. */
-	$sourcedFiles = array();
-	foreach ($installPackages as $source => $packages) {
-	    if (!isset($repositories[$source])) {
-		continue;
-	    }
+	list ($ret, $sourcedFiles) = 
+	    $this->_createDownloadFileList($installPackages, $repositories);
 
-	    list ($ret, $tmp) = $repositories[$source]->getDownloadFileList($packages);
-	    if ($ret) {
-		return $ret;
-	    }
-	    $sourcedFiles[$source] = empty($sourcedFiles[$source])
-		? $tmp
-		: array_merge($sourcedFiles[$source], $tmp);
-	}
+	$totalActions = $this->_countInstallActions($sourcedFiles);
 
-	$totalActions = 0;
-	foreach ($sourcedFiles as $source => $files) {
-	    foreach ($files as $pluginType => $plugins) {
-		foreach ($plugins as $pluginId => $pluginDownloadData) {
-		    /*
-		     * 2 actions (preverify and download) for all files except
-		     * the descriptor which we just download.
-		     */
-		    $totalActions += 2 * count($pluginDownloadData['files']) - 1;
-
-		    /* 1 extra action for each plugin (language sync) */
-		    $totalActions += 1;
-		}
-	    }
-	}
 	foreach ($deleteLanguages as $pluginType => $plugins) {
 	    foreach ($plugins as $pluginId => $languages) {
 		$totalActions += count($languages);
 	    }
 	}
 
-	$status = array();
-	$status['error'] = array();
+	$status = array('error' => array());
 
 	/* Download files. */
 	$currentAction = 0;
+
+	$callback = array('method' => array($templateAdapter, 'updateProgressBar'),
+		  'title' => $titleText, 'current' => 0, 'total' => $totalActions);
 
 	foreach ($sourcedFiles as $source => $files) {
 	    $repository = $repositories[$source];
@@ -117,103 +94,16 @@ class AdminRepositoryDownloadAndInstallController extends GalleryController {
 		    $packageUrls = $pluginDownloadData['files'];
 		    $pluginName = $pluginDownloadData['name'];
 
-		    $templateAdapter->updateProgressBar(
-			$titleText,
-			sprintf($module->translate('Preparing %s'), $pluginName),
-			++$currentAction / $totalActions);
-
-		    /*
-		     * Extract the descriptor and verify that all of our packages will unpack
-		     * safely before starting.
-		     */
-		    $relativeDescriptorUrl = $packageUrls['descriptor'];
-		    unset($packageUrls['descriptor']);
-
-		    list ($ret, $descriptor) = $repository->downloadAndUnpack(
-			$pluginType, $pluginId, 'descriptor', $relativeDescriptorUrl);
+		    $downloadStatus = array();
+		    list($ret, $reactivatePlugin, $downloadStatus) = 
+			$repository->downloadPackagesForPlugin($pluginType, $pluginId, 
+			    $pluginDownloadData, $callback);
 		    if ($ret) {
-			if ($ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
-			    /* XXX: storage failure means we failed to download the file properly */
-			    $status['error']['failedToDownload'][$pluginName] =
-				$relativeDescriptorUrl;
-			    continue;
-			}
+			$gallery->debug('downloadSourceFiles, failed: ' . $ret->getAsText());
 			return $ret;
 		    }
-
-		    $errors = array();
-		    foreach (array_keys($packageUrls) as $packageName) {
-			$gallery->guaranteeTimeLimit(30);
-
-			if (++$currentAction % 5 == 0) {
-			    $templateAdapter->updateProgressBar(
-				$titleText,
-				sprintf($module->translate('Preparing %s'), $pluginName),
-				$currentAction / $totalActions);
-			}
-
-			/* pre-verify here */
-			$errors = array_merge(
-			    $errors, $repository->preVerifyPackage($packageName, $descriptor));
-		    }
-		    $errors = array_unique($errors);
-		    if ($errors) {
-			$status['error']['failedToInstall'][$pluginName] = $errors;
-			continue;
-		    }
-
-		    $templateAdapter->updateProgressBar(
-			$titleText,
-			sprintf($module->translate('Downloading %s'), $pluginName),
-			$currentAction / $totalActions);
-
-
-		    $dontReactivate = array();
-		    foreach ($packageUrls as $packageName => $relativePackageUrl) {
-			$gallery->guaranteeTimeLimit(30);
-
-			if (++$currentAction % 5 == 0) {
-			    $templateAdapter->updateProgressBar(
-				$titleText,
-				sprintf($module->translate('Downloading %s'), $pluginName),
-				$currentAction / $totalActions);
-			}
-
-			/* Download and unpack package. */
-			list ($ret, $ignored) = $repository->downloadAndUnpack(
-			    $pluginType, $pluginId, $packageName, $relativePackageUrl);
-			if ($ret) {
-			    if ($ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
-				/* XXX: storage failure means we failed to download the file */
-				$status['error']['failedToDownload'][$pluginName][] =
-				    $relativePackageUrl;
-				if ($packageName == 'base') {
-				    $dontReactivate[$pluginType][$pluginId] = 1;
-				    break;
-				} else {
-				    continue;
-				}
-			    }
-			    return $ret;
-			}
-
-			/* Check the unpacked files' integrity. */
-			$ret = $repository->verifyPackageIntegrity($packageName, $descriptor);
-			if ($ret) {
-			    return $ret;
-			}
-
-			/* Update plugin package map. */
-			list ($ret, $version, $build) = $repository->getPackageVersionAndBuild(
-			    $pluginType, $pluginId, $packageName);
-			if ($ret) {
-			    return $ret;
-			}
-			$ret = $repository->updatePackageMetaData(
-			    $pluginType, $pluginId, $packageName, $version, $build, 0);
-			if ($ret) {
-			    return $ret;
-			}
+		    if (!empty($downloadStatus)) {
+			$status['error'] = array_merge($status['error'], $downloadStatus);
 		    }
 
 		    /*
@@ -235,7 +125,7 @@ class AdminRepositoryDownloadAndInstallController extends GalleryController {
 			$titleText, sprintf($module->translate('Activating %s'), $pluginName),
 			$currentAction / $totalActions);
 
-		    if (empty($dontReactivate[$pluginType][$pluginId])) {
+		    if ($reactivatePlugin) {
 			/**
 			 * Some plugins may already be loaded (e.g. the default theme, or
 			 * authentication modules) so PHP will not let us evaluate the newly
@@ -332,29 +222,9 @@ class AdminRepositoryDownloadAndInstallController extends GalleryController {
 	    }
 	}
 
-	/*
-	 * Upgrading the base package synchronizes translations, but new language packs
-	 * get installed after the base package.  And new language packs can be installed
-	 * separately.  So synchronize the translations here.
-	 */
-	$synchronizeText = $module->translate('Synchronizing Language Packs');
-	foreach ($sourcedFiles as $source => $files) {
-	    foreach ($files as $pluginType => $plugins) {
-		foreach ($plugins as $pluginId => $ignored) {
-		    $templateAdapter->updateProgressBar(
-			$titleText, $synchronizeText, ++$currentAction / $totalActions);
-
-		    $ret = GalleryCoreApi::removeTranslationsForPlugin($pluginType, $pluginId);
-		    if ($ret) {
-			return $ret;
-		    }
-
-		    $ret = GalleryCoreApi::installTranslationsForPlugin($pluginType, $pluginId);
-		    if ($ret) {
-			return $ret;
-		    }
-		}
-	    }
+	$ret = $this->_synchronizeLanguages($sourcedFiles, $callback);
+	if ($ret) {
+	    return $ret;
 	}
 
 	/* Update progress bar. */
@@ -376,6 +246,92 @@ class AdminRepositoryDownloadAndInstallController extends GalleryController {
     }
 
     /**
+     * Create a list of all the files that need to be downloaded
+     * @param array $installPackages packages to install
+     * @param array $repositories an array of GalleryRepository
+     * @return array GalleryStatus a status code
+     * 		     array list of corresponding files for the specified packages
+     */
+    function _createDownloadFileList($installPackages, $repositories) {
+	/* Create download file list. */
+	$sourcedFiles = array();
+	foreach ($installPackages as $source => $packages) {
+	    if (!isset($repositories[$source])) {
+		continue;
+	    }
+
+	    list ($ret, $tmp) = $repositories[$source]->getDownloadFileList($packages);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    $sourcedFiles[$source] = empty($sourcedFiles[$source])
+		? $tmp
+		: array_merge($sourcedFiles[$source], $tmp);
+	}
+	return array(null, $sourcedFiles);
+    }
+
+    /**
+     * Calculate the total number of actions for the progress notifications
+     * @param array $sourcedFiles list of files that were downloaded
+     * @return int number of actions
+     */
+    function _countInstallActions($sourcedFiles) {
+	$totalActions = 0;
+	foreach ($sourcedFiles as $source => $files) {
+	    foreach ($files as $pluginType => $plugins) {
+		foreach ($plugins as $pluginId => $pluginDownloadData) {
+		    /*
+		     * 2 actions (preverify and download) for all files except
+		     * the descriptor which we just download.
+		     */
+		    $totalActions += 2 * count($pluginDownloadData['files']) - 1;
+
+		    /* 1 extra action for each plugin (language sync) */
+		    $totalActions += 1;
+		}
+	    }
+	}
+	return $totalActions;
+    }
+
+    /**
+     * Synchronize the active language packages with the newly downloaded packages
+     * @param array $sourcedFiles list of files that were downloaded
+     * @param array $callback progress notification callback
+     * @return GalleryStatus a status code
+     */
+    function _synchronizeLanguages($sourcedFiles, &$callback) {
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$synchronizeText = $module->translate('Synchronizing Language Packs');
+
+	foreach ($sourcedFiles as $source => $files) {
+	    foreach ($files as $pluginType => $plugins) {
+		foreach ($plugins as $pluginId => $ignored) {
+		    $percentage = ++$callback['current'] / $callback['total'];
+		    call_user_func($callback['method'], $callback['title'], $synchronizeText, 
+			$percentage);
+
+		    $ret = GalleryCoreApi::removeTranslationsForPlugin($pluginType, $pluginId);
+		    if ($ret) {
+			return $ret;
+		    }
+
+		    $ret = GalleryCoreApi::installTranslationsForPlugin($pluginType, $pluginId);
+		    if ($ret) {
+			return $ret;
+		    }
+		}
+	    }
+	}
+	return null;
+    }
+
+    /**
      * Passthrough to GalleryCoreApi::fetchPluginStatus, used by test code to
      * allow us to inject mock plugins.
      * @see GalleryCoreApi::fetchPluginStatus
@@ -383,6 +339,107 @@ class AdminRepositoryDownloadAndInstallController extends GalleryController {
      */
     function _fetchPluginStatus($pluginType, $ignoreCache) {
 	return GalleryCoreApi::fetchPluginStatus($pluginType, $ignoreCache);
+    }
+
+    /**
+     * Update the repository index, and scan all installed plugins and update
+     * GalleryPluginPackageMap with a complete listing of everything that's installed.
+     *
+     * @todo Show a summary page (or at least a link to it) which contains details about
+     * the exact tasks that were performed and any errors that were encountered.
+     *
+     * @param array $pluginStatus status of all available installed plugins
+     * @param array $repositories the repositories available for new plugins
+     * @param array $redirect generateUrl params defining the view to return to
+     * @return GalleryStatus a status code
+     */
+    function updatePluginStatus($pluginStatus, $repositories, $redirect) {
+	global $gallery;
+	$templateAdapter =& $gallery->getTemplateAdapter();
+	$platform =& $gallery->getPlatform();
+
+	$status = array();
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret) {
+	    return $ret;
+	}
+	$heading = $module->translate('Updating Repository Index');
+	$templateAdapter->updateProgressBar($heading, '', 0);
+
+	/* Erase all plugin data, so that a full scan drops old entries */
+	$ret = GalleryCoreApi::removeAllMapEntries('GalleryPluginPackageMap');
+	if ($ret) {
+	    return $ret;
+	}
+
+	/* Update the index */
+	$currentProgress = 0;
+	$indexWeight = 5;
+	$increment = 1.0 / ($indexWeight * count($repositories) + count($pluginStatus['module']) +
+			    count($pluginStatus['theme']));
+
+	foreach ($repositories as $source => $repository) {
+	    list ($ret, $message) = GalleryRepository::translateRepositoryName($source);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    $templateAdapter->updateProgressBar($heading, $message, $currentProgress);
+	    $ret = $repository->downloadIndex();
+	    if ($ret) {
+		/** @todo: Internationalize this error message */
+		$status['error']['download'][] = $ret->getErrorMessage();
+	    }
+	    $currentProgress += $indexWeight * $increment;
+	}
+
+	$heading = $module->translate('Scanning plugins');
+	$sSlash = 's' . $platform->getDirectorySeparator();
+
+	if (!isset($repository)) {
+	    /*
+	     * The loop below needs a working repository, but we don't have one because all of our
+	     * existing indexes are missing or corrupted.  So create a new bogus one expressly for
+	     * the purpose of calling GalleryRepository::scanPlugin().
+	     */
+	    $repository = new GalleryRepository();
+	    $repository->init('bogus');
+	}
+
+	foreach (array('module', 'theme') as $pluginType) {
+	    foreach (array_keys($pluginStatus[$pluginType]) as $pluginId) {
+		$gallery->guaranteeTimeLimit(30);
+
+		$templateAdapter->updateProgressBar(
+			$heading, $pluginType . $sSlash . $pluginId, $currentProgress);
+		$ret = $repository->scanPlugin($pluginType, $pluginId);
+		if ($ret && !($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
+		    /*
+		     * Something is wrong with this plugin. Maybe it's a 3rd party plugin w/o
+		     * MANIFEST file, maybe it has no revisions in the po files, maybe the
+		     * module.inc is foobar. Just log and ignore it.
+		     */
+		    if ($gallery->getDebug()) {
+			$gallery->debug_r($ret);
+		    }
+		    $status['error']['scanPlugin'][] = $pluginId;
+		} else if ($ret) {
+		    return $ret;
+		}
+		$currentProgress += $increment;
+	    }
+	}
+
+	$templateAdapter->updateProgressBar(
+	    $module->translate('Update Plugin List'), $module->translate('Done.'), 1);
+
+	$session =& $gallery->getSession();
+	$session->putStatus($status);
+
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect));
+
+	return null;
     }
 }
 ?>

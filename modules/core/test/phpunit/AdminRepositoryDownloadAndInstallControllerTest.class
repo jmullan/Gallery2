@@ -43,6 +43,7 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 	}
 	global $gallery;
 
+	$this->_originalSession = $gallery->_session;
 	$this->_galleryTemplateAdapter =& $gallery->getTemplateAdapter();
 
 	$gallery->_phpVm = new AdminRepositoryDownloadAndInstallControllerTestPhpVm();
@@ -56,6 +57,7 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
     function tearDown() {
 	global $gallery;
 	$gallery->_templateAdapter =& $this->_galleryTemplateAdapter;
+	$gallery->_session = $this->_originalSession;
 
 	$ret = parent::tearDown();
 	if ($ret) {
@@ -87,47 +89,14 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 	$repository->setReply('getDownloadFileList',
 			      array($expectedPluginData),
 			      array(null, $pluginDownloadFileList));
-	/* Descriptor. */
-	$repository->setReply('downloadAndUnpack',
-			      array('module', $testModule, 'descriptor', 'testModule-descriptor'),
-			      array(null, 'descriptorContents'));
 
-	/* Preverify both language packages */
-	$repository->setReply('preVerifyPackage',
-			      array('lang-en_US', 'descriptorContents'),
-			      array());
-	$repository->setReply('preVerifyPackage',
-			      array('lang-hu_HU', 'descriptorContents'),
-			      array());
-
-	/* lang-en_US */
-	$repository->setReply('downloadAndUnpack',
-			      array('module', $testModule, 'lang-en_US', 'en_US-package'),
-			      array(null, array()));
-	$repository->setReply('verifyPackageIntegrity',
-			      array('lang-en_US', 'descriptorContents'),
-			      null);
-	$repository->setReply('getPackageVersionAndBuild',
-			      array('module', $testModule, 'lang-en_US'),
-			      array(null, 'en_US-version', 'en_US-build'));
-	$repository->setReply('updatePackageMetaData',
-			      array('module', $testModule, 'lang-en_US',
-				    'en_US-version', 'en_US-build', 0),
-			      null);
-	/* lang-hu_HU */
-	$repository->setReply('downloadAndUnpack',
-			      array('module', $testModule, 'lang-hu_HU', 'hu_HU-package'),
-			      array(null, array()));
-	$repository->setReply('verifyPackageIntegrity',
-			      array('lang-hu_HU', 'descriptorContents'),
-			      null);
-	$repository->setReply('getPackageVersionAndBuild',
-			      array('module', $testModule, 'lang-hu_HU'),
-			      array(null, 'hu_HU-version', 'hu_HU-build'));
-	$repository->setReply('updatePackageMetaData',
-			      array('module', $testModule, 'lang-hu_HU',
-				    'hu_HU-version', 'hu_HU-build', 0),
-			      null);
+	$repository->setReply('downloadPackagesForPlugin',
+			      array('module', $testModule, 
+				    $pluginDownloadFileList['module'][$testModule],
+				    array('method' => array($mockAdapter, 'updateProgressBar'),
+					  'title' => 'Updating Packages', 'current' => 0,
+					  'total' => 6)),
+			      array(null, true, array()));
 
 	$ret = $this->_controller->performDownloadAndInstallation(
 	    array('test' =>
@@ -171,27 +140,13 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 	$repository->setReply('getDownloadFileList',
 			      array($expectedPluginData),
 			      array(null, $pluginDownloadFileList));
-	/* Descriptor. */
-	$repository->setReply('downloadAndUnpack',
-			      array('module', $testModule, 'descriptor', 'testModule-descriptor'),
-			      array(null, 'descriptorContents'));
-
-	$repository->setReply('preVerifyPackage',
-			      array('base', 'descriptorContents'),
-			      array());
-	$repository->setReply('downloadAndUnpack',
-			      array('module', $testModule, 'base', 'base-package'),
-			      array(null, array()));
-	$repository->setReply('verifyPackageIntegrity',
-			      array('base', 'descriptorContents'),
-			      null);
-	$repository->setReply('getPackageVersionAndBuild',
-			      array('module', $testModule, 'base'),
-			      array(null, 'base-version', 'base-build'));
-	$repository->setReply('updatePackageMetaData',
-			      array('module', $testModule, 'base',
-				    'base-version', 'base-build', 0),
-			      null);
+	$repository->setReply('downloadPackagesForPlugin',
+			      array('module', $testModule, 
+				    $pluginDownloadFileList['module'][$testModule],
+				    array('method' => array($mockAdapter, 'updateProgressBar'),
+					  'title' => 'Updating Packages', 'current' => 0,
+					  'total' => 4)),
+			      array(null, true, array()));
 
 	$ret = $this->_controller->performDownloadAndInstallation(
 	    array('test' => array('module' => array($testModule => array('base' => 1)))),
@@ -230,27 +185,13 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 	$repository->setReply('getDownloadFileList',
 			      array($expectedPluginData),
 			      array(null, $pluginDownloadFileList));
-	/* Descriptor. */
-	$repository->setReply('downloadAndUnpack',
-			      array('module', $testModule, 'descriptor', 'testModule-descriptor'),
-			      array(null, 'descriptorContents'));
-
-	$repository->setReply('preVerifyPackage',
-			      array('base', 'descriptorContents'),
-			      array());
-	$repository->setReply('downloadAndUnpack',
-			      array('module', $testModule, 'base', 'base-package'),
-			      array(null, array()));
-	$repository->setReply('verifyPackageIntegrity',
-			      array('base', 'descriptorContents'),
-			      null);
-	$repository->setReply('getPackageVersionAndBuild',
-			      array('module', $testModule, 'base'),
-			      array(null, 'base-version', 'base-build'));
-	$repository->setReply('updatePackageMetaData',
-			      array('module', $testModule, 'base',
-				    'base-version', 'base-build', 0),
-			      null);
+	$repository->setReply('downloadPackagesForPlugin',
+			      array('module', $testModule, 
+				    $pluginDownloadFileList['module'][$testModule],
+				    array('method' => array($mockAdapter, 'updateProgressBar'),
+					  'title' => 'Updating Packages', 'current' => 0,
+					  'total' => 4)),
+			      array(null, true, array()));
 
 	$ret = $this->_controller->performDownloadAndInstallation(
 	    array('test' => array('module' => array($testModule => array('base' => 1)))),
@@ -290,27 +231,13 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 	$repository->setReply('getDownloadFileList',
 			      array($expectedPluginData),
 			      array(null, $pluginDownloadFileList));
-	/* Descriptor. */
-	$repository->setReply('downloadAndUnpack',
-			      array('module', $testModule, 'descriptor', 'testModule-descriptor'),
-			      array(null, 'descriptorContents'));
-
-	$repository->setReply('preVerifyPackage',
-			      array('base', 'descriptorContents'),
-			      array());
-	$repository->setReply('downloadAndUnpack',
-			      array('module', $testModule, 'base', 'base-package'),
-			      array(null, array()));
-	$repository->setReply('verifyPackageIntegrity',
-			      array('base', 'descriptorContents'),
-			      null);
-	$repository->setReply('getPackageVersionAndBuild',
-			      array('module', $testModule, 'base'),
-			      array(null, 'base-version', 'base-build'));
-	$repository->setReply('updatePackageMetaData',
-			      array('module', $testModule, 'base',
-				    'base-version', 'base-build', 0),
-			      null);
+	$repository->setReply('downloadPackagesForPlugin',
+			      array('module', $testModule, 
+				    $pluginDownloadFileList['module'][$testModule],
+				    array('method' => array($mockAdapter, 'updateProgressBar'),
+					  'title' => 'Updating Packages', 'current' => 0,
+					  'total' => 4)),
+			      array(null, true, array()));
 
 	$ret = $this->_controller->performDownloadAndInstallation(
 	    array('test' => array('module' => array($testModule => array('base' => 1)))),
@@ -333,6 +260,8 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 
     function testPerformDownloadAndInstallationFailedBaseDownload() {
 	global $gallery;
+	$session =& $gallery->getSession();
+
 	$testModule = 'AdminRepositoryDownloadAndInstallControllerTest';
 
 	$mockAdapter = new MockTemplateAdapter();
@@ -355,26 +284,14 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 	$repository->setReply('getDownloadFileList',
 			      array($expectedPluginData),
 			      array(null, $pluginDownloadFileList));
-	/* Descriptor. */
-	$repository->setReply('downloadAndUnpack',
-			      array('module', $testModule, 'descriptor', 'testModule-descriptor'),
-			      array(null, 'descriptorContents'));
-
-	/* Preverify everything  */
-	$repository->setReply('preVerifyPackage',
-			      array('base', 'descriptorContents'),
-			      array());
-	$repository->setReply('preVerifyPackage',
-			      array('lang-en_US', 'descriptorContents'),
-			      array());
-	$repository->setReply('preVerifyPackage',
-			      array('lang-hu_HU', 'descriptorContents'),
-			      array());
-
-	/* base fails, so nothing else gets unpacked */
-	$repository->setReply('downloadAndUnpack',
-			      array('module', $testModule, 'base', 'base-package'),
-			      array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE), null));
+	$repository->setReply('downloadPackagesForPlugin',
+			      array('module', $testModule, 
+				    $pluginDownloadFileList['module'][$testModule],
+				    array('method' => array($mockAdapter, 'updateProgressBar'),
+					  'title' => 'Updating Packages', 'current' => 0,
+					  'total' => 8)),
+			      array(null, false, array('failedToDownload' => array('module' => 
+				  array('Test Module' => array('base-package'))))));
 
 	$ret = $this->_controller->performDownloadAndInstallation(
 	    array('test' =>
@@ -389,12 +306,19 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 	    return ($ret);
 	}
 
+	$status = $session->getStatus();
 	$this->assert($repository->isComplete(), $repository->getRemaining());
 	$this->assert(empty($_REQUEST['called']), 'Nothing should have gotten called');
+	$expected = array('error' => array('failedToDownload' =>  array('module' => 
+				array('Test Module' =>  array('base-package')))),
+			  'languagePacksDeleted' =>  0);
+	$this->assertEquals($expected, $status, 'Expected error status');
     }
 
     function testPerformDownloadAndInstallationFailedLanguageDownload() {
 	global $gallery;
+	$session =& $gallery->getSession();
+
 	$testModule = 'AdminRepositoryDownloadAndInstallControllerTest';
 
 	$mockAdapter = new MockTemplateAdapter();
@@ -417,55 +341,14 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 	$repository->setReply('getDownloadFileList',
 			      array($expectedPluginData),
 			      array(null, $pluginDownloadFileList));
-	/* Descriptor. */
-	$repository->setReply('downloadAndUnpack',
-			      array('module', $testModule, 'descriptor', 'testModule-descriptor'),
-			      array(null, 'descriptorContents'));
-
-	/* Preverify everything  */
-	$repository->setReply('preVerifyPackage',
-			      array('base', 'descriptorContents'),
-			      array());
-	$repository->setReply('preVerifyPackage',
-			      array('lang-en_US', 'descriptorContents'),
-			      array());
-	$repository->setReply('preVerifyPackage',
-			      array('lang-hu_HU', 'descriptorContents'),
-			      array());
-
-	/* base */
-	$repository->setReply('downloadAndUnpack',
-			      array('module', $testModule, 'base', 'base-package'),
-			      array(null, array()));
-	$repository->setReply('verifyPackageIntegrity',
-			      array('base', 'descriptorContents'),
-			      null);
-	$repository->setReply('getPackageVersionAndBuild',
-			      array('module', $testModule, 'base'),
-			      array(null, 'base-version', 'base-build'));
-	$repository->setReply('updatePackageMetaData',
-			      array('module', $testModule, 'base',
-				    'base-version', 'base-build', 0),
-			      null);
-	/* lang-en_US */
-	$repository->setReply('downloadAndUnpack',
-			      array('module', $testModule, 'lang-en_US', 'en_US-package'),
-			      array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE), null));
-
-	/* lang-hu_HU */
-	$repository->setReply('downloadAndUnpack',
-			      array('module', $testModule, 'lang-hu_HU', 'hu_HU-package'),
-			      array(null, array()));
-	$repository->setReply('verifyPackageIntegrity',
-			      array('lang-hu_HU', 'descriptorContents'),
-			      null);
-	$repository->setReply('getPackageVersionAndBuild',
-			      array('module', $testModule, 'lang-hu_HU'),
-			      array(null, 'hu_HU-version', 'hu_HU-build'));
-	$repository->setReply('updatePackageMetaData',
-			      array('module', $testModule, 'lang-hu_HU',
-				    'hu_HU-version', 'hu_HU-build', 0),
-			      null);
+	$repository->setReply('downloadPackagesForPlugin',
+			      array('module', $testModule, 
+				    $pluginDownloadFileList['module'][$testModule],
+				    array('method' => array($mockAdapter, 'updateProgressBar'),
+					  'title' => 'Updating Packages', 'current' => 0,
+					  'total' => 8)),
+			      array(null, true, array('failedToDownload' => array('module' => 
+				  array('Test Module' => array('en_GB-package'))))));
 
 	$ret = $this->_controller->performDownloadAndInstallation(
 	    array('test' =>
@@ -486,6 +369,13 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 				  'autoConfigure' => 1,
 				  'activate' => 1),
 			    $_REQUEST['called']);
+
+	$status = $session->getStatus();
+	$expected = array('error' => array('failedToDownload' =>  array('module' => 
+				array('Test Module' =>  array('en_GB-package')))),
+			  'updated' => array('Test Module'),
+			  'languagePacksDeleted' =>  0);
+	$this->assertEquals($expected, $status, 'Expected status messages');
     }
 
     function testDeleteLanguages() {
@@ -526,6 +416,135 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
 	$this->assert($repository->isComplete(), $repository->getRemaining());
+    }
+
+    function testUpdatePluginStatus() {
+	global $gallery;
+
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
+
+	$repository = new UnitTestRepository();
+	$repository->setReply('downloadIndex', array(), null);
+	$repository->setReply('scanPlugin', array('module', 'module1'), null);
+	$repository->setReply('scanPlugin', array('module', 'module2'), null);
+	$repository->setReply('scanPlugin', array('theme', 'theme1'), null);
+	$repository->setReply('scanPlugin', array('theme', 'theme2'), null);
+
+	$mockUrlGenerator = new AdminRepositoryControllerTestUrlGenerator();
+	$gallery->_urlGenerator =& $mockUrlGenerator;
+
+	$ret = $this->_controller->updatePluginStatus(
+	    array('module' => array(
+		      'module1' => array('active' => true, 'available' => true),
+		      'module2' => array('active' => true, 'available' => true)),
+		  'theme' => array(
+		      'theme1' => array('active' => true, 'available' => true),
+		      'theme2' => array('active' => true, 'available' => true))),
+	    array('test' => $repository),  
+	    array('view' => 'core.SiteAdmin', 'subView' => 'core.AdminRepository'));
+	if ($ret) {
+	    return $ret;
+	}
+
+	/* Assert that we saw what we expected */
+	$this->assertEquals(
+	    array('0', '0', '0.56' /* index downloads have a higher weight */,
+		  '0.67', '0.78', '0.89', '1' /* 4 steps for the plugins */,
+		  'complete:view=core.SiteAdmin,subView=core.AdminRepository'),
+	    $mockAdapter->getProgressBarDump());
+
+	$this->assert($repository->isComplete(), $repository->getRemaining());
+    }
+
+    function testUpdatePluginStatusIgnoresPluginScanErrors() {
+	global $gallery;
+
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
+	$gallery->_session = new AdminRepositoryControllerTestSession();
+	$gallery->_storage = new UnitTestStorage();
+	
+	$gallery->_storage->setReply('removeAllMapEntries', array('GalleryPluginPackageMap', false),
+	    null);
+
+	$repository = new UnitTestRepository();
+	$repository->setReply('downloadIndex', array(), null);
+	$repository->setReply('scanPlugin', array('module', 'module1'), null);
+	$repository->setReply('scanPlugin',
+			      array('module', 'module2'),
+			      GalleryCoreApi::error(ERROR_BAD_PATH));
+	$repository->setReply('scanPlugin', array('theme', 'theme1'), null);
+	$repository->setReply('scanPlugin', array('theme', 'theme2'), null);
+
+	$mockUrlGenerator = new AdminRepositoryControllerTestUrlGenerator();
+	$gallery->_urlGenerator =& $mockUrlGenerator;
+
+	$ret = $this->_controller->updatePluginStatus(
+	    array('module' => array(
+		      'module1' => array('active' => true, 'available' => true),
+		      'module2' => array('active' => false, 'available' => true)),
+		  'theme' => array(
+		      'theme1' => array('active' => true, 'available' => true),
+		      'theme2' => array('active' => true, 'available' => true))),
+	    array('test' => $repository), 
+	    array('view' => 'core.SiteAdmin', 'subView' => 'core.AdminRepository'));
+	if ($ret) {
+	    return $ret;
+	}
+
+	/* Assert that we saw what we expected */
+	$this->assertEquals(
+	    array('0', '0', '0.56' /* index downloads have a higher weight */,
+		  '0.67', '0.78', '0.89', '1' /* 4 steps for the plugins */,
+		  'complete:view=core.SiteAdmin,subView=core.AdminRepository'),
+	    $mockAdapter->getProgressBarDump());
+
+	$this->assert($repository->isComplete(), $repository->getRemaining());
+	$this->assert($gallery->_storage->isComplete(), $gallery->_storage->getRemaining());
+	
+	$session =& $gallery->getSession();
+	$expectedStatus['scanPlugin'] = array('module2');
+	$this->assertEquals($expectedStatus, $session->getStatus(),
+			    'scanPlugin error should be in status');
+    }
+
+    function testUpdatePluginStatusFailsHardOnStorageError() {
+	global $gallery;
+
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
+	$gallery->_session = new AdminRepositoryControllerTestSession();
+
+	$repository = new UnitTestRepository();
+	$repository->setReply('downloadIndex', array(), null);
+	$repository->setReply('scanPlugin', array('module', 'module1'), null);
+	$repository->setReply('scanPlugin',
+			      array('module', 'module2'),
+			      GalleryCoreApi::error(ERROR_STORAGE_FAILURE));
+	$repository->setReply('scanPlugin', array('theme', 'theme1'), null);
+	$repository->setReply('scanPlugin', array('theme', 'theme2'), null);
+
+	$mockUrlGenerator = new AdminRepositoryControllerTestUrlGenerator();
+	$gallery->_urlGenerator =& $mockUrlGenerator;
+
+	/* Run the test and verify that the operation fails as expected */
+	$ret = $this->_controller->updatePluginStatus(
+	    array('module' => array(
+		      'module1' => array('active' => true, 'available' => true),
+		      'module2' => array('active' => false, 'available' => true)),
+		  'theme' => array(
+		      'theme1' => array('active' => true, 'available' => true),
+		      'theme2' => array('active' => true, 'available' => true))),
+	    array('test' => $repository), 
+	    array('view' => 'core.SiteAdmin', 'subView' => 'core.AdminRepository'));
+	if ($ret && $ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
+	    /* Good, as expected */
+	} else if ($ret) {
+	    return ($ret);
+	} else {
+	    $this->fail('ERROR_STORAGE_FAILURE should not be ignored');
+	}
     }
 }
 

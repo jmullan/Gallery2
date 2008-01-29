@@ -89,9 +89,11 @@ class AdminRepositoryController extends AdminRepositoryDownloadAndInstallControl
 	    }
 
 	    $templateAdapter =& $gallery->getTemplateAdapter();
+
 	    $templateAdapter->registerTrailerCallback(
 		array($this, 'updatePluginStatus'),
-		array($pluginStatus, $repositories));
+		array($pluginStatus, $repositories, 
+		      array('view' => 'core.SiteAdmin', 'subView' => 'core.AdminRepository')));
 	    $delegate['view'] = 'core.ProgressBar';
 	} else if (isset($form['action']['upgradeAll'])) {
 	    list ($ret, $repositories) = $this->_getRepositories();
@@ -140,108 +142,6 @@ class AdminRepositoryController extends AdminRepositoryDownloadAndInstallControl
 	return array(null, $results);
     }
 
-    /**
-     * Update the repository index, and scan all installed plugins and update
-     * GalleryPluginPackageMap with a complete listing of everything that's installed.
-     *
-     * @todo Show a summary page (or at least a link to it) which contains details about
-     * the exact tasks that were performed and any errors that were encountered.
-     *
-     * @param $pluginStatus status of all available installed plugins
-     * @param $repositories the repositories available for new plugins
-     * @return GalleryStatus a status code
-     */
-    function updatePluginStatus($pluginStatus, $repositories) {
-	global $gallery;
-	$templateAdapter =& $gallery->getTemplateAdapter();
-	$platform =& $gallery->getPlatform();
-
-	$status = array();
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret) {
-	    return $ret;
-	}
-	$heading = $module->translate('Updating Repository Index');
-	$templateAdapter->updateProgressBar($heading, '', 0);
-
-	/* Erase all plugin data, so that a full scan drops old entries */
-	$ret = GalleryCoreApi::removeAllMapEntries('GalleryPluginPackageMap');
-	if ($ret) {
-	    return $ret;
-	}
-
-	/* Update the index */
-	$currentProgress = 0;
-	$indexWeight = 5;
-	$increment = 1.0 / ($indexWeight * count($repositories) + count($pluginStatus['module']) +
-			    count($pluginStatus['theme']));
-
-	foreach ($repositories as $source => $repository) {
-	    list ($ret, $message) = GalleryRepository::translateRepositoryName($source);
-	    if ($ret) {
-		return $ret;
-	    }
-
-	    $templateAdapter->updateProgressBar($heading, $message, $currentProgress);
-	    $ret = $repository->downloadIndex();
-	    if ($ret) {
-		/* TODO: Internationalize this error message */
-		$status['error']['download'][] = $ret->getErrorMessage();
-	    }
-	    $currentProgress += $indexWeight * $increment;
-	}
-
-	$heading = $module->translate('Scanning plugins');
-	$sSlash = 's' . $platform->getDirectorySeparator();
-
-	if (!isset($repository)) {
-	    /*
-	     * The loop below needs a working repository, but we don't have one because all of our
-	     * existing indexes are missing or corrupted.  So create a new bogus one expressly for
-	     * the purpose of calling GalleryRepository::scanPlugin().
-	     */
-	    $repository = new GalleryRepository();
-	    $repository->init('bogus');
-	}
-
-	foreach (array('module', 'theme') as $pluginType) {
-	    foreach (array_keys($pluginStatus[$pluginType]) as $pluginId) {
-		$gallery->guaranteeTimeLimit(30);
-
-		$templateAdapter->updateProgressBar(
-			$heading, $pluginType . $sSlash . $pluginId, $currentProgress);
-		$ret = $repository->scanPlugin($pluginType, $pluginId);
-		if ($ret && !($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
-		    /*
-		     * Something is wrong with this plugin. Maybe it's a 3rd party plugin w/o
-		     * MANIFEST file, maybe it has no revisions in the po files, maybe the
-		     * module.inc is foobar. Just log and ignore it.
-		     */
-		    if ($gallery->getDebug()) {
-			$gallery->debug_r($ret);
-		    }
-		    $status['error']['scanPlugin'][] = $pluginId;
-		} else if ($ret) {
-		    return $ret;
-		}
-		$currentProgress += $increment;
-	    }
-	}
-
-	$templateAdapter->updateProgressBar(
-	    $module->translate('Update Plugin List'), $module->translate('Done.'), 1);
-
-	$redirect['view'] = 'core.SiteAdmin';
-	$redirect['subView'] = 'core.AdminRepository';
-
-	$session =& $gallery->getSession();
-	$session->putStatus($status);
-
-	$urlGenerator =& $gallery->getUrlGenerator();
-	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect));
-
-	return null;
-    }
 }
 
 /**
@@ -312,9 +212,9 @@ class AdminRepositoryView extends GalleryView {
 		break;
 	    }
 
-	    /*
+	    /**
 	     * Note: this merges modules and themes instead of treating themes separately.
-	     * TODO: separate themes into their own group, like we do elsewhere
+	     * @todo: separate themes into their own group, like we do elsewhere
 	     */
 	    foreach (array('module', 'theme') as $pluginType) {
 		/* Get list of plugins to show in the repository browser. */
@@ -402,7 +302,7 @@ class AdminRepositoryView extends GalleryView {
     }
 
     /**
-     * TODO: combine this with AdminPluginsView::pluginSort
+     * @todo: combine this with AdminPluginsView::pluginSort
      */
     function pluginSort($a, $b) {
 	if (($cmp = strcmp($a['groupLabel'], $b['groupLabel'])) == 0) {
