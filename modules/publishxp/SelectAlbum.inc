@@ -130,6 +130,7 @@ class SelectAlbumView extends GalleryView {
 	    $albumIds['allIds'] = $filteredIds;
 	}
 
+	$albums = array();
 	if (!empty($albumIds['allIds'])) {
 	    /* Load all the album entities */
 	    list ($ret, $albums) =
@@ -142,6 +143,12 @@ class SelectAlbumView extends GalleryView {
 	$SelectAlbum = array();
 	$SelectAlbum['albumTree'] = GalleryUtilities::createAlbumTree($albums);
 
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'publishxp');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$template->title($module->translate('Publish XP'));
 	$template->setVariable('SelectAlbum', $SelectAlbum);
 	$template->setVariable('controller', 'publishxp.SelectAlbum');
 	$template->head('modules/publishxp/templates/Head.tpl');

@@ -156,6 +156,12 @@ class NewAlbumView extends GalleryView {
 	$NewAlbum = array();
 	$NewAlbum['parents'] = $parents;
 
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'publishxp');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$template->title($module->translate('Publish XP'));
 	$template->setVariable('NewAlbum', $NewAlbum);
 	$template->setVariable('controller', 'publishxp.NewAlbum');
 	$template->head('modules/publishxp/templates/Head.tpl');

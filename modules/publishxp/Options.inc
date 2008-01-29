@@ -129,6 +129,12 @@ class OptionsView extends GalleryView {
 	    }
 	}
 
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'publishxp');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$template->title($module->translate('Publish XP'));
 	$template->setVariable('Options', $Options);
 	$template->head('modules/publishxp/templates/Head.tpl');
 

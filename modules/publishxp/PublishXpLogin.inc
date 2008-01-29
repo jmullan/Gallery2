@@ -119,6 +119,12 @@ class PublishXpLoginView extends GalleryView {
 	    return array(null, array('redirect' => array('view' => 'publishxp.SelectAlbum')));
 	}
 
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'publishxp');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$template->title($module->translate('Publish XP'));
 	$template->setVariable('controller', 'publishxp.PublishXpLogin');
 	$template->head('modules/publishxp/templates/Head.tpl');
 

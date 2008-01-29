@@ -2,10 +2,6 @@
  * $Revision$
  * Read this before changing templates!  http://codex.gallery2.org/Gallery2:Editing_Templates
  *}
-<title>
-  {g->text text="Publish XP"}
-</title>
-
 <script type="text/javascript">
 // <![CDATA[
   var onBackUrl = null;

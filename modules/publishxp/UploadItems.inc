@@ -279,6 +279,12 @@ class UploadItemsView extends GalleryView {
 	    $UploadItems['setCaptions'] = 0;
 	}
 
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'publishxp');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$template->title($module->translate('Publish XP'));
 	$template->setVariable('UploadItems', $UploadItems);
 	$template->head('modules/publishxp/templates/Head.tpl');
 
