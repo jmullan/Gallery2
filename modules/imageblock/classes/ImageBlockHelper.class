@@ -533,16 +533,6 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	$data[] = (int)$userId;
 	$data[] = $typeMap[$itemType];
 
-	if ($order == 'random') {
-	    $where[] = '[ImageBlockCacheMap::random] > ?';
-	    list ($ret, $minMax) = ImageBlockHelper::getRandomKeyRange((int)$userId);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	    /* We want that the returned integer is smaller than any number in the range */
-	    $data[] = ImageBlockHelper::getRandomKey($minMax[0], $minMax[1]) - 1;
-	}
-
 	if ($order == 'viewed' || isset($parentId)) {
 	    $select[] = '[GalleryItemAttributesMap::viewCount]';
 	    $from[] = '[GalleryItemAttributesMap]';
@@ -555,6 +545,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    return array($ret, null);
 	}
 	/* Only use LIKE statement if necessary */
+	$parentSequence = null;
 	if (isset($parentId) && $parentId != $rootAlbumId) {
 	    $where[] = '[GalleryItemAttributesMap::parentSequence] LIKE ?';
 	    list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($parentId);
@@ -566,7 +557,18 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    } else {
 		$sequence = '';
 	    }
-	    $data[] = $sequence . $parentId . '/%';
+	    $data[] = $parentSequence = $sequence . $parentId . '/%';
+	}
+
+	if ($order == 'random') {
+	    $where[] = '[ImageBlockCacheMap::random] > ?';
+	    list ($ret, $minMax) = ImageBlockHelper::getRandomKeyRange(
+		(int)$userId, $typeMap[$itemType], $parentSequence);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    /* We want that the returned integer is smaller than any number in the range */
+	    $data[] = ImageBlockHelper::getRandomKey($minMax[0], $minMax[1]) - 1;
 	}
 
 	/* Build the query */
@@ -981,22 +983,37 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
     /**
      * Determine the highest and lowest numbers currently in the random index.
      *
-     * @param int $userId (optional) User id, defaults to active user's id.
+     * @param int $userId User id
+     * @param int $itemType ImageBlock itemType
+     * @param string $parentSequence (optional) Optional parent sequence condition
      * @return array GalleryStatus a status code
      *		     array int Minimum value of the random number to be genereated
      *			   int Maximum value of the random number to be generated
      */
-    function getRandomKeyRange($userId=null) {
+    function getRandomKeyRange($userId, $itemType, $parentSequence=null) {
 	global $gallery;
 	$storage = $gallery->getStorage();
 
-	$query = 'SELECT MIN([ImageBlockCacheMap::random]), MAX([ImageBlockCacheMap::random])'
-		 . ' FROM [ImageBlockCacheMap]'
-		 . ' WHERE [ImageBlockCacheMap::userId] = ? AND '
-		 . '[ImageBlockCacheMap::random] IS NOT NULL';
+	$from[] = '[ImageBlockCacheMap] LEFT JOIN [ImageBlockDisabledMap] ON '
+		. '[ImageBlockCacheMap::itemId]=[ImageBlockDisabledMap::itemId]';
+	$where[] = '[ImageBlockCacheMap::userId] = ?';
+	$where[] = '[ImageBlockCacheMap::itemType] = ?';
+	$where[] = '[ImageBlockCacheMap::random] IS NOT NULL';
+	$where[] = '[ImageBlockDisabledMap::itemId] IS NULL';
+	$data = array($userId, $itemType);
+	if (!empty($parentSequence)) {
+	    $from[] = '[GalleryItemAttributesMap]';
+	    $where[] = '[ImageBlockCacheMap::itemId] = [GalleryItemAttributesMap::itemId]';
+	    $where[] = '[GalleryItemAttributesMap::parentSequence] LIKE ?';
+	    $data[] = $parentSequence;
+	}
 
-	list ($ret, $results) = $storage->search($query,
-	    array(isset($userId) ? $userId : $gallery->getActiveUserId()));
+	$query = '
+	SELECT MIN([ImageBlockCacheMap::random]), MAX([ImageBlockCacheMap::random])
+	FROM ' . implode(', ', $from) . '
+	WHERE ' . implode(' AND ', $where);
+
+	list ($ret, $results) = $storage->search($query, $data);
 	if ($ret) {
 	    return array($ret, null);
 	}

@@ -434,11 +434,13 @@ class ImageBlockHelperTest extends GalleryTestCase {
 	$storage->setReply('search', array($isCachedQuery, array($userId), array()),
 	    array(null, new UnitTestStorageSearchResults(array(array(2)))));
 
-	$query = 'SELECT MIN([ImageBlockCacheMap::random]), MAX([ImageBlockCacheMap::random])'
-	       . ' FROM [ImageBlockCacheMap]'
-	       . ' WHERE [ImageBlockCacheMap::userId] = ? AND '
-	       . '[ImageBlockCacheMap::random] IS NOT NULL';
-	$storage->setReply('search', array($query, array($userId), array()),
+	$query = '
+	SELECT MIN([ImageBlockCacheMap::random]), MAX([ImageBlockCacheMap::random])
+	FROM [ImageBlockCacheMap] LEFT JOIN [ImageBlockDisabledMap] ON '
+	. '[ImageBlockCacheMap::itemId]=[ImageBlockDisabledMap::itemId]
+	WHERE [ImageBlockCacheMap::userId] = ? AND [ImageBlockCacheMap::itemType] = ? AND '
+	. '[ImageBlockCacheMap::random] IS NOT NULL AND [ImageBlockDisabledMap::itemId] IS NULL';
+	$storage->setReply('search', array($query, array($userId, 1), array()),
 	    array(null, new UnitTestStorageSearchResults(array(array(5, 9)))));
 
 	$phpVm->setReply('rand', array(5, 9), 7);
@@ -472,14 +474,17 @@ class ImageBlockHelperTest extends GalleryTestCase {
 	$gallery->_storage = new UnitTestStorage();
 	$storage =& $gallery->getStorage();
 
-	$query = 'SELECT MIN([ImageBlockCacheMap::random]), MAX([ImageBlockCacheMap::random])'
-	       . ' FROM [ImageBlockCacheMap]'
-	       . ' WHERE [ImageBlockCacheMap::userId] = ? AND '
-	       . '[ImageBlockCacheMap::random] IS NOT NULL';
-	$storage->setReply('search', array($query, array($gallery->getActiveUserId()), array()),
+	$query = '
+	SELECT MIN([ImageBlockCacheMap::random]), MAX([ImageBlockCacheMap::random])
+	FROM [ImageBlockCacheMap] LEFT JOIN [ImageBlockDisabledMap] ON '
+	. '[ImageBlockCacheMap::itemId]=[ImageBlockDisabledMap::itemId]
+	WHERE [ImageBlockCacheMap::userId] = ? AND [ImageBlockCacheMap::itemType] = ? AND '
+	. '[ImageBlockCacheMap::random] IS NOT NULL AND [ImageBlockDisabledMap::itemId] IS NULL';
+
+	$storage->setReply('search', array($query, array($gallery->getActiveUserId(), 1), array()),
 	    array(null, new UnitTestStorageSearchResults(array(array(5, 9)))));
 
-	list ($ret, $range) = ImageBlockHelper::getRandomKeyRange();
+	list ($ret, $range) = ImageBlockHelper::getRandomKeyRange($gallery->getActiveUserId(), 1);
 	if ($ret) {
 	    return $ret;
 	}
