@@ -10,7 +10,7 @@
 
   {*
    * If you enable XpDebug, you get Back/Next buttons for all browsers, not
-   * just the XP Publishing Wizard.  It's useful for debugging in a development
+   * just the Windows Publishing Wizard.  It's useful for debugging in a development
    * environment, but should be disabled for production environments.
    *}
   {assign var=XpDebug value=false}

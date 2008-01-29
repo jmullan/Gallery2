@@ -134,7 +134,7 @@ class OptionsView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	$template->title($module->translate('Publish XP'));
+	$template->title($module->translate('Windows Publishing Wizard'));
 	$template->setVariable('Options', $Options);
 	$template->head('modules/publishxp/templates/Head.tpl');
 

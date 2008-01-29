@@ -52,7 +52,7 @@ class ItemAddPublishXp extends ItemAddPlugin {
 	if ($ret) {
 	    return array($ret, null);
 	}
-	return array(null, $module->translate('Windows XP'));
+	return array(null, $module->translate('Windows Publishing Wizard'));
     }
 }
 ?>
