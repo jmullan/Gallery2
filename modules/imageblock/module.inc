@@ -32,7 +32,7 @@ class ImageBlockModule extends GalleryModule {
 	$this->setId('imageblock');
 	$this->setName($gallery->i18n('Image Block'));
 	$this->setDescription($gallery->i18n('Random, Most Recent or Most Viewed Photo or Album'));
-	$this->setVersion('1.1.7');
+	$this->setVersion('1.1.8');
 	$this->_templateVersion = 1;
 	$this->setGroup('blocks', $gallery->i18n('Blocks'));
 	$this->setCallbacks('getSiteAdminViews');
@@ -97,13 +97,23 @@ class ImageBlockModule extends GalleryModule {
 	    }
 	}
 
-	if (!empty($currentVersion) && version_compare($currentVersion, '1.1.5', '<=')) {
+	if (!empty($currentVersion) && version_compare($currentVersion, '1.1.7', '<=')) {
 	    GalleryCoreApi::requireOnce('modules/imageblock/classes/ImageBlockHelper.class');
 	    $ret = $storage->removeAllMapEntries('ImageBlockCacheMap', true);
 	    if ($ret) {
 		return $ret;
 	    }
+	}
+	if (!empty($currentVersion) && version_compare($currentVersion, '1.1.5', '<=')) {
+	    /* Add ImageBlockCacheMap::random */
 	    $ret = $storage->configureStore($this->getId(), array('ImageBlockCacheMap:1.1'));
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+	if (!empty($currentVersion) && version_compare($currentVersion, '1.1.7', '<=')) {
+	    /* Add proper index with new ::random column */
+	    $ret = $storage->configureStore($this->getId(), array('ImageBlockCacheMap:1.2'));
 	    if ($ret) {
 		return $ret;
 	    }
