@@ -436,8 +436,9 @@ class ImageBlockHelperTest extends GalleryTestCase {
 
 	$query = 'SELECT MIN([ImageBlockCacheMap::random]), MAX([ImageBlockCacheMap::random])'
 	       . ' FROM [ImageBlockCacheMap]'
-	       . ' WHERE [ImageBlockCacheMap::random] IS NOT NULL';
-	$storage->setReply('search', array($query, array(), array()),
+	       . ' WHERE [ImageBlockCacheMap::userId] = ? AND '
+	       . '[ImageBlockCacheMap::random] IS NOT NULL';
+	$storage->setReply('search', array($query, array($userId), array()),
 	    array(null, new UnitTestStorageSearchResults(array(array(5, 9)))));
 
 	$phpVm->setReply('rand', array(5, 9), 7);
@@ -462,6 +463,28 @@ class ImageBlockHelperTest extends GalleryTestCase {
 	$this->assertEquals(array(array('id' => 15, 'viewCount' => 4),
 				  array('id' => 19, 'viewCount' => 99)),
 			    $results);
+
+	$this->assert($storage->isComplete(), $storage->getRemaining());
+    }
+
+    function testGetRandomKeyRange() {
+	global $gallery;
+	$gallery->_storage = new UnitTestStorage();
+	$storage =& $gallery->getStorage();
+
+	$query = 'SELECT MIN([ImageBlockCacheMap::random]), MAX([ImageBlockCacheMap::random])'
+	       . ' FROM [ImageBlockCacheMap]'
+	       . ' WHERE [ImageBlockCacheMap::userId] = ? AND '
+	       . '[ImageBlockCacheMap::random] IS NOT NULL';
+	$storage->setReply('search', array($query, array($gallery->getActiveUserId()), array()),
+	    array(null, new UnitTestStorageSearchResults(array(array(5, 9)))));
+
+	list ($ret, $range) = ImageBlockHelper::getRandomKeyRange();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(array(5, 9), $range);
 
 	$this->assert($storage->isComplete(), $storage->getRemaining());
     }

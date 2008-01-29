@@ -535,7 +535,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 
 	if ($order == 'random') {
 	    $where[] = '[ImageBlockCacheMap::random] > ?';
-	    list ($ret, $minMax) = ImageBlockHelper::getRandomKeyRange();
+	    list ($ret, $minMax) = ImageBlockHelper::getRandomKeyRange((int)$userId);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -981,19 +981,22 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
     /**
      * Determine the highest and lowest numbers currently in the random index.
      *
+     * @param int $userId (optional) User id, defaults to active user's id.
      * @return array GalleryStatus a status code
      *		     array int Minimum value of the random number to be genereated
      *			   int Maximum value of the random number to be generated
      */
-    function getRandomKeyRange() {
+    function getRandomKeyRange($userId=null) {
 	global $gallery;
 	$storage = $gallery->getStorage();
 
 	$query = 'SELECT MIN([ImageBlockCacheMap::random]), MAX([ImageBlockCacheMap::random])'
 		 . ' FROM [ImageBlockCacheMap]'
-		 . ' WHERE [ImageBlockCacheMap::random] IS NOT NULL';
+		 . ' WHERE [ImageBlockCacheMap::userId] = ? AND '
+		 . '[ImageBlockCacheMap::random] IS NOT NULL';
 
-	list ($ret, $results) = $storage->search($query);
+	list ($ret, $results) = $storage->search($query,
+	    array(isset($userId) ? $userId : $gallery->getActiveUserId()));
 	if ($ret) {
 	    return array($ret, null);
 	}
