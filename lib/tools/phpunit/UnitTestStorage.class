@@ -149,8 +149,9 @@ class UnitTestStorage extends MockObject {
 	return $this->_makeReply('removeMapEntry', array($mapName, $entry));
     }
 
-    function removeAllMapEntries($mapName) {
-	return $this->_makeReply('removeAllMapEntries', array($mapName));
+    function removeAllMapEntries($mapName, $useNonTransactionalConnection=false) {
+	return $this->_makeReply('removeAllMapEntries', 
+	    array($mapName, $useNonTransactionalConnection));
     }
 
     function getMapEntry($mapName, $select, $match=array(), $optional=array()) {
