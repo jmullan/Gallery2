@@ -506,6 +506,23 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
 	}
 
+	list ($ret, $orderBy) = ImageBlockHelper::_buildOrderBy($order);
+	if ($ret) {
+	    return array($ret, null);
+	}
+	
+	list ($ret, $isCached) = ImageBlockHelper::_isCached($userId);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	if (!$isCached) {
+	    $ret = ImageBlockHelper::cacheViewableTree($userId);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
+	
 	/* Prepare the query */
 	$select[] = '[ImageBlockCacheMap::itemId]';
 	$from[] = '[ImageBlockCacheMap] LEFT JOIN [ImageBlockDisabledMap] ON ' .
@@ -515,11 +532,6 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	$where[] = '[ImageBlockDisabledMap::itemId] IS NULL';
 	$data[] = (int)$userId;
 	$data[] = $typeMap[$itemType];
-
-	list ($ret, $orderBy) = ImageBlockHelper::_buildOrderBy($order);
-	if ($ret) {
-	    return array($ret, null);
-	}
 
 	if ($order == 'random') {
 	    $where[] = '[ImageBlockCacheMap::random] > ?';
@@ -566,18 +578,6 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	list ($ret, $query) = $storage->getFunctionSql('LIMIT', array($count, $query));
 	if ($ret) {
 	    return array($ret, null);
-	}
-
-	list ($ret, $isCached) = ImageBlockHelper::_isCached($userId);
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	if (!$isCached) {
-	    $ret = ImageBlockHelper::cacheViewableTree($userId);
-	    if ($ret) {
-		return array($ret, null);
-	    }
 	}
 
 	list ($ret, $results) = ImageBlockHelper::_runQuery($query, $data);
@@ -966,6 +966,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
      * @return int a number between 0 and 2147483647.
      */
     function getRandomKey($min=0, $max=2147483647) {
+    	global $gallery;
+    	$phpVm = $gallery->getPhpVm();
 	static $initialized = false;
 
 	if (!$initialized) {
@@ -973,7 +975,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    srand($sec + $usec * 100000);
 	    $initialized = true;
 	}
-	return rand($min, $max);
+	return $phpVm->rand($min, $max);
     }
 
     /**
