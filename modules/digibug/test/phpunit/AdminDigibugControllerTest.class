@@ -90,9 +90,35 @@ class AdminDigibugControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'digibug.AdminDigibug'),
 				  'status' => array(),
-				  'error' => array('form[error][digibugCustomerId][missing]',
-						   'form[error][digibugPricelistId][missing]')),
+				  'error' => array('form[error][digibugCustomerId][invalid]',
+						   'form[error][digibugPricelistId][invalid]')),
 			    $results);
+    }
+
+    function testAdminDigibugControllerSaveInvalidValues() {
+	GalleryUtilities::putRequestVariable('form[action][save]', '1');
+	GalleryUtilities::putRequestVariable('form[digibugCustomerId]', '123bsd4');
+	GalleryUtilities::putRequestVariable('form[digibugPricelistId]', '4sds321');
+
+	list ($ret, $origParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'digibug');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'digibug.AdminDigibug'),
+				  'status' => array(),
+				  'error' => array('form[error][digibugCustomerId][invalid]',
+						   'form[error][digibugPricelistId][invalid]')),
+			    $results);
+
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'digibug');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals($origParams, $params, 'module param values have changed');
     }
 }
 ?>

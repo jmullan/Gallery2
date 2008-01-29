@@ -28,10 +28,10 @@
       <input type="text" size="6" id="formDigibugCustomerId" autocomplete="off"
        name="{g->formVar var="form[digibugCustomerId]"}" value="{$form.digibugCustomerId}"/>
     </td></tr>
-    {if isset($form.error.digibugCustomerId.missing)}
+    {if isset($form.error.digibugCustomerId.invalid)}
     <tr><td colspan="2">
       <div class="giError">
-	{g->text text="You must enter a digibug customer id."}
+	{g->text text="You must enter a valid digibug customer id."}
       </div>
     </td></tr>
     {/if}
@@ -43,7 +43,7 @@
       <input type="text" size="6" id="formDigibugEventId" autocomplete="off"
        name="{g->formVar var="form[digibugPricelistId]"}" value="{$form.digibugPricelistId}"/>
     </td></tr>
-    {if isset($form.error.digibugPricelistId.missing)}
+    {if isset($form.error.digibugPricelistId.invalid)}
     <tr><td colspan="2">
       <div class="giError">
 	{g->text text="Please create an event or use your default event id as your pricelist id."}

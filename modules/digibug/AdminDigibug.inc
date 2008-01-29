@@ -46,11 +46,13 @@ class AdminDigibugController extends GalleryController {
 
 	$status = $error = array();
 	if (isset($form['action']['save'])) {
-	    if (empty($form['digibugCustomerId'])) {
-		$error[] = 'form[error][digibugCustomerId][missing]';
+	    if (empty($form['digibugCustomerId'])
+		    || !preg_match('/^\d+$/', trim($form['digibugCustomerId']))) {
+		$error[] = 'form[error][digibugCustomerId][invalid]';
 	    }
-	    if (empty($form['digibugPricelistId'])) {
-		$error[] = 'form[error][digibugPricelistId][missing]';
+	    if (empty($form['digibugPricelistId'])
+		    || !preg_match('/^\d+$/', trim($form['digibugPricelistId']))) {
+		$error[] = 'form[error][digibugPricelistId][invalid]';
 	    }
 	    if (empty($error)) {
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'digibug');
@@ -63,7 +65,7 @@ class AdminDigibugController extends GalleryController {
 		}
 
 		foreach (array('digibugCustomerId', 'digibugPricelistId') as $key) {
-		    $ret = $module->setParameter($key, $form[$key]);
+		    $ret = $module->setParameter($key, trim($form[$key]));
 		    if ($ret) {
 			return array($ret, null);
 		    }
