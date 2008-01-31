@@ -256,7 +256,7 @@ class GalleryLockHelper_simple {
 	}
 	$lockSystem =& $result[1];
 
-	$ret = $lockSystem->refreshLocks();
+	$ret = $lockSystem->refreshLocks($freshUntil);
 	if ($ret) {
 	    return $ret;
 	}
