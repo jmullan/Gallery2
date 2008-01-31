@@ -40,13 +40,14 @@ class AdminSnapGalaxyController extends GalleryController {
 
 	$status = $error = array();
 	if (isset($form['action']['save'])) {
-	    if (empty($form['snapgalaxyPartnerId'])) {
-		$error[] = 'form[error][snapgalaxyPartnerId][missing]';
+	    if (empty($form['snapgalaxyPartnerId'])
+		    || !preg_match('/^[A-Za-z0-9_\-]+$/', $form['snapgalaxyPartnerId'])) {
+		$error[] = 'form[error][snapgalaxyPartnerId][invalid]';
 	    }
 	    if (empty($error)) {
 		foreach (array('snapgalaxyPartnerId') as $key) {
 		    $ret = GalleryCoreApi::setPluginParameter(
-			'module', 'snapgalaxy', $key, $form[$key]);
+			'module', 'snapgalaxy', $key, trim($form[$key]));
 		    if ($ret) {
 			return array($ret, null);
 		    }

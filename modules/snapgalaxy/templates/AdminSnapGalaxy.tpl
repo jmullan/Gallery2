@@ -27,10 +27,10 @@
       <input type="text" size="6" id="formSnapGalaxyPartnerId" autocomplete="off"
        name="{g->formVar var="form[snapgalaxyPartnerId]"}" value="{$form.snapgalaxyPartnerId}"/>
     </td></tr>
-    {if isset($form.error.snapgalaxyPartnerId.missing)}
+    {if isset($form.error.snapgalaxyPartnerId.invalid)}
     <tr><td colspan="2">
       <div class="giError">
-  	{g->text text="You must enter a snapgalaxy partner id or set it as %s if you do not have one." arg1="<b>default</b>"}
+  	{g->text text="You must enter a valid snapgalaxy partner id or set it as %s if you do not have one." arg1="<b>default</b>"}
       </div>
     </td></tr>
     {/if}

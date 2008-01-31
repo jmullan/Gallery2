@@ -57,7 +57,7 @@ class AdminSnapGalaxyControllerTest extends GalleryControllerTestCase {
     }
 
     function testAdminSnapGalaxyControllerSave() {
-	GalleryUtilities::putRequestVariable('form[snapgalaxyPartnerId]', '1234');
+	GalleryUtilities::putRequestVariable('form[snapgalaxyPartnerId]', '1234_a-X');
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
 	$results = $this->handleRequest();
@@ -79,7 +79,7 @@ class AdminSnapGalaxyControllerTest extends GalleryControllerTestCase {
 	}
 	ksort($params);
 
-	$this->assertEquals(array('snapgalaxyPartnerId' => '1234'),
+	$this->assertEquals(array('snapgalaxyPartnerId' => '1234_a-X'),
 	    $params, 'Verify settings');
     }
 
@@ -91,7 +91,20 @@ class AdminSnapGalaxyControllerTest extends GalleryControllerTestCase {
 	    array('delegate' => array('view' => 'core.SiteAdmin',
 				      'subView' => 'snapgalaxy.AdminSnapGalaxy'),
 		  'status' => array(),
-		  'error' => array('form[error][snapgalaxyPartnerId][missing]')),
+		  'error' => array('form[error][snapgalaxyPartnerId][invalid]')),
+	    $results);
+    }
+
+    function testAdminSnapGalaxyControllerSaveInvalidValues() {
+    	GalleryUtilities::putRequestVariable('form[snapgalaxyPartnerId]', 'ç&%/1234');
+	GalleryUtilities::putRequestVariable('form[action][save]', '1');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('delegate' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'snapgalaxy.AdminSnapGalaxy'),
+		  'status' => array(),
+		  'error' => array('form[error][snapgalaxyPartnerId][invalid]')),
 	    $results);
     }
 }
