@@ -547,6 +547,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	/* Only use LIKE statement if necessary */
 	$parentSequence = null;
 	if (isset($parentId) && $parentId != $rootAlbumId) {
+	    /** @todo Evaluate adding parentSequence to the ImageBlockCachedMap (and its index) */
 	    $where[] = '[GalleryItemAttributesMap::parentSequence] LIKE ?';
 	    list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($parentId);
 	    if ($ret) {
@@ -666,6 +667,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
      * Cache viewable data for user
      * @param int $userId
      * @return GalleryStatus a status code
+     * @todo Respect DisabledMap on INSERT such that we don't have to join the DisabledMap on SELECT
      */
     function cacheViewableTree($userId) {
 	global $gallery;
