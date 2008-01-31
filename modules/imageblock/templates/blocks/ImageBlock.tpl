@@ -8,7 +8,9 @@
 	     link=$link|default:null linkTarget=$linkTarget|default:null
 	     useDefaults=$useDefaults|default:true showHeading=$showHeading|default:true
 	     showTitle=$showTitle|default:true showDate=$showDate|default:true
-	     showViews=$showViews|default:false showOwner=$showOwner|default:false}
+	     showViews=$showViews|default:false showOwner=$showOwner|default:false
+	     show=$show|default:null exactSize=$exactSize|default:null
+	     itemFrame=$itemFrame|default:null albumFrame=$albumFrame|default:null}
 
 {if !empty($ImageBlockData)}
 <div class="{$class}">

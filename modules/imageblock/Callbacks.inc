@@ -42,19 +42,23 @@ class ImageBlockCallbacks {
 		    return $ret;
 		}
 
-		$showMap = array_flip(explode('|', $moduleParams['show']));
-		foreach (array('showHeading' => 'heading',
-			       'showTitle' => 'title', 'showViews' => 'views',
-			       'showOwner' => 'owner', 'showDate' => 'date')
-			 as $blockVarName => $showMapName) {
-		    if (empty($params[$blockVarName])) {
-			unset($showMap[$showMapName]);
-		    } else {
-			$showMap[$showMapName] = 1;
+		/* GalleryEmbed::getBlocks() sets 'show' as a pipe delimited list */
+		if (!isset($params['show'])) {
+		    /* As a theme block the 'show' elements are set as separate properties */
+		    $showMap = array_flip(explode('|', $moduleParams['show']));
+		    foreach (array('showHeading' => 'heading',
+				   'showTitle' => 'title', 'showViews' => 'views',
+				   'showOwner' => 'owner', 'showDate' => 'date')
+			    as $blockVarName => $showMapName) {
+			if (empty($params[$blockVarName])) {
+			    unset($showMap[$showMapName]);
+			} else {
+			    $showMap[$showMapName] = 1;
+			}
 		    }
-		}
 
-		$params['show'] = implode('|', array_keys($showMap));
+		    $params['show'] = implode('|', array_keys($showMap));
+		}
 	    }
 
 	    if (isset($userId)) {

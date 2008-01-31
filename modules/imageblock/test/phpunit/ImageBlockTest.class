@@ -896,6 +896,62 @@ class ImageBlockTest extends GalleryTestCase {
 	}
     }
 
+    function testEmbedImageBlock() {
+	/*
+	 * Simulate a call to GalleryEmbed::getBlock('imageblock', 'ImageBlock, $params) by
+	 * setting the method parameters as template variables and processing the template. 
+	 */
+	$blockTpl = "modules/imageblock/templates/blocks/ImageBlock.tpl";
+	$template = new GalleryTemplate(GalleryCoreApi::getCodeBasePath());
+	$template->setVariable('l10Domain', 'modules_imageblock');
+
+	/* Default theme variables */	    
+	GalleryCoreApi::requireOnce('modules/core/classes/GalleryView.class');
+	$ret = GalleryView::setStandardTemplateVariables($template);
+	if ($ret) {
+	    return $ret;
+	}
+
+	foreach (array('blocks' => 'randomImage|recentAlbum',
+		       'show' => 'heading|owner',
+		       'itemFrame' => 'testItemFrame',
+		       'albumFrame' => 'testAlbumFrame',
+		       'class' => 'foo') as $key => $value) {
+	    $template->setVariable($key, $value);
+	}
+
+	$this->_markFactoryForCleanup();
+	$this->_registerFactoryImplementationForTest(
+	    'ImageFrameInterface_1_1', 'ImageBlockTestFrame', 'ImageBlockTestFrame', 'ignored',
+	    'imageblock');
+
+	/* Temporarily allow php suppressed notices (smarty template rendering) */
+	set_error_handler("ImageBlockTest_error_handler");
+	$_REQUEST['ImageBlockTestFrame'] = '';
+
+	/* Render the block */
+	list ($ret, $blockHtml) = $template->fetch("gallery:$blockTpl");
+	if ($ret) {
+	    return $ret;
+	}
+
+	$imageBlockData = $template->getVariable('ImageBlockData');
+	$this->assertEquals(2, count($imageBlockData['blocks']), 'two blocks');
+        
+	$this->assertBlock($imageBlockData['blocks'][0], 'first block', true);
+	$this->assertBlock($imageBlockData['blocks'][1], 'second block', true);
+
+	$this->assert(!empty($imageBlockData['blocks'][0]['title']), 'show heading for block 1');
+	$this->assert(!empty($imageBlockData['blocks'][0]['title']), 'show heading for block 2');
+	$this->assert(isset($imageBlockData['show']['owner']), 'show owner');
+	$this->assert(!isset($imageBlockData['show']['title']), 'do not show title');
+	$this->assert(!isset($imageBlockData['show']['views']), 'do not show view count');
+	$this->assert(!isset($imageBlockData['show']['date']), 'do not show date');
+
+	$this->assertEquals(array('testAlbumFrame', 'testItemFrame'),
+			    $_REQUEST['ImageBlockTestFrame']);
+    }
+
     function _doImageBlockCallback($blocks=null, $userId=null, $itemId=null) {
 	$smarty = new GallerySmarty();
 	$callbacks = new ImageBlockCallbacks();
@@ -964,5 +1020,23 @@ class ImageBlockDummyGalleryTemplate {
     function register_block() { }
     function register_function() { }
     function head() { }
+}
+
+class ImageBlockTestFrame /* extends ImageBlockInterface_1_1 */ {
+    function init(&$template, $frameIds) {
+    	$_REQUEST['ImageBlockTestFrame'] = $frameIds;
+    }
+
+    function renderImageFrame($params, $content, &$smarty) {}
+}
+
+/* Allow for suppressed php errors */
+function ImageBlockTest_error_handler($errno, $errstr, $errfile, $errline) {
+    if (error_reporting() == 0) {
+	return;
+    }
+
+    /* Else call our default error_handler */
+    return PHPUnit_error_handler($errno, $errstr, $errfile, $errline);
 }
 ?>
