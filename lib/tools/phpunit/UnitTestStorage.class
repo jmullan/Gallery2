@@ -60,7 +60,7 @@ class UnitTestStorage extends MockObject {
 	}
     }
 
-   function setReply($function, $inputs, $outputs, $optional=false) {
+    function setReply($function, $inputs, $outputs, $optional=false) {
        if ($this->_lockSystem != 'database' &&
 	       in_array($function, array('acquireReadLock', 'acquireWriteLock', 'releaseLocks'))) {
 	   return;
