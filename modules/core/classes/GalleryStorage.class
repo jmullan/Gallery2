@@ -1269,14 +1269,6 @@ class GalleryStorage {
      * @access protected
      */
     function _getEntityOrMapInfo($type, $tryAllModules) {
-	if (!$tryAllModules) {
-	    /* Avoid core API methods that could entail cyclic dependencies on describe*() */
-	    list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginList('module');
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	}
-
 	/* @todo Remove the type constraint from selects and have describeXXX use the same map */
 	$typeInfo = array();
 	if (!$tryAllModules) {

@@ -1003,10 +1003,6 @@ class StorageTest extends GalleryTestCase {
 
 	GalleryDataCache::reset();
 
-	/* Mock the list of active modules */
-	GalleryDataCache::put('GalleryPluginHelper::fetchPluginList(module)',
-			      array('core' => array('active' => 1)));
-
 	/* Prepare mocked record sets */
 	$map = array('GalleryTest2Map' => array('field3' => array('type' => STORAGE_TYPE_STRING,
 								    'size' => STORAGE_SIZE_MEDIUM,
@@ -1055,10 +1051,6 @@ class StorageTest extends GalleryTestCase {
 	$storage =& $gallery->getStorage();
 
 	GalleryDataCache::reset();
-
-	/* Mock the list of active modules */
-	GalleryDataCache::put('GalleryPluginHelper::fetchPluginList(module)',
-			      array('core' => array('active' => 1)));
 
 	$entityEntry = array('GalleryEntity' => array('members' => array('id'  =>
 			array('type' => STORAGE_TYPE_INTEGER | STORAGE_TYPE_ID, 'notNull' => 1,
