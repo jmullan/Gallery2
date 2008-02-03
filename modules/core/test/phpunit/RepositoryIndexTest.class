@@ -524,7 +524,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	}
     }
 
-    function testGetLanguageSourceFilesScalarInput() {
+    function testGetLanguagePackageFilesScalarInput() {
 	list ($ret, $files) = $this->_index->getLanguagePackageFiles('en_GB');
 	if ($ret) {
 	    return $ret;
@@ -539,7 +539,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	$this->assertEquals($expected, $files, 'Unexpected results for single language');
     }
 
-    function testGetLanguageSourceFilesArrayInput() {
+    function testGetLanguagePackageFilesArrayInput() {
 	list ($ret, $files) = $this->_index->getLanguagePackageFiles(array('en_GB', 'pt_BR'));
 	if ($ret) {
 	    return $ret;
