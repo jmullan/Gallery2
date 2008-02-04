@@ -59,6 +59,8 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$session = & $gallery->getSession();
+        $session->remove('commentTime');
 
 	$this->_startTime = time();
     }
@@ -111,6 +113,35 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	    $this->assert($comments[0]->getDate() >= $this->_startTime &&
 			  $comments[0]->getDate() <= time(), 'date');
 	}
+    }
+
+    function testAddCommentFlood() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form[action][add]', 1);
+	GalleryUtilities::putRequestVariable('form[subject]', 'this is a subject');
+	GalleryUtilities::putRequestVariable('form[comment]', 'this is a comment');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('redirect' => array(
+		      'view' => 'comment.CommentChangeConfirmation',
+		      'itemId' => $this->_item->getId()),
+		  'status' => array('added' => 1),
+		  'error' => array()),
+	    $results, 'First Comment');
+
+	/* Perform the second request and verify that we prevented flooding */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('delegate' => array(
+		      'view' => 'comment.AddComment'),
+		  'status' => array(),
+		  'error' => array('form[error][comment][flood]')),
+	    $results, 'Flood Comment');
     }
 
     function testAddCommentGuest() {
@@ -297,6 +328,8 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	    return $ret;
 	}
 	sleep(1);
+	$session = & $gallery->getSession();
+        $session->remove('commentTime');
 	$results = $this->handleRequest();
 	$this->assertEquals(
 	    array('redirect' => array('view' => 'comment.CommentChangeConfirmation',

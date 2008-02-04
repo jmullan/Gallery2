@@ -70,6 +70,12 @@
       {g->text text="You must enter a comment!"}
     </div>
     {/if}
+    
+    {if isset($form.error.comment.flood)}
+    <div class="giError">
+      {g->text text="Please wait a little longer before posting another comment"}
+    </div>
+    {/if}
   </div>
 
   {* Include validation plugins *}
