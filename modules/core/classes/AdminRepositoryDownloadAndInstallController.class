@@ -388,7 +388,7 @@ class AdminRepositoryDownloadAndInstallController extends GalleryController {
 	$session->putStatus($status);
 
 	$urlGenerator =& $gallery->getUrlGenerator();
-	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect));
+	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect), true);
 
 	return null;
     }
