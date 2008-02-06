@@ -460,6 +460,7 @@ class AdminLanguageManagerView extends GalleryView {
 
 	/* Render the HTML body */
 	$template->setVariable('controller', 'core.AdminLanguageManager');
+	$template->javascript('lib/yui/utilities.js');
 	return array(null, array('body' => 'modules/core/templates/AdminLanguageManager.tpl'));
     }
 

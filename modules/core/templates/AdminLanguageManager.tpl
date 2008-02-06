@@ -163,9 +163,13 @@
     // <![CDATA[
       {literal}
 	function toggleAll(thisAllButton, otherAllButton, checkBoxGroup, languageCount) {
+	  var selectAllButtons = YAHOO.util.Dom.getElementsByClassName("selectAll");
+	  for( var i in selectAllButtons) {
+	    selectAllButtons[i].checked = '';
+	  }
 	  var currentButton = document.getElementById(thisAllButton);
 	  var element = document.getElementById(otherAllButton);
-	  element.checked = currentButton.checked;
+	  currentButton.checked = element.checked = 'checked';
 	  for (var current = 1; current <= languageCount; current++) {
 	    var element = document.getElementById(checkBoxGroup + current);
 	    if (!element.disabled) {
@@ -201,16 +205,18 @@
 	  <td style="text-align: center">
 	    <input type="radio" id=selectAllUpgrade1 onclick="toggleAll('selectAllUpgrade1', 'selectAllUpgrade2', 'upgrade', {$languageCount})" 
 		{if empty($AdminLanguages.enableSelectAll.upgrade)}disabled="disabled" {/if}
-	    />
+	        class="selectAll"/>
 	  </td>
 	  <td style="text-align: center">
 	    <input type="radio" id=selectAllRemove1 onclick="toggleAll('selectAllRemove1', 'selectAllRemove2', 'remove', {$languageCount})" 
 		{if empty($AdminLanguages.enableSelectAll.remove)}disabled="disabled" {/if}
+		class="selectAll"
 	    />
 	  </td>
 	  <td style="text-align: center">
 	    <input type="radio" id=selectAllDownload1 onclick="toggleAll('selectAllDownload1', 'selectAllDownload2', 'download', {$languageCount})" 
 		{if empty($AdminLanguages.enableSelectAll.download)}disabled="disabled" {/if}
+		class="selectAll"
 	    />
 	  </td>
 	  <td style="text-align: center">
@@ -250,16 +256,19 @@
 	  <td style="text-align: center">
 	    <input type="radio" id=selectAllUpgrade2 onclick="toggleAll('selectAllUpgrade2', 'selectAllUpgrade1', 'upgrade', {$languageCount})" 
 		{if empty($AdminLanguages.enableSelectAll.upgrade)}disabled="disabled" {/if}
+		class="selectAll"
 	    />
 	  </td>
 	  <td style="text-align: center">
-	    <input type="radio" id=selectAllRemove2 onclick="toggleAll('selectAllRemove2', ''selectAllRemove1', 'remove', {$languageCount})" 
+	    <input type="radio" id=selectAllRemove2 onclick="toggleAll('selectAllRemove2', 'selectAllRemove1', 'remove', {$languageCount})" 
 		{if empty($AdminLanguages.enableSelectAll.remove)}disabled="disabled" {/if}
+		class="selectAll"
 	    />
 	  </td>
 	  <td style="text-align: center">
 	    <input type="radio" id=selectAllDownload2 onclick="toggleAll('selectAllDownload2', 'selectAllDownload1', 'download', {$languageCount})" 
 		{if empty($AdminLanguages.enableSelectAll.download)}disabled="disabled" {/if}
+		class="selectAll"
 	    />
 	  </td>
 	  <td style="text-align: center">
