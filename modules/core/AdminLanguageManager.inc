@@ -157,7 +157,9 @@ class AdminLanguageManagerController extends AdminRepositoryDownloadAndInstallCo
 		return $ret;
 	    }
 	    $status['languagePacksDeleted'] = $languagePacksDeleted;
-	    $status['error']['failedToDeleteLanguage'] = $failedToDeleteLanguage;
+	    if (!empty($failedToDeleteLanguage)) {
+		$status['error']['failedToDeleteLanguage'] = $failedToDeleteLanguage;
+	    }
 
 	    $ret = $this->_synchronizeLanguagesByLocale($installLanguages, $callback);
 	    if ($ret) {
@@ -182,7 +184,7 @@ class AdminLanguageManagerController extends AdminRepositoryDownloadAndInstallCo
 	$session->putStatus($status);
 
 	$urlGenerator =& $gallery->getUrlGenerator();
-	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect), false);
+	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect), true);
 	return $ret;
     }
 
