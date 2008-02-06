@@ -33,15 +33,14 @@ class AdminRepositoryDownloadAndInstallController extends GalleryController {
     /**
      * Download specified packages to the local repository cache and perform installation.
      *
-     * TODO: Show a summary page (or at least a link to it) which contains details about
+     * @todo: Show a summary page (or at least a link to it) which contains details about
      * the exact tasks that were performed and any errors that were encountered.
      *
      * @param array $installPackages packages to install
-     * @param array $deleteLanguages language packages to delete
      * @param array an array of GalleryRepository
      * @return GalleryStatus a status code
      */
-    function performDownloadAndInstallation($installPackages, $deleteLanguages, $repositories) {
+    function performDownloadAndInstallation($installPackages, $repositories) {
 	global $gallery;
 	$session =& $gallery->getSession();
 	$platform =& $gallery->getPlatform();
@@ -71,12 +70,6 @@ class AdminRepositoryDownloadAndInstallController extends GalleryController {
 	    $this->_createDownloadFileList($installPackages, $repositories);
 
 	$totalActions = $this->_countInstallActions($sourcedFiles);
-
-	foreach ($deleteLanguages as $pluginType => $plugins) {
-	    foreach ($plugins as $pluginId => $languages) {
-		$totalActions += count($languages);
-	    }
-	}
 
 	$status = array('error' => array());
 
@@ -180,48 +173,6 @@ class AdminRepositoryDownloadAndInstallController extends GalleryController {
 	    }
 	}
 
-	/* Delete old language packs */
-	$deleteText = $module->translate('Deleting Language Packs');
-	$g2base = GalleryCoreApi::getCodeBasePath();
-	$status['languagePacksDeleted'] = 0;
-	foreach ($deleteLanguages as $pluginType => $plugins) {
-	    foreach ($plugins as $pluginId => $languages) {
-		foreach ($languages as $language) {
-		    $currentAction++;
-		    $templateAdapter->updateProgressBar(
-			$titleText, $deleteText, $currentAction / $totalActions);
-
-		    $actual = 0;
-		    $dir = "${g2base}${pluginType}s/$pluginId/locale/$language";
-		    if ($platform->is_dir($dir) && $platform->is_writeable($dir)) {
-			$platform->recursiveRmdir($dir);
-			$actual++;
-		    }
-		    $fileBase = "${g2base}${pluginType}s/$pluginId/po/$language";
-		    foreach (array('mo', 'po') as $tag) {
-			$file = "$fileBase.$tag";
-			if ($platform->is_file($file) && $platform->is_writeable($file)) {
-			    $platform->unlink($file);
-			    $actual++;
-			}
-		    }
-
-		    $ret = GalleryCoreApi::removeMapEntry(
-			'GalleryPluginPackageMap',
-			array('pluginType' => $pluginType,
-			      'pluginId' => $pluginId,
-			      'packageName' => 'lang-' . $language));
-		    if ($ret) {
-			return $ret;
-		    }
-
-		    if ($actual) {
-			$status['languagePacksDeleted']++;
-		    }
-		}
-	    }
-	}
-
 	$ret = $this->_synchronizeLanguages($sourcedFiles, $callback);
 	if ($ret) {
 	    return $ret;
@@ -238,10 +189,10 @@ class AdminRepositoryDownloadAndInstallController extends GalleryController {
 	/* Show link to return to the previously selected tab. */
 	$redirect['view'] = 'core.SiteAdmin';
 	$redirect['subView'] = 'core.AdminRepository';
-	
+
 	$session->putStatus($status);
 	$urlGenerator =& $gallery->getUrlGenerator();
-	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect));
+	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect), true);
 	return null;
     }
 

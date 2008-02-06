@@ -50,6 +50,27 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	$this->_controller = new AdminRepositoryDownloadControllerTestWrapper();
 	$this->_controller->_version = '0.1';
 	$this->_controller->_active = true;
+
+	$cacheKey = 'GalleryTranslator::SupportedLanguages';
+	$supportedLanguages = array('en' => array('US' => array('US English')),
+				    'hu' => array('HU' => array('Magyar')));
+
+	$supportedLanguages = array();
+	$defaultCountry = array();
+
+	/* English */
+	$supportedLanguages['en']['US']['description'] = 'English (US)';
+	$supportedLanguages['en']['GB']['description'] = 'English (UK)';
+
+	/* Hungarian */
+	$supportedLanguages['hu']['HU']['description'] = 'Magyar';
+
+	/* Spanish */
+	$supportedLanguages['es']['ES']['description'] = 'Espa&#241;ol';
+	$supportedLanguages['es']['MX']['description'] = 'Espa&#241;ol (MX)';
+	$supportedLanguages['es']['AR']['description'] = 'Espa&#241;ol (AR)';
+
+	GalleryDataCache::put($cacheKey, $supportedLanguages);
     }
 
     function tearDown() {
@@ -81,18 +102,38 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
     function testInitiateDownload() {
 	global $gallery;
 
+	list ($ret, $adminGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	if ($ret) {
+	    return $ret;
+	}
+
 	GalleryUtilities::putRequestVariable('form[pluginType]', 'module');
 	GalleryUtilities::putRequestVariable('form[pluginId]', 'testModule');
-	GalleryUtilities::putRequestVariable('form[base]', 'test:1000');
-	GalleryUtilities::putRequestVariable(
-	    'form[languages]', array('test:en_US:1000', 'test:hu_HU:1000'));
-	GalleryUtilities::putRequestVariable(
-	    'form[languagesAvailable]',
-	    array('test:en_US', 'test:hu_HU', 'test:es', 'test:af'));
+	GalleryUtilities::putRequestVariable('form[base]', 'test:22222');
 	GalleryUtilities::putRequestVariable('form[action][download]', '1');
 
 	$mockAdapter = new MockTemplateAdapter();
 	$gallery->_templateAdapter =& $mockAdapter;
+
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$gallery->_storage = new UnitTestStorage();
+	$storage =& $gallery->getStorage();
+
+	$storage->setReply('getMapEntry',
+	    array('GalleryPluginPackageMap',
+		  array('locked', 'packageVersion', 'packageBuild', 'packageName'),
+		  array('pluginType' => 'module', 'pluginId' => 'testModule'), array()),
+	    array(null, new UnitTestStorageSearchResults(array(
+		array(0, '12345', '11111', 'base'), array(0, '12345', '11111', 'lang-en_GB'),
+		array(0, '12345', '11111', 'lang-es'), array(0, '12345', '11111', 'lang-es_MX'),
+		array(0, '12345', '11111', 'lang-es_AR'), array(0, '12345', '11111', 'lang-hu'),
+		array(0, '12345', '11111', 'lang-pt_BR'), array(0, '12345', '11111', 'lang-pt_PT')
+	    ))));
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.ProgressBar'),
@@ -103,24 +144,22 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(1, $mockAdapter->getCallbackCount());
 	$callback = $mockAdapter->getCallback(0);
 
-	$this->assertEquals(
-	    array($this->_controller, 'performDownloadAndInstallation'),
-	    $callback[0]);
+	$this->assertEquals(array($this->_controller, 'performDownloadAndInstallation'), 
+	    $callback[0], 'Incorrect callback method');
 
 	$this->assertEquals(
 	    array('test' => array(
 		      'module' => array(
 			  'testModule' => array(
 			      'base' => 1,
-			      'lang-en_US' => 1,
-			      'lang-hu_HU' => 1)))),
-	    $callback[1][0],
-	    'installPackages mismatch');
+			      'lang-en_GB' => 1,
+			      'lang-es' => 1,
+			      'lang-es_MX' => 1,
+			      'lang-es_AR' => 1,
+			      'lang-hu' => 1)))),
+	    $callback[1][0], 'installPackages mismatch');
 
-	$this->assertEquals(
-	    array('module' => array('testModule' => array('es', 'af'))),
-	    $callback[1][1],
-	    'deleteLanguages mismatch');
+	$this->assert($storage->isComplete(), $storage->getRemaining());
     }
 }
 

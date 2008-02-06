@@ -105,7 +105,6 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 				'base' => 1,
 				'lang-en_US' => 1,
 				'lang-hu_HU' => 1)))),
-	    array(),
 	    array('test' => $repository));
 	if ($ret) {
 	    return ($ret);
@@ -150,7 +149,6 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 
 	$ret = $this->_controller->performDownloadAndInstallation(
 	    array('test' => array('module' => array($testModule => array('base' => 1)))),
-	    array(),
 	    array('test' => $repository));
 	if ($ret) {
 	    return ($ret);
@@ -195,7 +193,6 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 
 	$ret = $this->_controller->performDownloadAndInstallation(
 	    array('test' => array('module' => array($testModule => array('base' => 1)))),
-	    array(),
 	    array('test' => $repository));
 	if ($ret) {
 	    return ($ret);
@@ -241,7 +238,6 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 
 	$ret = $this->_controller->performDownloadAndInstallation(
 	    array('test' => array('module' => array($testModule => array('base' => 1)))),
-	    array(),
 	    array('test' => $repository));
 	if ($ret) {
 	    return ($ret);
@@ -253,8 +249,7 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 	$session =& $gallery->getSession();
 	$status = $session->getStatus();
 	$this->assertEquals(
-	    array('error' => array('cantUpgradeInUse' => array('Test Module')),
-		  'languagePacksDeleted' => 0),
+	    array('error' => array('cantUpgradeInUse' => array('Test Module'))),
 	    $status);
     }
 
@@ -300,7 +295,6 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 				'base' => 1,
 				'lang-en_US' => 1,
 				'lang-hu_HU' => 1)))),
-	    array(),
 	    array('test' => $repository));
 	if ($ret) {
 	    return ($ret);
@@ -310,8 +304,7 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 	$this->assert($repository->isComplete(), $repository->getRemaining());
 	$this->assert(empty($_REQUEST['called']), 'Nothing should have gotten called');
 	$expected = array('error' => array('failedToDownload' =>  array('module' => 
-				array('Test Module' =>  array('base-package')))),
-			  'languagePacksDeleted' =>  0);
+				array('Test Module' =>  array('base-package')))));
 	$this->assertEquals($expected, $status, 'Expected error status');
     }
 
@@ -357,7 +350,6 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 				'base' => 1,
 				'lang-en_US' => 1,
 				'lang-hu_HU' => 1)))),
-	    array(),
 	    array('test' => $repository));
 	if ($ret) {
 	    return ($ret);
@@ -373,49 +365,8 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 	$status = $session->getStatus();
 	$expected = array('error' => array('failedToDownload' =>  array('module' => 
 				array('Test Module' =>  array('en_GB-package')))),
-			  'updated' => array('Test Module'),
-			  'languagePacksDeleted' =>  0);
+			  'updated' => array('Test Module'));
 	$this->assertEquals($expected, $status, 'Expected status messages');
-    }
-
-    function testDeleteLanguages() {
-	global $gallery;
-	$mockAdapter = new MockTemplateAdapter();
-	$gallery->_templateAdapter =& $mockAdapter;
-
-	/* Make sure translate calls during test won't generate any platform calls */
-	list ($ret) = GalleryCoreApi::getPermissionIds();
-	if ($ret) {
-	    return $ret;
-	}
-
-	$moduleBase = GalleryCoreApi::getCodeBasePath(
-	    'modules/AdminRepositoryDownloadAndInstallControllerTest');
-	$platform = new UnitTestPlatform();
-	$platform->setReply('is_dir', array("$moduleBase/locale/aa"), true);
-	$platform->setReply('is_writeable', array("$moduleBase/locale/aa"), true);
-	$platform->setReply('recursiveRmdir', array("$moduleBase/locale/aa"), true);
-	$platform->setReply('is_file', array("$moduleBase/po/aa.mo"), true);
-	$platform->setReply('is_writeable', array("$moduleBase/po/aa.mo"), true);
-	$platform->setReply('unlink', array("$moduleBase/po/aa.mo"), true);
-	$platform->setReply('is_file', array("$moduleBase/po/aa.po"), true);
-	$platform->setReply('is_writeable', array("$moduleBase/po/aa.po"), true);
-	$platform->setReply('unlink', array("$moduleBase/po/aa.po"), true);
-	$gallery->setPlatform($platform);
-
-	$repository = new UnitTestRepository();
-
-	$ret = $this->_controller->performDownloadAndInstallation(
-	    array(),
-	    array('module' =>
-		array('AdminRepositoryDownloadAndInstallControllerTest' => array('aa'))),
-	    array('test' => $repository));
-	if ($ret) {
-	    return ($ret);
-	}
-
-	$this->assert($platform->isComplete(), $platform->getRemaining());
-	$this->assert($repository->isComplete(), $repository->getRemaining());
     }
 
     function testUpdatePluginStatus() {
@@ -545,6 +496,20 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 	} else {
 	    $this->fail('ERROR_STORAGE_FAILURE should not be ignored');
 	}
+    }
+
+    function testCountInstallActions() {
+	$sourceFiles = 	array('test' => array(
+	    'module' => array('testModule' => array('name' => 'Test Module',
+		'files' => array('descriptor' => 'modules/testModule.descriptor',
+		    'af' => 'modules/testModule-af.package', 
+		    'cs' => 'modules/testModule-cs.package'))),
+	    'theme' => array('testTheme' => array('name' => 'Test Theme',
+		'files' => array('descriptor' => 'themes/testTheme.descriptor',
+		    'af' => 'themes/testTheme-af.package', 
+		    'cs' => 'themes/testTheme-cs.package')))));
+	$count = $this->_controller->_countInstallActions($sourceFiles);
+	$this->assertEquals(12, $count, 'Unexpected count fromcountInstallActions');
     }
 }
 

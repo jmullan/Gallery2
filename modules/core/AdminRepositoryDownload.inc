@@ -37,6 +37,7 @@ class AdminRepositoryDownloadController extends AdminRepositoryDownloadAndInstal
      */
     function handleRequest($form) {
 	global $gallery;
+	$translator =& $gallery->getTranslator();
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
@@ -66,7 +67,7 @@ class AdminRepositoryDownloadController extends AdminRepositoryDownloadAndInstal
 	    $redirect['subView'] = 'core.AdminRepository';
 	} else if (isset($form['action']['download'])) {
 	    /* Create package list. */
-	    $installPackages = $deleteLanguages = array();
+	    $installPackages = array();
 
 	    $utils = new GalleryRepositoryUtilities();
 	    list ($ret, $pluginPackages) = $utils->getPluginPackages($pluginType, $pluginId);
@@ -74,46 +75,33 @@ class AdminRepositoryDownloadController extends AdminRepositoryDownloadAndInstal
 		return array($ret, null);
 	    }
 
-	    $baseSource = '';
 	    if (!empty($form['base'])) {
+		list ($languages, $defaultCountry) = $translator->getLanguageData();
 		list($baseSource, $baseNewBuild) = explode(':', $form['base']);
+		$supportedLanguages = GalleryCoreApi::getSupportedLanguages();
 		if (empty($pluginPackages['base']['build']) ||
 			$pluginPackages['base']['build'] != $baseNewBuild) {
 		    $installPackages[$baseSource][$pluginType][$pluginId]['base'] = 1;
-		}
-	    }
-
-	    $selected = array();
-	    if (isset($form['languages'])) {
-		foreach ($form['languages'] as $language) {
-		    list ($langSource, $langCode, $langNewVersion) = explode(':', $language);
-		    $langCode = 'lang-' . $langCode;
-		    if ($langSource == $baseSource &&
-			    (empty($pluginPackages[$langCode]['build']) ||
-			    $pluginPackages[$langCode]['build'] != $langNewVersion)) {
-			$installPackages[$langSource][$pluginType][$pluginId][$langCode] = 1;
-		    }
-		    $selected[$pluginType][$pluginId][$langCode] = 1;
-		}
-	    }
-
-	    if (isset($form['languagesAvailable'])) {
-		foreach ($form['languagesAvailable'] as $language) {
-		    list ($langSource, $langCode) = explode(':', $language);
-		    if ($langSource == $baseSource &&
-			    empty($selected[$pluginType][$pluginId]['lang-' . $langCode])) {
-			$deleteLanguages[$pluginType][$pluginId][] = $langCode;
+		    foreach (array_keys($pluginPackages) as $packageName) {
+			if (preg_match('/^lang-(\w+)$/', $packageName, $matches)) {
+			    list ($ret, $language, $country) =
+				$translator->getLanguageAndCountryFromLanguageCode($matches[1]);
+			    if (!empty($supportedLanguages[$language][$country])) {
+				$installPackages[$baseSource][$pluginType][$pluginId][$packageName]
+				     = 1;
+			    }
+			}
 		    }
 		}
 	    }
 
 	    /* Show error message if no packages have been selected for download. */
-	    if (empty($installPackages) && empty($deleteLanguages)) {
+	    if (empty($installPackages)) {
 		$delegate['view'] = 'core.SiteAdmin';
 		$delegate['subView'] = 'core.AdminRepositoryDownload';
 		$error[] = 'form[error][nothingSelected]';
 
-		/* TODO: Do we need to put these vars back into the request? */
+		/** @todo: Do we need to put these vars back into the request? */
 		GalleryUtilities::putRequestVariable('pluginId', $pluginId);
 		GalleryUtilities::putRequestVariable('pluginType', $pluginType);
 	    } else {
@@ -125,7 +113,7 @@ class AdminRepositoryDownloadController extends AdminRepositoryDownloadAndInstal
 		$templateAdapter =& $gallery->getTemplateAdapter();
 		$templateAdapter->registerTrailerCallback(
 		    array($this, 'performDownloadAndInstallation'),
-		    array($installPackages, $deleteLanguages, $repositories));
+		    array($installPackages, $repositories));
 		$delegate['view'] = 'core.ProgressBar';
 	    }
 	}
@@ -158,6 +146,7 @@ class AdminRepositoryDownloadView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
+	$translator =& $gallery->getTranslator();
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
@@ -177,9 +166,7 @@ class AdminRepositoryDownloadView extends GalleryView {
 	list ($pluginType, $pluginId) =
 	    GalleryUtilities::getRequestVariables('pluginType', 'pluginId');
 
-	$AdminRepositoryDownload = array(
-	    'pluginId' => $pluginId,
-	    'pluginType' => $pluginType);
+	$AdminRepositoryDownload = array('pluginId' => $pluginId, 'pluginType' => $pluginType);
 
 	$utils = new GalleryRepositoryUtilities();
 	list ($ret, $pluginPackages) = $utils->getPluginPackages($pluginType, $pluginId);
@@ -187,11 +174,7 @@ class AdminRepositoryDownloadView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	foreach (array_keys($pluginPackages) as $code) {
-	    if (strpos($code, 'lang-') !== false) {
-		$AdminRepositoryDownload['installedLanguages'][substr($code, 5)] = 1;
-	    }
-	}
+	list ($languages, $defaultCountry) = $translator->getLanguageData();
 
 	foreach ($repositories as $source => $repository) {
 	    if (!$repository->pluginExistsInIndex($pluginType, $pluginId)) {
@@ -214,6 +197,28 @@ class AdminRepositoryDownloadView extends GalleryView {
 		return array($ret, null);
 	    }
 
+	    /* Treat all variations of a language as one */
+	    $condensedData = array();
+	    foreach ($upgradeData['languages'] as $langCode => $languageData) {
+	    	if (in_array($langCode, array('zh_CN', 'zh_TW', 'en_GB'))) {
+		    $condensedData[$langCode] = $languageData;
+	    	} else {
+		    list ($ret, $language) = 
+			$translator->getLanguageAndCountryFromLanguageCode($langCode);
+		    if ($ret) {
+			return array($ret, null);
+		    }
+		    if (empty($condensedData[$language])) {
+			$condensedData[$language] = $languageData;
+		    } else {
+			if ($condensedData[$language]['newBuild'] < $languageData['newBuild']) {
+			    $condensedData[$language]['newBuild'] = $languageData['newBuild'];
+			    $condensedData[$language]['relation'] = $languageData['relation'];
+			}
+		    }
+		}
+	    }
+	    $upgradeData['languages'] = $condensedData;
 	    $upgradeData['languageCount'] = count($upgradeData['languages']);
 	    $upgradeData['repository'] = $source;
 	    list ($ret, $upgradeData['repositoryName']) =

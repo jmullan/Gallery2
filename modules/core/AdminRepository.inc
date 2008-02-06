@@ -56,6 +56,10 @@ class AdminRepositoryController extends AdminRepositoryDownloadAndInstallControl
 
 	$status = $error = array();
 	if (isset($form['action']['update'])) {
+	    /**
+	     * @todo refactor this repository update such that it can be used from Language
+	     * manager.
+	     */
 	    foreach (array('module', 'theme') as $pluginType) {
 		list ($ret, $pluginStatus[$pluginType]) =
 		    GalleryCoreApi::fetchPluginStatus($pluginType, true);
@@ -121,7 +125,7 @@ class AdminRepositoryController extends AdminRepositoryDownloadAndInstallControl
 		$templateAdapter =& $gallery->getTemplateAdapter();
 		$templateAdapter->registerTrailerCallback(
 		    array($this, 'performDownloadAndInstallation'),
-		    array($packages, array(), $repositories));
+		    array($packages, $repositories));
 		$delegate['view'] = 'core.ProgressBar';
 	    }
 	}

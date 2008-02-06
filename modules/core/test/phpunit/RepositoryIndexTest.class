@@ -525,10 +525,23 @@ class RepositoryIndexTest extends GalleryTestCase {
     }
 
     function testGetLanguagePackageFilesScalarInput() {
+	/* Since we can't mock the core API, we'll use the cache to store our mock plugin. */
+	GalleryDataCache::put('GalleryPluginHelper::loadPlugin(module, testModule)',
+			      new RepositoryIndexTestModule());
+	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(module)',
+			      array('testModule' => array('active' => 1, 'available' => 1)));
+
+	$testTheme = new RepositoryIndexTestTheme();
+	$themeApi = GalleryTheme::getApiVersion();
+	GalleryDataCache::put('GalleryPluginHelper::loadPlugin(theme, testTheme)', $testTheme);
+	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(theme)',
+			      array('testTheme' => array('active' => 1, 'available' => 1)));
+
 	list ($ret, $files) = $this->_index->getLanguagePackageFiles('en_GB');
 	if ($ret) {
 	    return $ret;
 	}
+
 	$expected = array(
 	    'module' => array('testModule' => array('name' => 'Test Module',
 		'files' => array('descriptor' => 'modules/testModule-1.0.0-44444.descriptor',
@@ -540,6 +553,17 @@ class RepositoryIndexTest extends GalleryTestCase {
     }
 
     function testGetLanguagePackageFilesArrayInput() {
+	/* Since we can't mock the core API, we'll use the cache to store our mock plugin. */
+	GalleryDataCache::put('GalleryPluginHelper::loadPlugin(module, testModule)',
+			      new RepositoryIndexTestModule());
+	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(module)',
+			      array('testModule' => array('active' => 1, 'available' => 1)));
+
+	GalleryDataCache::put('GalleryPluginHelper::loadPlugin(theme, testTheme)',
+			      new RepositoryIndexTestTheme());
+	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(theme)',
+			      array('testTheme' => array('active' => 1, 'available' => 1)));
+
 	list ($ret, $files) = $this->_index->getLanguagePackageFiles(array('en_GB', 'pt_BR'));
 	if ($ret) {
 	    return $ret;
@@ -556,6 +580,89 @@ class RepositoryIndexTest extends GalleryTestCase {
 	$this->assertEquals($expected, $files, 'Unexpected results for multiple languages');
     }
 
+    function testGetLanguagePackageFilesVersionMisMatch() {
+	/* Since we can't mock the core API, we'll use the cache to store our mock plugin. */
+	GalleryDataCache::put('GalleryPluginHelper::loadPlugin(module, testModule)',
+			      new RepositoryIndexTestModule());
+	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(module)',
+			      array('testModule' => array('active' => 1, 'available' => 1)));
+
+	$testTheme = new RepositoryIndexTestTheme();
+	$themeApi = GalleryTheme::getApiVersion();
+	$themeApi[1]--;
+	$testTheme->_themeApi = $themeApi;
+
+	GalleryDataCache::put('GalleryPluginHelper::loadPlugin(theme, testTheme)', $testTheme);
+	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(theme)',
+			      array('testTheme' => array('active' => 1, 'available' => 1)));
+
+	list ($ret, $files) = $this->_index->getLanguagePackageFiles(array('en_GB', 'pt_BR'));
+	if ($ret) {
+	    return $ret;
+	}
+	$expected = array(
+	    'module' => array('testModule' => array('name' => 'Test Module',
+		'files' => array('descriptor' => 'modules/testModule-1.0.0-44444.descriptor',
+				 'en_GB' => 'modules/testModule-1.0.0-44444-en_GB.package',
+				 'pt_BR' => 'modules/testModule-1.0.0-44444-pt_BR.package'))));
+	$this->assertEquals($expected, $files, 'Unexpected results for multiple languages');
+    }
+
+    function testGetLanguagePackageFilesVersionNotActive() {
+	/* Since we can't mock the core API, we'll use the cache to store our mock plugin. */
+	GalleryDataCache::put('GalleryPluginHelper::loadPlugin(module, testModule)',
+			      new RepositoryIndexTestModule());
+	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(module)',
+			      array('testModule' => array('active' => 1, 'available' => 1)));
+
+	$testTheme = new RepositoryIndexTestTheme();
+	$themeApi = GalleryTheme::getApiVersion();
+
+	GalleryDataCache::put('GalleryPluginHelper::loadPlugin(theme, testTheme)', $testTheme);
+	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(theme)',
+			      array('testTheme' => array('active' => 0, 'available' => 1)));
+
+	list ($ret, $files) = $this->_index->getLanguagePackageFiles(array('en_GB', 'pt_BR'));
+	if ($ret) {
+	    return $ret;
+	}
+	$expected = array(
+	    'module' => array('testModule' => array('name' => 'Test Module',
+		'files' => array('descriptor' => 'modules/testModule-1.0.0-44444.descriptor',
+				 'en_GB' => 'modules/testModule-1.0.0-44444-en_GB.package',
+				 'pt_BR' => 'modules/testModule-1.0.0-44444-pt_BR.package'))),
+	    'theme' => array('testTheme' => array('name' => 'Test Theme',
+		'files' => array('descriptor' => 'themes/testTheme-1.0.0-11111.descriptor',
+				 'en_GB' => 'themes/testTheme-1.0.0-11111-en_GB.package',
+				 'pt_BR' => 'themes/testTheme-1.0.0-11111-pt_BR.package'))));
+	$this->assertEquals($expected, $files, 'Unexpected results for multiple languages');
+    }
+
+    function testGetLanguagePackageFilesVersionNotAvailable() {
+	/* Since we can't mock the core API, we'll use the cache to store our mock plugin. */
+	GalleryDataCache::put('GalleryPluginHelper::loadPlugin(module, testModule)',
+			      new RepositoryIndexTestModule());
+	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(module)',
+			      array('testModule' => array('active' => 1, 'available' => 1)));
+
+	$testTheme = new RepositoryIndexTestTheme();
+	$themeApi = GalleryTheme::getApiVersion();
+
+	GalleryDataCache::put('GalleryPluginHelper::loadPlugin(theme, testTheme)', $testTheme);
+	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(theme)',
+			      array('testTheme' => array('active' => 1, 'available' => 0)));
+
+	list ($ret, $files) = $this->_index->getLanguagePackageFiles(array('en_GB', 'pt_BR'));
+	if ($ret) {
+	    return $ret;
+	}
+	$expected = array(
+	    'module' => array('testModule' => array('name' => 'Test Module',
+		'files' => array('descriptor' => 'modules/testModule-1.0.0-44444.descriptor',
+				 'en_GB' => 'modules/testModule-1.0.0-44444-en_GB.package',
+				 'pt_BR' => 'modules/testModule-1.0.0-44444-pt_BR.package'))));
+	$this->assertEquals($expected, $files, 'Unexpected results for multiple languages');
+    }
 }
 
 class RepositoryIndexTestUtilities {
@@ -589,6 +696,29 @@ class RepositoryIndexTestUtilities {
 
     function downloadFile($url) {
 	return array(true, $this->_fileContents[$url]);
+    }
+}
+
+class RepositoryIndexTestModule {
+
+    function getRequiredCoreApi() {
+	return GalleryCoreApi::getApiVersion();
+    }
+
+    function getRequiredModuleApi() {
+	return GalleryModule::getApiVersion();
+    }
+}
+
+class RepositoryIndexTestTheme {
+    var $_themeApi;
+
+    function getRequiredCoreApi() {
+	return GalleryCoreApi::getApiVersion();
+    }
+
+    function getRequiredThemeApi() {
+	return empty($this->_themeApi) ? GalleryTheme::getApiVersion() : $this->_themeApi;
     }
 }
 ?>

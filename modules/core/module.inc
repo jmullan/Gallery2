@@ -34,14 +34,14 @@ class CoreModule extends GalleryModule {
 	$this->setGalleryVersion('2.3-svn');
 
 	/* Don't forget to update CoreModuleExtras::upgrade and _prepareConfigUpgrade too! */
-	$this->setVersion('1.2.28');
+	$this->setVersion('1.2.29');
 	$this->_templateVersion = 1;
 
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks(
 	    'getItemLinks|getSystemLinks|getItemAdminViews|getSiteAdminViews|getUserAdminViews');
-	$this->setRequiredCoreApi(array(7, 45));
+	$this->setRequiredCoreApi(array(7, 47));
 	$this->setRequiredModuleApi(array(3, 8));
     }
 
@@ -314,6 +314,8 @@ class CoreModule extends GalleryModule {
 			    'view' => 'core.AdminPerformance'),
 		      array('name' => $this->translate('Event Logs'),
 			    'view' => 'core.AdminEventLogViewer'),
+		      array('name' => $this->translate('Language Settings'),
+			    'view' => 'core.AdminLanguageManager'),
 		      );
 
 	list ($ret, $list) = GalleryCoreApi::getRedundantToolkitPriorities();

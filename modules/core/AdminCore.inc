@@ -105,12 +105,6 @@ class AdminCoreController extends GalleryController {
 		    $form['cookie']['domain'] = '';
 		}
 	    }
-
-	    if (empty($form['language']['useBrowserPref'])) {
-		$form['language']['useBrowserPref'] = '0';
-	    } else {
-		$form['language']['useBrowserPref'] = '1';
-	    }
 	}
 
 	if (isset($form['action']['emailTest'])) {
@@ -133,8 +127,6 @@ class AdminCoreController extends GalleryController {
 			   'default.orderBy',
 			   'default.orderDirection',
 			   'default.theme',
-			   'default.language',
-			   'language.useBrowserPref',
 			   'session.lifetime',
 			   'session.inactivityTimeout',
 			   'misc.markup',
@@ -230,8 +222,6 @@ class AdminCoreView extends GalleryView {
 			   'permissions.file',
 			   'exec.beNice',
 			   'exec.expectedStatus',
-			   'default.language',
-			   'language.useBrowserPref',
 			   'session.lifetime',
 			   'session.inactivityTimeout',
 			   'misc.markup',
@@ -262,9 +252,6 @@ class AdminCoreView extends GalleryView {
 	    $form['emailTest']['to'] = '';
 	}
 
-	/* Radio button handling */
-	$form['language']['useBrowserPref'] = (int)!empty($form['language']['useBrowserPref']);
-
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
 	    return array($ret, null);
@@ -273,20 +260,6 @@ class AdminCoreView extends GalleryView {
 	$platform =& $gallery->getPlatform();
 	$translator =& $gallery->getTranslator();
 	$AdminCore = $can = array();
-
-	if ($translator->canTranslate()) {
-	    $can['translate'] = true;
-
-	    /* Set up our language selection list */
-	    $AdminCore['languageList'] = array();
-	    $supportedLanguages = GalleryCoreApi::getSupportedLanguages();
-	    foreach ($supportedLanguages as $language => $countryList) {
-		foreach ($countryList as $country => $languageData) {
-		    $AdminCore['languageList'][$language . '_' . $country] =
-			$languageData['description'];
-		}
-	    }
-	}
 
 	/* Set up our session time lists */
 	$sessionTimeList = array();

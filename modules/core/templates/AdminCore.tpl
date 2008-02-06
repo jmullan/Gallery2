@@ -34,40 +34,6 @@
 {/if}
 
 <div class="gbBlock">
-  <h3> {g->text text="Language Settings"} </h3>
-
-  <p class="giDescription">
-    {g->text text="Select language defaults for Gallery. Individual users can override this setting in their personal preferences or via the language selector block if available. Gallery will try to automatically detect the language preference of each user if the browser preference check is enabled."}
-  </p>
-
-  {if isset($AdminCore.can.translate)}
-  <table class="gbDataTable"><tr>
-    <td>
-      {g->text text="Default language"}
-    </td><td>
-      <select name="{g->formVar var="form[default][language]"}">
-	{html_options options=$AdminCore.languageList selected=$form.default.language}
-      </select>
-    </td>
-  </tr><tr>
-    <td>
-      {g->text text="Check Browser Preference"}
-    </td><td>
-      <input type="checkbox"{if $form.language.useBrowserPref} checked="checked"{/if} 
-	     name="{g->formVar var="form[language][useBrowserPref]"}"/>
-    </td>
-  </tr></table>
-  {else}
-    <div class="giWarning">
-      {capture name="gettext"}
-	<a href="http://php.net/gettext">{g->text text="gettext"}</a>
-      {/capture}
-      {g->text text="Your webserver does not support localization.  Please instruct your system administrator to reconfigure PHP with the %s option enabled." arg1=$smarty.capture.gettext}
-    </div>
-  {/if}
-</div>
-
-<div class="gbBlock">
   <h3> {g->text text="Date Formats"} </h3>
 
   <p class="giDescription">

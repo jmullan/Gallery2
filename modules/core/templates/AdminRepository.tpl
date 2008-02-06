@@ -78,12 +78,6 @@
     </p>
     {/foreach}
   {/if}
-  {if !empty($status.languagePacksDeleted)}
-    <p>
-      {g->text one="%d language pack deleted." many="%d language packs deleted."
-               count=$status.languagePacksDeleted arg1=$status.languagePacksDeleted}
-    </p>
-  {/if}
 </h2></div>
 {/if}
 
