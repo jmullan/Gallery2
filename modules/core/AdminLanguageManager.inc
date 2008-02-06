@@ -423,7 +423,7 @@ class AdminLanguageManagerView extends GalleryView {
 	}
 
 	/* Get list of upgradeable packages in repository */
-	$upgradeInfo = array();
+	$upgradeInfo = $languagePackages = array();
 	$enableAllFlags = array('upgrade' => false, 'remove' => false, 'download' => false);
 	foreach ($repositories as $source => $repository) {
 	    if (!$repository->localIndexExists()) {
