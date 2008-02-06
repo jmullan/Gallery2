@@ -333,9 +333,6 @@ class AdminLanguageManagerController extends AdminRepositoryDownloadAndInstallCo
 			}
 		    }
 		    $count += $fileCount - 1;
-		    $callback['current'] += $fileCount;
-		    $percentage = $callback['current'] / $callback['total'];
-		    call_user_func($callback['method'], $callback['title'], '', $percentage);
 		}
 	    }
 	}
@@ -505,16 +502,15 @@ class AdminLanguageManagerView extends GalleryView {
 			return array($ret, null);
 		    }
 		    $installed = !empty($supportedLanguages[$language][$country]);
-		    $enableAllFlags['remove'] = $enableAllFlags['upgrade'] || !$installed;
-		    $enableAllFlags['download'] = $enableAllFlags['upgrade'] || $installed;
+		    $enableAllFlags['remove'] = $enableAllFlags['remove'] || $installed;
 		    if (in_array($code, array('zh_CN', 'zh_TW', 'en_GB'))) {
-			$packages[$code] =  array('upgrade' => $pack['relation'] == 'newer', 
+			$packages[$code] =  array('upgrade' => $pack['relation'] == 'older', 
 			    'installed' => $installed,
 			    'description' => $languageData[$language][$country]['description']);
 		    } else {
 			if (empty($packages[$language])) {
 			    $country = $defaultCountry[$language];
-			    $packages[$language] = array('upgrade' => $pack['relation'] == 'newer',
+			    $packages[$language] = array('upgrade' => $pack['relation'] == 'older',
 				'installed' => $installed,
 				'description' => $languageData[$language][$country]['description']);
 			} else {
@@ -522,7 +518,7 @@ class AdminLanguageManagerView extends GalleryView {
 				$packages[$language]['upgrade'] = true;
 			    } else {
 				$packages[$language]['upgrade'] = 
-				    $packages[$language]['upgrade'] || $pack['relation'] == 'newer';
+				    $packages[$language]['upgrade'] || $pack['relation'] == 'older';
 			    }
 			}
 		    }
@@ -537,13 +533,16 @@ class AdminLanguageManagerView extends GalleryView {
 	    if (in_array($language, array('en', 'zh'))) {
 		if (empty($packages['en_GB'])) {
 		    $packages['en_GB'] = array('upgrade' => false, 'installed' => false,
-		    'description' => $countryData['GB']['description']);
+			'description' => $countryData['GB']['description']);
+		    $enableAllFlags['download'] = true;
 		} else if (empty($packages['zh_TW'])) {
 		    $packages['zh_TW'] = array('upgrade' => false, 'installed' => false,
-		    'description' => $countryData['TW']['description']);
+			'description' => $countryData['TW']['description']);
+		    $enableAllFlags['download'] = true;
 		} else if (empty($packages['zh_CN'])) {
 		    $packages['zh_CN'] = array('upgrade' => false, 'installed' => false,
-		    'description' => $countryData['CN']['description']);
+			'description' => $countryData['CN']['description']);
+		    $enableAllFlags['download'] = true;
 		}
 	    } else if (empty($packages[$language])) {
 		$locales = array();
@@ -553,7 +552,7 @@ class AdminLanguageManagerView extends GalleryView {
 		}
 		$packages[$language] = array('upgrade' => false, 'installed' => false,
 		    'description' => $countryData[$defaultCountry[$language]]['description']);
-		$enableAllFlags['remove'] = true;
+		$enableAllFlags['download'] = true;
 	    }
 	}
 	if (!empty($packages['en'])) {  /* don't show English(US) as a managed language */
