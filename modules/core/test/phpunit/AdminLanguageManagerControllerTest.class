@@ -123,7 +123,7 @@ class AdminLanguageManagerControllerTest extends GalleryControllerTestCase {
 
 	$this->assertEquals(array('redirect' => array(
 				      'view' => 'core.SiteAdmin',
-				      'subView' => 'albumselect.AlbumSelectSiteAdmin'),
+				      'subView' => 'core.AdminLanguageManager'),
 				  'status' => array('languageSettingsSaved' => true),
 				  'error' => array()),
 			    $results, 'Langauge general settings not updated');
@@ -151,7 +151,7 @@ class AdminLanguageManagerControllerTest extends GalleryControllerTestCase {
 
 	$this->assertEquals(array('redirect' => array(
 				      'view' => 'core.SiteAdmin',
-				      'subView' => 'albumselect.AlbumSelectSiteAdmin'),
+				      'subView' => 'core.AdminLanguageManager'),
 				  'status' => array('languageSettingsSaved' => true),
 				  'error' => array()),
 			    $results, 'Langauge general settings not updated');
@@ -231,11 +231,9 @@ class AdminLanguageManagerControllerTest extends GalleryControllerTestCase {
 				    $this->_callback),
 			      array(null, true, array()));
 
-	$callback = $this->_callback;
-	$callback['current'] = 3;
 	$this->_testRepository->setReply('downloadPackagesForPlugin',
 			array('theme', 'testTheme',
-			      $sourceFiles['test']['theme']['testTheme'], $callback),
+			      $sourceFiles['test']['theme']['testTheme'], $this->_callback),
 			      array(null, true, array()));
 
 	list ($ret, $repositories) = GalleryRepository::getRepositories();
@@ -310,7 +308,6 @@ class AdminLanguageManagerControllerTest extends GalleryControllerTestCase {
 			'af' => 'modules/testModule-af.package')),
 		  $this->_callback), 
 		array(null, false, array()));
-	$this->_callback['current'] = 2;
 	$this->_testRepository->setReply('downloadPackagesForPlugin', 
 	    array('theme', 
 		  'testTheme', 
