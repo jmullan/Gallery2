@@ -500,6 +500,8 @@ class GalleryRepositoryIndex {
      * requiredCoreApi and requiredPluginApi respectively.  The repository index's required api's 
      * are on a per plugin basis.  If the plugin status does not contain the required api's (not 
      * installed), then the plugin is loaded and the values extracted from the class directly.
+     * A further check is made to insure that the language pack is an older build to prevent over-
+     * riding local modifications.
      * An exact check of language package compatibility is not possible at the moment, so this check
      * is primarily to ensure that plugins from a release branch get lang updates/packages from the 
      * release branch and not from the experimental branch repository.
@@ -566,8 +568,26 @@ class GalleryRepositoryIndex {
 			return array($ret, null);
 		    }
 
-		    foreach ($locales as $locale) {	
-			if (!empty($entry['languages'][$stringsRevision][$locale])) {
+		    list ($ret, $pluginPackages) =
+	  		$this->_utilities->getPluginPackages($pluginType, $pluginId);
+	  	    if ($ret) {
+	  		return array($ret, null);
+	  	    }
+
+		    $revision = $entry['languages'][$stringsRevision];
+		    foreach ($locales as $locale) {
+			$packageName = 'lang-' . $locale;
+			$hasPackage = !empty($pluginPackages[$packageName]);
+			if ($hasPackage) {
+			    $package = $pluginPackages[$packageName];
+			    $includePackage = !$package['locked']
+						  && $package['version'] < $revision[$locale];
+			}
+			/*
+			 * We want this pack if it is not installed or if the the local revision is
+			 * older than the repository revision
+			 */
+			if (!empty($revision[$locale]) && (!$hasPackage || $includePackage)) {
 			    list ($ret, $packageUrl) = 
 				$this->getPackageUrl($pluginType, $pluginId, $locale);
 			    if ($ret) {

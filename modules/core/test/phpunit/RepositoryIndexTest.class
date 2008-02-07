@@ -537,11 +537,16 @@ class RepositoryIndexTest extends GalleryTestCase {
 	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(theme)',
 			      array('testTheme' => array('active' => 1, 'available' => 1)));
 
+	$utilities = new UnitTestRepositoryUtilities();
+	$this->_setUpRepositoryUtilitiesResponses($utilities);
+	$this->_index->_utilities =& $utilities;
+
 	list ($ret, $files) = $this->_index->getLanguagePackageFiles('en_GB');
 	if ($ret) {
 	    return $ret;
 	}
 
+	$this->assert($utilities->isComplete(), $utilities->getRemaining());
 	$expected = array(
 	    'module' => array('testModule' => array('name' => 'Test Module',
 		'files' => array('descriptor' => 'modules/testModule-1.0.0-44444.descriptor',
@@ -564,10 +569,16 @@ class RepositoryIndexTest extends GalleryTestCase {
 	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(theme)',
 			      array('testTheme' => array('active' => 1, 'available' => 1)));
 
+	$utilities = new UnitTestRepositoryUtilities();
+	$this->_setUpRepositoryUtilitiesResponses($utilities);
+	$this->_index->_utilities =& $utilities;
+
 	list ($ret, $files) = $this->_index->getLanguagePackageFiles(array('en_GB', 'pt_BR'));
 	if ($ret) {
 	    return $ret;
 	}
+
+	$this->assert($utilities->isComplete(), $utilities->getRemaining());
 	$expected = array(
 	    'module' => array('testModule' => array('name' => 'Test Module',
 		'files' => array('descriptor' => 'modules/testModule-1.0.0-44444.descriptor',
@@ -596,45 +607,21 @@ class RepositoryIndexTest extends GalleryTestCase {
 	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(theme)',
 			      array('testTheme' => array('active' => 1, 'available' => 1)));
 
+	$utilities = new UnitTestRepositoryUtilities();
+	$this->_setUpRepositoryUtilitiesResponses($utilities, array('noTheme' => 1));
+	$this->_index->_utilities =& $utilities;
+
 	list ($ret, $files) = $this->_index->getLanguagePackageFiles(array('en_GB', 'pt_BR'));
 	if ($ret) {
 	    return $ret;
 	}
+
+	$this->assert($utilities->isComplete(), $utilities->getRemaining());
 	$expected = array(
 	    'module' => array('testModule' => array('name' => 'Test Module',
 		'files' => array('descriptor' => 'modules/testModule-1.0.0-44444.descriptor',
 				 'en_GB' => 'modules/testModule-1.0.0-44444-en_GB.package',
 				 'pt_BR' => 'modules/testModule-1.0.0-44444-pt_BR.package'))));
-	$this->assertEquals($expected, $files, 'Unexpected results for multiple languages');
-    }
-
-    function testGetLanguagePackageFilesVersionNotActive() {
-	/* Since we can't mock the core API, we'll use the cache to store our mock plugin. */
-	GalleryDataCache::put('GalleryPluginHelper::loadPlugin(module, testModule)',
-			      new RepositoryIndexTestModule());
-	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(module)',
-			      array('testModule' => array('active' => 1, 'available' => 1)));
-
-	$testTheme = new RepositoryIndexTestTheme();
-	$themeApi = GalleryTheme::getApiVersion();
-
-	GalleryDataCache::put('GalleryPluginHelper::loadPlugin(theme, testTheme)', $testTheme);
-	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(theme)',
-			      array('testTheme' => array('active' => 0, 'available' => 1)));
-
-	list ($ret, $files) = $this->_index->getLanguagePackageFiles(array('en_GB', 'pt_BR'));
-	if ($ret) {
-	    return $ret;
-	}
-	$expected = array(
-	    'module' => array('testModule' => array('name' => 'Test Module',
-		'files' => array('descriptor' => 'modules/testModule-1.0.0-44444.descriptor',
-				 'en_GB' => 'modules/testModule-1.0.0-44444-en_GB.package',
-				 'pt_BR' => 'modules/testModule-1.0.0-44444-pt_BR.package'))),
-	    'theme' => array('testTheme' => array('name' => 'Test Theme',
-		'files' => array('descriptor' => 'themes/testTheme-1.0.0-11111.descriptor',
-				 'en_GB' => 'themes/testTheme-1.0.0-11111-en_GB.package',
-				 'pt_BR' => 'themes/testTheme-1.0.0-11111-pt_BR.package'))));
 	$this->assertEquals($expected, $files, 'Unexpected results for multiple languages');
     }
 
@@ -652,6 +639,10 @@ class RepositoryIndexTest extends GalleryTestCase {
 	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(theme)',
 			      array('testTheme' => array('active' => 1, 'available' => 0)));
 
+	$utilities = new UnitTestRepositoryUtilities();
+	$this->_setUpRepositoryUtilitiesResponses($utilities);
+	$this->_index->_utilities =& $utilities;
+
 	list ($ret, $files) = $this->_index->getLanguagePackageFiles(array('en_GB', 'pt_BR'));
 	if ($ret) {
 	    return $ret;
@@ -662,6 +653,91 @@ class RepositoryIndexTest extends GalleryTestCase {
 				 'en_GB' => 'modules/testModule-1.0.0-44444-en_GB.package',
 				 'pt_BR' => 'modules/testModule-1.0.0-44444-pt_BR.package'))));
 	$this->assertEquals($expected, $files, 'Unexpected results for multiple languages');
+    }
+
+    function _setUpRepositoryUtilitiesResponses(&$utilities, $options=array()) {
+	$installedPackages =
+	    array('base' => array('locked' => false, 'version' => '1.0.0', 'build' => '44444'),
+		  'lang-en_GB' => array('locked' => 0, 'version' => '1.0.0', 'build' => '44444'),
+		  'lang-pt_PT' => array('locked' => 1, 'version' => '1.0.0', 'build' => '44444'),
+		  'lang-pt_BR' => array('locked' => 0, 'version' => '1.0.0', 'build' => '44444'));
+	$utilities->setReply('getPluginPackages', array('module', 'testModule'),
+	    array(null, $installedPackages));
+	if (empty($options['noTheme'])) {
+	    $installedPackages = array(
+		'base' => array('locked' => false, 'version' => '1.0.0', 'build' => '11111'),
+		'lang-en_GB' => array('locked' => 0, 'version' => '1.0.0', 'build' => '11111'),
+		'lang-pt_PT' => array('locked' => 1, 'version' => '1.0.0', 'build' => '11111'),
+		'lang-pt_BR' => array('locked' => 0, 'version' => '1.0.0', 'build' => '11111'));
+	    $utilities->setReply('getPluginPackages', array('theme', 'testTheme'),
+		array(null, $installedPackages));
+	}
+    }
+}
+
+/**
+ * @todo move to /lib/tools/phpunit and change the unit tests to use instead of 
+ * RepositoryIndexTestUtilities
+ */
+class UnitTestRepositoryUtilities extends MockObject {
+    function extractRevision($string) {
+	return $this->_makeReply('extractRevision', array($string));
+    }
+
+    function getFileRevision($file) {
+	return $this->_makeReply('getFileRevision', array($file));
+    }
+
+    function compareVersions($version1, $version2, $build1=null, $build2=null) {
+	return $this->_makeReply('compareVersions', array($version1, $version2, $build1, $build2));
+    }
+
+    function compareRevisions($revision1, $revision2) {
+	return $this->_makeReply('compareRevisions', array($revision1, $revision2));
+    }
+
+    function getFirstBytesFromFile($path, $bytes) {
+	return $this->_makeReply('getFirstBytesFromFile', array($path, $bytes));
+    }
+
+    function getLanguageBaseRevision($pluginType, $pluginId) {
+	return $this->_makeReply('getLanguageBaseRevision', array($pluginType, $pluginId));
+    }
+
+    function isPluginAvailable($pluginType, $pluginId) {
+	return $this->_makeReply('isPluginAvailable', array($pluginType, $pluginId));
+    }
+
+    function isPluginCompatible($pluginType, $requiredCoreApi, $requiredPluginApi,
+	    $providedApis=null) {
+	return $this->_makeReply('isPluginCompatible', array($pluginType, $requiredCoreApi, 
+	    $requiredPluginApi, $providedApis));
+    }
+
+    function getProvidedApis($pluginType, $providedApis=null) {
+	return $this->_makeReply('getProvidedApis', array($pluginType, $providedApis));
+    }
+
+    function getPluginPackages($pluginType, $pluginId) {
+	return $this->_makeReply('getPluginPackages', array($pluginType, $pluginId));
+    }
+
+    function getLanguageDescription($languageCode) {
+	return $this->_makeReply('getLanguageDescription', array($languageCode));
+    }
+
+    function getPluginVersion($pluginType, $pluginId) {
+	return $this->_makeReply('getPluginVersion', array($pluginType, $pluginId));
+    }
+
+    function downloadFile($url, $ignoreCompression=false) {
+	return $this->_makeReply('downloadFile', array($url, $ignoreCompression));
+    }
+
+    function downloadPackagesForPlugin($repository, $pluginType, $pluginId, $pluginDownloadData, 
+				       &$callback) {
+	return $this->_makeReply('downloadPackagesForPlugin', array($repository, $pluginType, 
+	    $pluginId, $pluginDownloadData, $callback));
     }
 }
 

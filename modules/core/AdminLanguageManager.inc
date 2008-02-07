@@ -94,6 +94,12 @@ class AdminLanguageManagerController extends AdminRepositoryDownloadAndInstallCo
 
 	$status = array('error' => array());
 
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret) {
+	    return $ret;
+	}
+	$heading = $module->translate('Updating Language Settings');
+
 	list ($ret, $status['languageSettingsSaved']) = $this->_updateGeneralSettings($form);
 	if ($ret) {
 	    return $ret;
@@ -129,11 +135,6 @@ class AdminLanguageManagerController extends AdminRepositoryDownloadAndInstallCo
 
 	/* If actions > 0, then we have some language packages to work with */
 	if ($totalActions > 0) {
-	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-	    if ($ret) {
-		return $ret;
-	    }
-	    $heading = $module->translate('Updating Language Settings');
 	    $templateAdapter->updateProgressBar($heading, '', 0);
 
 	    $callback = array('method' => array($templateAdapter, 'updateProgressBar'),
@@ -184,7 +185,7 @@ class AdminLanguageManagerController extends AdminRepositoryDownloadAndInstallCo
 	$session->putStatus($status);
 
 	$urlGenerator =& $gallery->getUrlGenerator();
-	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect), true);
+	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect), false);
 	return $ret;
     }
 
@@ -495,6 +496,7 @@ class AdminLanguageManagerView extends GalleryView {
 		    }
 		    return array($ret, null);
 		}
+		$isCompatible = $upgradeInfo['base']['isCompatible'];
 		foreach ($upgradeInfo['languages'] as $code => $pack) {
 		    list ($ret, $language, $country) = 
 			$translator->getLanguageAndCountryFromLanguageCode($code);
@@ -503,22 +505,23 @@ class AdminLanguageManagerView extends GalleryView {
 		    }
 		    $installed = !empty($supportedLanguages[$language][$country]);
 		    $enableAllFlags['remove'] = $enableAllFlags['remove'] || $installed;
+		    $upgradeable = $isCompatible && $pack['relation'] == 'older';
 		    if (in_array($code, array('zh_CN', 'zh_TW', 'en_GB'))) {
-			$packages[$code] =  array('upgrade' => $pack['relation'] == 'older', 
+			$packages[$code] =  array('upgrade' => $upgradeable, 
 			    'installed' => $installed,
 			    'description' => $languageData[$language][$country]['description']);
 		    } else {
 			if (empty($packages[$language])) {
 			    $country = $defaultCountry[$language];
-			    $packages[$language] = array('upgrade' => $pack['relation'] == 'older',
+			    $packages[$language] = array('upgrade' => $upgradeable,
 				'installed' => $installed,
 				'description' => $languageData[$language][$country]['description']);
 			} else {
 			    if ($packages[$language]['installed'] && !$installed) {
-				$packages[$language]['upgrade'] = true;
+				$packages[$language]['upgrade'] = $isCompatible;
 			    } else {
 				$packages[$language]['upgrade'] = 
-				    $packages[$language]['upgrade'] || $pack['relation'] == 'older';
+				    $packages[$language]['upgrade'] || $upgradeable;
 			    }
 			}
 		    }
