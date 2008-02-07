@@ -17,7 +17,7 @@
 	  codebase="http://java.sun.com/products/plugin/autodl/jinstall-1_4-windows-i586.cab#Version=1,4,0,0"
 	  width="300" height="450">
     <param name="code" value="{$SlideshowApplet.code}"/>
-    <param name="archive" value="{g->url href="modules/slideshowapplet/applets/GalleryRemoteAppletMini.jar},{g->url href="modules/slideshowapplet/applets/GalleryRemoteHTTPClient.jar"},{g->url href="modules/slideshowapplet/applets/applet_img.jar"}"/>
+    <param name="archive" value="{g->url href="modules/slideshowapplet/applets/GalleryRemoteAppletMini.jar"},{g->url href="modules/slideshowapplet/applets/GalleryRemoteHTTPClient.jar"},{g->url href="modules/slideshowapplet/applets/applet_img.jar"}"/>
     <param name="type" value="application/x-java-applet;version=1.4"/>
     <param name="scriptable" value="false"/>
     <param name="progressbar" value="true"/>
@@ -45,7 +45,7 @@
       <embed
           type="application/x-java-applet;version=1.4"
           code="{$SlideshowApplet.code}"
-          archive="{g->url href="modules/slideshowapplet/applets/GalleryRemoteAppletMini.jar},{g->url href="modules/slideshowapplet/applets/GalleryRemoteHTTPClient.jar"},{g->url href="modules/slideshowapplet/applets/applet_img.jar"}"
+          archive="{g->url href="modules/slideshowapplet/applets/GalleryRemoteAppletMini.jar"},{g->url href="modules/slideshowapplet/applets/GalleryRemoteHTTPClient.jar"},{g->url href="modules/slideshowapplet/applets/applet_img.jar"}"
           width="300"
           height="450"
           scriptable="false"
