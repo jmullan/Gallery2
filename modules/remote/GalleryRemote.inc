@@ -741,6 +741,9 @@ class GalleryRemoteController extends GalleryController {
 	}
 
 	$response->setProperty('album.caption', $album->getTitle());
+	if (isset($form['extrafields']) && $form['extrafields'] == 'yes') {
+	    $response->setProperty('album.extrafields', "Summary,Description");
+	}
 
 	if (isset($form['random']) && $form['random'] == 'yes' && isset($form['limit'])) {
 	    /* get random descendants (only GalleryPhotoItems) of the album */
@@ -918,6 +921,17 @@ class GalleryRemoteController extends GalleryController {
 		$response->setProperty('image.caption.' . $i, $item->getTitle());
 		$response->setProperty('image.title.' . $i, $item->getPathComponent());
 		$response->setProperty('image.hidden.' . $i, 'no');
+		
+		if (isset($form['extrafields']) && $form['extrafields'] == 'yes') {
+		    if ($item->getDescription()) {
+			$response->setProperty('image.extrafield.Description.' . $i,
+					       $item->getDescription());
+		    }
+		    if ($item->getSummary()) {
+			$response->setProperty('image.extrafield.Summary.' . $i,
+					       $item->getSummary());
+		    }
+		}
 
 		$i++;
 	    } else if (GalleryUtilities::isA($item, 'GalleryAlbumItem') && $albumsToo) {

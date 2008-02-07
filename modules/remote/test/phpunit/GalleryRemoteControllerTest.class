@@ -706,6 +706,41 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$this->assert($response->hasProperty('status_text'));
     }
 
+    function testFetchAlbumImagesExtrafields() {
+	/* Create some images */
+	$parentId = $this->_rootAlbum->getId();
+	for ($i = 0; $i < 2; $i++) {
+	    list ($ret, $image[$i]) = $this->_createRandomDataItem($parentId, 'image/jpg');
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    list ($ret, $derivative[$i]) = $this->_createDerivative(
+		$image[$i], $image[$i]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
+	GalleryUtilities::putRequestVariable('form[cmd]', 'fetch-album-images');
+	GalleryUtilities::putRequestVariable('form[set_albumName]', $this->_rootAlbum->getId());
+	GalleryUtilities::putRequestVariable('form[albums_too]', 'yes');
+	GalleryUtilities::putRequestVariable('form[extrafields]', 'yes');
+	$results = $this->handleRequest();
+	$this->assertEquals(array(), $results['error'], 'error');
+	$this->assertEquals('remote.GalleryRemote', $results['delegate']['view'], 'delegate');
+
+	$response = $results['status']['controllerResponse'];
+	$this->assertEquals($this->_code['SUCCESS'], (int)$response->getProperty('status'));
+
+	/* Make sure the the extra fields match */
+	$this->assertEquals($image[0]->getSummary(),
+                            $response->getProperty('image.extrafield.Summary.1'));
+	$this->assertEquals($image[0]->getDescription(),
+                            $response->getProperty('image.extrafield.Description.1'));
+	$this->assert($response->hasProperty('status_text'));
+    }
+
     function testFetchAlbumImagesAlbumsRandom() {
 	$ids = array();
 	/* Create some images */
