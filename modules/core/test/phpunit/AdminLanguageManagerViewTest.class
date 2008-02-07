@@ -99,6 +99,10 @@ class AdminLanguageManagerViewTest extends GalleryViewTestCase {
 		    'en_US' => array('name' => 'en_US', 'currentBuild' => '00001',
 			'newBuild' => '33333', 'relation' => 'older', 'locked' => 0),
 		    'hu_HU' => array('name' => 'hu_HU', 'currentBuild' => '22222',
+			'newBuild' => '33333', 'relation' => 'older', 'locked' => 0),
+		    'zh_CN' => array('name' => 'zh_CN', 'currentBuild' => '22222',
+			'newBuild' => '33333', 'relation' => 'older', 'locked' => 0),
+		    'zh_TW' => array('name' => 'zh_TW', 'currentBuild' => '22222',
 			'newBuild' => '33333', 'relation' => 'older', 'locked' => 0)))));
 	}
 
@@ -116,7 +120,11 @@ class AdminLanguageManagerViewTest extends GalleryViewTestCase {
 	    'hu' => array('upgrade' => true, 'installed' => true, 
 		'description' => 'Magyar'),
 	    'pt' => array('upgrade' => false, 'installed' => false, 
-		'description' => 'Portugu&#234;s'));
+		'description' => 'Portugu&#234;s'),
+	    'zh_CN' => array('upgrade' => true, 'installed' => false, 
+		'description' => '&#31616;&#20307;&#20013;&#25991;'),
+	    'zh_TW' => array('upgrade' => true, 'installed' => false, 
+		'description' => '&#32321;&#39636;&#20013;&#25991;'));
 	$this->assertEquals($expected, $languagePackages, 'Language packages incorrect');
 	$this->assertEquals(array('upgrade' => true, 'remove' => true, 'download' => true), 
 	    $enableAllFlags, 'Enable all flags incorrect');
@@ -159,7 +167,11 @@ class AdminLanguageManagerViewTest extends GalleryViewTestCase {
 	    'hu' => array('upgrade' => false, 'installed' => true, 
 		'description' => 'Magyar'),
 	    'pt' => array('upgrade' => false, 'installed' => false, 
-		'description' => 'Portugu&#234;s'));
+		'description' => 'Portugu&#234;s'),
+	    'zh_CN' => array('upgrade' => false, 'installed' => false, 
+		'description' => '&#31616;&#20307;&#20013;&#25991;'),
+	    'zh_TW' => array('upgrade' => false, 'installed' => false, 
+		'description' => '&#32321;&#39636;&#20013;&#25991;'));
 	$this->assertEquals($expected, $languagePackages, 'Language packages incorrect');
 	$this->assertEquals(array('upgrade' => false, 'remove' => true, 'download' => true), 
 	    $enableAllFlags, 'Enable all flags incorrect');
@@ -184,6 +196,11 @@ class AdminLanguagesViewTestTranslator extends GalleryTranslator {
 	$supportedLanguages['pt']['BR']['description'] = 'Portugu&#234;s Brasileiro';
 	$supportedLanguages['pt']['PT']['description'] = 'Portugu&#234;s';
 	$defaultCountry['pt'] = 'PT';
+
+	/* Chinese */
+	$supportedLanguages['zh']['CN']['description'] = '&#31616;&#20307;&#20013;&#25991;';
+	$supportedLanguages['zh']['TW']['description'] = '&#32321;&#39636;&#20013;&#25991;';
+	$defaultCountry['zh'] = 'CN';
 
 	return array($supportedLanguages, $defaultCountry);
     }

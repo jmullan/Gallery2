@@ -510,6 +510,7 @@ class AdminLanguageManagerView extends GalleryView {
 			$packages[$code] =  array('upgrade' => $upgradeable, 
 			    'installed' => $installed,
 			    'description' => $languageData[$language][$country]['description']);
+			$language = $code;
 		    } else {
 			if (empty($packages[$language])) {
 			    $country = $defaultCountry[$language];
@@ -532,30 +533,31 @@ class AdminLanguageManagerView extends GalleryView {
 	}
 
 	/* Add in the unistalled languages so the list is complete */
-	foreach ($languageData as $language => $countryData) {
-	    if (in_array($language, array('en', 'zh'))) {
-		if (empty($packages['en_GB'])) {
-		    $packages['en_GB'] = array('upgrade' => false, 'installed' => false,
-			'description' => $countryData['GB']['description']);
-		    $enableAllFlags['download'] = true;
-		} else if (empty($packages['zh_TW'])) {
-		    $packages['zh_TW'] = array('upgrade' => false, 'installed' => false,
-			'description' => $countryData['TW']['description']);
-		    $enableAllFlags['download'] = true;
-		} else if (empty($packages['zh_CN'])) {
-		    $packages['zh_CN'] = array('upgrade' => false, 'installed' => false,
-			'description' => $countryData['CN']['description']);
+	foreach ($languageData as $language => $countries) {
+	    if ($language == 'zh') {
+		foreach ($countries as $country => $countryData) {
+		    $locale = $language .'_' . $country;
+		    if (empty($packages[$locale])) {
+			$packages[$locale] = array('upgrade' => false, 
+			    'installed' => false, 'description' => $countryData['description']);
+		    }
+		}
+	    } else if ($language == 'en') {
+		foreach ($countries as $country => $countryData) {
+		    if ($country != 'US') {
+			$locale = $language .'_' . $country;
+			if (empty($packages[$locale])) {
+			    $packages[$locale] = array('upgrade' => false, 'installed' => false,
+				'description' => $countryData['description']);
+			}
+		    }
+		}
+	    } else {
+		if (empty($packages[$language])) {
+		    $packages[$language] = array('upgrade' => false, 'installed' => false,
+			'description' => $countries[$defaultCountry[$language]]['description']);
 		    $enableAllFlags['download'] = true;
 		}
-	    } else if (empty($packages[$language])) {
-		$locales = array();
-		foreach (array_keys($countryData) as $country) {
-		    $locales[] = ($defaultCountry[$language] == $country) ? $language 
-			: $language .'_' . $country;
-		}
-		$packages[$language] = array('upgrade' => false, 'installed' => false,
-		    'description' => $countryData[$defaultCountry[$language]]['description']);
-		$enableAllFlags['download'] = true;
 	    }
 	}
 	if (!empty($packages['en'])) {  /* don't show English(US) as a managed language */
