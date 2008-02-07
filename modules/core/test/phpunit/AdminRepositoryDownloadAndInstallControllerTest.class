@@ -52,6 +52,8 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 	$this->_controller = new AdminRepositoryDownloadAndInstallControllerTestWrapper();
 	$this->_controller->_version = '0.1';
 	$this->_controller->_active = true;
+
+	$gallery->_storage = new UnitTestStorage();
     }
 
     function tearDown() {
@@ -59,6 +61,7 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 	$gallery->_templateAdapter =& $this->_galleryTemplateAdapter;
 	$gallery->_session = $this->_originalSession;
 
+	$this->assert($gallery->_storage->isComplete(), $gallery->_storage->getRemaining());
 	$ret = parent::tearDown();
 	if ($ret) {
 	   $this->failWithStatus($ret);
@@ -371,9 +374,12 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 
     function testUpdatePluginStatus() {
 	global $gallery;
+	$storage =& $gallery->getStorage();
 
 	$mockAdapter = new MockTemplateAdapter();
 	$gallery->_templateAdapter =& $mockAdapter;
+
+	$storage->setReply('removeAllMapEntries', array('GalleryPluginPackageMap', null), null);
 
 	$repository = new UnitTestRepository();
 	$repository->setReply('downloadIndex', array(), null);
@@ -462,10 +468,13 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 
     function testUpdatePluginStatusFailsHardOnStorageError() {
 	global $gallery;
+	$storage =& $gallery->getStorage();
 
 	$mockAdapter = new MockTemplateAdapter();
 	$gallery->_templateAdapter =& $mockAdapter;
 	$gallery->_session = new AdminRepositoryControllerTestSession();
+
+	$storage->setReply('removeAllMapEntries', array('GalleryPluginPackageMap', null), null);
 
 	$repository = new UnitTestRepository();
 	$repository->setReply('downloadIndex', array(), null);
