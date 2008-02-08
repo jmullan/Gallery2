@@ -45,9 +45,9 @@
     {/if}
   </p>
   <div style="position: relative; left: 25px; ">
-    <p> {g->text text="The following language packages are available for this plugin"} </p>
     <div class="languagePacks" id="{$item.repository}_languagePacks"
 	 style="{if empty($currentlyInstalled) || $item.repository != $currentlyInstalled}display: none{/if}">
+      <p> {g->text text="The following language packages are available for this plugin"} </p>
       <p id="{$item.repository}_languages">
         {if !empty($item.languages)}
         {foreach from=$item.languages key=code item=pack}
