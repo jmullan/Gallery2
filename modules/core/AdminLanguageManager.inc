@@ -498,6 +498,7 @@ class AdminLanguageManagerView extends GalleryView {
 		}
 		$isCompatible = $upgradeInfo['base']['isCompatible'];
 		foreach ($upgradeInfo['languages'] as $code => $pack) {
+		    $gallery->guaranteeTimeLimit(60);
 		    list ($ret, $language, $country) = 
 			$translator->getLanguageAndCountryFromLanguageCode($code);
 		    if ($ret) {
@@ -534,6 +535,8 @@ class AdminLanguageManagerView extends GalleryView {
 
 	/* Add in the unistalled languages so the list is complete */
 	foreach ($languageData as $language => $countries) {
+	    $gallery->guaranteeTimeLimit(30);
+
 	    if ($language == 'zh') {
 		foreach ($countries as $country => $countryData) {
 		    $locale = $language .'_' . $country;
@@ -554,9 +557,20 @@ class AdminLanguageManagerView extends GalleryView {
 		}
 	    } else {
 		if (empty($packages[$language])) {
-		    $packages[$language] = array('upgrade' => false, 'installed' => false,
-			'description' => $countries[$defaultCountry[$language]]['description']);
-		    $enableAllFlags['download'] = true;
+		    $locales = array();
+		    foreach ($countries as $country => $countryData) {
+			$locales[] = $language .'_' . $country;
+		    }
+		    list ($ret, $packageCount) = 
+			$this->_determinePackageAvailability($repository, $locales);
+		    if ($ret) {
+			return array($ret, null);
+		    }
+		    if ($packageCount > 0) {
+			$packages[$language] = array('upgrade' => false, 'installed' => false,
+			    'description' => $countries[$defaultCountry[$language]]['description']);
+			$enableAllFlags['download'] = true;
+		    }
 		}
 	    }
 	}
@@ -566,6 +580,33 @@ class AdminLanguageManagerView extends GalleryView {
 	ksort($packages);
 
 	return array(null, $packages);
+    }
+
+    /**
+     * Count the number of packages available for download from this repository
+     * @param GalleryRepository $repository
+     * @param array $locales to count the packages (should be all related i.e. es, es_MX, es_AR)
+     * @return array GalleryStatus a status code
+     *               int package count
+     */
+    function _determinePackageAvailability($repository, $locales) {
+	global $gallery;
+	$translator =& $gallery->getTranslator();
+
+	list ($ret, $files) = $repository->getLanguagePackageFiles($locales);
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$packageCount = 0;
+	foreach ($files as $plugins) {
+	    foreach ($plugins as $indexData) {
+		$packageCount += count($indexData['files']);
+		if (!empty($indexData['files']['descriptor'])) {
+		    $packageCount--; /* don't include the descriptor in the count */
+		}
+	    }
+	}
+	return array(null, $packageCount);
     }
 }
 ?>
