@@ -547,8 +547,8 @@ class AdminLanguageManagerView extends GalleryView {
 		}
 	    } else if ($language == 'en') {
 		foreach ($countries as $country => $countryData) {
+		    $locale = $language .'_' . $country;
 		    if ($country != 'US') {
-			$locale = $language .'_' . $country;
 			if (empty($packages[$locale])) {
 			    $packages[$locale] = array('upgrade' => false, 'installed' => false,
 				'description' => $countryData['description']);
@@ -557,12 +557,17 @@ class AdminLanguageManagerView extends GalleryView {
 		}
 	    } else {
 		if (empty($packages[$language])) {
-		    $locales = array();
+		    $langugeCodes = array();
 		    foreach ($countries as $country => $countryData) {
-			$locales[] = $language .'_' . $country;
+			$locale = $language .'_' . $country;
+			list ($ret, $langCode) = $translator->getLanguageCodeFromLocale($locale);
+			if ($ret) {
+			    return array($ret, null);
+			}
+			$langugeCodes[] = $langCode;
 		    }
 		    list ($ret, $packageCount) = 
-			$this->_determinePackageAvailability($repository, $locales);
+			$this->_determinePackageAvailability($repository, $langugeCodes);
 		    if ($ret) {
 			return array($ret, null);
 		    }
@@ -585,15 +590,15 @@ class AdminLanguageManagerView extends GalleryView {
     /**
      * Count the number of packages available for download from this repository
      * @param GalleryRepository $repository
-     * @param array $locales to count the packages (should be all related i.e. es, es_MX, es_AR)
+     * @param array $langCodes to count the packages (should be all related i.e. es, es_MX, es_AR)
      * @return array GalleryStatus a status code
      *               int package count
      */
-    function _determinePackageAvailability($repository, $locales) {
+    function _determinePackageAvailability($repository, $langCodes) {
 	global $gallery;
 	$translator =& $gallery->getTranslator();
 
-	list ($ret, $files) = $repository->getLanguagePackageFiles($locales);
+	list ($ret, $files) = $repository->getLanguagePackageFiles($langCodes);
 	if ($ret) {
 	    return array($ret, null);
 	}
