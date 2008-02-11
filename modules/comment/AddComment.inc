@@ -75,14 +75,15 @@ class AddCommentController extends GalleryController {
 	    }
 
 	    /* Check for flooding - don't allow more than 1 comment every 30 seconds */
-	    $session = & $gallery->getSession();
-	    $commentTime = $session->get('commentTime');
+	    list ($ret, $commentTime) = GalleryCommentHelper::getLatestCommentTime(
+		GalleryUtilities::getRemoteHostAddress());
+	    if ($ret) {
+		return array($ret, null);
+	    }
 	    $phpVm = $gallery->getPhpVm();
 	    $currentTime = $phpVm->time();
-	    if (isset($commentTime) && ($currentTime - $commentTime < 30)) {
+	    if ($currentTime - $commentTime < 30) {
 		$error[] = 'form[error][comment][flood]';
-	    } else {
-		$session->put('commentTime', $currentTime);
 	    }
 		
 	    list ($ret, $useValidationPlugins) = GalleryCommentHelper::useValidationPlugins();

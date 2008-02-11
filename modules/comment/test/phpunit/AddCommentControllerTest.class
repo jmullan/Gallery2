@@ -59,9 +59,6 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$session = & $gallery->getSession();
-        $session->remove('commentTime');
-
 	$this->_startTime = time();
     }
 
@@ -298,6 +295,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
     function testAddMaliciousComment() {
 	global $gallery;
+	$gallery->_phpVm = new CommentTestPhpVm();
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', 'bbcode');
 	if ($ret) {
 	    return $ret;
@@ -328,8 +326,6 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	    return $ret;
 	}
 	sleep(1);
-	$session = & $gallery->getSession();
-        $session->remove('commentTime');
 	$results = $this->handleRequest();
 	$this->assertEquals(
 	    array('redirect' => array('view' => 'comment.CommentChangeConfirmation',
@@ -358,9 +354,10 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('', $comments[0]->getAuthor(), 'author');
 	$this->assertEquals($gallery->getActiveUserId(), $comments[0]->getCommenterId(), 'user 1');
 	$this->assertEquals($_SERVER['REMOTE_ADDR'], $comments[0]->getHost(), 'host 1');
-	$this->assert($comments[0]->getDate() >= $this->_startTime &&
-		      $comments[0]->getDate() <= time(), 'time 1');
 
+	if (!$comments[1]) {
+	    return $this->fail('second result is missing!');
+	}
 	$this->assertEquals(
 	    'this is a subject with  in it.',
 	    $comments[1]->getSubject(), 'html subject');
@@ -370,8 +367,6 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('', $comments[1]->getAuthor(), 'html author');
 	$this->assertEquals($gallery->getActiveUserId(), $comments[1]->getCommenterId(), 'user 2');
 	$this->assertEquals($_SERVER['REMOTE_ADDR'], $comments[1]->getHost(), 'host 2');
-	$this->assert($comments[1]->getDate() >= $this->_startTime &&
-		      $comments[1]->getDate() <= time(), 'time 2');
     }
 
     function testAddMaliciousCommentGuest() {
@@ -585,6 +580,21 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	    return $ret;
 	}
 	$this->assertEquals(array(), $comments, 'no comments');
+    }
+}
+
+/**
+ * Mock PHP VM
+ */
+class CommentTestPhpVm {
+    function time() {
+	list ($ret, $commentTime) = GalleryCommentHelper::getLatestCommentTime(
+	    GalleryUtilities::getRemoteHostAddress());
+	if ($ret) {
+	    return $ret;
+	}
+	$commentTime += 1000;
+	return $commentTime;
     }
 }
 

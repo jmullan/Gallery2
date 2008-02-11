@@ -278,6 +278,44 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
     }
 
     /**
+     * Return the timestamp of the most recent comment from this IP
+     *
+     * @param int $hostId IP address in question
+     * @return array GalleryStatus a status code,
+     *               int latest comment time
+     */
+    function getLatestCommentTime($hostId) {
+	global $gallery;
+
+	$data = array($hostId);
+	$query = '
+	SELECT
+	  [GalleryComment::date]
+	FROM
+	  [GalleryComment]
+	WHERE
+	  [GalleryComment::host] = ?
+	ORDER BY
+	  [GalleryComment::date] DESC
+        ';
+	list ($ret, $searchResults) = $gallery->search(
+	    $query, $data, array('limit' => array('count' => 1)));
+
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$result = $searchResults->nextResult();
+	if ($result) {
+	    $result = (int)$result[0];
+	} else {
+	    $result = 0;
+	}
+
+	return array(null, $result);
+    }
+    
+    /**
      * Get information needed for the AddComment page
      *
      * @param GalleryItem $item to work from
