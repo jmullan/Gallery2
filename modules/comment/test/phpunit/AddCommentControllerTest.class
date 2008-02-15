@@ -141,6 +141,38 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	    $results, 'Flood Comment');
     }
 
+    function testAddCommentDifferentIp() {
+	global $gallery;
+
+	/* Use valid inputs */
+	$_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form[action][add]', 1);
+	GalleryUtilities::putRequestVariable('form[subject]', 'this is a subject');
+	GalleryUtilities::putRequestVariable('form[comment]', 'this is a comment');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('redirect' => array(
+		      'view' => 'comment.CommentChangeConfirmation',
+		      'itemId' => $this->_item->getId()),
+		  'status' => array('added' => 1),
+		  'error' => array()),
+	    $results, 'First Comment');
+
+	/* Perform the second request from different IP and verify that we succeeded */
+	$_SERVER['REMOTE_ADDR'] = '1.2.3.4';
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('redirect' => array(
+		      'view' => 'comment.CommentChangeConfirmation',
+		      'itemId' => $this->_item->getId()),
+		  'status' => array('added' => 1),
+		  'error' => array()),
+	    $results, 'Second Comment');
+    }
+
     function testAddCommentGuest() {
 	global $gallery;
 

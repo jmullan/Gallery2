@@ -469,6 +469,20 @@ class CommentTest extends GalleryTestCase {
 
 	$this->assert($akismet->wasCalled('submitHam'));
     }
+    
+    function testGetLatestCommentTime() {
+	list ($ret, $commentTime) = GalleryCommentHelper::getLatestCommentTime('301.302.303.304');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(0, $commentTime, 'No comments');
+	
+	list ($ret, $commentTime) = GalleryCommentHelper::getLatestCommentTime('127.0.0.1');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals($this->_comment[3]->getDate(), $commentTime, 'Comment 4');
+    }
 }
 
 class CommentTest_MockAkismetApi {

@@ -280,14 +280,14 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
     /**
      * Return the timestamp of the most recent comment from this IP
      *
-     * @param int $hostId IP address in question
+     * @param int $hostAddress IP address in question
      * @return array GalleryStatus a status code,
      *               int latest comment time
      */
-    function getLatestCommentTime($hostId) {
+    function getLatestCommentTime($hostAddress) {
 	global $gallery;
 
-	$data = array($hostId);
+	$data = array($hostAddress);
 	$query = '
 	SELECT
 	  [GalleryComment::date]
