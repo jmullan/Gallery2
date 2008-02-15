@@ -14,7 +14,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
+ *ten You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
@@ -37,36 +37,26 @@ if (empty($SRCDIR)) {
     if (!empty($_SERVER['SERVER_NAME'])) {
 	die("You must run this from the command line\n");
     }
-    
+
     $quiet = false;
-    $path = null;
+    $path = '';
     array_shift($argv);
-    
+
     for ($i = 0; $i < count($argv); $i++) {
 	if ($argv[$i] === '-q') {
 	    $quiet = true;
 	} else if ($argv[$i] === '-p') {
 	    $path = $argv[++$i];
+	    if (!file_exists($path)) {
+		die("The directory '$path' does not exist");
+	    } else if (!is_dir($path)) {
+		die("The specified path ('$path') is not a directory");
+	    } else if (!preg_match('#^(modules|themes)(/\w+)?/?$#', $path)) {
+		die("The path '$path' must be a relative path to a plugin (e.g. modules/core)");
+	    }
 	}
     }
-    
-    /* Just so we are consistent lets standardize on Unix path sepearators */
-    $baseDir = dirname(dirname(dirname(dirname(__FILE__)))) . '/';
-    $baseDir = str_replace("\\", '/', $baseDir);
-    chdir($baseDir);
-    
-    if (empty($path)) {
-	$path = $baseDir;
-    } else if (!file_exists($path)) {
-	die("The directory '$path' does not exist");
-    } else if (!is_dir($path)) {
-	die("The specified path ('$path') is not a directory");
-    } else if (!preg_match('#^(modules|themes)(/\w+)?/?$#', $path)) {
-	die("The path '$path' must be a relative path to a plugin (e.g. modules/core)");
-    } else {
-	$path = $baseDir . $path;
-    }
-    
+
     /**
      * If quiet mode is not enabled, display the message on standard out.
      * @param string $message Message to display.
@@ -80,16 +70,28 @@ if (empty($SRCDIR)) {
     makeManifest($path);
 }
 
-function makeManifest($path=null) {
+function makeManifest($filterPath='') {
     global $SRCDIR;
     $startTime = time();
-    
+
+    if (empty($SRCDIR)) {
+	/* Current working directory must be gallery2 folder */
+	if (!file_exists('modules') && !file_exists('themes')) {
+	    $baseDir = dirname(dirname(dirname(dirname(__FILE__)))) . '/';
+	    chdir($baseDir);
+	} else {
+	    $baseDir = getcwd();
+	}
+    } else {
+	$baseDir = $SRCDIR . '/gallery2/';
+	chdir($baseDir);
+    }
     /* Just so we are consistent lets standardize on Unix path sepearators */
-    $baseDir = empty($path) ? $SRCDIR . '/gallery2/' : $path;
-    chdir($baseDir);
-    
+    $baseDir = str_replace("\\", '/', $baseDir);
+    $baseDir .= substr($baseDir, -1) == '/' ? '' : '/';
+
     quiet_print("Finding all files...");
-    $entries = listSvn($baseDir);
+    $entries = listSvn($filterPath);
 
     quiet_print("Sorting...");
     sort($entries);
@@ -99,20 +101,20 @@ function makeManifest($path=null) {
     quiet_print("Separating into sections...");
     foreach ($entries as $file) {
 	$matches = array();
-	if (preg_match('#(^.*)((modules|layouts|themes)[\\/].*?)[\\/]#', $file, $matches) !== 0) {
-	    $sections["{$matches[2]}/MANIFEST"][] = $file;
+	if (preg_match('#((modules|layouts|themes)[\\/].*?)[\\/]#', $file, $matches) !== 0) {
+	    $sections["{$matches[1]}/MANIFEST"][] = $file;
 	} else {
 	    $sections['MANIFEST'][] = $file;
 	}
     }
-    
+
     /* Now generate the checksum files */
     quiet_print("Generating checksums...");
     $changed = 0;
     $total = 0;
-    
+
     foreach ($sections as $manifest => $entries) {
-	$oldLines = file($manifest);
+	$oldLines = file($baseDir . $manifest);
 	$oldContent = implode('', $oldLines);
 	$nl = preg_match('/\r\n/', $oldContent) ? "\r\n" : "\n";
 	$matches = array();
@@ -121,15 +123,16 @@ function makeManifest($path=null) {
     
 	$newContent = "# \$Revi" . "sion: $oldRevision\$$nl";
 	$newContent .= "# File crc32 crc32(crlf) size size(crlf)  or  R File$nl";
-    
+
 	$deleted = $seen = array();
 	foreach ($entries as $entry) {
 	    list ($file, $isBinary) = preg_split('/\@\@/', $entry);
-	    
-	    if (preg_match('/deleted:(.*)/', $file, $matches)) {
+	    $relativeFilePath = $file;
+	    $file = $baseDir . $file;
+	    if (preg_match('/deleted:(.*)/', $relativeFilePath, $matches)) {
 		$deleted[$matches[1]] = true;
 	    } else {
-		$seen[$file] = true;
+		$seen[$relativeFilePath] = true;
 		$fileHandle = fopen($file, 'rb');
 		$fileSize = filesize($file);
 		$data = fread($fileHandle, $fileSize);
@@ -150,9 +153,8 @@ function makeManifest($path=null) {
 		
 		$cksum = crc32($data);
 		$cksum_crlf = crc32($data_crlf);
-		$file = substr($file, strlen($baseDir));
-		$newContent .= 
-		    sprintf("$file\t%u\t%u\t%d\t%d$nl", $cksum, $cksum_crlf, $size, $size_crlf);
+		$newContent .= sprintf("$relativeFilePath\t%u\t%u\t%d\t%d$nl",
+		    $cksum, $cksum_crlf, $size, $size_crlf);
 	    }
 	}
     
@@ -162,13 +164,13 @@ function makeManifest($path=null) {
 		    continue;
 		}
 		if (preg_match('/^R\t(.*)$/', $line, $matches)) {
-		    $file = $baseDir . trim($matches[1]);
+		    $file = trim($matches[1]);
 		    if (empty($seen[$file])) {
 			$deleted[$file] = true;
 		    }
 		} else {
 		    preg_match('/^(.+?)\t/', $line, $matches);
-		    $file = $baseDir . trim($matches[1]);
+		    $file = trim($matches[1]);
 		    if (empty($seen[$file])) {
 			$deleted[$file] = true;
 		    }
@@ -176,13 +178,12 @@ function makeManifest($path=null) {
 	    }
     
 	    foreach ($deleted as $file => $unused) {
-		$file = substr($file, strlen($baseDir));
 		$newContent .= "R\t$file$nl";
 	    }
 	}
     
 	if ($oldContent != $newContent) {
-	    file_put_contents($manifest, $newContent);
+	    file_put_contents($baseDir . $manifest, $newContent);
 	    $changed++;
 	}
 	$total++;    
@@ -194,14 +195,14 @@ function makeManifest($path=null) {
 
 /**
  * Retrieve the SVN Entries
- * @param string $path Path to create retrieve the SVN entries for.
+ * @param string $filterpath Path to create retrieve the SVN entries for.
  * @return array List of SVN entries
  */
-function listSvn($path) {
+function listSvn($filterpath) {
     $entries = array();
 
     $binaryList = array();
-    exec("svn propget --non-interactive -R svn:mime-type $path", $output);
+    exec("svn propget --non-interactive -R svn:mime-type $filterpath", $output);
     foreach ($output as $line) {
 	$parts = preg_split('/\s-\s/', $line);
 	$file = str_replace("\\", '/', $parts[0]);
@@ -209,7 +210,7 @@ function listSvn($path) {
     }
 
     $output = array();
-    exec("svn status --non-interactive -v -q $path", $output);
+    exec("svn status --non-interactive -v -q $filterpath", $output);
     foreach ($output as $line) {
 	$matches = array();
 	if (preg_match('/^(.).....\s*\d+\s+[\d|\?]+\s+\S+\s+(.*)$/', $line, $matches) == 0) {
