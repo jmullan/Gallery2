@@ -147,6 +147,9 @@ class RepositoryDescriptor extends RepositoryObject {
 	if (!isset($this->_pluginDir)) {
 	    $this->_pluginDir = $platform->realpath(sprintf('%s%ss/%s/', 
 		GalleryCoreApi::getCodeBasePath(), $pluginType, $this->_pluginId));
+	    if (!in_array(substr($this->_pluginDir, -1), array('/', '\\'))) {
+		$this->_pluginDir .= '/';
+	    }
 	}
 
 	if (!$platform->file_exists($this->_pluginDir . 'MANIFEST')) {
