@@ -329,5 +329,30 @@ class WatermarkOptionTest extends ItemAddOptionTestCase {
 	    $this->assertEquals($expected, $derivative->getPostFilterOperations());
 	}
     }
+
+    function testWatermarkWatermarkIdInvalid() {
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'watermark');
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+
+	$form['WatermarkOption']['watermarkId'] = -1;
+	$result = $this->_handleRequestAfterAdd($form, $this->_items);
+
+	$message = $module->translate('Error: Missing watermark. Please see the Event Logs page in '
+				       . 'the Site Admin.');
+
+	$this->assertEquals(array(array($message), $this->_noWarnings), $result);
+
+	list ($ret, $derivative) = $this->_itemThumbnails[0]->refresh();
+	if ($ret) {
+	    return $ret;
+	}
+
+	/* For Oracle, null is replaced with '' when loading data from the database */
+	$this->assert(in_array($derivative->getPostFilterOperations(), array(null, '')),
+		      'postFilterOperations not empty');
+	$this->assertEquals(1, $derivative->getSerialNumber());
+    }
 }
 ?>

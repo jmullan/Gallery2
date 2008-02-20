@@ -89,24 +89,43 @@ class WatermarkOption extends ItemAddOption {
 	    $form['WatermarkOption']['watermarkId'] = $params['defaultWatermarkId'];
 	}
 
-	foreach ($items as $i => $item) {
-	    if (!empty($form['WatermarkOption']['watermarkId'])
-		    && GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
-		list ($ret, $watermark) = GalleryCoreApi::loadEntitiesById(
-		    $form['WatermarkOption']['watermarkId'], 'WatermarkImage');
+	if (!empty($form['WatermarkOption']['watermarkId'])) {
+	    list ($ret, $watermark) = GalleryCoreApi::loadEntitiesById(
+		$form['WatermarkOption']['watermarkId'], 'WatermarkImage');
+	    if ($ret) {
+		if (!$ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		    return array($ret, null, null);
+		}
+		$ret = GalleryCoreApi::addEventLogEntry('WATERMARK ERROR', 
+		    'Watermark doesn\'t exist', $form['WatermarkOption']['watermarkId']);
 		if ($ret) {
 		    return array($ret, null, null);
 		}
-		$watermarkArray =
-		    array(DERIVATIVE_TYPE_IMAGE_THUMBNAIL => $watermark->getApplyToThumbnail(),
-			  DERIVATIVE_TYPE_IMAGE_RESIZE => $watermark->getApplyToResizes(),
-			  DERIVATIVE_TYPE_IMAGE_PREFERRED => $watermark->getApplyToPreferred());
-		$ret = WatermarkHelper::watermarkItem($watermark, $item,
-						      $watermark->getXPercentage(),
-						      $watermark->getYPercentage(),
-						      $watermarkArray);
+
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'watermark');
 		if ($ret) {
 		    return array($ret, null, null);
+		}
+		$message = 
+		    $module->translate('Error: Missing watermark. Please see the Event Logs '
+				       . 'page in the Site Admin.');
+
+		return array(null, array($message), array());
+	    }
+
+	    foreach ($items as $i => $item) {
+		if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
+		    $watermarkArray =
+			array(DERIVATIVE_TYPE_IMAGE_THUMBNAIL => $watermark->getApplyToThumbnail(),
+			      DERIVATIVE_TYPE_IMAGE_RESIZE => $watermark->getApplyToResizes(),
+			      DERIVATIVE_TYPE_IMAGE_PREFERRED => $watermark->getApplyToPreferred());
+		    $ret = WatermarkHelper::watermarkItem($watermark, $item,
+							  $watermark->getXPercentage(),
+							  $watermark->getYPercentage(),
+							  $watermarkArray);
+		    if ($ret) {
+			return array($ret, null, null);
+		    }
 		}
 	    }
 	}
