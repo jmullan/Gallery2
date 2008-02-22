@@ -333,7 +333,7 @@ class WatermarkOptionTest extends ItemAddOptionTestCase {
     function testWatermarkWatermarkIdInvalid() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'watermark');
 	if ($ret) {
-	    return array($ret, null, null);
+	    return $ret;
 	}
 
 	$form['WatermarkOption']['watermarkId'] = -1;

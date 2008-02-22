@@ -232,7 +232,7 @@ class WatermarkHelper {
 
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'watermark');
 	if ($ret) {
-	    return array($ret, null, null);
+	    return array($ret, null);
 	}
 
 	if (!empty($params['defaultWatermarkId']) && $params['defaultWatermarkId'] == $itemId) {
