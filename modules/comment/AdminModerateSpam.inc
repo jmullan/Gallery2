@@ -114,7 +114,7 @@ class AdminModerateSpamView extends GalleryView {
 
 	list ($ret, $comments, $count) = GalleryCommentHelper::fetchAllComments(
 	    $rootId, $showCount, ($page - 1) * $showCount, ORDER_DESCENDING,
-	    COMMENT_PUBLISH_STATUS_SPAM);
+	    array(COMMENT_PUBLISH_STATUS_SPAM, COMMENT_PUBLISH_STATUS_UNPUBLISHED));
 	if ($ret) {
 	    return array($ret, null);
 	}

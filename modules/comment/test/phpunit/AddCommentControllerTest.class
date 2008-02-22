@@ -59,6 +59,10 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'comment', 'comments.moderate', 0);
+	if ($ret) {
+	    return $ret;
+	}
 	$this->_startTime = time();
     }
 

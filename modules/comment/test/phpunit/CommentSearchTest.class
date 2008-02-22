@@ -49,6 +49,16 @@ class CommentSearchTest extends GalleryTestCase {
 	    return $this->assert(false, 'Search module not installed');
 	}
 
+	$ret = $this->_markPluginParametersForCleanup('module', 'comment');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'comment', 'comments.moderate', 0);
+	if ($ret) {
+	    return $ret;
+	}
+
 	list ($ret, $groupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
 	if ($ret) {

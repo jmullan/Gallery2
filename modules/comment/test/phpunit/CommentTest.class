@@ -39,6 +39,16 @@ class CommentTest extends GalleryTestCase {
 	   return $ret;
 	}
 
+	$ret = $this->_markPluginParametersForCleanup('module', 'comment');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'comment', 'comments.moderate', 0);
+	if ($ret) {
+	    return $ret;
+	}
+
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    return $ret;
@@ -50,8 +60,8 @@ class CommentTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	/* Create 4 comments.  The 4th one is unpublished. */
-	for ($i = 0; $i < 4; $i++) {
+	/* Create 5 comments.  The 4th one is unpublished, the 5th is spam. */
+	for ($i = 0; $i < 5; $i++) {
 	    list ($ret, $this->_comment[$i]) =
 		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
 	    if ($ret) {
@@ -66,6 +76,9 @@ class CommentTest extends GalleryTestCase {
 	    $this->_comment[$i]->setDate(time()+$i);
 	    if ($i == 3) {
 		$this->_comment[$i]->setPublishStatus(COMMENT_PUBLISH_STATUS_UNPUBLISHED);
+	    }
+	    if ($i == 4) {
+		$this->_comment[$i]->setPublishStatus(COMMENT_PUBLISH_STATUS_SPAM);
 	    }
 	    $ret = $this->_comment[$i]->save();
 	    if ($ret) {
@@ -154,12 +167,13 @@ class CommentTest extends GalleryTestCase {
 			    $comments, 'guest');
 
 	list ($ret, $comments) = GalleryCommentHelper::fetchAllComments(
-	    $this->_album->getId(), 4, null, ORDER_ASCENDING, null);
+	    $this->_album->getId(), 5, null, ORDER_ASCENDING, null);
 	if ($ret) {
 	    return $ret;
 	}
 	$this->assertEquals(array($this->_comment[0], $this->_comment[1],
-				  $this->_comment[2], $this->_comment[3]),
+				  $this->_comment[2], $this->_comment[3],
+				  $this->_comment[4]),
 			    $comments, 'all publish status types');
 
 	list ($ret, $comments) =
@@ -344,12 +358,82 @@ class CommentTest extends GalleryTestCase {
 	$this->assertEquals(array($this->_comment[3]), $comments);
     }
 
-    function testSaveCommentChecksWithAkismetWhenAkismetActive() {
-	$ret = $this->_markPluginParametersForCleanup('module', 'comment');
+    function testFetchAllCommentsWithPublishStatuses() {
+	list ($ret, $comments) = GalleryCommentHelper::fetchAllComments(
+	    $this->_item->getId(), null, null, ORDER_ASCENDING,
+	    array(COMMENT_PUBLISH_STATUS_UNPUBLISHED, COMMENT_PUBLISH_STATUS_SPAM));
 	if ($ret) {
 	    return $ret;
 	}
 
+	$this->assertEquals(array($this->_comment[3], $this->_comment[4]), $comments);
+    }
+
+    function testSaveCommentWithCommentsModerateActive() {
+	global $gallery;
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'comment', 'comments.moderate', 1);
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $item2) = $this->_createRandomDataItem($this->_album->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $comment) =
+	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$comment->create($item2->getId());
+	$comment->setCommenterId($gallery->getActiveUserId());
+	$comment->setHost('127.0.0.1');
+	$comment->setComment('this is a test comment');
+	$comment->setDate(time() + 5);
+	$ret = $comment->save();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals($comment->getPublishStatus(), COMMENT_PUBLISH_STATUS_UNPUBLISHED);
+    }
+
+    function testSaveCommentWithCommentsModerateIsInactive() {
+	global $gallery;
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'comment', 'comments.moderate', 0);
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $item2) = $this->_createRandomDataItem($this->_album->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $comment) =
+	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$comment->create($item2->getId());
+	$comment->setCommenterId($gallery->getActiveUserId());
+	$comment->setHost('127.0.0.1');
+	$comment->setComment('this is a test comment');
+	$comment->setDate(time() + 5);
+	$ret = $comment->save();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals($comment->getPublishStatus(), COMMENT_PUBLISH_STATUS_PUBLISHED);
+    }
+
+    function testSaveCommentChecksWithAkismetWhenAkismetActive() {
 	list ($ret, $akismetActive) =
 	    GalleryCoreApi::setPluginParameter('module', 'comment', 'akismet.active', 1);
 	if ($ret) {
@@ -366,11 +450,6 @@ class CommentTest extends GalleryTestCase {
     }
 
     function testSaveCommentDoesntCheckWithAkismetWhenAkismetIsInactive() {
-	$ret = $this->_markPluginParametersForCleanup('module', 'comment');
-	if ($ret) {
-	    return $ret;
-	}
-
 	list ($ret, $akismetActive) =
 	    GalleryCoreApi::setPluginParameter('module', 'comment', 'akismet.active', 0);
 	if ($ret) {
@@ -387,11 +466,6 @@ class CommentTest extends GalleryTestCase {
     }
 
     function testSaveCommentDoesntCheckWithAkismetWhenListenerIsDisabled() {
-	$ret = $this->_markPluginParametersForCleanup('module', 'comment');
-	if ($ret) {
-	    return $ret;
-	}
-
 	list ($ret, $akismetActive) =
 	    GalleryCoreApi::setPluginParameter('module', 'comment', 'akismet.active', 0);
 	if ($ret) {
@@ -481,7 +555,7 @@ class CommentTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$this->assertEquals($this->_comment[3]->getDate(), $commentTime, 'Comment 4');
+	$this->assertEquals($this->_comment[4]->getDate(), $commentTime, 'Comment 4');
     }
 }
 

@@ -5,7 +5,7 @@
 {include file="gallery:modules/comment/templates/ChangeComment.js.tpl"}
 
 <div class="gbBlock gcBackground1">
-  <h2> {g->text text="Spam Comments"} </h2>
+  <h2> {g->text text="Comments Awaiting Moderation"} </h2>
 </div>
 
 {if isset($status.allSpamDeleted)}
@@ -16,7 +16,7 @@
 
 {if empty($AdminModerateSpam.comments)}
 <div class="gbBlock">
-  <h3> {g->text text="There are no spam comments in the queue."} </h3>
+  <h3> {g->text text="There are no comments awaiting moderation."} </h3>
 </div>
 {else}
 <div class="gbBlock">

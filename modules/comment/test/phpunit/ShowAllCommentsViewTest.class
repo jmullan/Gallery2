@@ -39,6 +39,16 @@ class ShowAllCommentsViewTest extends GalleryViewTestCase {
 	   return $ret;
 	}
 
+	$ret = $this->_markPluginParametersForCleanup('module', 'comment');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'comment', 'comments.moderate', 0);
+	if ($ret) {
+	    return $ret;
+	}
+
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    return $ret;

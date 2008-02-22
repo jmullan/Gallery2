@@ -43,7 +43,8 @@ class CommentSiteAdminControllerTest extends GalleryControllerTestCase {
 	    return $ret;
 	}
 
-	foreach (array('akismet.apiKey' => '', 'akismet.active' => '0') as $key => $value) {
+	foreach (array('akismet.apiKey' => '', 'akismet.active' => '0',
+		       'comments.moderate' => '0') as $key => $value) {
 	    $value = GalleryCoreApi::setPluginParameter('module', 'comment', $key, $value);
 	    if ($ret) {
 		return $ret;
@@ -65,6 +66,7 @@ class CommentSiteAdminControllerTest extends GalleryControllerTestCase {
     function testCommentSiteAdminControllerSave() {
 	GalleryUtilities::putRequestVariable('form[latest]', 1);
 	GalleryUtilities::putRequestVariable('form[show]', '12');
+	GalleryUtilities::putRequestVariable('form[moderate]', 1);
 	GalleryUtilities::putRequestVariable('form[apiKey]', '3abX');
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
@@ -78,6 +80,7 @@ class CommentSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	foreach (array('comments.latest' => '1',
 		       'comments.show' => '12',
+		       'comments.moderate' => '1',
 		       'akismet.apiKey' => '3abX',
 		       'akismet.active' => '1') as $key => $expectedValue) {
 	    list ($ret, $value) =

@@ -171,7 +171,17 @@ class GalleryComment extends GalleryChildEntity {
 	$this->setComment(null);
 	$this->setDate(time());
 	$this->setAuthor(null);
-	$this->setPublishStatus(COMMENT_PUBLISH_STATUS_PUBLISHED);
+
+	list ($ret, $moderate) =
+	    GalleryCoreApi::getPluginParameter ('module', 'comment', 'comments.moderate');
+	if ($ret) {
+	    return $ret;
+	}
+	if ($moderate) {
+	    $this->setPublishStatus(COMMENT_PUBLISH_STATUS_UNPUBLISHED);
+        } else {
+	    $this->setPublishStatus(COMMENT_PUBLISH_STATUS_PUBLISHED);
+	}
     }
 
     function getCommenterId() {

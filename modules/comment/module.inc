@@ -40,7 +40,7 @@ class CommentModule extends GalleryModule {
 	$this->setId('comment');
 	$this->setName($gallery->i18n('Comments'));
 	$this->setDescription($gallery->i18n('User commenting system'));
-	$this->setVersion('1.1.11'); /* Update upgrade() function below too */
+	$this->setVersion('1.1.12'); /* Update upgrade() function below too */
 	$this->_templateVersion = 1;
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
 	$this->setCallbacks('getItemLinks|getItemSummaries|' .
@@ -85,7 +85,7 @@ class CommentModule extends GalleryModule {
 	     }
 
 	     foreach (array('comments.show' => 10, 'comments.latest' => 1,
-			    'validation.level' => 'HIGH')
+			    'comments.moderate' => 0, 'validation.level' => 'HIGH')
 		     as $key => $value) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret) {
@@ -172,7 +172,12 @@ class CommentModule extends GalleryModule {
 	case '1.1.9':
 	    /* Combined YUI libraries into a single utilities.js file */ 
 	case '1.1.10':
-
+	case '1.1.11':
+	    /* Add Comment Moderation Queue Support */
+	    $ret = $this->setParameter('comments.moderate', 0);
+	    if ($ret) {
+		return $ret;
+	    }
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -328,7 +333,7 @@ class CommentModule extends GalleryModule {
 	return array(null,
 		     array(array('name' => $this->translate('Comments'),
 				 'view' => 'comment.CommentSiteAdmin'),
-			   array('name' => $this->translate('Moderate Spam'),
+			   array('name' => $this->translate('Moderate Comments'),
 				 'view' => 'comment.AdminModerateSpam')));
     }
 

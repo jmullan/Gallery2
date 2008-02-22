@@ -44,6 +44,23 @@
 </div>
 
 <div class="gbBlock">
+  <h3> {g->text text="Moderation Settings"} </h3>
+  <p class="giDescription">
+    {g->text text="Require administrator approval prior to publishing comments."}
+  </p>
+  <table class="gbDataTable"><tr>
+    <td>
+      <label for="cbModerate">
+	{g->text text="Moderate all comments:"}
+      </label>
+    </td><td>
+      <input type="checkbox" id="cbModerate" {if $form.moderate} checked="checked"{/if}
+       name="{g->formVar var="form[moderate]"}"/>
+    </td>
+  </tr></table>
+</div>
+
+<div class="gbBlock">
   <h3> {g->text text="Anti-Spam Settings"} </h3>
   <p class="giDescription">
     {g->text text="You can reduce the amount of spam comments that you receive by using a service called %sAkismet%s.  This service is free for personal use.  In order to use it, you will need to %sregister for an API key%s and enter that key in the box below." arg1="<a href=\"http://akismet.com\">" arg2="</a>" arg3="<a href=\"http://akismet.com/personal\">" arg4="</a>"}

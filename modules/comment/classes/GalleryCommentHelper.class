@@ -113,8 +113,9 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
      * @param int $count (optional) max number to retrieve
      * @param int $offset (optional) start of the range
      * @param string $orderDirection (optional) ORDER_DESCENDING to list newest first
-     * @param int $publishStatus One of the COMMENT_PUBLISH_STATUS_XXX constants or null to
-     *            get all comments
+     * @param mixed $publishStatus (optional) A single COMMENT_PUBLISH_STATUX_XXX constant, an array
+     *               of constants or null to get all comments. Default is
+     *               COMMENT_PUBLISH_STATUS_PUBLISHED.
      * @return array GalleryStatus a status code,
      *               array (entityId => GalleryComment, ...)
      *               int total number of comments available
@@ -168,9 +169,10 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	 AND
 	   [GalleryAccessSubscriberMap::itemId] = [GalleryItemAttributesMap::itemId]';
 	if ($publishStatus !== null) {
+	    $statusMarkers = GalleryUtilities::makeMarkers(count($publishStatus));
 	    $queryBase .= '
 	 AND
-	   [GalleryComment::publishStatus] = ?';
+	   [GalleryComment::publishStatus] IN (' . $statusMarkers . ')';
 	}
 	$queryBase .= '
 	 AND
@@ -188,7 +190,11 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	';
 	$data = array((int)$itemId, $sequence);
 	if ($publishStatus !== null) {
-	    $data[] = $publishStatus;
+	    if (!is_array($publishStatus)) {
+		$data[] = $publishStatus;
+	    } else {
+		$data = array_merge($data, $publishStatus);
+	    }
 	};
 	$data = array_merge($data, $aclIds);
 

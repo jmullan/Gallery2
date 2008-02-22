@@ -93,6 +93,11 @@ class CommentSiteAdminController extends GalleryController {
 		    return array($ret, null);
 		}
 
+		$ret = $module->setParameter('comments.moderate', !empty($form['moderate']));
+		if ($ret) {
+		    return array($ret, null);
+		}
+
 		$ret = $module->setParameter('akismet.apiKey', $form['apiKey']);
 		if ($ret) {
 		    return array($ret, null);
@@ -255,10 +260,12 @@ class CommentSiteAdminView extends GalleryView {
 
 	    $form['latest'] = isset($params['comments.latest']) ? $params['comments.latest'] : '';
 	    $form['show'] = $params['comments.show'];
+	    $form['moderate'] = !empty($params['comments.moderate']);
 	    $form['apiKey'] = isset($params['akismet.apiKey']) ? $params['akismet.apiKey'] : '';
-	} else if (!isset($form['latest'])) {
-	    $form['latest'] = false;
 	}
+
+	$form['latest'] = !empty($form['latest']);
+	$form['moderate'] = !empty($form['moderate']);
 
 	$CommentSiteAdmin = array();
 	$CommentSiteAdmin['akismetActive'] = !empty($params['akismet.active']);
