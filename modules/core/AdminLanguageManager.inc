@@ -47,16 +47,16 @@ class AdminLanguageManagerController extends AdminRepositoryDownloadAndInstallCo
 	$results = $status = $error = array();
 
 	if (!empty($form['save'])) {
-	    /*
-	     * We can update the general settings from 1 of two places: either here if there were
-	     * no local repositories; or as part of the progressBar call back.
-	     */
-	    foreach ($form['languageAction'] as $language => $action) {
-		if ($action == 'reset') {
-		    unset($form['languageAction'][$language]);
-		}
-	    }
 	    if (!empty($form['languageAction'])) {
+		/*
+		 * We can update the general settings from 1 of two places: either here if there 
+		 * were no local repositories; or as part of the progressBar call back.
+		 */
+		foreach ($form['languageAction'] as $language => $action) {
+		    if ($action == 'reset') {
+			unset($form['languageAction'][$language]);
+		    }
+		}
 		$templateAdapter->registerTrailerCallback(array($this, 'updateLanguageSettings'),
 		    array($form));
 		$delegate['view'] = 'core.ProgressBar';
