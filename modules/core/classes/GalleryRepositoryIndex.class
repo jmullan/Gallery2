@@ -581,7 +581,8 @@ class GalleryRepositoryIndex {
 			if ($hasPackage) {
 			    $package = $pluginPackages[$packageName];
 			    $includePackage = !$package['locked']
-						  && $package['version'] < $revision[$locale];
+						  && (empty($revision[$locale])
+						      || $package['version'] < $revision[$locale]);
 			}
 			/*
 			 * We want this pack if it is not installed or if the the local revision is
