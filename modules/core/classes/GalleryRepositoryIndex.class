@@ -590,7 +590,7 @@ class GalleryRepositoryIndex {
 			 */
 			if (!empty($revision[$locale]) && (!$hasPackage || $includePackage)) {
 			    list ($ret, $packageUrl) = 
-				$this->getPackageUrl($pluginType, $pluginId, $locale);
+				$this->getPackageUrl($pluginType, $pluginId, $packageName);
 			    if ($ret) {
 				return array($ret, null);
 			    }

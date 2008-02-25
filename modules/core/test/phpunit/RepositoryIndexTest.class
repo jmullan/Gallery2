@@ -550,10 +550,10 @@ class RepositoryIndexTest extends GalleryTestCase {
 	$expected = array(
 	    'module' => array('testModule' => array('name' => 'Test Module',
 		'files' => array('descriptor' => 'modules/testModule-1.0.0-44444.descriptor',
-				 'en_GB' => 'modules/testModule-1.0.0-44444-en_GB.package'))),
+				 'en_GB' => 'modules/testModule-lang-en_GB-22222-33333.package'))),
 	    'theme' => array('testTheme' => array('name' => 'Test Theme',
 		'files' => array('descriptor' => 'themes/testTheme-1.0.0-11111.descriptor',
-				 'en_GB' => 'themes/testTheme-1.0.0-11111-en_GB.package'))));
+				 'en_GB' => 'themes/testTheme-lang-en_GB-22222-22222.package'))));
 	$this->assertEquals($expected, $files, 'Unexpected results for single language');
     }
 
@@ -582,12 +582,12 @@ class RepositoryIndexTest extends GalleryTestCase {
 	$expected = array(
 	    'module' => array('testModule' => array('name' => 'Test Module',
 		'files' => array('descriptor' => 'modules/testModule-1.0.0-44444.descriptor',
-				 'en_GB' => 'modules/testModule-1.0.0-44444-en_GB.package',
-				 'pt_BR' => 'modules/testModule-1.0.0-44444-pt_BR.package'))),
+				 'en_GB' => 'modules/testModule-lang-en_GB-22222-33333.package',
+				 'pt_BR' => 'modules/testModule-lang-pt_BR-22222-33333.package'))),
 	    'theme' => array('testTheme' => array('name' => 'Test Theme',
 		'files' => array('descriptor' => 'themes/testTheme-1.0.0-11111.descriptor',
-				 'en_GB' => 'themes/testTheme-1.0.0-11111-en_GB.package',
-				 'pt_BR' => 'themes/testTheme-1.0.0-11111-pt_BR.package'))));
+				 'en_GB' => 'themes/testTheme-lang-en_GB-22222-22222.package',
+				 'pt_BR' => 'themes/testTheme-lang-pt_BR-22222-33333.package'))));
 	$this->assertEquals($expected, $files, 'Unexpected results for multiple languages');
     }
 
@@ -620,8 +620,8 @@ class RepositoryIndexTest extends GalleryTestCase {
 	$expected = array(
 	    'module' => array('testModule' => array('name' => 'Test Module',
 		'files' => array('descriptor' => 'modules/testModule-1.0.0-44444.descriptor',
-				 'en_GB' => 'modules/testModule-1.0.0-44444-en_GB.package',
-				 'pt_BR' => 'modules/testModule-1.0.0-44444-pt_BR.package'))));
+				 'en_GB' => 'modules/testModule-lang-en_GB-22222-33333.package',
+				 'pt_BR' => 'modules/testModule-lang-pt_BR-22222-33333.package'))));
 	$this->assertEquals($expected, $files, 'Unexpected results for multiple languages');
     }
 
@@ -650,8 +650,8 @@ class RepositoryIndexTest extends GalleryTestCase {
 	$expected = array(
 	    'module' => array('testModule' => array('name' => 'Test Module',
 		'files' => array('descriptor' => 'modules/testModule-1.0.0-44444.descriptor',
-				 'en_GB' => 'modules/testModule-1.0.0-44444-en_GB.package',
-				 'pt_BR' => 'modules/testModule-1.0.0-44444-pt_BR.package'))));
+				 'en_GB' => 'modules/testModule-lang-en_GB-22222-33333.package',
+				 'pt_BR' => 'modules/testModule-lang-pt_BR-22222-33333.package'))));
 	$this->assertEquals($expected, $files, 'Unexpected results for multiple languages');
     }
 
