@@ -61,6 +61,19 @@ class RepositoryTest extends GalleryTestCase {
      */
     function testUpgrade() {
 	global $gallery;
+
+	$cacheKey = 'GalleryTranslator::SupportedLanguages';
+	$supportedLanguages = array();
+
+	/* English */
+	$supportedLanguages['en']['US']['description'] = 'English (US)';
+	$supportedLanguages['en']['GB']['description'] = 'English (UK)';
+
+	/* Portuguese */
+	$supportedLanguages['pt']['BR']['description'] = 'Portugu&#234;s Brasileiro';
+	$supportedLanguages['pt']['PT']['description'] = 'Portugu&#234;s';
+	GalleryDataCache::put($cacheKey, $supportedLanguages);
+
 	$testcases = array(array( /* case 1 */
 	    'installedPackages' => array(
 		'base' => array('version' => '1.0.0', 'build' => '19710411131300', 'locked' => 0)),
@@ -1311,6 +1324,18 @@ class RepositoryTest extends GalleryTestCase {
 	    $utilities->setReply('compareRevisions', array($currentBuild, '33333'), 'older');
 	}
 	$repository->_utilities =& $utilities;
+
+	$cacheKey = 'GalleryTranslator::SupportedLanguages';
+	$supportedLanguages = array();
+
+	/* English */
+	$supportedLanguages['en']['US']['description'] = 'English (US)';
+	$supportedLanguages['en']['GB']['description'] = 'English (UK)';
+
+	/* Portuguese */
+	$supportedLanguages['pt']['BR']['description'] = 'Portugu&#234;s Brasileiro';
+	$supportedLanguages['pt']['PT']['description'] = 'Portugu&#234;s';
+	GalleryDataCache::put($cacheKey, $supportedLanguages);
 
 	return array($repository, $languages);
     }

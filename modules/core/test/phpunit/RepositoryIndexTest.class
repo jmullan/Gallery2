@@ -374,7 +374,25 @@ class RepositoryIndexTest extends GalleryTestCase {
     }
 
     function testGetAvailableLanguagesInPlugin() {
-	$testCases = array(
+	/* Load the cache for testing */
+	$cacheKey = 'GalleryTranslator::SupportedLanguages';
+	$supportedLanguages = array();
+
+	/* English */
+	$supportedLanguages['en']['US']['description'] = 'English (US)';
+	$supportedLanguages['en']['GB']['description'] = 'English (UK)';
+
+	/* Portuguese */
+	$supportedLanguages['pt']['BR']['description'] = 'Portugu&#234;s Brasileiro';
+	$supportedLanguages['pt']['PT']['description'] = 'Portugu&#234;s';
+	GalleryDataCache::put($cacheKey, $supportedLanguages);
+
+	$cacheKey = 'GalleryPluginHelper::getAllPluginIds(module)';
+	GalleryDataCache::put($cacheKey, array('testModule'));
+	$cacheKey = 'GalleryPluginHelper::getAllPluginIds(theme)';
+	GalleryDataCache::put($cacheKey, array('testTheme'));
+
+    	$testCases = array(
 	     array(
 		 'pluginType' => 'module',
 		 'pluginId' => 'testModule',
@@ -396,8 +414,14 @@ class RepositoryIndexTest extends GalleryTestCase {
     }
 
     function testGetAvailableLanguagesInPluginFiltered() {
+	/* Load the cache for testing */
 	$cacheKey = 'GalleryTranslator::SupportedLanguages';
 	GalleryDataCache::put($cacheKey, array('en' => array('US' => array('US English'))));
+
+	$cacheKey = 'GalleryPluginHelper::getAllPluginIds(module)';
+	GalleryDataCache::put($cacheKey, array('testModule'));
+	$cacheKey = 'GalleryPluginHelper::getAllPluginIds(theme)';
+	GalleryDataCache::put($cacheKey, array('testTheme'));
 
 	$testCases = array(
 	     array(
