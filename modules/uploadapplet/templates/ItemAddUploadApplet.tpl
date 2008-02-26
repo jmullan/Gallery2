@@ -34,6 +34,8 @@
     {foreach key=key item=value from=$ItemAddUploadApplet.override}
     <param name="GROverride_{$key}" value="{$value}"/>
     {/foreach}
+    <param name="codebase_lookup" value="false"/>
+    <param name="image" value="{g->url href="modules/slideshowapplet/applets/splash.gif"}"/>
 
     <comment>
       <embed
@@ -62,6 +64,8 @@
           {foreach key=key item=value from=$ItemAddUploadApplet.override}
           GROverride_{$key}="{$value}"
           {/foreach}
+          codebase_lookup="false"
+          image="{g->url href="modules/slideshowapplet/applets/splash.gif"}"
       >
           <noembed alt="{g->text text="Your browser doesn't support applets; you should use one of the other upload methods."}">
             {g->text text="Your browser doesn't support applets; you should use one of the other upload methods."}
