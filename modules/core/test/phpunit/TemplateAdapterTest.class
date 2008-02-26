@@ -367,7 +367,7 @@ class TemplateAdapterTest extends GalleryTestCase {
 	$platform->setReply(
 	    'stat', array($base . $filename), array(7 => 7, 9 => 9));
 	$gallery->_phpVm->setReply('md5', array($filename . ' 7 9,'), $md5Key);
-	$platform->setReply('file_exists', 
+	$platform->setReply('file_exists',
 	    array('/cache/module/_all/0/0/CombinedJavascript_' . $md5Key . '.inc'), false);
 	$platform->setReply('file_get_contents', array($base . $filename), $content);
 	$gallery->_phpVm->setReply('function_exists', array('gzencode'), false);
@@ -376,7 +376,7 @@ class TemplateAdapterTest extends GalleryTestCase {
 	$length = strlen($content);
 	$platform->setReply(
 	    'atomicWrite',
-	    array('/cache/module/_all/0/0/CombinedJavascript_' . $md5Key . '.inc', '|s:' . $length 
+	    array('/cache/module/_all/0/0/CombinedJavascript_' . $md5Key . '.inc', '|s:' . $length
 		. ':"' . $content . '";'),
 	    true);
     }
@@ -426,7 +426,7 @@ class TemplateAdapterTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	
+
 	$this->_templateAdapter->block($params, $this->_mockSmarty);
 	$this->assertEquals(
 	    array('smarty_include_tpl_file' => 'gallery:modules/core/templates/blocks/Missing.tpl',
@@ -435,27 +435,27 @@ class TemplateAdapterTest extends GalleryTestCase {
 						 'l10Domain' => 'modules_core')),
 	    $this->_mockSmarty->_includes[0]);
     }
-    
+
     /* Without compile check, i.e., happy if compiled template exists */
     function testMissingBlockNoCompileCheckTplCached() {
         global $gallery;
 	$this->_setupAdapterWithMocks();
 	$mockPlatform = new UnitTestPlatform();
-	$mockPlatform->setReply('file_exists', 
+	$mockPlatform->setReply('file_exists',
 				array('gallery:modules/core/templates/blocks/Bogus.tpl'), 1);
 	$gallery->_platform =& $mockPlatform;
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret) {
 	    return $ret;
 	}
-	
+
 	$this->_mockSmarty->_tpl_vars['l10Domain'] = 'modules_foo';
 	$params = array('type' => 'core.Bogus');
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smarty.compile_check', false);
 	if ($ret) {
 	    return $ret;
 	}
-	
+
 	$this->_templateAdapter->block($params, $this->_mockSmarty);
 	$this->assertEquals(
 	    array('smarty_include_tpl_file' => 'gallery:modules/core/templates/blocks/Bogus.tpl',
@@ -470,21 +470,21 @@ class TemplateAdapterTest extends GalleryTestCase {
         global $gallery;
 	$this->_setupAdapterWithMocks();
 	$mockPlatform = new UnitTestPlatform();
-	$mockPlatform->setReply('file_exists', 
+	$mockPlatform->setReply('file_exists',
 				array('gallery:modules/core/templates/blocks/Bogus.tpl'), 0);
 	$gallery->_platform =& $mockPlatform;
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret) {
 	    return $ret;
 	}
-	
+
 	$this->_mockSmarty->_tpl_vars['l10Domain'] = 'modules_foo';
 	$params = array('type' => 'core.Bogus');
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smarty.compile_check', false);
 	if ($ret) {
 	    return $ret;
 	}
-	
+
 	$this->_templateAdapter->block($params, $this->_mockSmarty);
 	$this->assertEquals(
 	    array('smarty_include_tpl_file' => 'gallery:modules/core/templates/blocks/Missing.tpl',
@@ -502,12 +502,14 @@ class TemplateAdapterTest extends GalleryTestCase {
 	$template->meta('test1', 'value 1');
 	$template->meta('test2', 'value 2', true);
 	$template->style('/test.css');
+	$template->link(array('attr1' => 'value1', 'attr2' => 'value2'));
 	$template->javascript('http://test.com/test.js?foo');
 
 	$expected = array(
 	    '',
 	    '<title>My Test Page</title>',
 	    '<link rel="stylesheet" type="text/css" href="/test.css"/>',
+	    '<link attr1="value1" attr2="value2"/>',
 	    '<script type="text/javascript" src="http://test.com/test.js?foo"></script>',
 	    '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>',
 	    '<meta name="test1" content="value 1"/>',
@@ -532,11 +534,11 @@ class TemplateAdapterMockSmarty {
     function _smarty_include($params) {
 	$this->_includes[] = $params;
     }
-    
+
     function template_exists($path) {
 	return strpos($path, 'Bogus') === false;
     }
-    
+
     function _get_compile_path($path) {
 	return $path;
     }

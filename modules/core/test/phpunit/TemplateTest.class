@@ -192,7 +192,7 @@ class TemplateTest extends GalleryTestCase {
 	$template = new GalleryTemplate('/legal/path');
 	$this->assertEquals(false, $template->_smarty->compile_check);
 
-	GalleryDataCache::remove('GalleryTemplate::compileCheck');	
+	GalleryDataCache::remove('GalleryTemplate::compileCheck');
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'smarty.compile_check', 1);
 	if ($ret) {
@@ -219,6 +219,26 @@ class TemplateTest extends GalleryTestCase {
 
 	$newTemplate = new GalleryTemplate('/legal/path');
 	$this->assertEquals(false, $newTemplate->_smarty->compile_check);
+    }
+
+    function testStyle() {
+	$template = new GalleryTemplate('');
+	$template->style('/path/to/foo.css');
+
+	$head = $template->getVariable('head');
+	$this->assertEquals(
+	    array('<link rel="stylesheet" type="text/css" href="/path/to/foo.css"/>' => 1),
+	    $head['link']);
+    }
+
+    function testLink() {
+	$template = new GalleryTemplate('');
+	$template->link(array('attr1' => 'value1', 'attr2' => 'value2'));
+
+	$head = $template->getVariable('head');
+	$this->assertEquals(
+	    array('<link attr1="value1" attr2="value2"/>' => 1),
+	    $head['link']);
     }
 }
 
