@@ -1035,9 +1035,10 @@ class GalleryRemoteController extends GalleryController {
 
 	$response->setProperty('auto_resize', $biggestDerivative);
 	$response->setProperty('max_size', $maxSize);
+	$response->setProperty('extrafields', "Summary,Description");
 
 	$response->setProperty('status', $grStatusCodes['SUCCESS']);
-	$response->setProperty('status_text', 'Fetch-album-images successful.');
+	$response->setProperty('status_text', 'Album-properties successful.');
 
 	return null;
     }

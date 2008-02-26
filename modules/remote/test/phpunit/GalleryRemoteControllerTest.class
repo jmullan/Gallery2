@@ -862,6 +862,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($this->_code['SUCCESS'], (int)$response->getProperty('status'));
 
 	$this->assertEquals('640', $response->getProperty('auto_resize'));
+	$this->assertEquals('Summary,Description', $response->getProperty('extrafields'));
 	$this->assert($response->hasProperty('status_text'));
     }
 
