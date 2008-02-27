@@ -106,16 +106,6 @@ class AdminLanguageManagerViewTest extends GalleryViewTestCase {
 			'newBuild' => '33333', 'relation' => 'older', 'locked' => 0)))));
 	}
 
-	$this->_testRepository->setReply('getLanguagePackageFiles', array(array('pt_BR', 'pt')), 
-		array(null, array(
-	    'module' => array('testModule' => array('name' => 'Test Module',
-		'files' => array('descriptor' => 'modules/testModule.descriptor',
-		    'pt_PT' => 'modules/testModule-pt.package',
-		    'pt_BR' => 'modules/testModule-pt_BR.package'))),
-	    'theme' => array('testTheme' => array('name' => 'Test Theme',
-		'files' => array('descriptor' => 'themes/testTheme.descriptor',
-		    'pt_PT' => 'themes/testTheme-pt.package'))))));
-
 	$enableAllFlags = array('upgrade' => false, 'remove' => false, 'download' => false);
 	list ($ret, $repositories) = GalleryRepository::getRepositories();
 	list ($ret, $languagePackages) = 
@@ -162,16 +152,6 @@ class AdminLanguageManagerViewTest extends GalleryViewTestCase {
 		    'hu_HU' => array('name' => 'hu_HU', 'currentBuild' => '22222',
 			'newBuild' => '33333', 'relation' => 'older', 'locked' => 0)))));
 	}
-
-	$this->_testRepository->setReply('getLanguagePackageFiles', array(array('pt_BR', 'pt')), 
-		array(null, array(
-	    'module' => array('testModule' => array('name' => 'Test Module',
-		'files' => array('descriptor' => 'modules/testModule.descriptor',
-		    'pt_PT' => 'modules/testModule-pt.package',
-		    'pt_BR' => 'modules/testModule-pt_BR.package'))),
-	    'theme' => array('testTheme' => array('name' => 'Test Theme',
-		'files' => array('descriptor' => 'themes/testTheme.descriptor',
-		    'af' => 'themes/testTheme-af.package'))))));
 
 	$enableAllFlags = array('upgrade' => false, 'remove' => false, 'download' => false);
 	list ($ret, $repositories) = GalleryRepository::getRepositories();
@@ -220,13 +200,6 @@ class AdminLanguageManagerViewTest extends GalleryViewTestCase {
 			'newBuild' => '33333', 'relation' => 'older', 'locked' => 0)))));
 	}
 
-	$this->_testRepository->setReply('getLanguagePackageFiles', array(array('pt_BR', 'pt')),
-		array(null, array(
-	    'module' => array('testModule' => array('name' => 'Test Module',
-		'files' => array('descriptor' => 'modules/testModule.descriptor'))),
-	    'theme' => array('testTheme' => array('name' => 'Test Theme',
-		'files' => array('descriptor' => 'themes/testTheme.descriptor'))))));
-
 	$enableAllFlags = array('upgrade' => false, 'remove' => false, 'download' => false);
 	list ($ret, $repositories) = GalleryRepository::getRepositories();
 	list ($ret, $languagePackages) = 
@@ -240,12 +213,14 @@ class AdminLanguageManagerViewTest extends GalleryViewTestCase {
 		'description' => 'English (UK)'),
 	    'hu' => array('upgrade' => true, 'installed' => true, 
 		'description' => 'Magyar'),
+	    'pt' => array('upgrade' => false, 'installed' => false, 
+		'description' => 'Portugu&#234;s'),
 	    'zh_CN' => array('upgrade' => false, 'installed' => false, 
 		'description' => '&#31616;&#20307;&#20013;&#25991;'),
 	    'zh_TW' => array('upgrade' => false, 'installed' => false, 
 		'description' => '&#32321;&#39636;&#20013;&#25991;'));
 	$this->assertEquals($expected, $languagePackages, 'Language packages incorrect');
-	$this->assertEquals(array('upgrade' => true, 'remove' => true, 'download' => false), 
+	$this->assertEquals(array('upgrade' => true, 'remove' => true, 'download' => true), 
 	    $enableAllFlags, 'Enable all flags incorrect');
     }
 }

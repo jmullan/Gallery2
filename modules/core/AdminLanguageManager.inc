@@ -47,16 +47,19 @@ class AdminLanguageManagerController extends AdminRepositoryDownloadAndInstallCo
 	$results = $status = $error = array();
 
 	if (!empty($form['save'])) {
+	    /* Remove the reset languageActions */
 	    if (!empty($form['languageAction'])) {
-		/*
-		 * We can update the general settings from 1 of two places: either here if there 
-		 * were no local repositories; or as part of the progressBar call back.
-		 */
 		foreach ($form['languageAction'] as $language => $action) {
 		    if ($action == 'reset') {
 			unset($form['languageAction'][$language]);
 		    }
 		}
+	    }
+	    /*
+	     * We can update the general settings from 1 of two places: either here if there 
+	     * were no local repositories; or as part of the progressBar call back.
+	     */
+	    if (!empty($form['languageAction'])) {
 		$templateAdapter->registerTrailerCallback(array($this, 'updateLanguageSettings'),
 		    array($form));
 		$delegate['view'] = 'core.ProgressBar';
@@ -481,6 +484,7 @@ class AdminLanguageManagerView extends GalleryView {
 	list ($languageData, $defaultCountry) = $translator->getLanguageData();
 	$supportedLanguages = GalleryCoreApi::getSupportedLanguages();
 	$packages = array();
+
 	foreach (array('module', 'theme') as $pluginType) {
 	    list ($ret, $plugins) = GalleryCoreApi::getAllPluginIds($pluginType);
 	    if ($ret) {
@@ -556,29 +560,14 @@ class AdminLanguageManagerView extends GalleryView {
 		    }
 		}
 	    } else {
-		if (empty($packages[$language])) {
-		    $langugeCodes = array();
-		    foreach ($countries as $country => $countryData) {
-			$locale = $language .'_' . $country;
-			list ($ret, $langCode) = $translator->getLanguageCodeFromLocale($locale);
-			if ($ret) {
-			    return array($ret, null);
-			}
-			$langugeCodes[] = $langCode;
-		    }
-		    list ($ret, $packageCount) = 
-			$this->_determinePackageAvailability($repository, $langugeCodes);
-		    if ($ret) {
-			return array($ret, null);
-		    }
-		    if ($packageCount > 0) {
-			$packages[$language] = array('upgrade' => false, 'installed' => false,
-			    'description' => $countries[$defaultCountry[$language]]['description']);
-			$enableAllFlags['download'] = true;
-		    }
+		if (empty($supportedLanguages[$language])) {
+		    $packages[$language] = array('upgrade' => false, 'installed' => false,
+			'description' => $countries[$defaultCountry[$language]]['description']);
+		    $enableAllFlags['download'] = true;
 		}
 	    }
 	}
+
 	if (!empty($packages['en'])) {  /* don't show English(US) as a managed language */
 	    unset($packages['en']);
 	}
