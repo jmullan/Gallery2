@@ -86,7 +86,7 @@ class GalleryCoreApi {
      * - remove GalleryRepository::getLanguageDescription
      */
     function getApiVersion() {
-	return array(7, 47);
+	return array(7, 48);
     }
 
     /**
@@ -2637,12 +2637,13 @@ class GalleryCoreApi {
      * @param string $url
      * @param string $outputFile
      * @param array $extraHeaders (optional) extra headers to pass to the server
+     * @param array $postDataArray the key/value post data
      * @return array(boolean success, http response, headers, url)
      *  the url is the final url retrieved after redirects
      */
-    function fetchWebFile($url, $outputFile, $extraHeaders=array()) {
+    function fetchWebFile($url, $outputFile, $extraHeaders=array(), $postDataArray=array()) {
 	GalleryCoreApi::requireOnce('modules/core/classes/helpers/WebHelper_simple.class');
-	return WebHelper_simple::fetchWebFile($url, $outputFile, $extraHeaders);
+	return WebHelper_simple::fetchWebFile($url, $outputFile, $extraHeaders, $postDataArray);
     }
 
     /**

@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryModule.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryTheme.class');
+
 /**
  * Test Web functionality
  * @package GalleryCore
@@ -369,6 +372,34 @@ class WebTest extends GalleryTestCase {
 	$this->assertEquals(join("\n", $expectedBody), $body);
     }
 
+    function testFetchWebFilePostData() {
+	list ($return, $response, $headers) =
+	    GalleryCoreApi::fetchWebFile('http://www.test.server/testFetchWebFile' 
+		    . '?coreApi=1.1&moduleApi=1.2s&themeApi=1.3',
+		'testFetchWebFile.tmp', array(), 
+		array('files[0]' => 'modules/test-11111-22222-base.package'));
+
+	$expectedHeaders['Connection'] = 'close';
+	$expectedHeaders['Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
+	$expectedHeaders['Accept-Ranges'] = 'bytes';
+	$expectedHeaders['ETag'] = '"122ae4-5-3fc199b0"';
+	$expectedHeaders['Server'] = 'Apache/1.3.28 (Unix)';
+	$expectedHeaders['Content-Length'] = '5';
+	$expectedHeaders['Content-Type'] = 'text/html';
+	$expectedHeaders['Last-Modified'] = 'Mon, 24 Nov 2003 05:40:00 GMT';
+	$expectedHeaders['Client-Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
+	$expectedHeaders['Client-Peer'] = '209.237.226.157:80';
+	$expectedHeaders['Client-Response-Num'] = '1';
+
+	$expectedBody[] = 'post successful';
+	$expectedBody[] = '';			  /* newline at the end of the file */
+
+	$this->assert($return);
+	$this->assertEquals('HTTP/1.1 200 OK', $response);
+	$this->assertEquals("test\n",
+			    $this->_outputFile['testFetchWebFile.tmp']);
+    }
+
     function testFetchWebFile() {
 	list ($return, $response, $headers) =
 	    GalleryCoreApi::fetchWebFile(
@@ -387,7 +418,7 @@ class WebTest extends GalleryTestCase {
 	$expectedHeaders['Client-Response-Num'] = '1';
 
 
-	$this->assertEquals(true, $return);
+	$this->assert($return);
 	$this->assertEquals('HTTP/1.1 200 OK', $response);
 	$this->assertEquals("test\n",
 			    $this->_outputFile['testFetchWebFile.tmp']);
@@ -411,7 +442,7 @@ class WebTest extends GalleryTestCase {
 	$expectedHeaders['Client-Peer'] = '209.237.226.157:80';
 	$expectedHeaders['Client-Response-Num'] = '1';
 
-	$this->assertEquals(true, $return);
+	$this->assert($return);
 	$this->assertEquals('HTTP/1.1 200 OK', $response);
 	$this->assertEquals("test\n",
 			    $this->_outputFile['testFetchWebFile.tmp']);
@@ -506,7 +537,7 @@ class WebTest extends GalleryTestCase {
 	$expectedHeaders['Client-Peer'] = '209.237.226.157:80';
 	$expectedHeaders['Client-Response-Num'] = '1';
 
-	$this->assertEquals(true, $return);
+	$this->assert($return);
 	$this->assertEquals('HTTP/1.1 200 OK', $response);
 	$this->assertEquals("test\n",
 			    $this->_outputFile['testFetchHttpsWebFile.tmp']);
@@ -539,6 +570,12 @@ class WebTestPlatform {
     function fwrite($handle, $string, $length=0) {
 	if ($handle == 'test-resource-1') {
 	    switch ($string) {
+	    case "POST /testFetchWebFile?coreApi=1.1&moduleApi=1.2s&themeApi=1.3 HTTP/1.0\r\n" .
+		 "Host: www.test.server\r\n" .
+		 "Content-Type: application/x-www-form-urlencoded\r\n".
+		 "Content-Length: 52\r\n" .
+		 "\r\n" .
+		 "files%5B0%5D=modules%2Ftest-11111-22222-base.package":
 	    case "GET /testFetchWebPage HTTP/1.0\r\n" .
 		"Host: www.test.server\r\n" .
 		"\r\n":
@@ -727,9 +764,9 @@ class WebTestPlatform {
 	    case "POST /testPostToWebPage HTTP/1.0\r\n" .
 		 "Host: www.test.server\r\n" .
 		 "Content-Type: application/x-www-form-urlencoded\r\n".
-		 "Content-Length: 58\r\n" .
+		 "Content-Length: 56\r\n" .
 		 "\r\n" .
-		 "key1=value1&key2=value+2&key+3=http%3A%2F%2Fvalue%3A3%2F\r\n":
+		 "key1=value1&key2=value+2&key+3=http%3A%2F%2Fvalue%3A3%2F":
 		$buffer = array();
 		$buffer[] = 'HTTP/1.1 200 OK';
 		$buffer[] = 'Connection: close';

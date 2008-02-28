@@ -2534,6 +2534,8 @@ class CoreModuleExtras {
 	    }
 	case '1.2.28':
 	    /* Language Manager Implementation */
+	case '1.2.29':
+	    /* GalleryCoreApi::fetchWebFile accepts post data and can use the POST method */
 
 	case 'end of upgrade path':
 	    /*
@@ -2876,6 +2878,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.26':
 	case '1.2.27':
 	case '1.2.28':
+	case '1.2.29':
 
 	case 'end of upgrade path':
 	    /*
