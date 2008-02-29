@@ -41,7 +41,7 @@ class MainTest extends GalleryTestCase {
 	$_SERVER['HTTP_HOST'] = 'example.com';
 	$_SERVER['SERVER_PORT'] = 80;
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php';
-	GalleryUtilities::putRequestVariable('view', 'core.FooView');
+	GalleryUtilities::putRequestVariable('view', 'core.Foo');
 	$this->_urlGenerator = new GalleryUrlGenerator();
 	$ret = $this->_urlGenerator->init('phpunit_test.php');
 	if ($ret) {
@@ -520,7 +520,7 @@ class MainTestPhpVm extends GalleryPhpVm {
 }
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryView.class');
-class FooViewView extends GalleryView {
+class FooView extends GalleryView {
 }
 
 class MainTestImmediateView extends GalleryView {
