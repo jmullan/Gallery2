@@ -132,5 +132,9 @@ class UnitTestPhpVm extends MockObject {
     function gzencode($data, $level=null, $encodingMode=null) {
 	return $this->_makeReply('gzencode', array($data, $level, $encodingMode));
     }
+
+    function gethostbyname($hostname) {
+	return $this->_makeReply('gethostbyname', array($hostname));
+    }
 }
 ?>
