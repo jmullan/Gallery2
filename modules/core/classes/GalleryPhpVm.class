@@ -292,5 +292,15 @@ class GalleryPhpVm {
     function gethostbyname($hostname) {
 	return gethostbyname($hostname);
     }
+
+    /**
+     * Checks whether the given constant exists and is defined.
+     *
+     * @param string $name the name of the constant
+     * @return bool returns TRUE if the named constant has been defined, FALSE otherwise
+     */
+    function defined($name) {
+	return defined($name);
+    }
 }
 ?>

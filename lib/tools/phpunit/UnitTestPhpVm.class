@@ -136,5 +136,9 @@ class UnitTestPhpVm extends MockObject {
     function gethostbyname($hostname) {
 	return $this->_makeReply('gethostbyname', array($hostname));
     }
+
+    function defined($name) {
+	return $this->_makeReply('defined', array($name));
+    }
 }
 ?>
