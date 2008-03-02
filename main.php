@@ -161,7 +161,7 @@ function GalleryMain($embedded=false) {
  * @return array GalleryStatus a status code
  *               array
  */
-function _GalleryMain($embedded=false) {
+function _GalleryMain($embedded=false, $template=null) {
     global $gallery;
     $urlGenerator =& $gallery->getUrlGenerator();
 
@@ -444,8 +444,10 @@ function _GalleryMain($embedded=false) {
 	    }
 	    $data['isDone'] = true;
 	} else {
-	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
-	    $template = new GalleryTemplate(dirname(__FILE__));
+	    if (!isset($template)) {
+		GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
+		$template = new GalleryTemplate(dirname(__FILE__));
+	    }
 	    list ($ret, $results, $theme) = $view->doLoadTemplate($template);
 	    if ($ret) {
 		list ($ret, $results) = $view->_permissionCheck($ret);
@@ -493,6 +495,15 @@ function _GalleryMain($embedded=false) {
 		}
 		$data['isDone'] = true;
 	    } else {
+		$event = GalleryCoreApi::newEvent('Gallery::BeforeDisplay');
+		$event->setEntity($template);
+		$event->setData(array('templatePath' => $templatePath,
+				      'view' => $view));
+		list ($ret, $ignored) = GalleryCoreApi::postEvent($event);
+		if ($ret) {
+		    return array($ret, null);
+		}
+
 		list ($ret, $html) = $template->fetch($templatePath);
 		if ($ret) {
 		    return array($ret, null);

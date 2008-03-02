@@ -509,6 +509,33 @@ class MainTest extends GalleryTestCase {
 	$this->assertEquals(null, $g2Data, 'returned data');
 	$this->assertEquals(array(), $this->_getResponseHeaders(), 'headers');
     }
+
+    function testPostBeforeDisplayEvent() {
+	GalleryUtilities::putRequestVariable('view', 'core.MainTest_Fake');
+
+	$ret = $this->_registerFactoryImplementationForTest(
+	    'GalleryEventListener', 'MainTest_BeforeDisplayListener',
+	    'MainTest_BeforeDisplayListener', __FILE__, 'MainTest',
+	    array('Gallery::BeforeDisplay'));
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $g2Data) = _GalleryMain(null, new MainTest_FakeTemplate());
+	if ($ret) {
+	    return $ret;
+	}
+
+	$receivedEvent = $_GET['testEvent'];
+	$this->assertEquals('Gallery::BeforeDisplay', $receivedEvent->getEventName());
+
+	$receivedData = $receivedEvent->getData();
+	$this->assertEquals('gallery:themes', substr($receivedData['templatePath'], 0, 14),
+			    "Expected $receivedData[templatePath] to be a theme tpl path");
+	$this->assertEquals(
+	    'maintest_faketemplate', strtolower(get_class($receivedEvent->getEntity())));
+	$this->assertEquals('maintest_fakeview', strtolower(get_class($receivedData['view'])));
+    }
 }
 
 class MainTestPhpVm extends GalleryPhpVm {
@@ -521,6 +548,35 @@ class MainTestPhpVm extends GalleryPhpVm {
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryView.class');
 class FooView extends GalleryView {
+}
+
+/**
+ * Fake view that returns a bogus body template path so that it seems like a real view.
+ */
+class MainTest_FakeView extends GalleryView {
+    function loadTemplate() {
+	return array(null, array('body' => 'anything.tpl'));
+    }
+}
+
+class MainTest_BeforeDisplayListener {
+    function handleEvent($event) {
+	$_GET['testEvent'] = $event;
+	return array(null, null);
+    }
+}
+
+/**
+ * Fake GalleryTemplate that doesn't actually fetch the data.
+ */
+class MainTest_FakeTemplate extends GalleryTemplate {
+    function MainTest_FakeTemplate() {
+	$this->GalleryTemplate('.');
+    }
+
+    function fetch() {
+	return array(null, '');
+    }
 }
 
 class MainTestImmediateView extends GalleryView {
