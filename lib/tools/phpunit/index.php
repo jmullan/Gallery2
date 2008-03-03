@@ -146,6 +146,7 @@ require_once('UnitTestUrlGenerator.class');
 require_once('MockTemplateAdapter.class');
 require_once('UnitTestTemplate.class');
 require_once('UnitTestRepository.class');
+require_once('UnitTestRepositoryUtilities.class');
 
 function PhpUnitGalleryMain(&$testSuite, $filter) {
     $ret = GalleryInitFirstPass();

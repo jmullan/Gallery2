@@ -120,7 +120,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	    'package' => 'lang-pt_BR',
 	    'expectedUrl' => 'themes/testTheme-lang-pt_BR-22222-33333.package'));
 
-	$this->_index->utilities = new RepositoryIndexTestUtilities();
+	$this->_index->utilities = new UnitTestRepositoryUtilities();
 
 	foreach ($testcases as $case) {
 	    list ($ret, $url) = $this->_index->getPackageUrl(
@@ -157,7 +157,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 		      'expectedName' => 'en_GB-themes_testTheme-Test Theme'),
 		);
 
-	$this->_index->utilities = new RepositoryIndexTestUtilities();
+	$this->_index->utilities = new UnitTestRepositoryUtilities();
 
 	foreach ($testcases as $case) {
 	    if (!is_array($case)) {
@@ -195,9 +195,15 @@ class RepositoryIndexTest extends GalleryTestCase {
 
 	/* Prepare mock objects. */
 	$serializedSampleIndex = serialize($this->_sampleIndex);
-	$this->_index->_utilities = new RepositoryIndexTestUtilities(
-	    array('http://example.com/repository/test/index' => $serializedSampleIndex,
-		  'http://example.com/repository/test/index.hash' => md5($serializedSampleIndex)));
+	$utilities = new UnitTestRepositoryUtilities();
+	$this->_index->_utilities =& $utilities;
+
+	$utilities->setReply('downloadFile', 
+	    array('http://example.com/repository/test/index', null), 
+	    array(true, $serializedSampleIndex));
+	$utilities->setReply('downloadFile', 
+	    array('http://example.com/repository/test/index.hash', 1), 
+	    array(true, md5($serializedSampleIndex)));
 
 	$platform = new UnitTestPlatform();
 	$platform->setReply('file_exists',
@@ -222,6 +228,8 @@ class RepositoryIndexTest extends GalleryTestCase {
 	if ($ret) {
 	    return ($ret);
 	}
+
+	$this->assert($utilities->isComplete(), $utilities->getRemaining());
 	$this->assertEquals($this->_sampleIndex, $this->_index->_index);
 	$this->assert($this->_index->_isLoaded, 'GalleryRepositoryIndex::isLoaded bit not set.');
 
@@ -521,21 +529,36 @@ class RepositoryIndexTest extends GalleryTestCase {
 		'testTheme' => $this->_sampleIndex['themes']['testTheme'])),
 	    'expectedVersion' => false));
 
+	$coreApi = GalleryCoreApi::getApiVersion();
 	$i = 0;
 	foreach ($testCases as $case) {
 	    $i++;
 
-	    $this->_index->_utilities =	new RepositoryIndexTestUtilities(
-		array(), $case['isAvailable'], $case['isCompatible']);
+	    $pluginType = $case['pluginType'];
+	    $pluginId = 'test' . ucfirst($pluginType);
 
-	    list ($ret, $plugins) =
-		$this->_index->getPlugins($case['pluginType'], $case['showAll']);
+	    $utilities = new UnitTestRepositoryUtilities();
+	    $this->_index->_utilities =& $utilities;
+
+	    $pluginApi = $pluginType == 'module' ? GalleryModule::getApiVersion()
+						 : GalleryTheme::getApiVersion();
+	    $utilities->setReply('isPluginCompatible',
+		array($pluginType, $coreApi, $pluginApi, null), $case['isCompatible']);
+	    if ($case['showAll'] || $case['isCompatible']) {
+		$utilities->setReply('isPluginAvailable', 
+		    array($pluginType, $pluginId), array(null, $case['isAvailable']));
+
+		if ($case['isAvailable']) {
+		    $utilities->setReply('getPluginVersion', 
+			array($pluginType, $pluginId), array(null, 'someVersion'));
+		}
+	    }
+
+	    list ($ret, $plugins) = $this->_index->getPlugins($pluginType, $case['showAll']);
 	    if ($ret) {
 		return ($ret);
 	    }
 
-	    $pluginType = $case['pluginType'];
-	    $pluginId = 'test' . ucfirst($pluginType);
 	    if ($case['expectedVersion']) {
 		$case['expectedPlugins'][$pluginType][$pluginId]['localVersion'] = 'someVersion';
 	    }
@@ -544,6 +567,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 		    $case['isCompatible'];
 	    }
 
+	    $this->assert($utilities->isComplete(), "Case $i " . $utilities->getRemaining());
 	    $this->assertEquals($case['expectedPlugins'], $plugins, "Case $i");
 	}
     }
@@ -696,106 +720,6 @@ class RepositoryIndexTest extends GalleryTestCase {
 	    $utilities->setReply('getPluginPackages', array('theme', 'testTheme'),
 		array(null, $installedPackages));
 	}
-    }
-}
-
-/**
- * @todo move to /lib/tools/phpunit and change the unit tests to use instead of 
- * RepositoryIndexTestUtilities
- */
-class UnitTestRepositoryUtilities extends MockObject {
-    function extractRevision($string) {
-	return $this->_makeReply('extractRevision', array($string));
-    }
-
-    function getFileRevision($file) {
-	return $this->_makeReply('getFileRevision', array($file));
-    }
-
-    function compareVersions($version1, $version2, $build1=null, $build2=null) {
-	return $this->_makeReply('compareVersions', array($version1, $version2, $build1, $build2));
-    }
-
-    function compareRevisions($revision1, $revision2) {
-	return $this->_makeReply('compareRevisions', array($revision1, $revision2));
-    }
-
-    function getFirstBytesFromFile($path, $bytes) {
-	return $this->_makeReply('getFirstBytesFromFile', array($path, $bytes));
-    }
-
-    function getLanguageBaseRevision($pluginType, $pluginId) {
-	return $this->_makeReply('getLanguageBaseRevision', array($pluginType, $pluginId));
-    }
-
-    function isPluginAvailable($pluginType, $pluginId) {
-	return $this->_makeReply('isPluginAvailable', array($pluginType, $pluginId));
-    }
-
-    function isPluginCompatible($pluginType, $requiredCoreApi, $requiredPluginApi,
-	    $providedApis=null) {
-	return $this->_makeReply('isPluginCompatible', array($pluginType, $requiredCoreApi, 
-	    $requiredPluginApi, $providedApis));
-    }
-
-    function getProvidedApis($pluginType, $providedApis=null) {
-	return $this->_makeReply('getProvidedApis', array($pluginType, $providedApis));
-    }
-
-    function getPluginPackages($pluginType, $pluginId) {
-	return $this->_makeReply('getPluginPackages', array($pluginType, $pluginId));
-    }
-
-    function getLanguageDescription($languageCode) {
-	return $this->_makeReply('getLanguageDescription', array($languageCode));
-    }
-
-    function getPluginVersion($pluginType, $pluginId) {
-	return $this->_makeReply('getPluginVersion', array($pluginType, $pluginId));
-    }
-
-    function downloadFile($url, $ignoreCompression=false) {
-	return $this->_makeReply('downloadFile', array($url, $ignoreCompression));
-    }
-
-    function downloadPackagesForPlugin($repository, $pluginType, $pluginId, $pluginDownloadData, 
-				       &$callback) {
-	return $this->_makeReply('downloadPackagesForPlugin', array($repository, $pluginType, 
-	    $pluginId, $pluginDownloadData, $callback));
-    }
-}
-
-class RepositoryIndexTestUtilities {
-
-    var $_fileContentsIndex;
-    var $_isPluginAvailable;
-    var $_isPluginCompatible;
-
-    function RepositoryIndexTestUtilities($contents = array(),
-	    $isPluginAvailable = true, $isPluginCompatible = true) {
-	$this->_fileContents = $contents;
-	$this->_isPluginAvailable = $isPluginAvailable;
-	$this->_isPluginCompatible = $isPluginCompatible;
-    }
-
-    function getLanguageBaseRevision() {
-	return array(null, '2.2');
-    }
-
-    function isPluginAvailable($pluginType, $pluginId) {
-	return array(null, $this->_isPluginAvailable);
-    }
-
-    function getPluginVersion($pluginType, $pluginId) {
-	return array(null, 'someVersion');
-    }
-
-    function isPluginCompatible($pluginType, $requiredCoreApi, $requiredPluginApi, $apis = null) {
-	return $this->_isPluginCompatible;
-    }
-
-    function downloadFile($url) {
-	return array(true, $this->_fileContents[$url]);
     }
 }
 
