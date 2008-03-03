@@ -61,52 +61,65 @@ class RepositoryTest extends GalleryTestCase {
 	$pluginApi = $pluginType == 'module' ? GalleryModule::getApiVersion()
 					     : GalleryTheme::getApiVersion();
 	$pluginId = 'test' . ucfirst($pluginType);
-	$header = $index["{$pluginType}s"][$pluginId]['header'];
 
+	$header = $index["{$pluginType}s"][$pluginId]['header'];
 	$expectedUpgradeInfo = $case['expectedUpgradeInfo'];
-	$installedPackages = $case['installedPackages'];
+	$installed = $case['installed'][$pluginId];
 
 	$utilities->setReply('getPluginPackages', array($pluginType, $pluginId), 
-	    array(null, $installedPackages));
+	    array(null, $installed['packages']));
 	$utilities->setReply('isPluginCompatible', 
 	    array($pluginType, $header['requiredCoreApi'], $header['requiredPluginApi'], null),
 	    $pluginApi == $header['requiredPluginApi'] && $header['requiredCoreApi'] == $coreApi);
 
-	$base = $expectedUpgradeInfo['base'];
+	$base = $installed['packages']['base'];
 
-	$baseVersion = $baseBuild = null; 
-	if (!empty($installedPackages)) {
-	    $baseVersion = $installedPackages['base']['version'];
-	    $baseBuild = $installedPackages['base']['build'];
-	}
 	$utilities->setReply('compareVersions', 
-	    array($baseVersion, $header['version'], $baseBuild, $header['buildTimestamp']),
+	    array($base['version'], $base['newVersion'], $base['build'], $base['newBuild']),
 	    array(null, $base['relation']));
 
 	$utilities->setReply('isPluginAvailable', array($pluginType, $pluginId),
-	    array(null, !empty($installedPackages)));
+	    array(null, !empty($base['version'])));
 
-	$languages = $index["{$pluginType}s"][$pluginId]['languages']['22222'];
-	foreach ($expectedUpgradeInfo['languages'] as $locale => $data) {
-	    if (empty($data['currentBuild']) || $data['currentBuild'] < $languages[$locale]) {
-		$relation = 'older';
-	    } else if ($data['currentBuild'] == $languages[$locale]) {
-		$relation = 'equal';
-	    } else {
-		$relation = 'newer';
-	    }
+	foreach ($installed['languages'] as $locale => $data) {
 	    $utilities->setReply('compareRevisions',
-		array($data['currentBuild'], $languages[$locale]), $relation);
+		array($data['currentBuild'], $data['newBuild']), $data['relation']);
 	}
     }
 
-    function _getUpgradeTestCase($index) {
-	switch ($index) {
+    function _getUpgradeTestCase($testCase) {
+	switch ($testCase) {
 	case 0:
 	    $case = array( /* case 1 */
-		'installedPackages' => array(
-		    'base' => array(
-			'version' => '1.0.0', 'build' => '19710411131300', 'locked' => 0)),
+		'installed' => array(
+		    'testModule' => array(
+			'packages' => array(
+			    'base' => array('version' => '1.0.0',
+				'build' => '19710411131300', 'locked' => 0, 'relation' => 'newer',
+				'newVersion' => '1.0.0', 'newBuild' => '44444')),
+			'languages' => array(
+			    'en_US' => array('currentBuild' => NULL, 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'en_GB' => array('currentBuild' => NULL, 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'pt_PT' => array('currentBuild' => NULL, 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'pt_BR' => array('currentBuild' => NULL, 'newBuild' => '33333',
+					     'relation' => 'older'))),
+		    'testTheme' => array(
+			'packages' => array(
+			    'base' => array('version' => '1.0.0',
+				'build' => '19710411131300', 'locked' => 0, 'relation' => 'newer',
+				'newVersion' => '1.0.0', 'newBuild' => '11111')),
+			'languages' => array(
+			    'en_US' => array('currentBuild' => NULL, 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'en_GB' => array('currentBuild' => NULL, 'newBuild' => '22222',
+					     'relation' => 'older'),
+			    'pt_PT' => array('currentBuild' => NULL, 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'pt_BR' => array('currentBuild' => NULL, 'newBuild' => '33333',
+					     'relation' => 'older')))),
 		'expectedUpgradeInfo' => array(
 		    'upgradeable' => false,
 		    'base' => array(
@@ -131,9 +144,35 @@ class RepositoryTest extends GalleryTestCase {
 	    break;
 	case 1:
 	    $case = array( /* case 2 */
-		'installedPackages' => array(
-		    'base' => array(
-			'version' => '2.0.0', 'build' => '19710411131300', 'locked' => 0)),
+		'installed' => array(
+		    'testModule' => array(
+			'packages' => array(
+			    'base' => array('version' => '2.0.0',
+				'build' => '19710411131300', 'locked' => 0, 'relation' => 'newer',
+				'newVersion' => '1.0.0', 'newBuild' => '44444')),
+			'languages' => array(
+			    'en_US' => array('currentBuild' => NULL, 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'en_GB' => array('currentBuild' => NULL, 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'pt_PT' => array('currentBuild' => NULL, 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'pt_BR' => array('currentBuild' => NULL, 'newBuild' => '33333',
+					     'relation' => 'older'))),
+		    'testTheme' => array(
+			'packages' => array(
+			    'base' => array('version' => '2.0.0',
+				'build' => '19710411131300', 'locked' => 0, 'relation' => 'newer',
+				'newVersion' => '1.0.0', 'newBuild' => '11111')),
+			'languages' => array(
+			    'en_US' => array('currentBuild' => NULL, 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'en_GB' => array('currentBuild' => NULL, 'newBuild' => '22222',
+					     'relation' => 'older'),
+			    'pt_PT' => array('currentBuild' => NULL, 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'pt_BR' => array('currentBuild' => NULL, 'newBuild' => '33333',
+					     'relation' => 'older')))),
 		'expectedUpgradeInfo' => array(
 		    'base' => array(
 			'newVersion' => '1.0.0',
@@ -158,185 +197,385 @@ class RepositoryTest extends GalleryTestCase {
 	    break;
 	case 2:
 	    $case = array( /* case 3 */
-	    'installedPackages' => array(
-		'base' => array('version' => '1.0.0', 'build' => '00001', 'locked' => 0)),
-	    'expectedUpgradeInfo' => array(
-		'upgradeable' => 1,
-		'base' => array(
-		    'newVersion' => '1.0.0',
-		    'newBuild' => '44444',
-		    'currentVersion' => '1.0.0',
-		    'currentBuild' => '00001',
-		    'relation' => 'older',
-		    'isCompatible' => true,
-		    'locked' => 0),
-		'complete' => false,
-		'languages' => array(
-		    'en_US' => array('name' => 'en_US', 'currentBuild' => NULL,
+		'installed' => array(
+		    'testModule' => array(
+			'packages' => array(
+			    'base' => array('version' => '1.0.0',
+				'build' => '00001', 'locked' => 0, 'relation' => 'older',
+				'newVersion' => '1.0.0', 'newBuild' => '44444')),
+			'languages' => array(
+			    'en_US' => array('currentBuild' => NULL, 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'en_GB' => array('currentBuild' => NULL, 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'pt_PT' => array('currentBuild' => NULL, 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'pt_BR' => array('currentBuild' => NULL, 'newBuild' => '33333',
+					     'relation' => 'older'))),
+		    'testTheme' => array(
+			'packages' => array(
+			    'base' => array('version' => '1.0.0',
+				'build' => '00001', 'locked' => 0, 'relation' => 'older',
+				'newVersion' => '1.0.0', 'newBuild' => '11111')),
+			'languages' => array(
+			    'en_US' => array('currentBuild' => NULL, 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'en_GB' => array('currentBuild' => NULL, 'newBuild' => '22222',
+					     'relation' => 'older'),
+			    'pt_PT' => array('currentBuild' => NULL, 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'pt_BR' => array('currentBuild' => NULL, 'newBuild' => '33333',
+					     'relation' => 'older')))),
+		'expectedUpgradeInfo' => array(
+		    'upgradeable' => 1,
+		    'base' => array(
+			'newVersion' => '1.0.0',
+			'newBuild' => '44444',
+			'currentVersion' => '1.0.0',
+			'currentBuild' => '00001',
+			'relation' => 'older',
+			'isCompatible' => true,
+			'locked' => 0),
+		    'complete' => false,
+		    'languages' => array(
+			'en_US' => array('name' => 'en_US', 'currentBuild' => NULL,
 				     'newBuild' => '33333', 'relation' => 'older', 'locked' => 0),
-		    'en_GB' => array('name' => 'en_GB', 'currentBuild' => NULL,
+			'en_GB' => array('name' => 'en_GB', 'currentBuild' => NULL,
 				     'newBuild' => '33333', 'relation' => 'older', 'locked' => 0),
-		    'pt_PT' => array('name' => 'pt_PT', 'currentBuild' => NULL,
+			'pt_PT' => array('name' => 'pt_PT', 'currentBuild' => NULL,
 				     'newBuild' => '33333', 'relation' => 'older', 'locked' => 0),
-		    'pt_BR' => array('name' => 'pt_BR', 'currentBuild' => NULL,
+			'pt_BR' => array('name' => 'pt_BR', 'currentBuild' => NULL,
 				     'newBuild' => '33333', 'relation' => 'older', 'locked' => 0))),
-	    'expectedPackages' => array('module' => array('testModule' => array(
-		'base' => 1)),	'theme' => array('testTheme' => array(
-		'base' => 1))));
+		'expectedPackages' => array(
+		    'module' => array('testModule' => array('base' => 1)),
+		    'theme' => array('testTheme' => array('base' => 1))));
 	    break;
 	case 3:
 	    $case = array( /* case 4 */
-	    'installedPackages' => array(
-		'base' => array('version' => '1.0.0', 'build' => '44444', 'locked' => 0),
-		'lang-en_US' => array('version' => '22222', 'build' => '33333', 'locked' => 0),
-		'lang-en_GB' => array('version' => '22222', 'build' => '33333', 'locked' => 0),
-		'lang-pt_BR' => array('version' => '22222', 'build' => '33333', 'locked' => 0),
-		'lang-pt_PT' => array('version' => '22222', 'build' => '33333', 'locked' => 0)),
-	    'expectedUpgradeInfo' => array(
-		'upgradeable' => false,
-		'base' => array(
-		    'newVersion' => '1.0.0',
-		    'newBuild' => '44444',
-		    'currentVersion' => '1.0.0',
-		    'currentBuild' => '44444',
-		    'relation' => 'equal',
-		    'isCompatible' => true,
-		    'locked' => 0),
-		'complete' => true,
-		'languages' => array(
-		    'en_US' => array('name' => 'en_US', 'currentBuild' => '33333',
+		'installed' => array(
+		    'testModule' => array(
+			'packages' => array(
+			    'base' => array('version' => '1.0.0',
+				'build' => '44444', 'locked' => 0, 'relation' => 'equal',
+				'newVersion' => '1.0.0', 'newBuild' => '44444'),
+			    'lang-en_US' => array('version' => '22222', 'build' => '33333',
+				'locked' => 0),
+			    'lang-en_GB' => array('version' => '22222', 'build' => '33333',
+				'locked' => 0),
+			    'lang-pt_BR' => array('version' => '22222', 'build' => '33333',
+				'locked' => 0),
+			    'lang-pt_PT' => array('version' => '22222', 'build' => '33333',
+				'locked' => 0)),
+			'languages' => array(
+			    'en_US' => array('currentBuild' => '33333', 'newBuild' => '33333',
+					     'relation' => 'equal'),
+			    'en_GB' => array('currentBuild' => '33333', 'newBuild' => '33333',
+					     'relation' => 'equal'),
+			    'pt_PT' => array('currentBuild' => '33333', 'newBuild' => '33333',
+					     'relation' => 'equal'),
+			    'pt_BR' => array('currentBuild' => '33333', 'newBuild' => '33333',
+					     'relation' => 'equal'))),
+		    'testTheme' => array(
+			'packages' => array(
+			    'base' => array('version' => '1.0.0',
+				'build' => '44444', 'locked' => 0, 'relation' => 'equal',
+				'newVersion' => '1.0.0', 'newBuild' => '11111'),
+			    'lang-en_US' => array('version' => '22222', 'build' => '33333',
+				'locked' => 0),
+			    'lang-en_GB' => array('version' => '22222', 'build' => '33333',
+				'locked' => 0),
+			    'lang-pt_BR' => array('version' => '22222', 'build' => '33333',
+				'locked' => 0),
+			    'lang-pt_PT' => array('version' => '22222', 'build' => '33333',
+				'locked' => 0)),
+			'languages' => array(
+			    'en_US' => array('currentBuild' => '33333', 'newBuild' => '33333',
+					     'relation' => 'equal'),
+			    'en_GB' => array('currentBuild' => '33333', 'newBuild' => '22222',
+					     'relation' => 'newer'),
+			    'pt_PT' => array('currentBuild' => '33333', 'newBuild' => '33333',
+					     'relation' => 'equal'),
+			    'pt_BR' => array('currentBuild' => '33333', 'newBuild' => '33333',
+					     'relation' => 'equal')))),
+		'expectedUpgradeInfo' => array(
+		    'upgradeable' => false,
+		    'base' => array(
+			'newVersion' => '1.0.0',
+			'newBuild' => '44444',
+			'isCompatible' => true,
+			'relation' => 'equal',
+			'currentVersion' => '1.0.0',
+			'currentBuild' => '44444',
+			'locked' => 0),
+		    'complete' => true,
+		    'languages' => array(
+			'en_US' => array('name' => 'en_US', 'currentBuild' => '33333',
 				     'newBuild' => '33333', 'relation' => 'equal', 'locked' => 0),
-		    'en_GB' => array('name' => 'en_GB', 'currentBuild' => '33333',
+			'en_GB' => array('name' => 'en_GB', 'currentBuild' => '33333',
 				     'newBuild' => '33333', 'relation' => 'equal', 'locked' => 0),
-		    'pt_PT' => array('name' => 'pt_PT', 'currentBuild' => '33333',
+			'pt_PT' => array('name' => 'pt_PT', 'currentBuild' => '33333',
 				     'newBuild' => '33333', 'relation' => 'equal', 'locked' => 0),
-		    'pt_BR' => array('name' => 'pt_BR', 'currentBuild' => '33333',
+			'pt_BR' => array('name' => 'pt_BR', 'currentBuild' => '33333',
 				     'newBuild' => '33333', 'relation' => 'equal', 'locked' => 0))),
-	    'expectedPackages' => array());
+		'expectedPackages' => array());
 	    break;
 	case 4:
 	    $case = array( /* case 5 */
-	    'installedPackages' => array(),
-	    'expectedUpgradeInfo' => array(
-		'base' => array(
-		    'newVersion' => '1.0.0',
-		    'newBuild' => '44444',
-		    'currentVersion' => NULL,
-		    'currentBuild' => NULL,
-		    'relation' => 'older',
-		    'isCompatible' => true,
-		    'locked' => 0),
-		'upgradeable' => true,
-		'complete' => false,
-		'languages' => array(
-		    'en_US' => array('name' => 'en_US', 'currentBuild' => NULL,
+		'installed' => array(
+		    'testModule' => array(
+			'packages' => array(
+			    'base' => array('version' => null,
+				'build' => null, 'locked' => 0, 'relation' => 'older',
+				'newVersion' => '1.0.0', 'newBuild' => '44444')),
+			'languages' => array(
+			    'en_US' => array('currentBuild' => null, 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'en_GB' => array('currentBuild' => null, 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'pt_PT' => array('currentBuild' => null, 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'pt_BR' => array('currentBuild' => null, 'newBuild' => '33333',
+					     'relation' => 'older'))),
+		    'testTheme' => array(
+			'packages' => array(
+			    'base' => array('version' => null,
+				'build' => null, 'locked' => 0, 'relation' => 'older',
+				'newVersion' => '1.0.0', 'newBuild' => '11111')),
+			'languages' => array(
+			    'en_US' => array('currentBuild' => null, 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'en_GB' => array('currentBuild' => null, 'newBuild' => '22222',
+					     'relation' => 'older'),
+			    'pt_PT' => array('currentBuild' => null, 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'pt_BR' => array('currentBuild' => null, 'newBuild' => '33333',
+					     'relation' => 'older')))),
+		'expectedUpgradeInfo' => array(
+		    'base' => array(
+			'newVersion' => '1.0.0',
+			'newBuild' => '44444',
+			'currentVersion' => NULL,
+			'currentBuild' => NULL,
+			'relation' => 'older',
+			'isCompatible' => true,
+			'locked' => 0),
+		    'upgradeable' => true,
+		    'complete' => false,
+		    'languages' => array(
+			'en_US' => array('name' => 'en_US', 'currentBuild' => NULL,
 				     'newBuild' => '33333', 'relation' => 'older', 'locked' => 0),
-		    'en_GB' => array('name' => 'en_GB', 'currentBuild' => NULL,
+			'en_GB' => array('name' => 'en_GB', 'currentBuild' => NULL,
 				     'newBuild' => '33333', 'relation' => 'older', 'locked' => 0),
-		    'pt_PT' => array('name' => 'pt_PT', 'currentBuild' => NULL,
+			'pt_PT' => array('name' => 'pt_PT', 'currentBuild' => NULL,
 				     'newBuild' => '33333', 'relation' => 'older', 'locked' => 0),
-		    'pt_BR' => array('name' => 'pt_BR', 'currentBuild' => NULL,
+			'pt_BR' => array('name' => 'pt_BR', 'currentBuild' => NULL,
 				     'newBuild' => '33333', 'relation' => 'older', 'locked' => 0))),
-	    'expectedPackages' => array());
+		'expectedPackages' => array());
 	    break;
 	case 5:
 	    $case = array( /* case 6 */
-	    'installedPackages' => array(
-		'base' => array('version' => '1.0.0', 'build' => '44444', 'locked' => 0),
-		'lang-en_US' => array('version' => '22222', 'build' => '00001', 'locked' => 0),
-		'lang-en_GB' => array('version' => '22222', 'build' => '22222', 'locked' => 0),
-		'lang-pt_PT' => array('version' => '22222', 'build' => '33333', 'locked' => 0)),
-	    'expectedUpgradeInfo' => array(
-		'base' => array(
-		    'newVersion' => '1.0.0',
-		    'newBuild' => '44444',
-		    'currentVersion' => '1.0.0',
-		    'currentBuild' => '44444',
-		    'relation' => 'equal',
-		    'isCompatible' => true,
-		    'locked' => 0),
-		'upgradeable' => true,
-		'complete' => false,
-		'languages' => array(
-		    'en_US' => array('name' => 'en_US', 'currentBuild' => '00001',
+		'installed' => array(
+		    'testModule' => array(
+			'packages' => array(
+			    'base' => array('version' => '1.0.0',
+				'build' => '44444', 'locked' => 0, 'relation' => 'equal',
+				'newVersion' => '1.0.0', 'newBuild' => '44444'),
+			    'lang-en_US' => array('version' => '22222', 'build' => '00001',
+				'locked' => 0),
+			    'lang-en_GB' => array('version' => '22222', 'build' => '22222',
+				'locked' => 0),
+			    'lang-pt_PT' => array('version' => '22222', 'build' => '33333',
+				'locked' => 0)),
+			'languages' => array(
+			    'en_US' => array('currentBuild' => '00001', 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'en_GB' => array('currentBuild' => '22222', 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'pt_PT' => array('currentBuild' => '33333', 'newBuild' => '33333',
+					     'relation' => 'equal'),
+			    'pt_BR' => array('currentBuild' => null, 'newBuild' => '33333',
+					     'relation' => 'older'))),
+		    'testTheme' => array(
+			'packages' => array(
+			    'base' => array('version' => '1.0.0',
+				'build' => '11111', 'locked' => 0, 'relation' => 'equal',
+				'newVersion' => '1.0.0', 'newBuild' => '11111'),
+			    'lang-en_US' => array('version' => '22222', 'build' => '00001',
+				'locked' => 0),
+			    'lang-en_GB' => array('version' => '22222', 'build' => '22222',
+				'locked' => 0),
+			    'lang-pt_PT' => array('version' => '22222', 'build' => '33333',
+				'locked' => 0)),
+			'languages' => array(
+			    'en_US' => array('currentBuild' => '00001', 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'en_GB' => array('currentBuild' => '22222', 'newBuild' => '22222',
+					     'relation' => 'equal'),
+			    'pt_PT' => array('currentBuild' => '33333', 'newBuild' => '33333',
+					     'relation' => 'equal'),
+			    'pt_BR' => array('currentBuild' => null, 'newBuild' => '33333',
+					     'relation' => 'older')))),
+		'expectedUpgradeInfo' => array(
+		    'base' => array(
+			'newVersion' => '1.0.0',
+			'newBuild' => '44444',
+			'currentVersion' => '1.0.0',
+			'currentBuild' => '44444',
+			'relation' => 'equal',
+			'isCompatible' => true,
+			'locked' => 0),
+		    'upgradeable' => true,
+		    'complete' => false,
+		    'languages' => array(
+			'en_US' => array('name' => 'en_US', 'currentBuild' => '00001',
 				     'newBuild' => '33333', 'relation' => 'older', 'locked' => 0),
-		    'en_GB' => array('name' => 'en_GB', 'currentBuild' => '22222',
+			'en_GB' => array('name' => 'en_GB', 'currentBuild' => '22222',
 				     'newBuild' => '33333', 'relation' => 'older', 'locked' => 0),
-		    'pt_PT' => array('name' => 'pt_PT', 'currentBuild' => '33333',
+			'pt_PT' => array('name' => 'pt_PT', 'currentBuild' => '33333',
 				     'newBuild' => '33333', 'relation' => 'equal', 'locked' => 0),
-		    'pt_BR' => array('name' => 'pt_BR', 'currentBuild' => NULL,
+			'pt_BR' => array('name' => 'pt_BR', 'currentBuild' => NULL,
 				     'newBuild' => '33333', 'relation' => 'older', 'locked' => 0))),
-	    'expectedPackages' => array('module' => array(
-					    'testModule' => array(
-						'lang-en_US' => 1, 'lang-en_GB' => 1)),
-					'theme' => array(
-					    'testTheme' => array('lang-en_US' => 1))));
+		'expectedPackages' => array(
+		    'module' => array('testModule' => array('lang-en_US' => 1, 'lang-en_GB' => 1)),
+		    'theme' => array('testTheme' => array('lang-en_US' => 1))));
 	    break;
 	case 6:
 	    $case = array( /* case 7 */
-	    'installedPackages' => array(
-		'base' => array('version' => '1.0.0', 'build' => '11111', 'locked' => 1),
-		'lang-en_US' => array('version' => '22222', 'build' => '00001', 'locked' => 1),
-		'lang-en_GB' => array('version' => '22222', 'build' => '22222', 'locked' => 1),
-		'lang-pt_PT' => array('version' => '22222', 'build' => '33333', 'locked' => 1)),
-	    'expectedUpgradeInfo' => array(
-		'base' => array(
-		    'newVersion' => '1.0.0',
-		    'newBuild' => '44444',
-		    'currentVersion' => '1.0.0',
-		    'currentBuild' => '11111',
-		    'relation' => 'older',
-		    'isCompatible' => true,
-		    'locked' => 1),
-		'upgradeable' => true,
-		'complete' => 0,
-		'languages' => array(
-		    'en_US' => array('name' => 'en_US', 'currentBuild' => '00001',
+		'installed' => array(
+		    'testModule' => array(
+			'packages' => array(
+			    'base' => array('version' => '1.0.0',
+				'build' => '11111', 'locked' => 1, 'relation' => 'older',
+				'newVersion' => '1.0.0', 'newBuild' => '44444'),
+			    'lang-en_US' => array('version' => '22222', 'build' => '00001',
+				'locked' => 1),
+			    'lang-en_GB' => array('version' => '22222', 'build' => '22222',
+				'locked' => 1),
+			    'lang-pt_PT' => array('version' => '22222', 'build' => '33333',
+				'locked' => 1)),
+			'languages' => array(
+			    'en_US' => array('currentBuild' => '00001', 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'en_GB' => array('currentBuild' => '22222', 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'pt_PT' => array('currentBuild' => '33333', 'newBuild' => '33333',
+					     'relation' => 'equal'),
+			    'pt_BR' => array('currentBuild' => null, 'newBuild' => '33333',
+					     'relation' => 'older'))),
+		    'testTheme' => array(
+			'packages' => array(
+			    'base' => array('version' => '1.0.0',
+				'build' => '11111', 'locked' => 1, 'relation' => 'equal',
+				'newVersion' => '1.0.0', 'newBuild' => '11111'),
+			    'lang-en_US' => array('version' => '22222', 'build' => '00001',
+				'locked' => 1),
+			    'lang-en_GB' => array('version' => '22222', 'build' => '22222',
+				'locked' => 1),
+			    'lang-pt_PT' => array('version' => '22222', 'build' => '33333',
+				'locked' => 1)),
+			'languages' => array(
+			    'en_US' => array('currentBuild' => '00001', 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'en_GB' => array('currentBuild' => '22222', 'newBuild' => '22222',
+					     'relation' => 'equal'),
+			    'pt_PT' => array('currentBuild' => '33333', 'newBuild' => '33333',
+					     'relation' => 'equal'),
+			    'pt_BR' => array('currentBuild' => null, 'newBuild' => '33333',
+					     'relation' => 'older')))),
+		'expectedUpgradeInfo' => array(
+		    'upgradeable' => true,
+		    'base' => array(
+			'newVersion' => '1.0.0',
+			'newBuild' => '44444',
+			'isCompatible' => true,
+			'relation' => 'older',
+			'currentVersion' => '1.0.0',
+			'currentBuild' => '11111',
+			'locked' => 1),
+		    'languages' => array(
+			'en_US' => array('name' => 'en_US', 'currentBuild' => '00001',
 				     'newBuild' => '33333', 'relation' => 'older', 'locked' => 1),
-		    'en_GB' => array('name' => 'en_GB', 'currentBuild' => '22222',
+			'en_GB' => array('name' => 'en_GB', 'currentBuild' => '22222',
 				     'newBuild' => '33333', 'relation' => 'older', 'locked' => 1),
-		    'pt_PT' => array('name' => 'pt_PT', 'currentBuild' => '33333',
+			'pt_PT' => array('name' => 'pt_PT', 'currentBuild' => '33333',
 				     'newBuild' => '33333', 'relation' => 'equal', 'locked' => 1),
-		    /**
-		     * this language is not considered "locked" because it doesn't exist in the
-		     * original install.  This is not optimal.
-		     *
-		     * @TODO: lock missing languages when the base package is locked.
-		     */
-		    'pt_BR' => array('name' => 'pt_BR', 'currentBuild' => NULL,
-				     'newBuild' => '33333', 'relation' => 'older', 'locked' => 0))),
-	    'expectedPackages' => array(/* no upgrades; the base package is locked */));
+			/**
+			 * this language is not considered "locked" because it doesn't exist in the
+			 * original install.  This is not optimal.
+			 *
+			 * @TODO: lock missing languages when the base package is locked.
+			 */
+			'pt_BR' => array('name' => 'pt_BR', 'currentBuild' => NULL,
+				     'newBuild' => '33333', 'relation' => 'older', 'locked' => 0)),
+		    'complete' => 0),
+		'expectedPackages' => array(/* no upgrades; the base package is locked */));
 	    break;
 	case 7:
 	    $case = array( /* case 8 */
-	    'installedPackages' => array(
-		'base' => array('version' => '1.0.0', 'build' => '11111', 'locked' => 0),
-		'lang-en_US' => array('version' => '22222', 'build' => '00001', 'locked' => 0),
-		'lang-en_GB' => array('version' => '22222', 'build' => '22222', 'locked' => 0),
-		'lang-pt_PT' => array('version' => '22222', 'build' => '33333', 'locked' => 0)),
-	    'expectedUpgradeInfo' => array(
-		'base' => array(
-		    'newVersion' => '1.0.0',
-		    'newBuild' => '44444',
-		    'currentVersion' => '1.0.0',
-		    'currentBuild' => '11111',
-		    'relation' => 'older',
-		    'locked' => 0,
-		    'isCompatible' => false),
-		'upgradeable' => false,
-		'complete' => 0,
-		'languages' => array(
-		    'en_US' => array('name' => 'en_US', 'currentBuild' => '00001',
+		'installed' => array(
+		    'testModule' => array(
+			'packages' => array(
+			    'base' => array('version' => '1.0.0',
+				'build' => '11111', 'locked' => 0, 'relation' => 'older',
+				'newVersion' => '1.0.0', 'newBuild' => '44444'),
+			    'lang-en_US' => array('version' => '22222', 'build' => '00001',
+				'locked' => 0),
+			    'lang-en_GB' => array('version' => '22222', 'build' => '22222',
+				'locked' => 0),
+			    'lang-pt_PT' => array('version' => '22222', 'build' => '33333',
+				'locked' => 0)),
+			'languages' => array(
+			    'en_US' => array('currentBuild' => '00001', 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'en_GB' => array('currentBuild' => '22222', 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'pt_PT' => array('currentBuild' => '33333', 'newBuild' => '33333',
+					     'relation' => 'equal'),
+			    'pt_BR' => array('currentBuild' => null, 'newBuild' => '33333',
+					     'relation' => 'older'))),
+		    'testTheme' => array(
+			'packages' => array(
+			    'base' => array('version' => '1.0.0',
+				'build' => '11111', 'locked' => 0, 'relation' => 'equal',
+				'newVersion' => '1.0.0', 'newBuild' => '11111'),
+			    'lang-en_US' => array('version' => '22222', 'build' => '00001',
+				'locked' => 0),
+			    'lang-en_GB' => array('version' => '22222', 'build' => '22222',
+				'locked' => 0),
+			    'lang-pt_PT' => array('version' => '22222', 'build' => '33333',
+				'locked' => 0)),
+			'languages' => array(
+			    'en_US' => array('currentBuild' => '00001', 'newBuild' => '33333',
+					     'relation' => 'older'),
+			    'en_GB' => array('currentBuild' => '22222', 'newBuild' => '22222',
+					     'relation' => 'equal'),
+			    'pt_PT' => array('currentBuild' => '33333', 'newBuild' => '33333',
+					     'relation' => 'equal'),
+			    'pt_BR' => array('currentBuild' => null, 'newBuild' => '33333',
+					     'relation' => 'older')))),
+		'expectedUpgradeInfo' => array(
+		    'base' => array(
+			'newVersion' => '1.0.0',
+			'newBuild' => '44444',
+			'currentVersion' => '1.0.0',
+			'currentBuild' => '11111',
+			'relation' => 'older',
+			'locked' => 0,
+			'isCompatible' => false),
+		    'upgradeable' => false,
+		    'complete' => 0,
+		    'languages' => array(
+			'en_US' => array('name' => 'en_US', 'currentBuild' => '00001',
 				     'newBuild' => '33333', 'relation' => 'older', 'locked' => 0),
-		    'en_GB' => array('name' => 'en_GB', 'currentBuild' => '22222',
+			'en_GB' => array('name' => 'en_GB', 'currentBuild' => '22222',
 				     'newBuild' => '33333', 'relation' => 'older', 'locked' => 0),
-		    'pt_PT' => array('name' => 'pt_PT', 'currentBuild' => '33333',
+			'pt_PT' => array('name' => 'pt_PT', 'currentBuild' => '33333',
 				     'newBuild' => '33333', 'relation' => 'equal', 'locked' => 0),
-		    'pt_BR' => array('name' => 'pt_BR', 'currentBuild' => NULL,
+			'pt_BR' => array('name' => 'pt_BR', 'currentBuild' => NULL,
 				     'newBuild' => '33333', 'relation' => 'older', 'locked' => 0))),
-	    'requiredModuleApi' => array(9999, 9999),  /* This better be incompatible! */
-	    'expectedPackages' => array(/* the module is incompatible, but the theme is ok */
-		'theme' => array('testTheme' => array('base' => 1, 'lang-en_US' => 1))));
+		'requiredModuleApi' => array(9999, 9999),  /* This better be incompatible! */
+		'expectedPackages' => array(/* the module is incompatible, but the theme is ok */
+		    'theme' => array('testTheme' => array('lang-en_US' => 1))));
 	    break;
 	}
 	return $case;
@@ -553,7 +792,7 @@ class RepositoryTest extends GalleryTestCase {
 	    array($coreApis['core'], $coreApis['module']));
     }
 
-    function _getRepositoryPluginListTestCase($index) {
+    function _getRepositoryPluginListTestCase($testCase) {
 	$testModule = $this->_sampleIndex['modules']['testModule'];
 
 	$coreApi = GalleryCoreApi::getApiVersion();
@@ -563,7 +802,7 @@ class RepositoryTest extends GalleryTestCase {
 	$themeApi = GalleryTheme::getApiVersion();
 	$themeApiString = join('.', $themeApi);
 
-	switch ($index) {
+	switch ($testCase) {
 	case 0:
 	    $case = array(/* Compatible, locally available, upgradeable. */
 		'pluginData' => array(
