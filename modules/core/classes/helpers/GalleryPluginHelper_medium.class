@@ -300,7 +300,9 @@ class GalleryPluginHelper_medium {
 	    return $ret;
 	}
 
-	if (!is_array($itemId)) $itemId = array($itemId);
+	if (!is_array($itemId)) {
+	    $itemId = array($itemId);
+	}
 	foreach($itemId as $id) {
 	    if (!isset($params[$id]) || !array_key_exists($parameterName, $params[$id])) {
 		$ret = GalleryPluginHelper_medium::_addParameter(
