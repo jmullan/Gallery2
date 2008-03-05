@@ -34,6 +34,10 @@ class RepositoryTestStorage {
     var $_searches;
     var $_removedMapData;
 
+    function RepositoryTestStorage() {
+	$this->reset();
+    }
+
     function reset() {
 	$this->_searches = array();
 	$this->_searchResults = array();

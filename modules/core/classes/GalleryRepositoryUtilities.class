@@ -396,125 +396,188 @@ class GalleryRepositoryUtilities {
     }
 
     /**
-     * Download the specified packages.
-     * @param GalleryRepository $repository
+     * Saves the specified package meta data into the database.
+     *
      * @param string $pluginType
      * @param string $pluginId
-     * @param array $pluginDownloadData list of plugins to download
-     * @param array $callback information for progress bar updates
-     * @ret array GalleryStatus a status code
-     * 		  boolean a flag indicating the plugin should be re-activated
-     * 		  array string status messages indicating problems encounterd
+     * @param string $packageName
+     * @param string $packageVersion
+     * @param string $packageBuild
+     * @param string $locked
+     * @return GalleryStatus a status code
      */
-    function downloadPackagesForPlugin($repository, $pluginType, $pluginId, $pluginDownloadData, 
-				       &$callback) {
+    function updatePackageMetaData(
+	$pluginType, $pluginId, $packageName, $packageVersion, $packageBuild, $locked) {
+
+	/* Check if specified package exists in the database. */
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryPluginPackageMap',
+	    array('packageVersion', 'packageBuild'),
+	    array('pluginType' => $pluginType, 'pluginId' => $pluginId,
+		  'packageName' => $packageName));
+	if ($ret) {
+	    return $ret;
+	}
+
+	if ($searchResults->resultCount() > 1) {
+	    return GalleryCoreApi::error(
+		ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+		"Multiple records found [$pluginType] [$pluginId] [$package]");
+	}
+	$existsInDatabase = $searchResults->resultCount() > 0;
+
+	/* Add or update package data. */
+	if ($existsInDatabase) {
+	    $ret = GalleryCoreApi::updateMapEntry(
+		'GalleryPluginPackageMap',
+		array('pluginType' => $pluginType, 'pluginId' => $pluginId,
+		      'packageName' => $packageName),
+		array('packageVersion' => $packageVersion, 'packageBuild' => $packageBuild,
+		      'locked' => $locked));
+	} else {
+	    $ret = GalleryCoreApi::addMapEntry(
+		'GalleryPluginPackageMap',
+		array('pluginType' => $pluginType, 'pluginId' => $pluginId,
+		      'packageName' => $packageName, 'packageVersion' => $packageVersion,
+		      'packageBuild' => $packageBuild, 'locked' => $locked));
+	}
+	if ($ret) {
+	    return $ret;
+	}
+
+	return null;
+    }
+
+    /**
+     * Verify that a package will install cleanly by examining all of its paths and making sure
+     * that any file operations that we intend to make will be successful.
+     *
+     * @param string $packageName name of the package to check
+     * @param array $descriptor descriptor of the plugin the package belongs to
+     * @return array of files that can't be overwritten (empty array if everything is ok)
+     */
+    function preVerifyPackage($packageName, $descriptor) {
 	global $gallery;
+	$platform =& $gallery->getPlatform();
 
-	$status = array();
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret) {
-	    return array($ret, null, null);
-	}
+	$errorMessages = array();
 
-	$packageUrls = $pluginDownloadData['files'];
-	$pluginName = $pluginDownloadData['name'];
+	$pluginType = $descriptor['pluginType'];
+	$pluginId = $descriptor['pluginId'];
+	$pluginOutputDir = sprintf(
+	    '%s%ss/%s/', GalleryCoreApi::getCodeBasePath(), $pluginType, $pluginId);
 
-	$preparingText = $module->translate(array('text' => 'Preparing %s', 'arg1' => $pluginName));
-	$downloadingText = $module->translate(array('text' => 'Downloading %s', 
-	    'arg1' => $pluginName));
-
-	$percentage = ++$callback['current'] / $callback['total'];
-	call_user_func($callback['method'], $callback['title'], $preparingText, $percentage);
-
-	/*
-	 * Extract the descriptor and verify that all of our packages will unpack
-	 * safely before starting.
-	 */
-	$relativeDescriptorUrl = $packageUrls['descriptor'];
-	unset($packageUrls['descriptor']);
-
-	list ($ret, $descriptor) = $repository->downloadAndUnpack(
-	    $pluginType, $pluginId, 'descriptor', $relativeDescriptorUrl);
-	if ($ret) {
-	    if ($ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
-		/* XXX: storage failure means we failed to download the file properly */ 	 
-		$status['failedToDownload'][$pluginType][$pluginName] = $relativeDescriptorUrl;
-		return array(null, false, $status);
+	if ($platform->file_exists($pluginOutputDir)) {
+	    if (!$platform->is_writeable($pluginOutputDir) ||
+		!$platform->is_dir($pluginOutputDir)) {
+		return array($pluginOutputDir);
 	    }
-	    return array($ret, null, null);
+	} else {
+	    return array();
 	}
 
-	$errors = array();
-	foreach (array_keys($packageUrls) as $packageName) {
-	    $gallery->guaranteeTimeLimit(30);
+	foreach ($descriptor['contents']['files'] as $relativePath => $metaData) {
+	    foreach ($metaData['packages'] as $descriptorPackage) {
+		$gallery->guaranteeTimeLimit(10);
 
-	    if (++$callback['current'] % 5 == 0) {
-		$percentage = $callback['current'] / $callback['total'];
-		call_user_func($callback['method'], $callback['title'], $preparingText, 
-		    $percentage);
-	    }
+		if ($descriptorPackage == $packageName) {
+		    $filePath = $pluginOutputDir . $relativePath;
 
-	    /* pre-verify here */
-	    $errors = array_merge(
-		$errors, $repository->preVerifyPackage($packageName, $descriptor));
-	}
-
-	$errors = array_unique($errors);
-	if ($errors) {
-	    $status['failedToInstall'][$pluginType][$pluginName] = $errors;
-	    return array(null, false, $status);
-	}
-
-	$percentage = $callback['current'] / $callback['total'];
-	call_user_func($callback['method'],
-	    $callback['title'], sprintf($downloadingText, $pluginName), $percentage);
-
-	$reactivatePlugin = false;
-	foreach ($packageUrls as $packageName => $relativePackageUrl) {
-	    $gallery->guaranteeTimeLimit(30);
-
-	    if (++$callback['current'] % 5 == 0) {
-		call_user_func($callback['method'],
-		    $callback['title'], sprintf($downloadingText, $pluginName), $percentage);
-	    }
-
-	    /* Download and unpack package. */
-	    list ($ret, $ignored) = $repository->downloadAndUnpack(
-		$pluginType, $pluginId, $packageName, $relativePackageUrl);
-	    if ($ret) {
-		if ($ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
-		    /* XXX: storage failure means we failed to download the file */
-		    $status['failedToDownload'][$pluginType][$pluginName][] = $relativePackageUrl;
-		    if ($packageName == 'base') {
-			return array(null, false, $status);
+		    if ($platform->file_exists($filePath)) {
+			if (!$platform->is_writeable($filePath)) {
+			    $errorMessages[$filePath] = 1;
+			}
 		    } else {
-			continue;
+			$checkPath = dirname($filePath) . '/';
+			while ($checkPath != $pluginOutputDir && $checkPath != '.') {
+			    if ($platform->file_exists($checkPath) &&
+				    (!$platform->is_writeable($checkPath) ||
+				     !$platform->is_dir($checkPath))) {
+				$errorMessages[$filePath] = 1;
+				break;
+			    }
+			    $checkPath = dirname($checkPath) . '/';
+			}
 		    }
 		}
-		return array($ret, null, null);
 	    }
-
-	    /* Check the unpacked files' integrity. */
-	    $ret = $repository->verifyPackageIntegrity($packageName, $descriptor);
-	    if ($ret) {
-		return array($ret, null, null);
-	    }
-
-	    /* Update plugin package map. */
-	    list ($ret, $version, $build) = $repository->getPackageVersionAndBuild(
-		$pluginType, $pluginId, $packageName);
-	    if ($ret) {
-		return array($ret, null, null);
-	    }
-	    $ret = $repository->updatePackageMetaData(
-		$pluginType, $pluginId, $packageName, $version, $build, 0);
-	    if ($ret) {
-		return array($ret, null, null);
-	    }
-	    $reactivatePlugin |= $packageName == 'base';
 	}
 
-	return array(null, (bool)$reactivatePlugin, $status);
+	return array_keys($errorMessages);
+    }
+
+    /**
+     * Verifies the integrity of the specified packages' unpacked files.
+     *
+     * @param string $pluginType
+     * @param string $pluginId
+     * @param string $packageName name of the package to check
+     * @param array $descriptor descriptor of the plugin the package belongs to
+     * @return GalleryStatus a status code
+     */
+    function verifyPackageIntegrity($pluginType, $pluginId, $packageName, $descriptor) {
+	global $gallery;
+	$errorMessages = array();
+
+	$pluginOutputDir = sprintf(
+	    '%s%ss/%s/', GalleryCoreApi::getCodeBasePath(), $pluginType, $pluginId);
+
+	$platform =& $gallery->getPlatform();
+	foreach ($descriptor['files'] as $filePath => $metaData) {
+	    foreach ($metaData['packages'] as $descriptorPackage) {
+		if ($descriptorPackage == $packageName) {
+		    $filePath = $pluginOutputDir . $filePath;
+		    $contents = $platform->file_get_contents($filePath);
+		    $checksum = strlen($metaData['hash']) == 32
+			? md5($contents)
+			: sprintf("%u", crc32($contents));
+
+		    /**
+		     * hash_crlf and bytes_crlf were introduced in r17072 (2.3) so they don't
+		     * exist in older packages.  Set them to null if they don't exist so that we
+		     * don't get errors below.
+		     *
+		     * @todo: remove this when all of our DP packages have been generated these
+		     * fields.
+		     */
+		    if (empty($metaData['hash_crlf'])) {
+			$metaData['hash_crlf'] = null;
+		    }
+		    if (empty($metaData['bytes_crlf'])) {
+			$metaData['bytes_crlf'] = null;
+		    }
+
+		    if (!$platform->file_exists($filePath)) {
+			$errorMessage = "'$filePath' doesn't exist.";
+		    } else if (!in_array($platform->filesize($filePath),
+					 array($metaData['bytes'], $metaData['bytes_crlf']))) {
+			$errorMessage = "Size of '$filePath' did not match package descriptor.";
+		    } else if (false === $contents) {
+			$errorMessage = "Couldn't read '$filePath'.";
+		    } else if (!in_array($checksum,
+					 array($metaData['hash'], $metaData['hash_crlf']))) {
+			$errorMessage = "Integrity check failed for '$filePath'.";
+		    }
+
+		    if (!empty($errorMessage)) {
+			return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+						    $errorMessage);
+		    }
+		}
+	    }
+	}
+
+	return null;
+    }
+
+    /*
+     * Unpack and install a downloaded package file.
+     * This is primarily to allow unit testing.
+     * @param string $packageFile The file containing the package
+     * @param string $outputDirecory Directory the package should be installed to
+     */
+    function unpackPackage($packageFile, $outputDirecory) {
+	include($packageFile);
+	call_user_func($unpackFunction, $outputDirecory);
     }
 }
 ?>

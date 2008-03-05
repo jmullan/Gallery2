@@ -46,7 +46,6 @@ class RepositoryTest extends GalleryTestCase {
 	global $gallery;
 	$gallery->_storage = new RepositoryTestStorage();
 	$this->_testStorage =& $gallery->_storage;
-	$this->_testStorage->reset();
 
 	/* Prepare test index. */
 	include(dirname(__FILE__) . '/../../../../lib/tools/repository/test/data/SampleIndex.inc');
@@ -1039,61 +1038,6 @@ class RepositoryTest extends GalleryTestCase {
 			    $testCase, 'List not sorted properly.');
     }
 
-    function testUpdatePackageMetaData() {
-	$this->_testStorage->reset();
-	/* Test initial map entry add scenario. */
-	$this->_testStorage->setSearchResults(array());
-
-	$repository = new GalleryRepository();
-	$ret = $repository->updatePackageMetaData(
-	    'module', 'testModule', 'package', 'version', 'build', 'locked');
-	if ($ret) {
-	    return ($ret);
-	}
-	$this->assertEquals(array('GalleryPluginPackageMap' => array(
-				      array('pluginType' => 'module',
-					    'pluginId' => 'testModule',
-					    'packageName' => 'package',
-					    'packageVersion' => 'version',
-					    'packageBuild' => 'build',
-					    'locked' => 'locked'))),
-			    $this->_testStorage->getAddedMapData(),
-			    'Invalid data added.');
-
-	$searches = $this->_testStorage->getSearches();
-	$this->assertEquals(array('map' => 'GalleryPluginPackageMap',
-	    'select' => array('packageVersion', 'packageBuild'),
-	    'where' => array('pluginType' => 'module', 'pluginId' => 'testModule',
-		'packageName' => 'package')),
-	    $searches[0], 'Unexpected query on map addition.');
-
-	/* Test map entry update scenario. */
-	$this->_testStorage->setSearchResults(array('someResults'));
-
-	$repository = new GalleryRepository();
-	$ret = $repository->updatePackageMetaData(
-	    'module', 'testModule', 'package', 'version', 'build', 'locked');
-	if ($ret) {
-	    return ($ret);
-	}
-	$this->assertEquals(array('GalleryPluginPackageMap' => array(
-				      array('match' => array('pluginType' => 'module',
-							     'pluginId' => 'testModule',
-							     'packageName' => 'package'),
-					    'change' => array('packageVersion' => 'version',
-							      'packageBuild' => 'build',
-							      'locked' => 'locked')))),
-			    $this->_testStorage->getUpdatedMapData(),
-			    'Wrong data updated.');
-
-	$searches = $this->_testStorage->getSearches();
-	$this->assertEquals(array('map' => 'GalleryPluginPackageMap',
-	    'select' => array('packageVersion', 'packageBuild'),
-	    'where' => array('pluginType' => 'module', 'pluginId' => 'testModule',
-		'packageName' => 'package')),
-	    $searches[1], 'Unexpected query on map update.');
-    }
-
     function testCreatePluginDirectory() {
 	global $gallery;
 
@@ -1188,11 +1132,15 @@ class RepositoryTest extends GalleryTestCase {
 	$gallery->setPlatform($platform);
 
 	$repository = new GalleryRepository();
-	$repository->_source = 'test';  /* this is cheating, but it saves us some setup */
 	$repository->_utilities = new UnitTestRepositoryUtilities();
+	$repository->_index = $this->_index;
+	$repository->_source = 'test';
+
 	$repository->_utilities->setReply('downloadFile', 
 	    array('repositoryUrl/test/RepositoryTest.package', null), 
 	    array(true, serialize(array('repositoryUrl/test/RepositoryTest.package'))));
+	$repository->_utilities->setReply('unpackPackage', 
+	    array($testPackagePath, "$modules/testModule/"), null);
 	$repository->_utilities->setReply('downloadFile', 
 	    array('repositoryUrl/test/RepositoryTest.descriptor', null), 
 	    array(true, serialize(array('repositoryUrl/test/RepositoryTest.descriptor'))));
@@ -1219,214 +1167,6 @@ class RepositoryTest extends GalleryTestCase {
 	$this->assert($platform->isComplete(), $platform->getRemaining());
 	$this->assert($repository->_utilities->isComplete(),
 	    $repository->_utilities->getRemaining());
-    }
-
-    function _getDescriptorForPreVerifyPackageTests() {
-	return array(
-	    'pluginType' => 'module', 'pluginId' => 'm1',
-	    'contents' => array('files' => array(
-		'f1' => array('packages' => array('p1'), 'bytes' => 1, 'hash' => md5('f1')),
-		'd2/f2' => array('packages' => array('p1'), 'bytes' => 1, 'hash' => md5('f2')),
-		'd3/f3' => array('packages' => array('p2'), 'bytes' => 1, 'hash' => md5('f3')))));
-    }
-
-    function testPreVerifyPackageModuleNotInstalled() {
-	global $gallery;
-
-	$modules = GalleryCoreApi::getCodeBasePath('modules');
-	$testDescriptor = $this->_getDescriptorForPreVerifyPackageTests();
-
-	$platform = new UnitTestPlatform();
-	$platform->setReply('file_exists', array("$modules/m1/"), false);
-	$gallery->setPlatform($platform);
-
-	$repository = new GalleryRepository();
-	$errors = $repository->preVerifyPackage('p1', $testDescriptor);
-	$this->assertEquals(array(), $errors);
-
-	$this->assert($platform->isComplete(), $platform->getRemaining());
-    }
-
-    function testPreVerifyPackageModuleAlreadyInstalledAndWriteable() {
-	global $gallery;
-
-	$modules = GalleryCoreApi::getCodeBasePath('modules');
-	$testDescriptor = $this->_getDescriptorForPreVerifyPackageTests();
-
-	$platform = new UnitTestPlatform();
-	$platform->setReply('file_exists', array("$modules/m1/"), true);
-	$platform->setReply('is_writeable', array("$modules/m1/"), true);
-	$platform->setReply('is_dir', array("$modules/m1/"), true);
-	$platform->setReply('file_exists', array("$modules/m1/f1"), true);
-	$platform->setReply('is_writeable', array("$modules/m1/f1"), true);
-	$platform->setReply('file_exists', array("$modules/m1/d2/f2"), true);
-	$platform->setReply('is_writeable', array("$modules/m1/d2/f2"), true);
-	$gallery->setPlatform($platform);
-
-	$repository = new GalleryRepository();
-	$errors = $repository->preVerifyPackage('p1', $testDescriptor);
-	$this->assertEquals(array(), $errors);
-
-	$this->assert($platform->isComplete(), $platform->getRemaining());
-    }
-
-    function testPreVerifyPackageModuleNotOverwriteable() {
-	global $gallery;
-
-	$modules = GalleryCoreApi::getCodeBasePath('modules');
-	$testDescriptor = $this->_getDescriptorForPreVerifyPackageTests();
-
-	$platform = new UnitTestPlatform();
-	$platform->setReply('file_exists', array("$modules/m1/"), true);
-	$platform->setReply('is_writeable', array("$modules/m1/"), true);
-	$platform->setReply('is_dir', array("$modules/m1/"), true);
-	$platform->setReply('file_exists', array("$modules/m1/f1"), true);
-	$platform->setReply('is_writeable', array("$modules/m1/f1"), false); /* bad! */
-	$platform->setReply('file_exists', array("$modules/m1/d2/f2"), true);
-	$platform->setReply('is_writeable', array("$modules/m1/d2/f2"), false); /* bad! */
-	$gallery->setPlatform($platform);
-
-	$repository = new GalleryRepository();
-	$errors = $repository->preVerifyPackage('p1', $testDescriptor);
-	$this->assertEquals(array("$modules/m1/f1", "$modules/m1/d2/f2"), $errors);
-
-	$this->assert($platform->isComplete(), $platform->getRemaining());
-    }
-
-    function testPreVerifyPackageMissingOneDirectory() {
-	global $gallery;
-
-	$modules = GalleryCoreApi::getCodeBasePath('modules');
-	$testDescriptor = $this->_getDescriptorForPreVerifyPackageTests();
-
-	$platform = new UnitTestPlatform();
-	$platform->setReply('file_exists', array("$modules/m1/"), true);
-	$platform->setReply('is_writeable', array("$modules/m1/"), true);
-	$platform->setReply('is_dir', array("$modules/m1/"), true);
-	$platform->setReply('file_exists', array("$modules/m1/f1"), true);
-	$platform->setReply('is_writeable', array("$modules/m1/f1"), true);
-	$platform->setReply('file_exists', array("$modules/m1/d2/f2"), false);
-	$platform->setReply('file_exists', array("$modules/m1/d2/"), false); /* missing! */
-	$gallery->setPlatform($platform);
-
-	$repository = new GalleryRepository();
-	$errors = $repository->preVerifyPackage('p1', $testDescriptor);
-	$this->assertEquals(array(), $errors);
-
-	$this->assert($platform->isComplete(), $platform->getRemaining());
-    }
-
-    function testPreVerifyPackageMissingOneFile() {
-	global $gallery;
-
-	$modules = GalleryCoreApi::getCodeBasePath('modules');
-	$testDescriptor = $this->_getDescriptorForPreVerifyPackageTests();
-
-	$platform = new UnitTestPlatform();
-	$platform->setReply('file_exists', array("$modules/m1/"), true);
-	$platform->setReply('is_writeable', array("$modules/m1/"), true);
-	$platform->setReply('is_dir', array("$modules/m1/"), true);
-	$platform->setReply('file_exists', array("$modules/m1/f1"), true);
-	$platform->setReply('is_writeable', array("$modules/m1/f1"), true);
-	$platform->setReply('file_exists', array("$modules/m1/d2/f2"), false);
-	$platform->setReply('file_exists', array("$modules/m1/d2/"), true);
-	$platform->setReply('is_writeable', array("$modules/m1/d2/"), true);
-	$platform->setReply('is_dir', array("$modules/m1/d2/"), true);
-	$gallery->setPlatform($platform);
-
-	$repository = new GalleryRepository();
-	$errors = $repository->preVerifyPackage('p1', $testDescriptor);
-	$this->assertEquals(array(), $errors);
-
-	$this->assert($platform->isComplete(), $platform->getRemaining());
-    }
-
-    function testPreVerifyPackageModuleContainsFileInPlaceOfADirectory() {
-	global $gallery;
-
-	$modules = GalleryCoreApi::getCodeBasePath('modules');
-	$testDescriptor = $this->_getDescriptorForPreVerifyPackageTests();
-
-	$platform = new UnitTestPlatform();
-	$platform->setReply('file_exists', array("$modules/m1/"), true);
-	$platform->setReply('is_writeable', array("$modules/m1/"), true);
-	$platform->setReply('is_dir', array("$modules/m1/"), true);
-	$platform->setReply('file_exists', array("$modules/m1/f1"), true);
-	$platform->setReply('is_writeable', array("$modules/m1/f1"), true);
-	$platform->setReply('file_exists', array("$modules/m1/d2/f2"), false);
-	$platform->setReply('file_exists', array("$modules/m1/d2/"), true);
-	$platform->setReply('is_writeable', array("$modules/m1/d2/"), true);
-	$platform->setReply('is_dir', array("$modules/m1/d2/"), false);  /* bad! */
-	$gallery->setPlatform($platform);
-
-	$repository = new GalleryRepository();
-	$errors = $repository->preVerifyPackage('p1', $testDescriptor);
-	$this->assertEquals(array("$modules/m1/d2/f2"), $errors);
-
-	$this->assert($platform->isComplete(), $platform->getRemaining());
-    }
-
-    function testPreVerifyPackageNonWriteableModuleDir() {
-	global $gallery;
-
-	$modules = GalleryCoreApi::getCodeBasePath('modules');
-	$gallery->setConfig('data.gallery.plugins', '/');
-	$testDescriptor = $this->_getDescriptorForPreVerifyPackageTests();
-
-	$platform = new UnitTestPlatform();
-	$platform->setReply('file_exists', array("$modules/m1/"), true);
-	$platform->setReply('is_writeable', array("$modules/m1/"), false); /* bad! */
-	$gallery->setPlatform($platform);
-
-	$repository = new GalleryRepository();
-	$errors = $repository->preVerifyPackage('p1', $testDescriptor);
-	$this->assertEquals(array("$modules/m1/"), $errors);
-
-	$this->assert($platform->isComplete(), $platform->getRemaining());
-    }
-
-    function testVerifyPackageIntegrity() {
-	global $gallery;
-
-	$modules = GalleryCoreApi::getCodeBasePath('modules');
-	$gallery->setConfig('data.gallery.plugins', 'plugins/');
-	$testDescriptor = array(
-	    'pluginType' => 'module',
-	    'pluginId' => 'testModule',
-	    'contents' => array('files' => array(
-		'moduleFile1' => array('packages' => array('package1'),
-				       'bytes' => 1337,
-				       'bytes_crlf' => 1337,
-				       'hash_crlf' => md5('moduleFile1'),
-				       'hash' => md5('moduleFile1')),
-		'moduleFile2' => array('packages' => array('package1'),
-				       'bytes' => 31337,
-				       'bytes_crlf' => 31337,
-				       'hash_crlf' => md5('moduleFile2'),
-				       'hash' => md5('moduleFile2')))));
-
-	$platform = new UnitTestPlatform();
-	/* moduleFile1 */
-	$platform->setReply('file_get_contents',
-			    array("$modules/testModule/moduleFile1"), "moduleFile1");
-	$platform->setReply('file_exists', array("$modules/testModule/moduleFile1"), true);
-	$platform->setReply('filesize', array("$modules/testModule/moduleFile1"), 1337);
-
-
-	/* moduleFile2 */
-	$platform->setReply('file_get_contents',
-			    array("$modules/testModule/moduleFile2"), "moduleFile2");
-	$platform->setReply('file_exists', array("$modules/testModule/moduleFile2"), true);
-	$platform->setReply('filesize', array("$modules/testModule/moduleFile2"), 31337);
-	$gallery->setPlatform($platform);
-
-	$repository = new GalleryRepository();
-	$ret = $repository->verifyPackageIntegrity('package1', $testDescriptor);
-	if ($ret) {
-	    return ($ret);
-	}
-
-	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
 
     function testScanPlugin() {
@@ -1762,49 +1502,6 @@ class RepositoryTest_GalleryRepository {
 class RepositoryTestModule {
     function getVersion() {
 	return '1.0';
-    }
-}
-
-class RepositoryTestUtilities {
-
-    var $_packages;
-    var $_utilities;
-
-    function RepositoryTestUtilities($packages = null) {
-	$this->_packages = $packages;
-	$this->_utilities = new GalleryRepositoryUtilities();
-    }
-
-    function compareRevisions($revision1, $revision2) {
-	return $this->_utilities->compareRevisions($revision1, $revision2);
-    }
-
-    function compareVersions($version1, $version2, $revision1 = '', $revision2 = '') {
-	return $this->_utilities->compareVersions($version1, $version2, $revision1, $revision2);
-    }
-
-    function getProvidedApis($pluginType, $apis) {
-	return $this->_utilities->getProvidedApis($pluginType, $apis);
-    }
-
-    function getPluginPackages($pluginId, $plugin) {
-	return array(null, $this->_packages);
-    }
-
-    function getLanguageBaseRevision() {
-	return array(null, '22222');
-    }
-
-    function isPluginAvailable($pluginType, $pluginId) {
-	return array(null, !empty($this->_packages));
-    }
-
-    function isPluginCompatible($pluginType, $version1, $version2) {
-	return $this->_utilities->isPluginCompatible($pluginType, $version1, $version2);
-    }
-
-    function downloadFile($url) {
-	return array(true, serialize(array($url)));
     }
 }
 
