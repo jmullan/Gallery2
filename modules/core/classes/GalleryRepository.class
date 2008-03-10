@@ -722,7 +722,8 @@ class GalleryRepository {
 	    }
 
 	    /* Check the unpacked files' integrity. */
-	    $ret = $this->_utilities->verifyPackageIntegrity($packageName, $descriptor);
+	    $ret = $this->_utilities->verifyPackageIntegrity($descriptor['pluginType'], 
+		$descriptor['pluginId'], $packageName, $descriptor['contents']);
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
