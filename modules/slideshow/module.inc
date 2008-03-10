@@ -92,7 +92,7 @@ class SlideshowModule extends GalleryModule {
 
 	if (!isset($uninstalled)) {
 	    GalleryCoreApi::requireOnce('modules/slideshow/classes/PicLensHelper.class');
-	    $ret = PicLensHelper::install();
+	    list ($ret, $ignored) = PicLensHelper::install();
 	    if ($ret && $ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
 		return array($ret, null);
 	    } else if ($ret) {
