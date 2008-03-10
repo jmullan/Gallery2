@@ -32,12 +32,12 @@ class SlideshowModule extends GalleryModule {
 	$this->setId('slideshow');
 	$this->setName($gallery->i18n('Slideshow'));
 	$this->setDescription($gallery->i18n('Slideshow'));
-	$this->setVersion('1.0.8');
+	$this->setVersion('1.0.9');
 	$this->_templateVersion = 1;
 	$this->setGroup('display', $gallery->i18n('Display'));
-	$this->setCallbacks('getItemLinks');
-	$this->setRequiredCoreApi(array(7, 27));
-	$this->setRequiredModuleApi(array(3, 6));
+	$this->setCallbacks('getItemLinks|getSiteAdminViews');
+	$this->setRequiredCoreApi(array(7, 49));
+	$this->setRequiredModuleApi(array(3, 9));
     }
 
     /**
@@ -51,25 +51,122 @@ class SlideshowModule extends GalleryModule {
 	    return $ret;
 	}
 
+	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryEventListener',
+	    'SlideshowModule', 'SlideshowModule',
+	    'modules/slideshow/module.inc', 'slideshow',
+	    array('Gallery::BeforeDisplay'));
+	if ($ret) {
+	    return $ret;
+	}
+
 	return null;
+    }
+
+    /**
+     * @see GalleryModule::upgrade
+     */
+    function upgrade($currentVersion) {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$dir = $gallery->getConfig('data.gallery.plugins_data') . 'modules/slideshow';
+	list ($success) = GalleryUtilities::guaranteeDirExists($dir);
+	if (!$success) {
+	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					"Unable to create directory: $dir");
+	}
+
+	return null;
+    }
+
+    /**
+     * @see GalleryModule::activate
+     */
+    function activate($postActivationEvent=true) {
+	global $gallery;
+
+	list ($ret, $uninstalled) = $this->getParameter('piclens.uninstalled');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	if (!isset($uninstalled)) {
+	    GalleryCoreApi::requireOnce('modules/slideshow/classes/PicLensHelper.class');
+	    $ret = PicLensHelper::install();
+	    if ($ret && $ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
+		return array($ret, null);
+	    } else if ($ret) {
+		/* Should be safe to swallow this error */
+		GalleryCoreApi::addEventLogEntry(
+		    'slideshow module', 'Unable to install PicLens',
+		    $ret->getAsText());
+	    }
+	}
+
+	return parent::activate($postActivationEvent);
     }
 
     /**
      * @see GalleryModule::getItemLinks
      */
     function getItemLinks($items, $wantsDetailedLinks, $permissions) {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+
+	list ($ret, $picLensVersion) = $this->getParameter('piclens.version');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
 	$links = array();
 	foreach ($items as $item) {
 	    $itemId = $item->getId();
+	    $jsUrlParams = array('forJavascript' => true, 'forceFullUrl' => true);
 	    if (isset($wantsDetailedLinks[$itemId])) {
-		$links[$itemId][] =
-		    array('text' => $this->translate('View Slideshow'),
-			  'params' => array(
-			      'view' => 'slideshow.Slideshow',
-			      'itemId' => $itemId));
+		if ($picLensVersion) {
+		    $script = sprintf(
+			'var p=PicLensLite;'
+			. 'p.setCallbacks({onNoPlugins:function(){location.href=\'%s\'}});'
+			. 'p.setLiteURLs({swf:\'%s\'});'
+			. 'p.start({feedUrl:\'%s\', guid: %d})',
+			$urlGenerator->generateUrl(
+			    array('view' => 'slideshow.Slideshow',
+				  'itemId' => $itemId),
+			    $jsUrlParams),
+			$urlGenerator->generateUrl(
+			    array('view' => 'slideshow.DownloadPicLens',
+				  'file' => 'swf',
+				  'v' => $picLensVersion),
+			    $jsUrlParams),
+			$urlGenerator->generateUrl(
+			    array('view' => 'slideshow.SlideshowMediaRss',
+				  'itemId' => $item->getId()),
+			    $jsUrlParams),
+			$itemId);
+		    $links[$itemId][] =
+			array('text' => $this->translate('View Slideshow'),
+			      'params' => array('view' => 'slideshow.Slideshow',
+						'itemId' => $itemId),
+			      'script' => $script);
+		} else {
+		    $links[$itemId][] =
+			array('text' => $this->translate('View Slideshow'),
+			      'params' => array('view' => 'slideshow.Slideshow',
+						'itemId' => $itemId));
+		}
 	    }
 	}
+
 	return array(null, $links);
+    }
+
+    /**
+     * @see GalleryModule::getSiteAdminViews
+     */
+    function getSiteAdminViews() {
+	return array(null,
+		     array(array('name' => $this->translate('Slideshow'),
+				 'view' => 'slideshow.AdminSlideshow')));
     }
 
     /**
@@ -91,6 +188,53 @@ class SlideshowModule extends GalleryModule {
 	$rules[] = $rule;
 
 	return $rules;
+    }
+
+    /**
+     * @see GalleryModule::handleEvent
+     */
+    function handleEvent($event) {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+
+	$data = $event->getData();
+	if ($event->getEventName() == 'Gallery::BeforeDisplay'
+	        && $data['view']->getViewType() == VIEW_TYPE_SHOW_ITEM) {
+	    /**
+	     * We store the template in the entity field because we need a reference to it, and
+	     * that's the only reference to be had.  Theoretically in PHP5 this problem goes away
+	     * and we can store lots of stuff in the data member.  But for now, we store the
+	     * template there, and we get the item by leaning on GalleryView.
+	     */
+	    $template =& $event->getEntity();
+
+	    list ($ret, $item, $ignored) = GalleryView::getItem();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    list ($ret, $picLensVersion) = $this->getParameter('piclens.version');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    if ($picLensVersion) {
+		$template->link(
+		    array('rel' => 'alternate',
+			  'type' => 'application/rss+xml',
+			  'title' => 'Photo RSS',
+			  'href' => $urlGenerator->generateUrl(
+			      array('view' => 'slideshow.SlideshowMediaRss',
+				    'itemId' => $item->getId()))));
+
+		$template->javascript($urlGenerator->generateUrl(
+					  array('view' => 'slideshow.DownloadPicLens',
+						'file' => 'js',
+						'v' => $picLensVersion)));
+	    }
+	}
+
+	return array(null, null);
     }
 }
 ?>
