@@ -1075,6 +1075,25 @@ class GalleryTestCase extends TestCase {
 	    }
 	}
     }
+
+    /**
+     * Fail if the provided GalleryStatus object does not contain the given error code.
+     */
+    function assertErrorEquals($errorCode, $ret) {
+	if (!$ret) {
+	    $this->fail('Failed to get error %s',
+			join(', ', GalleryStatus::getErrorCodeConstants($errorCode)));
+	    return;
+	}
+
+	if (!($ret->getErrorCode() & $errorCode)) {
+	    $this->fail('Expected error %s, received %s<br>%s',
+			join(', ', GalleryStatus::getErrorCodeConstants($errorCode)),
+			join(', ', GalleryStatus::getErrorCodeConstants($ret->getErrorCode())),
+			$ret->getAsHtml());
+	    return;
+	}
+    }
 }
 
 /**
