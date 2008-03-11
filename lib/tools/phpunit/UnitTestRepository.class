@@ -27,7 +27,7 @@
  * 'fuzzy' to match the parameter to a regular expression.
  * It will expect to receive calls in that specific order and play them back.
  *
- * In tearDown() or a specifi test call:
+ * In tearDown() or at the end of the test, call:
  *
  *  $this->assert($repository->isComplete(), $repository->getRemaining());
  *
@@ -48,12 +48,12 @@ class UnitTestRepository extends MockObject {
     }
 
     function getPluginUpgradeInfo($pluginType, $pluginId, $forBasePackageUpgrade=true) {
-	return $this->_makeReply('getPluginUpgradeInfo', 
+	return $this->_makeReply('getPluginUpgradeInfo',
 	    array($pluginType, $pluginId, $forBasePackageUpgrade));
     }
 
     function getRepositoryPluginList($pluginType, $showAllPlugins=false, $coreApis=null) {
-	return $this->_makeReply('getRepositoryPluginList', 
+	return $this->_makeReply('getRepositoryPluginList',
 	    array($pluginType, $showAllPlugins, $coreApis));
     }
 
@@ -72,7 +72,7 @@ class UnitTestRepository extends MockObject {
     function updatePackageMetaData(
 	$pluginType, $pluginId, $packageName, $packageVersion, $packageBuild, $locked) {
 
-	return $this->_makeReply('updatePackageMetaData', 
+	return $this->_makeReply('updatePackageMetaData',
 	    array($pluginType, $pluginId, $packageName, $packageVersion, $packageBuild, $locked));
     }
 
@@ -85,12 +85,12 @@ class UnitTestRepository extends MockObject {
     }
 
     function downloadAndUnpack($pluginType, $pluginId, $packageName, $relativePackageUrl) {
-	return $this->_makeReply('downloadAndUnpack', 
+	return $this->_makeReply('downloadAndUnpack',
 	    array($pluginType, $pluginId, $packageName, $relativePackageUrl));
     }
 
     function downloadPackagesForPlugin($pluginType, $pluginId, $pluginDownloadData, &$callback) {
-	return $this->_makeReply('downloadPackagesForPlugin', 
+	return $this->_makeReply('downloadPackagesForPlugin',
 	    array($pluginType, $pluginId, $pluginDownloadData, $callback));
     }
 
@@ -127,7 +127,7 @@ class UnitTestRepository extends MockObject {
     }
 
     function getPackageVersionAndBuild($pluginType, $pluginId, $packageName) {
-	return $this->_makeReply('getPackageVersionAndBuild', 
+	return $this->_makeReply('getPackageVersionAndBuild',
 	    array($pluginType, $pluginId, $packageName));
     }
 

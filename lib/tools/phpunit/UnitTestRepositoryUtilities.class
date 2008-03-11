@@ -19,8 +19,8 @@
  */
 
 /**
- * Unit test repository utilties.  This is a mock RepositoryUtilties class that the unit tests can 
- * use to simulate the exact conditions that they want from the repository utilties in order to 
+ * Unit test repository utilties.  This is a mock RepositoryUtilties class that the unit tests can
+ * use to simulate the exact conditions that they want from the repository utilties in order to
  * exercise the code.
  *
  * Use setReply() to tell it what function calls to expect.  Provide it with an array of
@@ -28,7 +28,7 @@
  * 'fuzzy' to match the parameter to a regular expression.
  * It will expect to receive calls in that specific order and play them back.
  *
- * In tearDown() or a specifi test call:
+ * In tearDown() or at the end of the test, call:
  *
  *  $this->assert($repositoryUtilties->isComplete(), $repositoryUtilties->getRemaining());
  *
@@ -70,7 +70,7 @@ class UnitTestRepositoryUtilities extends MockObject {
 
     function isPluginCompatible($pluginType, $requiredCoreApi, $requiredPluginApi,
 	    $providedApis=null) {
-	return $this->_makeReply('isPluginCompatible', array($pluginType, $requiredCoreApi, 
+	return $this->_makeReply('isPluginCompatible', array($pluginType, $requiredCoreApi,
 	    $requiredPluginApi, $providedApis));
     }
 
@@ -97,7 +97,7 @@ class UnitTestRepositoryUtilities extends MockObject {
     function updatePackageMetaData(
 	$pluginType, $pluginId, $packageName, $packageVersion, $packageBuild, $locked) {
 
-	return $this->_makeReply('updatePackageMetaData', 
+	return $this->_makeReply('updatePackageMetaData',
 	    array($pluginType, $pluginId, $packageName, $packageVersion, $packageBuild, $locked));
     }
 
