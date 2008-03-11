@@ -154,12 +154,9 @@ class GalleryTemplate {
      * @param string $path stylesheet path relative to gallery2 dir
      */
     function style($path) {
-	global $gallery;
-	$urlGenerator =& $gallery->getUrlGenerator();
-
 	$this->link(array('rel' => 'stylesheet',
 			  'type' => 'text/css',
-			  'href' => $urlGenerator->generateUrl(array('href' => $path))));
+			  'href' => $path));
     }
 
     /**
@@ -176,9 +173,15 @@ class GalleryTemplate {
      * @param string $path script path relative to gallery2 dir
      */
     function link($attributes) {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+
 	$head =& $this->getVariableByReference('head');
 	$linkHtml = '<link';
 	foreach ($attributes as $key => $value) {
+	    if ($key == 'href') {
+		$value = $urlGenerator->generateUrl(array('href' => $value));
+	    }
 	    $linkHtml .= " $key=\"$value\"";
 	}
 	$linkHtml .= '/>';
