@@ -1485,7 +1485,7 @@ class GalleryCoreApi {
      * @param array $itemIds
      * @param int $userId an optional user id (default is the current user)
      * @return array GalleryStatus a status code
-     *               int a count
+     *               array (itemId => count, itemId => count, ...)
      */
     function fetchChildCounts($itemIds, $userId=null) {
 	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryItemHelper_simple.class');
