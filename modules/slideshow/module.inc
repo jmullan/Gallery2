@@ -92,7 +92,7 @@ class SlideshowModule extends GalleryModule {
 
 	if (!isset($uninstalled)) {
 	    GalleryCoreApi::requireOnce('modules/slideshow/classes/PicLensHelper.class');
-	    list ($ret, $ignored) = PicLensHelper::install();
+	    list ($ret, $version) = PicLensHelper::install();
 	    if ($ret && $ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
 		return array($ret, null);
 	    } else if ($ret) {
@@ -100,6 +100,12 @@ class SlideshowModule extends GalleryModule {
 		GalleryCoreApi::addEventLogEntry(
 		    'slideshow module', 'Unable to install PicLens',
 		    $ret->getAsText());
+	    } else {
+		$ret = GalleryCoreApi::setPluginParameter(
+		    'module', 'slideshow', 'piclens.version', $version);
+		if ($ret) {
+		    return array($ret, null);
+		}
 	    }
 	}
 
