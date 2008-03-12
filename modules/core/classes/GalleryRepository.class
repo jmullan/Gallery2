@@ -597,9 +597,8 @@ class GalleryRepository {
 	    '%s%ss/%s/', GalleryCoreApi::getCodeBasePath(), $pluginType, $pluginId);
 	if (!$platform->file_exists($pluginOutputDir)
 		&& !$platform->mkdir($pluginOutputDir)) {
-	    $ret = GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-					 "Couldn't create directory [$pluginOutputDir]");
-	    return array($ret, null);
+	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					 "Couldn't create directory [$pluginOutputDir]"), null);
 	}
 
 	/* Write package to the local repository cache directory. */
@@ -746,10 +745,16 @@ class GalleryRepository {
     }
 
     /**
-     * @see GalleryRepositoryUtilities::preVerifyPackage
+     * Verify that a package will install cleanly by examining all of its paths and making sure
+     * that any file operations that we intend to make will be successful.
+     *
+     * @param string $packageName name of the package to check
+     * @param array $descriptor descriptor of the plugin the package belongs to
+     * @return array of files that can't be overwritten (empty array if everything is ok)
      */
     function preVerifyPackage($packageName, $descriptor) {
-	return $this->_utilities->preVerifyPackage($packageName, $descriptor);
+	return $this->_utilities->preVerifyPackage($descriptor['pluginType'], 
+	    $descriptor['pluginId'], $packageName, $descriptor);
     }
 
     /**
@@ -759,7 +764,7 @@ class GalleryRepository {
      * @param array $descriptor descriptor of the plugin the package belongs to
      * @return GalleryStatus a status code
      */
-     function verifyPackageIntegrity($packageName, $descriptor) {
+    function verifyPackageIntegrity($packageName, $descriptor) {
 	return $this->_utilities->verifyPackageIntegrity($descriptor['pluginType'], 
 	    $descriptor['pluginId'], $packageName, $descriptor['contents']);
     }
@@ -928,6 +933,140 @@ class GalleryRepository {
      */
     function getLanguagePackageFiles($locales) {
 	return $this->_index->getLanguagePackageFiles($locales);
+    }
+
+    /**
+     * Retrieve all the specified files as one http request and separate into individual packages.
+     * @param string $source name of the repository to be accessed
+     * @param array $filesToDownload list of files to download
+     * @param array $callback progress notification callback
+     * @return array GalleryStatus a status code
+     * 		     array string status messages indicating problems encounterd
+     * 		     int count of packages installed
+     */
+    function downloadAndUnpackPackages($filesToDownload, &$callback) {
+	global $gallery;
+	$phpVm = $gallery->getPhpVm();
+	$platform =& $gallery->getPlatform();
+
+	$utilities = $this->_utilities;
+
+	list ($ret, $aggregateFile) = 
+	    $utilities->downloadAggregatePackages($this->_source, $filesToDownload);
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+
+	call_user_func($callback['method'], $callback['title'], '', 
+	    ++$callback['current'] / $callback['total']);
+
+	list ($ret, $packages) = $utilities->splitAggregatePackage($this->_source, $aggregateFile,
+	    $callback);
+	$platform->unlink($aggregateFile);
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+
+	list($ret, $status) = $this->_preverifyAggregatePackages($packages, $callback);
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+
+	$installedPackageCount = 0;
+	$cacheDir = $gallery->getConfig('repository.cache') . $this->_source . '/';
+	foreach ($packages as $pluginType => $plugins) {
+	    foreach ($plugins as $pluginId => $data) {
+		if (!empty($status['failedToInstall'][$pluginType][$pluginId])) {
+		    $callback['current'] += 
+			count($status['failedToInstall'][$pluginType][$pluginId]);
+		    call_user_func($callback['method'], $callback['title'], '', 
+			$callback['current'] / $callback['total']);
+		    continue;
+		}
+		$pluginOutputDir = GalleryCoreApi::getCodeBasePath("{$pluginType}s/$pluginId/");
+
+		$descriptor = $data['descriptor'];
+		foreach ($data['files'] as $packageFile) {
+		    $gallery->guaranteeTimeLimit(30);
+		    /* Unpack files from package. */
+		    $utilities->unpackPackage($cacheDir . $packageFile[1], $pluginOutputDir);
+		    $installedPackageCount++;
+
+		    $ret = $utilities->verifyPackageIntegrity($pluginType, $pluginId, 
+			$packageFile[0], $descriptor);
+		    if ($ret) {
+			return array($ret, null, null);
+		    }
+
+		    /* Update plugin package map. */
+		    list ($ret, $version, $build) = $this->getPackageVersionAndBuild(
+			$pluginType, $pluginId, $packageFile[0]);
+		    if ($ret) {
+			return array($ret, null, null);
+		    }
+		    $ret = $utilities->updatePackageMetaData(
+			    $pluginType, $pluginId, $packageFile[0], $version, $build, 0);
+		    if ($ret) {
+			return array($ret, null, null);
+		    }
+
+		    call_user_func($callback['method'], $callback['title'], '', 
+			++$callback['current'] / $callback['total']);
+		}
+	    }
+	}
+
+	return array(null, $status, $installedPackageCount);
+    }
+
+    /**
+     * Preverify that we will have no trouble unpacking and writing the packages we downloaded
+     *
+     * @param array $packages packages returned from splitAggregatePackage
+     * @param array $callback progress notification callback
+     * @return array GalleryStatus a status code
+     *  	     array string status messages indicating problems encounterd
+     */
+    function _preverifyAggregatePackages($packages, &$callback) {
+	global $gallery;
+
+	$status = array();
+	foreach ($packages as $pluginType => $plugins) {
+	    foreach ($plugins as $pluginId => $data) {
+		$gallery->guaranteeTimeLimit(30);
+		/* Make sure output directory exists. */
+		$pluginOutputDir = GalleryCoreApi::getCodeBasePath("{$pluginType}s/$pluginId/");
+
+		list ($success) = GalleryUtilities::guaranteeDirExists($pluginOutputDir);
+		if (!$success) {
+		    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+			"Couldn't create directory [$pluginOutputDir]"), null);
+		}
+
+		if (!empty($data['descriptor'])) {
+		    $descriptor = $data['descriptor'];
+		    foreach ($data['files'] as $packageFile) {
+			$lockedFiles = $this->_utilities->preVerifyPackage($pluginType, $pluginId, 
+			    $packageFile[0], $descriptor);
+			if (!empty($lockedFiles)) {
+			    $status['failedToInstall'][$pluginType][$pluginId][] = $packageFile[1];
+			    continue;
+			}
+		    }
+		} else {
+		    GalleryCoreApi::addEventLogEntry('Gallery Error', 'No Descriptor',
+			sprintf('No descriptor requested for %s %s', $pluginType, $pluginId));
+
+		    foreach ($data['files'] as $packageFile) {
+			$status['failedToInstall'][$pluginType][$pluginId][] = $packageFile[1];
+			$callback['current']++;
+		    }
+		    $percentage = $callback['current'] / $callback['total'];
+		    call_user_func($callback['method'], $callback['title'], '', $percentage);
+		}
+	    }
+	}
+	return array(null, $status);
     }
 }
 ?>

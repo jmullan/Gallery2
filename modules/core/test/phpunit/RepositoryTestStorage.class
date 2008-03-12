@@ -28,6 +28,7 @@
  */
 class RepositoryTestStorage {
 
+    /** @todo Convert this to use UnitTestStorage */
     var $_addedMapData;
     var $_updatedMapData;
     var $_searchResults;
@@ -96,6 +97,14 @@ class RepositoryTestStorage {
     }
 
     function rollbackTransaction() {
+    }
+
+    function getUniqueId($sequence) {
+	return 1;
+    }
+
+    function getAffectedRows($useNonTransactionalConnection) {
+	return 1;
     }
 }
 

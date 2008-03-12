@@ -373,16 +373,7 @@ class GalleryRepositoryUtilities {
 	    $needsInflation = true;
 	}
 
-	static $apiQueryParams;
-	if (empty($apiQueryParams)) {
-	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryTheme.class');
-	    $apiQueryParams = sprintf('coreApi=%s&moduleApi=%s&themeApi=%s',
-				      join('.', GalleryCoreApi::getApiVersion()),
-				      join('.', GalleryModule::getApiVersion()),
-				      join('.', GalleryTheme::getApiVersion()));
-	}
-
-	$url .= '?' . $apiQueryParams;
+	$url .= '?' . $this->_getApiQueryParams();
 	list ($successful, $contents, $response, $headers, $actualUrl) =
 	    GalleryCoreApi::fetchWebPage($url);
 	if (empty($contents) || !$successful) {
@@ -451,18 +442,18 @@ class GalleryRepositoryUtilities {
      * Verify that a package will install cleanly by examining all of its paths and making sure
      * that any file operations that we intend to make will be successful.
      *
+     * @param string $pluginType the plugin type (eg. module, theme)
+     * @param string $pluginId the plugin id
      * @param string $packageName name of the package to check
      * @param array $descriptor descriptor of the plugin the package belongs to
      * @return array of files that can't be overwritten (empty array if everything is ok)
      */
-    function preVerifyPackage($packageName, $descriptor) {
+    function preVerifyPackage($pluginType, $pluginId, $packageName, $descriptor) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
 	$errorMessages = array();
 
-	$pluginType = $descriptor['pluginType'];
-	$pluginId = $descriptor['pluginId'];
 	$pluginOutputDir = sprintf(
 	    '%s%ss/%s/', GalleryCoreApi::getCodeBasePath(), $pluginType, $pluginId);
 
@@ -475,7 +466,7 @@ class GalleryRepositoryUtilities {
 	    return array();
 	}
 
-	foreach ($descriptor['contents']['files'] as $relativePath => $metaData) {
+	foreach ($descriptor['files'] as $relativePath => $metaData) {
 	    foreach ($metaData['packages'] as $descriptorPackage) {
 		$gallery->guaranteeTimeLimit(10);
 
@@ -569,6 +560,107 @@ class GalleryRepositoryUtilities {
 	return null;
     }
 
+    /**
+     * This method reads the aggregate download file and extracts the package files. 
+     * The format of the file is:
+     * file: relative filename(.gz) lengthCRLF
+     * binary data if compressed or text if not compressed
+     * 
+     * file: relative filename(.gz) lengthCRLF
+     * binary data if compressed or text if not compressed
+     *
+     * @param string $source name of the repository to be accessed
+     * @param string $outputFile name of the temporary file containing the downloaded packages
+     * @param array $callback progress notification callback
+     * @return array GalleryStatus a status code
+     * 		     array of packages that were downloaded
+     */
+    function splitAggregatePackage($source, $outputFile, &$callback) {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+	$phpVm = $gallery->getPhpVm();
+
+	$packages = array('module' => array(), 'theme' => array());
+
+	/* Sample: file: modules/albumselect-lang-en_GB-12345-12345.package.gz 12345 */
+	$languagePackPattern = '#^file:\s+((module|theme)s/([a-zA-Z0-9]+)-'
+	    . '(?:(lang-[a-z]{2}(?:_[A-Z]{2})?)(?:-\d+){2})\.package)(\.gz)?\s+(\d+)$#';
+
+	/* Sample: file: modules/albumselect-1.0.10-12345-base.package.gz 12345 */
+	 $basePattern = '#^file:\s+((module|theme)s/([a-zA-Z0-9]+)-(?:\.?\d+){2,}-\d+-'
+	    . 'base\.package)(\.gz)?\s+(\d+)$#';
+
+	/* Sample: file: modules/albumselect-1.0.10-12345.descriptor.gz 12345 */
+	$descriptorPattern = '#^file:\s+((module|theme)s/([a-zA-Z0-9]+)-(?:\.?\d+){2,}-\d+'
+	    . '\.descriptor)(\.gz)?\s+(\d+)$#';
+
+	$handle = $platform->fopen($outputFile, 'r');
+	if (empty($handle)) {
+	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+		'Couldn\'t open aggregate package file'), null);
+	}
+	$cacheDir = $gallery->getConfig('repository.cache') . $source . '/';
+	while (($line = $platform->fgets($handle, 4096)) !== false) {
+	    $gallery->guaranteeTimeLimit(30);
+
+	    $line = trim($line);
+	    if (preg_match($languagePackPattern, $line, $matches)) {
+		list ($value, $file, $pluginType, $pluginId, $packageName, $needsInflation,
+		    $byteCount) = $matches;
+		$isDescriptor = false;
+	    } else if (preg_match($basePattern, $line, $matches)) {
+		list ($value, $file, $pluginType, $pluginId, $needsInflation, $byteCount) = 
+		    $matches;
+		$packageName = 'base';
+		$isDescriptor = false;
+	    } else if (preg_match($descriptorPattern, $line, $matches)) {
+		list ($value, $file, $pluginType, $pluginId, $needsInflation, $byteCount) = 
+		    $matches;
+		$packageName = null;
+		$isDescriptor = true;
+	    } else {
+		$platform->fclose($handle);
+		return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_FILE_TYPE, null, null,
+		    "Unexpected data encountered on download \"$line\""), null);
+	    }
+
+	    $contents = $platform->fread($handle, $byteCount);
+
+	    if (!empty($needsInflation)) {
+		if ($phpVm->function_exists('gzinflate')) {
+		    $contents = $phpVm->gzinflate($contents);
+		} else {
+		    $platform->fclose($handle);
+		    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_FILE_TYPE, null, null,
+			"gzinflate not installed and is required to inflate: $file"), null);
+		}
+	    }
+
+	    if (empty($packages[$pluginType][$pluginId])) {
+		$packages[$pluginType][$pluginId] = array('files' => array());
+	    }
+
+	    /* Write package to the local repository cache directory */
+	    $absolutePackagePath = $cacheDir . $file;
+	    if ($platform->file_put_contents($absolutePackagePath, $contents) === false) {
+		$platform->fclose($handle);
+		return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, null, null,
+		    "Error writing package: $absolutePackagePath"), null);
+	    }
+
+	    if ($isDescriptor) {
+		$packages[$pluginType][$pluginId]['descriptor'] = unserialize($contents);
+	    } else {
+		$packages[$pluginType][$pluginId]['files'][] = array($packageName, $file);
+	    }
+
+	    call_user_func($callback['method'], $callback['title'], '', 
+		++$callback['current'] / $callback['total']);
+	}
+	$platform->fclose($handle);
+	return array(null, $packages);
+    }
+
     /*
      * Unpack and install a downloaded package file.
      * This is primarily to allow unit testing.
@@ -578,6 +670,68 @@ class GalleryRepositoryUtilities {
     function unpackPackage($packageFile, $outputDirecory) {
 	include($packageFile);
 	call_user_func($unpackFunction, $outputDirecory);
+    }
+
+    /**
+     * Retrieve the core, module and theme API versions.
+     * @return string the API version numbers in http query format.
+     * @access private
+     */
+    function _getApiQueryParams() {
+	static $apiQueryParams;
+	if (empty($apiQueryParams)) {
+	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryTheme.class');
+	    $apiQueryParams = sprintf('coreApi=%s&moduleApi=%s&themeApi=%s',
+				      join('.', GalleryCoreApi::getApiVersion()),
+				      join('.', GalleryModule::getApiVersion()),
+				      join('.', GalleryTheme::getApiVersion()));
+	}
+
+	return $apiQueryParams;
+    }
+
+    /**
+     * Contact the repository and download the specified files with one request.
+     *
+     * @param string $source repository source
+     * @param array $filesToDownload list of files to download
+     * @return array GalleryStatus a status code
+     * 		     string name of the temporary file containing the aggregated download
+     */
+    function downloadAggregatePackages($source, $filesToDownload) {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+	$phpVm = $gallery->getPhpVm();
+
+	/* Create a temporary file for the multipart download file */
+	$tmpDir = $gallery->getConfig('data.gallery.tmp');
+	$outputFile = $platform->tempnam($tmpDir, 'multipart');
+	if (!$platform->file_exists($outputFile)) {
+	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+		'Couldn\'t create temporary file'), null);
+	}
+
+	$postDataArray = array();
+	$useCompression = $phpVm->function_exists('gzinflate');
+
+	foreach ($filesToDownload as $key => $file) {
+	    $postDataArray["files[$key]"] = $file . ($useCompression ? '.gz' : '');
+	}
+
+	$url = $gallery->getConfig('repository.url') . $source . '/multipart/';
+	$url .= '?' . $this->_getApiQueryParams();
+
+	$gallery->guaranteeTimeLimit(60);
+
+	list ($success, $response, $headers, $location) = 
+	    GalleryCoreApi::fetchWebFile($url, $outputFile, array(), $postDataArray);
+
+	if (empty($success)) {
+	    $platform->unlink($outputFile);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PATH, null, null, 
+		"Failed to download packages: \"$response\"."), null);
+	}
+	return array(null, $outputFile);
     }
 }
 ?>

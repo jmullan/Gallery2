@@ -138,4 +138,8 @@ class UnitTestRepository extends MockObject {
     function getLanguagePackageFiles($locales) {
 	return $this->_makeReply('getLanguagePackageFiles', array($locales));
     }
+
+    function downloadAndUnpackPackages($filesToDownload, &$callback) {
+	return $this->_makeReply('downloadAndUnpackPackages', array($filesToDownload, $callback));
+    }
 }

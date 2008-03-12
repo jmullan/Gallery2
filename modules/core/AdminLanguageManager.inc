@@ -134,7 +134,10 @@ class AdminLanguageManagerController extends AdminRepositoryDownloadAndInstallCo
 	    }
 	}
 
-	$totalActions = $this->_countInstallActions($sourceFiles) + count($deleteLanguages);
+	$installLanguagesCount = $this->_countInstallActions($sourceFiles);
+
+	/* Add one for the actual download */
+	$totalActions = $installLanguagesCount + count($deleteLanguages) + 1;
 
 	/* If actions > 0, then we have some language packages to work with */
 	if ($totalActions > 0) {
@@ -143,16 +146,18 @@ class AdminLanguageManagerController extends AdminRepositoryDownloadAndInstallCo
 	    $callback = array('method' => array($templateAdapter, 'updateProgressBar'),
 		'title' => $heading, 'current' => 0, 'total' => $totalActions);
 
-	    list ($ret, $downloadStatus, $count) = 
-		$this->_downloadAndInstallLanguagePackages($sourceFiles, $repositories, $callback);
-	    if ($ret) {
-		return $ret;
-	    }
-	    if (!empty($downloadStatus)) {
-		$status['error'] = array_merge($status['error'], $downloadStatus);
-	    }
+	    if ($installLanguagesCount > 0) {
+		list ($ret, $downloadStatus, $count) = $this->_downloadAndInstallLanguagePackages(
+		    $sourceFiles, $repositories, $callback);
+		if ($ret) {
+		    return $ret;
+		}
+		if (!empty($downloadStatus)) {
+		    $status['error'] = array_merge($status['error'], $downloadStatus);
+		}
 
-	    $status['languagePacksInstalled'] = $count;
+		$status['languagePacksInstalled'] = $count;
+	    }
 
 	    /* Delete old language packs */
 	    list ($ret, $languagePacksDeleted, $failedToDeleteLanguage) = 
@@ -188,7 +193,7 @@ class AdminLanguageManagerController extends AdminRepositoryDownloadAndInstallCo
 	$session->putStatus($status);
 
 	$urlGenerator =& $gallery->getUrlGenerator();
-	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect), false);
+	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect), true);
 	return $ret;
     }
 
@@ -318,27 +323,22 @@ class AdminLanguageManagerController extends AdminRepositoryDownloadAndInstallCo
 	$count = 0;
 	foreach ($sourceFiles as $source => $files) {
 	    $repository = $repositories[$source];
+	    $filesToDownload = array();
 	    foreach ($files as $pluginType => $plugins) {
 		foreach ($plugins as $pluginId => $pluginDownloadData) {
-		    list($ret, $value, $downloadStatus) = $repository->downloadPackagesForPlugin(
-			$pluginType, $pluginId, $pluginDownloadData, $callback);
-		    if ($ret) {
-			$gallery->debug('downloadSourceFiles, failed: ' . $ret->getAsText());
-			return array($ret, null, null);
+		    foreach ($pluginDownloadData['files'] as $key => $file) {
+			$filesToDownload[] = $file;
 		    }
-		    $fileCount = count($pluginDownloadData['files']);
-		    if (!empty($downloadStatus)) {
-			$status = array_merge($status, $downloadStatus);
-			/* Adjust total count for any errors */
-			foreach ($downloadStatus as $errorType => $plugInTypeStatus) {
-			    if (!empty($plugInTypeStatus[$pluginId])) {
-				$fileCount -= count($plugInTypeStatus[$pluginId]);
-			    }
-			}
-		    }
-		    $count += $fileCount - 1;
 		}
 	    }
+
+	    list($ret, $downloadStatus, $fileCount) = 
+		$repository->downloadAndUnpackPackages($filesToDownload, $callback);
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+	    $count += $fileCount;
+	    $status = array_merge($status, $downloadStatus);
 	}
 
 	return array(null, $status, $count);

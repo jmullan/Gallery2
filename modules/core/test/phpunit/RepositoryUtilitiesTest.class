@@ -511,7 +511,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	$gallery->setPlatform($platform);
 
 	$utilties = new GalleryRepositoryUtilities();
-	$errors = $utilties->preVerifyPackage('p1', $testDescriptor);
+	$errors = $utilties->preVerifyPackage('module', 'm1', 'p1', $testDescriptor);
 	$this->assertEquals(array(), $errors);
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
@@ -534,7 +534,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	$gallery->setPlatform($platform);
 
 	$utilties = new GalleryRepositoryUtilities();
-	$errors = $utilties->preVerifyPackage('p1', $testDescriptor);
+	$errors = $utilties->preVerifyPackage('module', 'm1', 'p1', $testDescriptor);
 	$this->assertEquals(array(), $errors);
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
@@ -557,19 +557,17 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	$gallery->setPlatform($platform);
 
 	$utilties = new GalleryRepositoryUtilities();
-	$errors = $utilties->preVerifyPackage('p1', $testDescriptor);
+	$errors = $utilties->preVerifyPackage('module', 'm1', 'p1', $testDescriptor);
 	$this->assertEquals(array("$modules/m1/f1", "$modules/m1/d2/f2"), $errors);
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
 
     function _getDescriptorForPreVerifyPackageTests() {
-	return array(
-	    'pluginType' => 'module', 'pluginId' => 'm1',
-	    'contents' => array('files' => array(
+	return array('files' => array(
 		'f1' => array('packages' => array('p1'), 'bytes' => 1, 'hash' => md5('f1')),
 		'd2/f2' => array('packages' => array('p1'), 'bytes' => 1, 'hash' => md5('f2')),
-		'd3/f3' => array('packages' => array('p2'), 'bytes' => 1, 'hash' => md5('f3')))));
+		'd3/f3' => array('packages' => array('p2'), 'bytes' => 1, 'hash' => md5('f3'))));
     }
 
     function testPreVerifyPackageMissingOneDirectory() {
@@ -589,7 +587,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	$gallery->setPlatform($platform);
 
 	$utilties = new GalleryRepositoryUtilities();
-	$errors = $utilties->preVerifyPackage('p1', $testDescriptor);
+	$errors = $utilties->preVerifyPackage('module', 'm1', 'p1', $testDescriptor);
 	$this->assertEquals(array(), $errors);
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
@@ -614,7 +612,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	$gallery->setPlatform($platform);
 
 	$utilties = new GalleryRepositoryUtilities();
-	$errors = $utilties->preVerifyPackage('p1', $testDescriptor);
+	$errors = $utilties->preVerifyPackage('module', 'm1', 'p1', $testDescriptor);
 	$this->assertEquals(array(), $errors);
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
@@ -639,7 +637,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	$gallery->setPlatform($platform);
 
 	$utilties = new GalleryRepositoryUtilities();
-	$errors = $utilties->preVerifyPackage('p1', $testDescriptor);
+	$errors = $utilties->preVerifyPackage('module', 'm1', 'p1', $testDescriptor);
 	$this->assertEquals(array("$modules/m1/d2/f2"), $errors);
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
@@ -658,7 +656,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	$gallery->setPlatform($platform);
 
 	$utilties = new GalleryRepositoryUtilities();
-	$errors = $utilties->preVerifyPackage('p1', $testDescriptor);
+	$errors = $utilties->preVerifyPackage('module', 'm1', 'p1', $testDescriptor);
 	$this->assertEquals(array("$modules/m1/"), $errors);
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
@@ -703,6 +701,290 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	    return ($ret);
 	}
 
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function _setSplitPackagesResponses($file, $rawData, $error=array()) {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+	$phpVm = $gallery->getPhpVm();
+
+	$repositoryCachePath = $gallery->getConfig('repository.cache');
+
+	$data = is_array($rawData) ? serialize($rawData) : serialize(array($rawData));
+	$dataLength = strlen($data);
+	if (empty($error['invalid'])) {
+	    $isGzip = substr($file, -3) == '.gz';
+	    $platform->setReply('fgets', array('handle', 4096), "file: $file {$dataLength}\r\n");
+	    $platform->setReply('fread', array('handle', $dataLength), $data);
+	    if (empty($error['returnGzip'])) {
+		if ($isGzip) {
+		    $phpVm->setReply('function_exists', array('gzinflate'), true);
+		    $phpVm->setReply('gzinflate', array($data, null), $data);
+		    $file = substr($file, 0, -3);
+		}
+		$platform->setReply('file_put_contents', 
+		    array("{$repositoryCachePath}test/$file", $data), true);
+	    } else {
+		$phpVm->setReply('function_exists', array('gzinflate'), false);
+	    }
+	} else {
+	    $platform->setReply('fgets', array('handle', 4096), "file:$file {$dataLength}\r\n");
+	}
+    }
+
+    function testSplitAggregatePackage() {
+	global $gallery;
+	$gallery->setPlatform(new UnitTestPlatform());
+	$platform =& $gallery->getPlatform();
+	$gallery->_phpVm = new UnitTestPhpVm();
+	$phpVm = $gallery->getPhpVm();
+
+	$gallery->setConfig('repository.cache', '/cache/');
+
+	$platform->setReply('fopen', array('tempOut', 'r', null), 'handle');
+	$this->_setSplitPackagesResponses('modules/testModule-1.0-22222.descriptor', 
+	    'Module Descriptor Data');
+	$this->_setSplitPackagesResponses('modules/testModule-1.0-22222-base.package', 
+	    'Module Base Data');
+	$this->_setSplitPackagesResponses('modules/testModule-lang-en_GB-11111-22222.package', 
+	    'Module Language en_GB Data');
+	$this->_setSplitPackagesResponses('themes/testTheme-1.0.1-22222.descriptor.gz', 
+	    'Theme Descriptor Data');
+	$this->_setSplitPackagesResponses('themes/testTheme-1.0.1.123-22222-base.package.gz', 
+	    'Theme Base Data');
+	$this->_setSplitPackagesResponses('themes/testTheme-lang-en_GB-11111-22222.package.gz', 
+	    'Theme Language en_GB Data');
+	$platform->setReply('fgets', array('handle', 4096), false);
+	$platform->setReply('fclose', array('handle'), true);
+
+	$mockAdapter = new MockTemplateAdapter();
+	$callback = array('method' => array($mockAdapter, 'updateProgressBar'),
+		'title' => 'Test', 'current' => 0, 'total' => 10);
+
+	$utilities = new GalleryRepositoryUtilities();
+	list ($ret, $packages) = $utilities->splitAggregatePackage('test', 'tempOut', $callback);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$expected = array(
+	    'module' => array('testModule' => array(
+		'files' => array(
+		    array('base', 'modules/testModule-1.0-22222-base.package'),
+		    array('lang-en_GB', 'modules/testModule-lang-en_GB-11111-22222.package')),
+		'descriptor' => array('Module Descriptor Data'))),
+	    'theme' => array('testTheme' => array(
+		'files' => array(
+		    array('base', 'themes/testTheme-1.0.1.123-22222-base.package'),
+		    array('lang-en_GB', 'themes/testTheme-lang-en_GB-11111-22222.package')),
+		'descriptor' => array('Theme Descriptor Data'))));
+
+	$this->assertEquals($expected, $packages, 'Unexpected Package list returned');
+	$this->assertEquals(6, $callback['current'], 'Callback didn\'t match');
+	$this->assertEquals(array('0.1', '0.2', '0.3', '0.4', '0.5', '0.6'), 
+	    $mockAdapter->_progress, 'Reported progress didn\'t match');
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testSplitAggregatePackageInvalidInput() {
+	global $gallery;
+	$gallery->setPlatform(new UnitTestPlatform());
+	$platform =& $gallery->getPlatform();
+
+	$gallery->setConfig('repository.cache', '/cache/');
+
+	$platform->setReply('fopen', array('tempOut', 'r', null), 'handle');
+	$this->_setSplitPackagesResponses('themes/testTheme-11111-22222.descriptor', 
+	    'Descriptor Data', array('invalid' => 1));
+	$platform->setReply('fclose', array('handle'), true);
+
+	$mockAdapter = new MockTemplateAdapter();
+	$callback = array('method' => array($mockAdapter, 'updateProgressBar'),
+		'title' => 'Test', 'current' => 0, 'total' => 10);
+
+	$utilities = new GalleryRepositoryUtilities();
+	list ($ret, $packages) = $utilities->splitAggregatePackage('test', 'tempOut', $callback);
+	$this->assertErrorEquals(ERROR_UNSUPPORTED_FILE_TYPE, $ret);
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testSplitAggregatePackageUnexpectedGzipFile() {
+	global $gallery;
+	$gallery->setPlatform(new UnitTestPlatform());
+	$platform =& $gallery->getPlatform();
+	$gallery->_phpVm = new UnitTestPhpVm();
+	$phpVm = $gallery->getPhpVm();
+
+	$gallery->setConfig('repository.cache', '/cache/');
+
+	$platform->setReply('fopen', array('tempOut', 'r', null), 'handle');
+	$this->_setSplitPackagesResponses('modules/testModule-1.0-22222.descriptor', 
+	    'Module Descriptor Data');
+	$this->_setSplitPackagesResponses('modules/testModule-1.0-22222-base.package.gz', 
+	    'Module Base Data', array('returnGzip' => 1));
+	$platform->setReply('fclose', array('handle'), true);
+
+	$mockAdapter = new MockTemplateAdapter();
+	$callback = array('method' => array($mockAdapter, 'updateProgressBar'),
+		'title' => 'Test', 'current' => 0, 'total' => 10);
+
+	$utilities = new GalleryRepositoryUtilities();
+	list ($ret, $packages) = $utilities->splitAggregatePackage('test', 'tempOut', $callback);
+
+	$this->assertErrorEquals(ERROR_UNSUPPORTED_FILE_TYPE, $ret);
+
+	$this->assert($phpVm->isComplete(), $phpVm->getRemaining());
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function _setDownloadHeaders($handle, $failed=null) {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	if (!empty($failed['download'])) {
+	    $platform->setReply('fgets', array($handle, 4096), 
+		"HTTP/1.1 {$failed['download']}\r\n");
+	    $platform->setReply('feof', array('fd'), true);
+	} else {
+	    $platform->setReply('fgets', array($handle, 4096), "HTTP/1.1 200 OK\r\n");
+	    $platform->setReply('feof', array($handle), false);
+	    $platform->setReply('fgets', array($handle, 4096), 
+		"Expires: Sun, 19 Nov 1978 05:00:00 GMT\r\n");
+	    $platform->setReply('feof', array($handle), false);
+	    $platform->setReply('fgets', array($handle, 4096), 
+		"Content-Type: application/g2-multipart-pkg; charset=utf-8\r\n");
+	    $platform->setReply('feof', array($handle), false);
+	    $platform->setReply('fgets', array($handle, 4096), "\r\n");
+	}
+    }
+
+    function _setAggregrateDownloadResponses($files, $errors=array()) {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	/* Create a temporary file for the multipart download file */
+	$tmpDir = $gallery->getConfig('data.gallery.tmp');
+	$outputFile = $tmpDir . 'multipart1234';
+	$platform->setReply('tempnam', array($tmpDir, 'multipart'), $outputFile);
+	$platform->setReply('file_exists', array($outputFile), empty($errors['tempDir']));
+	if (!empty($errors['tempDir'])) {
+	    return;
+	}
+
+	$platform->setReply('fsockopen', array('gallery.menalto.com', 80, null, null, 5), 'fd');
+
+	$seperator = $requestData = $responseData = '';
+	$counter = 0;
+
+	foreach ($files as $file => $data) {
+	    $encodedFile = urlencode($file);
+	    /* Request data to remote Server */
+	    $requestData .= sprintf('%sfiles%%5B%d%%5D=%s', $seperator, $counter++, $encodedFile);
+	    $seperator = '&';
+
+	    if (empty($errors['download'])) {
+		/* Build expected Response */
+		$responseData .= sprintf("file: %s %d\n%s", $encodedFile, strlen($data), $data);
+	    }
+	}
+
+        $requestDataLength = strlen($requestData);
+	$requestData = "POST /repository/test/multipart/?{$this->_apis} "
+	    . "HTTP/1.0\r\nHost: gallery.menalto.com\r\n"
+	    . "Content-Type: application/x-www-form-urlencoded\r\n"
+	    . "Content-Length: {$requestDataLength}\r\n\r\n" . $requestData;
+
+	$platform->setReply('fwrite',array('fd', $requestData, null), true);
+	$platform->setReply('fflush', array('fd'), null);
+
+	$this->_setDownloadHeaders('fd', $errors);
+	$platform->setReply('fopen', array($outputFile, 'wb', null), 'handle');
+	if (empty($errors['download'])) {
+	    $platform->setReply('feof', array('fd'), false);
+
+	    $platform->setReply('fread', array('fd', 4096), $responseData);
+	    $platform->setReply('fwrite', array('handle', $responseData, null), 
+		strlen($responseData));
+	}
+
+	$platform->setReply('feof', array('fd'), true);
+	$platform->setReply('fclose', array('handle'), true);
+	$platform->setReply('fclose', array('fd'), true);
+
+	if (!empty($errors['download'])) {
+	    $platform->setReply('unlink', array($outputFile), true);
+	}
+    }
+
+    function testDownloadAggregatePackages() {
+	global $gallery;
+	$gallery->setPlatform(new UnitTestPlatform());
+	$platform =& $gallery->getPlatform();
+	$gallery->_phpVm = new UnitTestPhpVm();
+	$phpVm = $gallery->getPhpVm();
+
+	$phpVm->setReply('function_exists', array('gzinflate'), false);
+
+	$files = array('modules/testModule-1.0.9-22222.descriptor' => 'Descriptor Data',
+		       'modules/testModule-1.0.9-22222-base.package' => 'Base Package Data',
+		       'modules/testModule-lang-en_GB-11111-22222.package' => 'Language Pack Data');
+
+	$this->_setAggregrateDownloadResponses($files);
+
+	$utilities = new GalleryRepositoryUtilities();
+	list ($ret, $packages) = $utilities->downloadAggregatePackages('test', array_keys($files));
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+	$this->assert($phpVm->isComplete(), $phpVm->getRemaining());
+    }
+
+    function testDownloadAggregatePackagesFailedDownload() {
+	global $gallery;
+	$gallery->setPlatform(new UnitTestPlatform());
+	$platform =& $gallery->getPlatform();
+	$gallery->_phpVm = new UnitTestPhpVm();
+	$phpVm = $gallery->getPhpVm();
+
+	$phpVm->setReply('function_exists', array('gzinflate'), false);
+
+	$files = array('modules/testModule-1.0.9-22222.descriptor' => '0123456789',
+		       'modules/testModule-1.0.9-22222-base.package' => '0123456789',
+		       'modules/testModule-lang-en_GB-11111-22222.package' => '0123456789');
+
+	$this->_setAggregrateDownloadResponses($files, 
+	    array('download' => '500 Internal Server Error'));
+
+	$utilities = new GalleryRepositoryUtilities();
+	list ($ret, $packages) = $utilities->downloadAggregatePackages('test', array_keys($files));
+	$this->assertErrorEquals(ERROR_BAD_PATH, $ret);
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+	$this->assert($phpVm->isComplete(), $phpVm->getRemaining());
+    }
+
+    function testDownloadAggregatePackagesTempDirectoryMissing() {
+	global $gallery;
+	$gallery->setPlatform(new UnitTestPlatform());
+	$platform =& $gallery->getPlatform();
+
+	$gallery->setConfig('repository.cache', '/cache/');
+
+	$tmpDir = $gallery->getConfig('data.gallery.tmp');
+
+	$files = array('modules/testModule-1.0.9-22222.descriptor' => '0123456789',
+		       'modules/testModule-1.0.9-22222-base.package' => '0123456789',
+		       'modules/testModule-lang-en_GB-11111-22222.package' => '0123456789');
+
+	$this->_setAggregrateDownloadResponses($files, array('tempDir' => 1));
+
+	$utilities = new GalleryRepositoryUtilities();
+	list ($ret, $packages) = $utilities->downloadAggregatePackages('test', array_keys($files));
+	$this->assertErrorEquals(ERROR_PLATFORM_FAILURE, $ret);
 	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
 }

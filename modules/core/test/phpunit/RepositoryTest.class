@@ -1404,6 +1404,47 @@ class RepositoryTest extends GalleryTestCase {
 	$this->assert(!GalleryDataCache::containsKey($cacheKey), 'key should be deleted');
     }
 
+    function _prepareForGetPluginUpgradeInfo($isNewer=false) {
+    	$repository = new GalleryRepository();
+	$repository->_index = $this->_index;
+	$utilities = new UnitTestRepositoryUtilities();
+	$installedPackages =
+	    array('base' => array('locked' => false, 'version' => '1.1', 'build' => '1'),
+		  'lang-en_GB' => array('locked' => 0, 'version' => '1.1', 'build' => '1'));
+	$utilities->setReply('getPluginPackages', array('module', 'testModule'),
+	    array(null, $installedPackages));
+	$utilities->setReply('isPluginCompatible',
+	    array('module', GalleryCoreApi::getApiVersion(), GalleryModule::getApiVersion(), null),
+	    true);
+	$utilities->setReply('compareVersions', array('1.1', '1.0.0', 1, '44444'),
+	    array(null, 'newer'));
+	$languages = array();
+	foreach (array('en_US', 'en_GB', 'pt_PT', 'pt_BR') as $lang) {
+	    $currentBuild = $lang == 'en_GB' ? '1' : null;
+	    $languages[$lang] = array('name' => $lang, 'currentBuild' => $currentBuild,
+				      'newBuild' => '33333', 'relation' => 'older', 'locked' => 0);
+	    GalleryDataCache::put("GalleryTranslator::LanguageDescription::$lang", $lang);
+	    if (!$isNewer) {
+		$utilities->setReply('compareRevisions', array($currentBuild, '33333'), 'older');
+	    }
+	}
+	$repository->_utilities =& $utilities;
+
+	$cacheKey = 'GalleryTranslator::SupportedLanguages';
+	$supportedLanguages = array();
+
+	/* English */
+	$supportedLanguages['en']['US']['description'] = 'English (US)';
+	$supportedLanguages['en']['GB']['description'] = 'English (UK)';
+
+	/* Portuguese */
+	$supportedLanguages['pt']['BR']['description'] = 'Portugu&#234;s Brasileiro';
+	$supportedLanguages['pt']['PT']['description'] = 'Portugu&#234;s';
+	GalleryDataCache::put($cacheKey, $supportedLanguages);
+
+	return array($repository, $languages);
+    }
+
     function testGetPluginUpgradeInfoForBasePackageUpgrade() {
 	list ($repository, $languages) = $this->_prepareForGetPluginUpgradeInfo();
 
@@ -1448,45 +1489,321 @@ class RepositoryTest extends GalleryTestCase {
 	    $info);
     }
 
-    function _prepareForGetPluginUpgradeInfo($isNewer=false) {
-    	$repository = new GalleryRepository();
-	$repository->_index = $this->_index;
+    function _setDownloadAndUnpackPackagesResponses($testData, &$callback) {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$platform->setReply('unlink', array('tempFile'), null);
+
 	$utilities = new UnitTestRepositoryUtilities();
-	$installedPackages =
-	    array('base' => array('locked' => false, 'version' => '1.1', 'build' => '1'),
-		  'lang-en_GB' => array('locked' => 0, 'version' => '1.1', 'build' => '1'));
-	$utilities->setReply('getPluginPackages', array('module', 'testModule'),
-	    array(null, $installedPackages));
-	$utilities->setReply('isPluginCompatible',
-	    array('module', GalleryCoreApi::getApiVersion(), GalleryModule::getApiVersion(), null),
-	    true);
-	$utilities->setReply('compareVersions', array('1.1', '1.0.0', 1, '44444'),
-	    array(null, 'newer'));
-	$languages = array();
-	foreach (array('en_US', 'en_GB', 'pt_PT', 'pt_BR') as $lang) {
-	    $currentBuild = $lang == 'en_GB' ? '1' : null;
-	    $languages[$lang] = array('name' => $lang, 'currentBuild' => $currentBuild,
-				      'newBuild' => '33333', 'relation' => 'older', 'locked' => 0);
-	    GalleryDataCache::put("GalleryTranslator::LanguageDescription::$lang", $lang);
-	    if (!$isNewer) {
-		$utilities->setReply('compareRevisions', array($currentBuild, '33333'), 'older');
+	$repository = new GalleryRepository();
+	$repository->_source = 'test';
+	$repository->_utilities =& $utilities;
+	$repository->_index = $this->_index;
+
+	$cacheDir = $gallery->getConfig('repository.cache');
+
+	$pathes = array();
+	foreach ($testData as $pluginType => $pluginFiles) {
+	    foreach ($pluginFiles as $pluginId => $files) {
+		foreach ($files as $file => $fileData) {
+		    $data = $file == 'descriptor' ? serialize($fileData['data']) 
+						  : $fileData['data'];
+		    $path = sprintf('%ss/%s-%s-%s-%s', $pluginType, $pluginId,
+			$fileData['revision'], $fileData['build'], $file);
+		    $pathes[] = $path;
+		}
 	    }
 	}
-	$repository->_utilities =& $utilities;
 
-	$cacheKey = 'GalleryTranslator::SupportedLanguages';
-	$supportedLanguages = array();
+	$utilities->setReply('downloadAggregatePackages', array('test', $pathes), 
+	    array(null, 'tempFile'));
 
-	/* English */
-	$supportedLanguages['en']['US']['description'] = 'English (US)';
-	$supportedLanguages['en']['GB']['description'] = 'English (UK)';
+	$packages = array();
+	foreach ($testData as $pluginType => $pluginFiles) {
+	    foreach ($pluginFiles as $pluginId => $files) {
+		$outputDir = GalleryCoreApi::getCodeBasePath("{$pluginType}s/$pluginId/");
+		foreach ($files as $file => $fileData) {
+		    if ($file == 'descriptor') {
+			$packages[$pluginType][$pluginId]['descriptor'] = $fileData['data'];
+		    } else {
+			$path = sprintf('%ss/%s-%s-%s-%s', $pluginType, $pluginId,
+			    $fileData['revision'], $fileData['build'], $file);
+			$packages[$pluginType][$pluginId]['files'][] = array('base', $path);
+		    }
+		}
+	    }
+	}
 
-	/* Portuguese */
-	$supportedLanguages['pt']['BR']['description'] = 'Portugu&#234;s Brasileiro';
-	$supportedLanguages['pt']['PT']['description'] = 'Portugu&#234;s';
-	GalleryDataCache::put($cacheKey, $supportedLanguages);
+	$utilities->setReply('splitAggregatePackage', array('test', 'tempFile', $callback),
+	    array(null, $packages));
 
-	return array($repository, $languages);
+	/* Responses for _preverifyAggregatePackages */
+	foreach ($testData as $pluginType => $pluginFiles) {
+	    foreach ($pluginFiles as $pluginId => $testFiles) {
+		$outputDir = GalleryCoreApi::getCodeBasePath("{$pluginType}s/$pluginId/");
+		$platform->setReply('file_exists', array($outputDir), true);
+		$platform->setReply('is_dir', array($outputDir), true);
+		if (!empty($testFiles['descriptor'])) {
+		    $files = $testFiles;
+		    $descriptor = $files['descriptor']['data'];
+		    unset($files['descriptor']);
+		    foreach ($files as $file => $fileData) {
+			if (empty($fileData['locked'])) {
+			    $utilities->setReply('preVerifyPackage', 
+				array($pluginType, $pluginId, 'base', $descriptor),
+				array());
+			} else {
+			    $utilities->setReply('preVerifyPackage', 
+				array($pluginType, $pluginId,'base', $descriptor),
+				array($file));
+			}
+		    }
+		}
+	    }
+	}
+
+	foreach ($testData as $pluginType => $pluginFiles) {
+	    foreach ($pluginFiles as $pluginId => $testFiles) {
+		$outputDir = GalleryCoreApi::getCodeBasePath("{$pluginType}s/$pluginId/");
+		$outputDir = GalleryCoreApi::getCodeBasePath("{$pluginType}s/$pluginId/");
+		if (!empty($testFiles['descriptor'])) {
+		    $files = $testFiles;
+		    $descriptor = $files['descriptor']['data'];
+		    unset($files['descriptor']);
+		    foreach ($files as $file => $fileData) {
+			if (empty($fileData['locked'])) {
+			    $path = sprintf('%stest/%ss/%s-%s-%s-%s', $cacheDir, $pluginType, 
+				$pluginId, $fileData['revision'], $fileData['build'], $file);
+			    $utilities->setReply('unpackPackage', array($path , $outputDir), null);
+			    $utilities->setReply('verifyPackageIntegrity', array($pluginType, 
+				$pluginId, 'base', $descriptor), null);
+			    $utilities->setReply('updatePackageMetaData', array($pluginType, 
+				$pluginId,'base', $fileData['revision'], $fileData['build'], 0), 
+				null);
+			}
+		    }
+		}
+	    }
+	}
+	return array($repository, $pathes);
+    }
+
+    function _buildDescriptor($pluginData) {
+	/* Leave the files empty so we don't have to generate a lot of platform calls */
+	return array (
+	    'header' => array (
+		'id' => $pluginData['id'],
+		'version' => '1.0.0',
+		'requiredCoreApi' => GalleryCoreApi::getApiVersion(),
+		'requiredPluginApi' => GalleryModule::getApiVersion(),
+		'stringsRevision' => $pluginData['revision'],
+		'buildTimestamp' => $pluginData['build']),
+	    'descriptions' => array (
+		'en_US' => array (
+		    'name' => $pluginData['name'],
+		    'description' => 'This is a test ' . $pluginData['type'],
+		    'groupLabel' => 'Test Group')),
+	    'directories' => array (
+		'locale/' => array (
+		    'packages' => array ('base')),
+		'locale/en_US/' => array (
+		    'packages' => array ('lang-en_US')),
+		'locale/en_US/LC_MESSAGES/' => array (
+	    'packages' => array ('lang-en_US')),
+		'images/' => array (
+		    'packages' => array ('base')),
+		'po/' => array (
+		    'packages' => array ('base'))),
+	    'files' => array (),
+ 	   'languages' => array (
+		'22222' => array ('en_US' => '33333')));
+    }
+
+    function testDownloadAndUnpackPackages() {
+	global $gallery;
+	$gallery->setPlatform(new UnitTestPlatform());
+	$platform =& $gallery->getPlatform();
+
+	$testData = array(
+	    'module' => array(
+		'testModule' => array(
+		    'descriptor' => array(
+			'revision' => '1.0.0', 'build' => '44444', 
+			'data' => $this->_buildDescriptor(array('id' => 'testModule',
+			    'type' => 'module', 'name' => 'Test Module',
+			    'revision' => '1.0.0', 'build' => '44444'))),
+		    'base.package' => array(
+			'revision' => '1.0.0', 'build' => '44444', 'data' => 'Module Base Data'))),
+	    'theme' => array(
+		'testTheme' => array(
+		    'descriptor' => array(
+			'revision' => '1.0.0', 'build' => '11111', 
+			'data' => $this->_buildDescriptor(array('id' => 'testTheme', 
+			'type' => 'theme', 'name' => 'Test Theme',
+			'revision' => '1.0.0', 'build' => '11111'))),
+		    'base.package' => array(
+			'revision' => '1.0.0', 'build' => '11111', 'data' => 'Theme Base Data'))));
+
+	$gallery->setConfig('repository.url', 'http://example.com/');
+	$gallery->setConfig('repository.cache', '/cache/');
+
+	$mockAdapter = new MockTemplateAdapter();
+	$expectedCallback = array('method' => array($mockAdapter, 'updateProgressBar'),
+	    'title' => 'Test', 'current' => 1, 'total' => 10);
+	list ($repository, $files) = 
+	    $this->_setDownloadAndUnpackPackagesResponses($testData, $expectedCallback);
+
+	$callback = array('method' => array($mockAdapter, 'updateProgressBar'),
+	    'title' => 'Test', 'current' => 0, 'total' => 10);
+	list ($ret, $status, $count) = $repository->downloadAndUnpackPackages($files, 
+	    $callback);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(2, $count, 'Unexpected number of files');
+	$this->assertEquals(array(), $status, 'Unexpected status messages');
+	$this->assertEquals(3, $callback['current'], 'Callback didn\'t match');
+	$this->assertEquals(array('0.1', '0.2', '0.3'), 
+	    $mockAdapter->_progress, 'Reported progress didn\'t match');
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+	$this->assert($repository->_utilities->isComplete(), 
+	    $repository->_utilities->getRemaining());
+    }
+
+    function testDownloadAndUnpackPackagesLockedFiles() {
+	global $gallery;
+	$gallery->setPlatform(new UnitTestPlatform());
+	$platform =& $gallery->getPlatform();
+
+	$testData = array(
+	    'module' => array(
+		'testModule' => array(
+		    'descriptor' => array(
+			'revision' => '1.0.0', 'build' => '44444', 
+			'data' => $this->_buildDescriptor(array('id' => 'testModule',
+			    'type' => 'module', 'name' => 'Test Module',
+			    'revision' => '1.0.0', 'build' => '44444'))),
+		    'base.package' => array(
+			'revision' => '1.0.0', 'build' => '44444', 'data' => 'Module Base Data',
+			'locked' => 1))),
+	    'theme' => array(
+		'testTheme' => array(
+		    'descriptor' => array(
+			'revision' => '1.0.0', 'build' => '11111', 
+			'data' => $this->_buildDescriptor(array('id' => 'testTheme', 
+			'type' => 'theme', 'name' => 'Test Theme',
+			'revision' => '1.0.0', 'build' => '11111'))),
+		    'base.package' => array(
+			'revision' => '1.0.0', 'build' => '11111', 'data' => 'Theme Base Data'))));
+
+	$gallery->setConfig('repository.url', 'http://example.com/');
+	$gallery->setConfig('repository.cache', '/cache/');
+
+	$mockAdapter = new MockTemplateAdapter();
+	$expectedCallback = array('method' => array($mockAdapter, 'updateProgressBar'),
+	    'title' => 'Test', 'current' => 1, 'total' => 10);
+	list ($repository, $files) = 
+	    $this->_setDownloadAndUnpackPackagesResponses($testData, $expectedCallback);
+
+	$callback = array('method' => array($mockAdapter, 'updateProgressBar'),
+	    'title' => 'Test', 'current' => 0, 'total' => 10);
+	list ($ret, $status, $count) = $repository->downloadAndUnpackPackages($files, 
+	    $callback);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(1, $count, 'Unexpected number of files');
+	$expected['failedToInstall'] = array('module' => array(
+	    'testModule' => array('modules/testModule-1.0.0-44444-base.package')));
+	$this->assertEquals($expected, $status, 'Unexpected status messages');
+	$this->assertEquals(3, $callback['current'], 'Callback didn\'t match');
+	$this->assertEquals(array('0.1', '0.2', '0.3'), 
+	    $mockAdapter->_progress, 'Reported progress didn\'t match');
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+	$this->assert($repository->_utilities->isComplete(), 
+	    $repository->_utilities->getRemaining());
+    }
+
+    function testDownloadAndUnpackPackagesNoDescriptors() {
+	global $gallery;
+	$gallery->setPlatform(new UnitTestPlatform());
+	$platform =& $gallery->getPlatform();
+
+	$testData = array(
+	    'module' => array(
+		'testModule' => array(
+		    'base.package' => array(
+			'revision' => '11111', 'build' => '22222', 'data' => 'Module Base Data'))),
+	    'theme' => array(
+		'testTheme' => array(
+		    'descriptor' => array(
+			'revision' => '1.0.0', 'build' => '11111', 
+			'data' => $this->_buildDescriptor(array('id' => 'testTheme', 
+			'type' => 'theme', 'name' => 'Test Theme',
+			'revision' => '1.0.0', 'build' => '11111'))),
+		    'base.package' => array(
+			'revision' => '1.0.0', 'build' => '11111', 'data' => 'Theme Base Data'))));
+
+	$gallery->setConfig('repository.url', 'http://example.com/');
+	$gallery->setConfig('repository.cache', '/cache/');
+
+	$mockAdapter = new MockTemplateAdapter();
+	$expectedCallback = array('method' => array($mockAdapter, 'updateProgressBar'),
+	    'title' => 'Test', 'current' => 1, 'total' => 10);
+	list ($repository, $files) = 
+	    $this->_setDownloadAndUnpackPackagesResponses($testData, $expectedCallback);
+
+	$callback = array('method' => array($mockAdapter, 'updateProgressBar'),
+	    'title' => 'Test', 'current' => 0, 'total' => 10);
+	list ($ret, $status, $count) = $repository->downloadAndUnpackPackages($files, 
+	    $callback);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$expected['failedToInstall'] = array('module' => array(
+	    'testModule' => array('modules/testModule-11111-22222-base.package')));
+
+	$this->assertEquals(1, $count, 'Unexpected number of files');
+	$this->assertEquals($expected, $status, 'Unexpected status messages');
+	$this->assertEquals(4, $callback['current'], 'Callback didn\'t match');
+	$this->assertEquals(array('0.1', '0.2', '0.3', '0.4'), 
+	    $mockAdapter->_progress, 'Reported progress didn\'t match');
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+	$this->assert($repository->_utilities->isComplete(), 
+	    $repository->_utilities->getRemaining());
+    }
+
+    function testDownloadAndUnpackPackagesFailed() {
+	global $gallery;
+	$gallery->setPlatform(new UnitTestPlatform());
+	$platform =& $gallery->getPlatform();
+
+	$files = array('modules/testModule-11111-22222.descriptor' => 'Module Base Data',
+		       'themes/testTheme-11111-22222.descriptor' => 'Theme Base Data');
+
+	$repository = new GalleryRepository();
+	$repository->_source = 'test';
+	$repository->_utilities = new UnitTestRepositoryUtilities();
+	$repository->_index = $this->_index;
+
+	$repository->_utilities->setReply('downloadAggregatePackages', array('test',
+	    array_keys($files)), array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE), null));
+
+	$mockAdapter = new MockTemplateAdapter();
+	$callback = array('method' => array($mockAdapter, 'updateProgressBar'),
+		'title' => 'Test', 'current' => 0, 'total' => 10);
+
+	list ($ret, $status, $count) = $repository->downloadAndUnpackPackages(array_keys($files), 
+	    $callback);
+	$this->assertErrorEquals(ERROR_PLATFORM_FAILURE, $ret);
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+	$this->assert($repository->_utilities->isComplete(), 
+	    $repository->_utilities->getRemaining());
     }
 }
 
