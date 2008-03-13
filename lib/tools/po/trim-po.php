@@ -23,7 +23,7 @@ if ($langpath == $path || !file_exists($langpath)) {
     print $header;
     foreach ($po as $id => $data) {
 	$isFuzzy = strpos($data['before'], ', fuzzy') !== false;
-	checkMessageForHtml($id, $data['msgstr'], $isFuzzy, $path);
+	checkMessageForValidity($id, $data['msgstr'], $isFuzzy, $path);
 	if (substr($id, 5) != substr($data['msgstr'], 6)) {
 	    print $data['before'] . $id . $data['msgstr'] . "\n";
 	}
@@ -37,18 +37,65 @@ list ($langpo) = readPo($langpath);
 print $header;
 foreach ($po as $id => $data) {
     $isFuzzy = strpos($data['before'], ', fuzzy') !== false;
-    checkMessageForHtml($id, $data['msgstr'], $isFuzzy, $path);
+    checkMessageForValidity($id, $data['msgstr'], $isFuzzy, $path);
     if (!isset($langpo[$id]) || $langpo[$id]['msgstr'] != $data['msgstr']) {
 	print $data['before'] . $id . $data['msgstr'] . "\n";
     }
 }
 
-function checkMessageForHtml($msgid, $msgstr, $isFuzzy, $path) {
+function isValidUtf8($string) {
+    /*
+     * Additional tests here:
+     * http://dev.jpmullan.com/snippets/check_utf8.php
+     */
+    $valid = false;
+    /*
+     * We are declaring non-strings to be invalid, even if their string
+     * representation is valid.
+     */
+    if (is_string($string)) {
+	if (!$string) {
+	    /* The empty string is always valid */
+	    $valid = true;
+	} else if (preg_match('/^.{1}/usS', $string)) {
+	    if (!preg_match("/[\xC0\xC1\xF5-\xFF]/S", $string)) {
+		/*
+		 * A string must pass both regexes to be valid.
+		 *
+		 * See
+		 * http://us.php.net/manual/en/reference.pcre.pattern.modifiers.php 
+		 * for the /u modifier trick.
+		 *
+		 * Theoretically preg_match /u does not fail on five or six
+		 * octet sequences, but they are not displayable in any
+		 * browser.  See the wikipedia page for why each of these
+		 * characters is specifically illegal.
+		 * http://en.wikipedia.org/wiki/UTF-8 
+		 */
+		$valid = true;
+	    }
+	}
+    }
+    return $valid;
+}
+
+function checkStringForBadUtf8($string, $path) {
+    if (!isValidUtf8($string)) {
+	$printableString = preg_replace('/([^\x20-\x7e])/e', '"\\\\\\x" . dechex(ord("${1}"))', $string);
+	fwrite(stdErr(),
+	       "\nWarning: Translation contains invalid UTF-8"
+	       . " \"$printableString\" in file $path\n");
+    }
+}
+
+function checkMessageForValidity($msgid, $msgstr, $isFuzzy, $path) {
     $string = _parsePoLinesForMessageString($msgid);
     checkStringForHtml($string, 'msgid', $path);
+    checkStringForBadUtf8($string, $path);
     if (!$isFuzzy) {
 	$string = _parsePoLinesForMessageString($msgstr);
 	checkStringForHtml($string, 'msgstr', $path);
+	checkStringForBadUtf8($string, $path);
     }
 }
 
