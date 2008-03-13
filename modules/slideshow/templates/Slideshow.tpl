@@ -10,6 +10,8 @@
 {literal}
 function start(startElId) {
   if (typeof myLytebox != 'undefined') {
+    myLytebox.slideInterval = 10000;
+    myLytebox.resizeSpeed = 10;
     myLytebox.start(document.getElementById(startElId), true, false);
     setTimeout('goBackOnStop()', 1000);
   } else {
