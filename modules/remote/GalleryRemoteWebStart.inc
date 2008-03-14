@@ -60,9 +60,9 @@ class GalleryRemoteWebStartView extends GalleryView {
 
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$codebase = $urlGenerator->getCurrentUrlDir(true);
-	$jnlpFile = $urlGenerator->generateUrl(
+	/*$jnlpFile = $urlGenerator->generateUrl(
 		array('view' => 'remote.GalleryRemoteWebStart'),
-		array('forceDirect' => true, 'forceFullUrl' => true, 'forceSessionId' => false));
+		array('forceDirect' => true, 'forceFullUrl' => true, 'forceSessionId' => false));*/
 
 	$user = $gallery->getActiveUser();
 	if (isset($user)) {
@@ -73,8 +73,8 @@ class GalleryRemoteWebStartView extends GalleryView {
 ?>
 <jnlp
   spec="1.0+"
-  codebase="<?php echo $codebase . 'modules/remote'; ?>"
-  href="<?php echo $jnlpFile; ?>">
+  codebase="<?php echo $codebase . 'modules/remote'; ?>">
+  <!-- removed the href attribute in the jnlp element, because it caused WebStart to fail caching the application -->
   <information>
     <title>Gallery Remote</title>
     <vendor>Gallery</vendor>
@@ -82,6 +82,7 @@ class GalleryRemoteWebStartView extends GalleryView {
     <description>A Java application you can use to upload pictures to your Gallery</description>
     <icon href="images/rar_icon_32.gif"/>
     <icon kind="splash" href="images/rar_about_gr1.png"/>
+    <offline-allowed />
     <shortcut online="true">
       <desktop/>
       <menu submenu="Gallery Remote"/>
