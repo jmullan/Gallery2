@@ -134,7 +134,7 @@ class SlideshowModule extends GalleryModule {
 			'var p=PicLensLite;'
 			. 'p.setCallbacks({onNoPlugins:function(){location.href=\'%s\'}});'
 			. 'p.setLiteURLs({swf:\'%s\'});'
-			. 'p.start({feedUrl:\'%s\', guid: %d})',
+			. 'p.start({feedUrl:\'%s\', guid:%d, pid:\'2PWfB4lurT4g\', delay:10})',
 			$urlGenerator->generateUrl(
 			    array('view' => 'slideshow.Slideshow',
 				  'itemId' => $itemId),
