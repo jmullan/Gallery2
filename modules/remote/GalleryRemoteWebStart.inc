@@ -60,6 +60,10 @@ class GalleryRemoteWebStartView extends GalleryView {
 
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$codebase = $urlGenerator->getCurrentUrlDir(true);
+	/*
+	 * Removed the href attribute in the jnlp element, because it caused WebStart to fail
+	 * caching the application.
+	 */
 	/*$jnlpFile = $urlGenerator->generateUrl(
 		array('view' => 'remote.GalleryRemoteWebStart'),
 		array('forceDirect' => true, 'forceFullUrl' => true, 'forceSessionId' => false));*/
@@ -74,7 +78,6 @@ class GalleryRemoteWebStartView extends GalleryView {
 <jnlp
   spec="1.0+"
   codebase="<?php echo $codebase . 'modules/remote'; ?>">
-  <!-- removed the href attribute in the jnlp element, because it caused WebStart to fail caching the application -->
   <information>
     <title>Gallery Remote</title>
     <vendor>Gallery</vendor>
