@@ -388,10 +388,13 @@ class TemplateAdapterTest extends GalleryTestCase {
 	$link = array('params' => array('view' => 'test.View'),
 		      'options' => array(), 'text' => 'test link');
 	$this->assertEquals('<a href="Array" class="gbAdminLink gbLink-test_View">test link</a>',
-			    $this->_templateAdapter->itemLink(array('link' => $link)), 1);
+			    $this->_templateAdapter->itemLink(array('link' => $link)));
 	$this->assertEquals(array(array($link['params'], $link['options'])),
-			    $this->_mockUrlGenerator->_calls, 1);
-	$this->_mockUrlGenerator->_calls = array();
+			    $this->_mockUrlGenerator->_calls);
+    }
+
+    function testItemLinkWithScript() {
+	$this->_setupAdapterWithMocks();
 
 	$link = array('params' => array('view' => 'test.View'),
 		      'options' => array('forceFullUrl' => true), 'text' => 'Test Link',
@@ -399,18 +402,32 @@ class TemplateAdapterTest extends GalleryTestCase {
 	$this->assertEquals('<a href="Array" onclick="alert(\'hi\');return false" title="fun" '
 		. 'target="_blank">test link</a>',
 		$this->_templateAdapter->itemLink(array('link' => $link, 'lowercase' => true,
-							'class' => null, 'target' => '_blank')), 2);
+							'class' => null, 'target' => '_blank')));
 	$this->assertEquals(array(array($link['params'], $link['options'])),
-			    $this->_mockUrlGenerator->_calls, 2);
-	$this->_mockUrlGenerator->_calls = array();
+			    $this->_mockUrlGenerator->_calls);
+    }
+
+    function testItemLinkAsSelectOption() {
+	$this->_setupAdapterWithMocks();
 
 	$link = array('params' => array('view' => 'test.View'),
 		      'options' => array(), 'text' => 'Test link');
 	$this->assertEquals('<option value="window.location=\'Array\'">Test link</option>',
-	    $this->_templateAdapter->itemLink(array('link' => $link, 'type' => 'option')), 3);
+	    $this->_templateAdapter->itemLink(array('link' => $link, 'type' => 'option')));
 	$this->assertEquals(array(array($link['params'], $link['options'])),
-			    $this->_mockUrlGenerator->_calls, 3);
-	$this->_mockUrlGenerator->_calls = array();
+			    $this->_mockUrlGenerator->_calls);
+    }
+
+    function testItemLinkOverrideTextClassAndAddAttribute() {
+	$this->_setupAdapterWithMocks();
+
+	$link = array('params' => array('view' => 'test.View'),
+		      'options' => array(), 'text' => 'Test link');
+	$this->assertEquals('<a href="Array" title="Some Title" class="">Text Override</a>',
+	    $this->_templateAdapter->itemLink(array('link' => $link, 'text' => 'Text Override',
+						    'title' => 'Some Title', 'class' => '')));
+	$this->assertEquals(array(array($link['params'], $link['options'])),
+			    $this->_mockUrlGenerator->_calls);
     }
 
     /* With compile check, i.e., just checking tpl file */
