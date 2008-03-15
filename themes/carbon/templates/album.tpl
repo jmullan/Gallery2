@@ -21,25 +21,25 @@
 		{foreach from=$links item=itemLink}
 		  {if $itemLink.moduleId == "cart"}
 		  <td class="gsActionIcon">
-		    <div class="buttonCart"><a href="{g->url params=$itemLink.params}"
-		     title="{$itemLink.text}"></a></div>
+		    <div class="buttonCart">{g->itemLink link=$itemLink
+		     title="`$itemLink.text`" text="" class=""}</div>
 		  </td>
 		  {elseif $itemLink.moduleId == "comment"}
 		    {if $itemLink.params.view == "comment.AddComment" }
 		    <td class="gsActionIcon">
-		      <div class="buttonAddComment"><a href="{g->url params=$itemLink.params}"
-		       title="{$itemLink.text}"></a></div>
+		      <div class="buttonAddComment">{g->itemLink link=$itemLink
+		     title="`$itemLink.text`" text="" class=""}</div>
 		    </td>
 		    {elseif $itemLink.params.view == "comment.ShowAllComments"}
 		    <td class="gsActionIcon">
-		      <div class="buttonViewComments"><a href="{g->url params=$itemLink.params}"
-		       title="{$itemLink.text}"></a></div>
+		      <div class="buttonViewComments">{g->itemLink link=$itemLink
+		     title="`$itemLink.text`" text="" class=""}</div>
 		    </td>
 		    {/if}
 		  {elseif $itemLink.moduleId == "slideshow"}
 		  <td class="gsActionIcon">
-		    <div class="buttonViewSlideshow"><a href="{g->url params=$itemLink.params}"
-		     title="{$itemLink.text}"></a></div>
+		    <div class="buttonViewSlideshow">{g->itemLink link=$itemLink
+		     title="`$itemLink.text`" text="" class=""}</div>
 		  </td>
 		  {/if}
 		{/foreach}
