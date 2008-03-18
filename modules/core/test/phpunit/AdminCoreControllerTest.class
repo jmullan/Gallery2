@@ -52,7 +52,6 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	    'default.orderBy' => 'x4',
 	    'default.orderDirection' => 'x5',
 	    'default.theme' => 'x7',
-	    'default.language' => 'x8',
 	    'session.lifetime' => 'x9',
 	    'session.inactivityTimeout' => 'x10',
 	    'misc.markup' => 'x11',
@@ -65,8 +64,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	    'smtp.from' => 'gallery@example.com',
 	    'format.date' => 'x16',
 	    'format.time' => 'x17',
-	    'format.datetime' => 'x18',
-	    'language.useBrowserPref' => '1');
+	    'format.datetime' => 'x18');
 
 	/* The AdminCore controller uses the url generator to check the cookie path */
 	$gallery->setUrlGenerator(new AdminCoreControllerTestUrlGenerator());
