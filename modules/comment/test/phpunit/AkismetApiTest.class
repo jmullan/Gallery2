@@ -134,7 +134,7 @@ class AkismetApiTest extends GalleryTestCase {
 	    $tmp[] = str_replace('%2B', '+', urlencode($key)) . '=' .
 		str_replace('%2B', '+', urlencode($value));
 	}
-	$request .= join('&', $tmp) . "\r\n";
+	$request .= join('&', $tmp);
 
 	$platform->setReply('fsockopen', array($host, $port, null, null, 5), 'HANDLE');
 	$platform->setReply('fwrite', array('HANDLE', $request, null), true);
@@ -159,7 +159,7 @@ class AkismetApiTest extends GalleryTestCase {
 		  "Host: rest.akismet.com\r\n" .
 		  "User-Agent: USER_AGENT\r\n" .
 		  "Content-Type: application/x-www-form-urlencoded\r\n" .
-		  "Content-Length: 60\r\n",
+		  "Content-Length: 58\r\n",
 		  array('key' => 'GOOD_key',
 			'blog' => 'http://gallery2|forceFullUrl:1')),
 	    array("HTTP/1.0 200 OK\r\n",
@@ -180,7 +180,7 @@ class AkismetApiTest extends GalleryTestCase {
 		  "Host: rest.akismet.com\r\n" .
 		  "User-Agent: USER_AGENT\r\n" .
 		  "Content-Type: application/x-www-form-urlencoded\r\n" .
-		  "Content-Length: 59\r\n",
+		  "Content-Length: 57\r\n",
 		  array('key' => 'BAD_key',
 			'blog' => 'http://gallery2|forceFullUrl:1')),
 	    array("HTTP/1.0 200 OK\r\n",
@@ -220,7 +220,7 @@ class AkismetApiTest extends GalleryTestCase {
 		  "Host: API_KEY.rest.akismet.com\r\n" .
 		  "User-Agent: USER_AGENT\r\n" .
 		  "Content-Type: application/x-www-form-urlencoded\r\n" .
-		  "Content-Length: 713\r\n",
+		  "Content-Length: 711\r\n",
 		  array('blog' => 'http://gallery2|forceFullUrl:1',
 			'user_ip' => 'USER_IP',
 			'user_agent' => 'HTTP_USER_AGENT',
@@ -282,7 +282,7 @@ class AkismetApiTest extends GalleryTestCase {
 		  "Host: API_KEY.rest.akismet.com\r\n" .
 		  "User-Agent: USER_AGENT\r\n" .
 		  "Content-Type: application/x-www-form-urlencoded\r\n" .
-		  "Content-Length: 298\r\n",
+		  "Content-Length: 296\r\n",
 		  array('blog' => 'http://gallery2|forceFullUrl:1',
 			'user_ip' => 'USER_IP',
 			'comment_type' => 'COMMENT_TYPE',
