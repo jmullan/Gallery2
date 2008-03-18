@@ -43,19 +43,18 @@ class AdminLanguageManagerControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	$this->_galleryTemplateAdapter = $gallery->getTemplateAdapter();
-	$this->_templateAdapter = new MockTemplateAdapter();
-	$gallery->_templateAdapter =& $this->_templateAdapter;
+	$gallery->_templateAdapter = new MockTemplateAdapter();
 
 	$cacheKey = 'GalleryRepository::getRepositories(,GalleryRepository)';
 	$this->_testRepository = new UnitTestRepository();
 	GalleryDataCache::put($cacheKey, array(array('test' => $this->_testRepository), 0));
 
-	list ($ret, $this->_useBrowserPref) = 
+	list ($ret, $this->_useBrowserPref) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'language.useBrowserPref');
 	if ($ret) {
 	   return $ret;
 	}
-	list ($ret, $this->_defaultLanguage) = 
+	list ($ret, $this->_defaultLanguage) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
 	if ($ret) {
 	   return $ret;
@@ -75,8 +74,9 @@ class AdminLanguageManagerControllerTest extends GalleryControllerTestCase {
 	$gallery->_storage = new UnitTestStorage();
 	$storage =& $gallery->getStorage();
 
-	$this->_callback = array('method' => array($this->_templateAdapter, 'updateProgressBar'),
-	    'title' => $module->translate('Updating Language Settings'), 'current' => 0, 
+	$this->_callback = array(
+	    'method' => array(&$gallery->_templateAdapter, 'updateProgressBar'),
+	    'title' => $module->translate('Updating Language Settings'), 'current' => 0,
 	    'total' => 10);
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
@@ -105,7 +105,7 @@ class AdminLanguageManagerControllerTest extends GalleryControllerTestCase {
     function testUpdateBrowserPreference() {
 	global $gallery;
 	$storage =& $gallery->getStorage();
-	
+
 	$newValue = ($this->_useBrowserPref) ? 0 : 1;
 	GalleryUtilities::putRequestVariable('form', array('save' => 'Save',
 		      'language' => array('useBrowserPref' => $newValue),
@@ -115,7 +115,7 @@ class AdminLanguageManagerControllerTest extends GalleryControllerTestCase {
 
 	$storage->setReply('updateMapEntry',
 	    array('GalleryPluginParameterMap',
-		  array('pluginType' => 'module', 'pluginId' => 'core', 'itemId' => 0, 
+		  array('pluginType' => 'module', 'pluginId' => 'core', 'itemId' => 0,
 			'parameterName' => 'language.useBrowserPref'),
 		  array('parameterValue' => $newValue), null), null);
 
@@ -142,8 +142,8 @@ class AdminLanguageManagerControllerTest extends GalleryControllerTestCase {
 
 
 	$storage =& $gallery->getStorage();
-	$storage->setReply('updateMapEntry', array('GalleryPluginParameterMap', 
-	    array('pluginType' => 'module', 'pluginId' => 'core', 'itemId' => 0, 
+	$storage->setReply('updateMapEntry', array('GalleryPluginParameterMap',
+	    array('pluginType' => 'module', 'pluginId' => 'core', 'itemId' => 0,
 		  'parameterName' => 'default.language'),
 	    array('parameterValue' => $newValue), null), null);
 
@@ -195,15 +195,15 @@ class AdminLanguageManagerControllerTest extends GalleryControllerTestCase {
 	$packages = array('af', 'cs');
 
 	$platform->setReply('file_exists', array('/g2data/locale/af'), true);
-	$platform->setReply('glob', array('/g2data/locale/af/LC_MESSAGES/*.mo', null), 
+	$platform->setReply('glob', array('/g2data/locale/af/LC_MESSAGES/*.mo', null),
 	    array('theme.mo', 'module.mo'));
 	$platform->setReply('recursiveRmdir', array('/g2data/locale/af'), true);
 	$platform->setReply('file_exists', array('/g2data/locale/cs'), true);
-	$platform->setReply('glob', array('/g2data/locale/cs/LC_MESSAGES/*.mo', null), 
+	$platform->setReply('glob', array('/g2data/locale/cs/LC_MESSAGES/*.mo', null),
 	    array('theme.mo', 'module.mo'));
 	$platform->setReply('recursiveRmdir', array('/g2data/locale/cs'), true);
 
-	list ($ret, $packagesDelete) = 
+	list ($ret, $packagesDelete) =
 	    $this->_controller->_deleteLanguagePackages($packages, $this->_callback);
 	if ($ret) {
 	    return $ret;
@@ -218,11 +218,11 @@ class AdminLanguageManagerControllerTest extends GalleryControllerTestCase {
 	$sourceFiles = 	array('test' => array(
 	    'module' => array('testModule' => array('name' => 'Test Module',
 		'files' => array('descriptor' => 'modules/testModule.descriptor',
-		    'af' => 'modules/testModule-af.package', 
+		    'af' => 'modules/testModule-af.package',
 		    'cs' => 'modules/testModule-cs.package'))),
 	    'theme' => array('testTheme' => array('name' => 'Test Theme',
 		'files' => array('descriptor' => 'themes/testTheme.descriptor',
-		    'af' => 'themes/testTheme-af.package', 
+		    'af' => 'themes/testTheme-af.package',
 		    'cs' => 'themes/testTheme-cs.package')))));
 
 	$this->_testRepository->setReply('downloadPackagesForPlugin',
@@ -292,7 +292,7 @@ class AdminLanguageManagerControllerTest extends GalleryControllerTestCase {
 
 	$gallery->setConfig('data.gallery.locale', '/g2data/locale/');
 
-	$this->_testRepository->setReply('getLanguagePackageFiles', array(array('af')), 
+	$this->_testRepository->setReply('getLanguagePackageFiles', array(array('af')),
 		array(null, array(
 	    'module' => array('testModule' => array('name' => 'Test Module',
 		'files' => array('descriptor' => 'modules/testModule.descriptor',
@@ -300,35 +300,35 @@ class AdminLanguageManagerControllerTest extends GalleryControllerTestCase {
 	    'theme' => array('testTheme' => array('name' => 'Test Theme',
 		'files' => array('descriptor' => 'themes/testTheme.descriptor',
 		    'af' => 'themes/testTheme-af.package'))))));
-	$this->_testRepository->setReply('downloadPackagesForPlugin', 
-	    array('module', 
-		  'testModule', 
-		  array('name' => 'Test Module', 
-			'files' => array('descriptor' => 'modules/testModule.descriptor', 
+	$this->_testRepository->setReply('downloadPackagesForPlugin',
+	    array('module',
+		  'testModule',
+		  array('name' => 'Test Module',
+			'files' => array('descriptor' => 'modules/testModule.descriptor',
 			'af' => 'modules/testModule-af.package')),
-		  $this->_callback), 
+		  $this->_callback),
 		array(null, false, array()));
-	$this->_testRepository->setReply('downloadPackagesForPlugin', 
-	    array('theme', 
-		  'testTheme', 
-		  array('name' => 'Test Theme', 
-			'files' => array('descriptor' => 'themes/testTheme.descriptor', 
+	$this->_testRepository->setReply('downloadPackagesForPlugin',
+	    array('theme',
+		  'testTheme',
+		  array('name' => 'Test Theme',
+			'files' => array('descriptor' => 'themes/testTheme.descriptor',
 			'af' => 'themes/testTheme-af.package')),
-		  $this->_callback), 
+		  $this->_callback),
 		array(null, false, array()));
 
 	$platform->setReply('glob', array(GalleryCoreApi::getCodeBasePath('modules/*/po'), null),
 	    array(GalleryCoreApi::getCodeBasePath('modules/testModule/po')));
-	$platform->setReply('file_exists', 
+	$platform->setReply('file_exists',
 	    array('/g2data/locale/af/LC_MESSAGES/modules_testModule.mo'), true);
-	$platform->setReply('file_exists', 
+	$platform->setReply('file_exists',
 	    array('/g2data/locale/af/LC_MESSAGES/modules_testModule.mo'), true);
 
 	$platform->setReply('glob', array(GalleryCoreApi::getCodeBasePath('themes/*/po'), null),
 	    array(GalleryCoreApi::getCodeBasePath('themes/testTheme/po')));
-	$platform->setReply('file_exists', 
+	$platform->setReply('file_exists',
 	    array('/g2data/locale/af/LC_MESSAGES/themes_testTheme.mo'), true);
-	$platform->setReply('file_exists', 
+	$platform->setReply('file_exists',
 	    array('/g2data/locale/af/LC_MESSAGES/themes_testTheme.mo'), true);
 
 	$ret = $this->_controller->updateLanguageSettings($form);
