@@ -215,39 +215,58 @@ class AdminLanguageManagerControllerTest extends GalleryControllerTestCase {
     }
 
     function testUpdateLanguagePackages() {
-	$sourceFiles = 	array('test' => array(
-	    'module' => array('testModule' => array('name' => 'Test Module',
-		'files' => array('descriptor' => 'modules/testModule.descriptor',
-		    'af' => 'modules/testModule-af.package',
-		    'cs' => 'modules/testModule-cs.package'))),
-	    'theme' => array('testTheme' => array('name' => 'Test Theme',
-		'files' => array('descriptor' => 'themes/testTheme.descriptor',
-		    'af' => 'themes/testTheme-af.package',
-		    'cs' => 'themes/testTheme-cs.package')))));
+	$this->_testRepository->setReply(
+	    'downloadAndUnpackPackages',
+	    array(
+		array('modules/testModule.descriptor',
+		      'modules/testModule-af.package',
+		      'modules/testModule-cs.package',
+		      'themes/testTheme.descriptor',
+		      'themes/testTheme-af.package',
+		      'themes/testTheme-cs.package'),
+		$this->_callback),
+	    array(null, array('STATUS REPO1'), 6));
 
-	$this->_testRepository->setReply('downloadPackagesForPlugin',
-			array('module', 'testModule',
-			      $sourceFiles['test']['module']['testModule'],
-				    $this->_callback),
-			      array(null, true, array()));
+	$this->_testRepository->setReply(
+	    'downloadAndUnpackPackages',
+	    array(
+		array('modules/anotherTest.descriptor',
+		      'modules/anotherTest-ab.package',
+		      'modules/anotherTest-cd.package'),
+		$this->_callback),
+	    array(null, array('STATUS REPO2'), 3));
 
-	$this->_testRepository->setReply('downloadPackagesForPlugin',
-			array('theme', 'testTheme',
-			      $sourceFiles['test']['theme']['testTheme'], $this->_callback),
-			      array(null, true, array()));
-
-	list ($ret, $repositories) = GalleryRepository::getRepositories();
+	list ($ret, $status, $count) = $this->_controller->_downloadAndInstallLanguagePackages(
+	    array('repo1' => array(
+		      'module' => array(
+			  'testModule' => array(
+			      'name' => 'Test Module',
+			      'files' => array('descriptor' => 'modules/testModule.descriptor',
+					       'af' => 'modules/testModule-af.package',
+					       'cs' => 'modules/testModule-cs.package'))),
+		      'theme' => array(
+			  'testTheme' => array(
+			      'name' => 'Test Theme',
+			      'files' => array('descriptor' => 'themes/testTheme.descriptor',
+					       'af' => 'themes/testTheme-af.package',
+					       'cs' => 'themes/testTheme-cs.package')))),
+		  'repo2' => array(
+		      'module' => array(
+			  'anotherTestModule' => array(
+			      'name' => 'Test Module',
+			      'files' => array('descriptor' => 'modules/anotherTest.descriptor',
+					       'af' => 'modules/anotherTest-ab.package',
+					       'cs' => 'modules/anotherTest-cd.package'))))),
+	    array('repo1' => $this->_testRepository,
+		  'repo2' => $this->_testRepository),
+	    $this->_callback);
 	if ($ret) {
 	    return $ret;
 	}
 
-	list ($ret, $downloadStatus) = $this->_controller->_downloadAndInstallLanguagePackages(
-	    $sourceFiles, $repositories, $this->_callback);
-	if ($ret) {
-	    return $ret;
-	}
-
-	$this->assertEquals(array(), $downloadStatus, 'Incorrect status returned');
+	$this->assertEquals(9, $count, 'Number of files that we should have downloaded');
+	$this->assertEquals(
+	    array('STATUS REPO1', 'STATUS REPO2'), $status, 'Incorrect status returned');
     }
 
     function testHandleRequest() {
@@ -288,7 +307,7 @@ class AdminLanguageManagerControllerTest extends GalleryControllerTestCase {
 		      'save' => 'Save',
 		      'languageAction' => array('af' => 'download'));
 
-	$this->_callback['total'] = 8;
+	$this->_callback['total'] = 9;
 
 	$gallery->setConfig('data.gallery.locale', '/g2data/locale/');
 
@@ -300,22 +319,16 @@ class AdminLanguageManagerControllerTest extends GalleryControllerTestCase {
 	    'theme' => array('testTheme' => array('name' => 'Test Theme',
 		'files' => array('descriptor' => 'themes/testTheme.descriptor',
 		    'af' => 'themes/testTheme-af.package'))))));
-	$this->_testRepository->setReply('downloadPackagesForPlugin',
-	    array('module',
-		  'testModule',
-		  array('name' => 'Test Module',
-			'files' => array('descriptor' => 'modules/testModule.descriptor',
-			'af' => 'modules/testModule-af.package')),
-		  $this->_callback),
-		array(null, false, array()));
-	$this->_testRepository->setReply('downloadPackagesForPlugin',
-	    array('theme',
-		  'testTheme',
-		  array('name' => 'Test Theme',
-			'files' => array('descriptor' => 'themes/testTheme.descriptor',
-			'af' => 'themes/testTheme-af.package')),
-		  $this->_callback),
-		array(null, false, array()));
+	$this->_testRepository->setReply(
+	    'downloadAndUnpackPackages',
+	    array(
+		array(
+		    'modules/testModule.descriptor',
+		    'modules/testModule-af.package',
+		    'themes/testTheme.descriptor',
+		    'themes/testTheme-af.package'),
+		$this->_callback),
+	    array(null, array('STATUS'), 2));
 
 	$platform->setReply('glob', array(GalleryCoreApi::getCodeBasePath('modules/*/po'), null),
 	    array(GalleryCoreApi::getCodeBasePath('modules/testModule/po')));
