@@ -75,10 +75,13 @@ class MockObject {
 
 	$_GET[$this->_className]['errorCount']++;
 	printf("Unhandled reply<br/>\n");
-	printf("Received:<br/>\nFunction: %s<br/>\nRequest: <pre>%s</pre><br/>\n",
+	printf("Received:<br/>\nFunction: <b>%s</b><br/>\nRequest: <pre>%s</pre><br/>\n",
 	       $function, print_r($request, true));
-	printf("Expected:<br/>\nFunction: %s<br/>\nRequest: <pre>%s</pre><br/>\n",
+	printf("Expected:<br/>\nFunction: <b>%s</b><br/>\nRequest: <pre>%s</pre><br/>\n",
 	       $expected[0], print_r($expected[1], true));
+	printf('<b>Mismatch At</b>: %s<br/>',
+	       htmlspecialchars(GalleryTestCase::DeepCompare($request, $expected[1])));
+
 	$ret = GalleryCoreApi::error(ERROR_UNKNOWN, null, null, 'Unhandled reply in MockObject');
 	print $ret->getAsHtml();
     }

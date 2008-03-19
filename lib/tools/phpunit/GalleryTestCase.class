@@ -821,6 +821,9 @@ class GalleryTestCase extends TestCase {
 	return null;
     }
 
+    /**
+     * @static
+     */
     function DeepCompare($obj1, $obj2, $context=null) {
 	if (gettype($obj1) !== gettype($obj2)) {
 	    return "[$context] $obj1 type (" . gettype($obj1)
@@ -851,7 +854,7 @@ class GalleryTestCase extends TestCase {
 		    return "[$context] $key1 !== $key2";
 		}
 
-		$err = $this->DeepCompare($obj1[$key1], $obj2[$key2], "$context $key1");
+		$err = GalleryTestCase::DeepCompare($obj1[$key1], $obj2[$key2], "$context $key1");
 		if (isset($err)) {
 		    return $err;
 		}
