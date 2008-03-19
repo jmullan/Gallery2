@@ -45,13 +45,24 @@ class SlideshowMediaRssView extends GalleryView {
 	$phpVm = $gallery->getPhpVm();
 
 	$SlideShowMediaRss = array();
-	list ($ret, $item) = $this->getItem();
-	if ($ret) {
-	    return $ret;
-	}
-	list ($ret, $items, $start) = SlideshowHelper::buildAlbumSlideshow($item);
-	if ($ret) {
-	    return $ret;
+	$itemListString = GalleryUtilities::getRequestVariables('itemList');
+	if (!empty($itemListString)) {
+	    foreach (explode('|', $itemListString) as $id) {
+		$itemIds[] = (int)$id;
+	    }
+	    list ($ret, $items, $start) = SlideshowHelper::buildItemsSlideshow($itemIds);
+	    if ($ret) {
+		return $ret;
+	    }
+	} else {
+	    list ($ret, $item) = $this->getItem();
+	    if ($ret) {
+		return $ret;
+	    }
+	    list ($ret, $items, $start) = SlideshowHelper::buildAlbumSlideshow($item);
+	    if ($ret) {
+		return $ret;
+	    }
 	}
 
 	if (!$phpVm->headers_sent()) {

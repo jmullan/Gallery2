@@ -7,15 +7,33 @@
 {/foreach}
 
 <script type="text/javascript">
+function start(startElId) {ldelim}
+  {if !isset($Slideshow.piclensVersion)}
+  startLB(startElId);
+  {else}
+  var p=PicLensLite;
+  p.setCallbacks({ldelim} onNoPlugins:function(){ldelim}startLB(startElId){rdelim},
+                          onExit:function(){ldelim}location.href='{$Slideshow.returnUrl}' {rdelim}
+                 {rdelim});
+  p.setLiteURLs({ldelim} swf:'{$Slideshow.piclensSwfUrl}' {rdelim});
+  p.start({ldelim} feedUrl:'{$Slideshow.mediaRssUrl}',
+                   guid:{$Slideshow.startItemId},
+                   pid:'2PWfB4lurT4g',
+                   delay:10
+          {rdelim});
+  {/if}
+{rdelim}
+
+{* PiclensLite already defines function startLytebox. Avoid that name. *}
 {literal}
-function start(startElId) {
+function startLB(startElId) {
   if (typeof myLytebox != 'undefined') {
     myLytebox.slideInterval = 10000;
     myLytebox.resizeSpeed = 10;
     myLytebox.start(document.getElementById(startElId), true, false);
     setTimeout('goBackOnStop()', 1000);
   } else {
-    setTimeout('start("' + startElId + '")', 1000);
+    setTimeout('startLB("' + startElId + '")', 1000);
   }
 }
 function goBackOnStop() {

@@ -34,6 +34,7 @@ class SlideshowView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
 
 	$Slideshow = array();
 
@@ -42,6 +43,11 @@ class SlideshowView extends GalleryView {
 	if (isset($startId)) {
 	    $startId = (int)$startId;
 	}
+
+	/**
+	 * @todo Remove the redundancy of calling buildAlbumSlideshow() twice (here and in
+	 *       SlideshowMediaRss), e.g. by building the lytebox slideshow via AJAX/DOM.
+	 */
 	if (!empty($itemListString)) {
 	    foreach (explode('|', $itemListString) as $id) {
 		$itemIds[] = (int)$id;
@@ -62,11 +68,6 @@ class SlideshowView extends GalleryView {
 	    }
 	}
 
-	$Slideshow['items'] = $items;
-	$Slideshow['count'] = count($items);
-	$Slideshow['start'] = $start;
-	$template->setVariable('Slideshow', $Slideshow);
-
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'slideshow');
 	if ($ret) {
 	    return array($ret, null);
@@ -78,7 +79,66 @@ class SlideshowView extends GalleryView {
 	    $template->title($module->translate('Slideshow'));
 	}
 
-        $template->javascript('lib/yui/yahoo-dom-event.js');
+	list ($ret, $picLensVersion) = $module->getParameter('piclens.version');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	if ($picLensVersion) {
+	    $Slideshow['piclensVersion'] = $picLensVersion;
+
+	    $template->javascript($urlGenerator->generateUrl(
+		array('view' => 'slideshow.DownloadPicLens',
+		      'file' => 'js',
+		      'v' => $picLensVersion)));
+
+	    $jsUrlParams = array('forJavascript' => true, 'forceFullUrl' => true,
+				 'htmlEntities' => false);
+	    $Slideshow['piclensSwfUrl'] = $urlGenerator->generateUrl(
+		array('view' => 'slideshow.DownloadPicLens',
+		      'file' => 'swf',
+		      'v' => $picLensVersion),
+		$jsUrlParams);
+
+	    if (empty($itemListString)) {
+		$Slideshow['mediaRssUrl'] = $urlGenerator->generateUrl(
+		    array('view' => 'slideshow.SlideshowMediaRss',
+			  'itemId' => $item->getId()),
+		    $jsUrlParams);
+	    } else {
+		$Slideshow['mediaRssUrl'] = $urlGenerator->generateUrl(
+		    array('view' => 'slideshow.SlideshowMediaRss',
+			  'itemList' => $itemListString),
+		    $jsUrlParams);
+	    }
+
+	    /* Set the start item */
+	    if (!empty($items)) {
+		$Slideshow['startItemId'] = $items[$start]['item']['id'];
+	    } else {
+		$Slideshow['startItemId'] = $item->getId();
+	    }
+
+	    if (GalleryUtilities::hasRequestVariable('return')) {
+		/* Remove HTML entities */
+		$Slideshow['returnUrl'] =
+		    html_entity_decode(GalleryUtilities::getRequestVariables('return'));
+	    }
+
+	    if (empty($Slideshow['returnUrl'])) {
+		$Slideshow['returnUrl'] = $urlGenerator->generateUrl(
+		    array('view' => 'core.ShowItem', 'itemId' => $Slideshow['startItemId']),
+		    $jsUrlParams);
+	    }
+	    $Slideshow['returnUrl'] = $urlGenerator->makeAbsoluteUrl($Slideshow['returnUrl']);
+	}
+
+	$Slideshow['items'] = $items;
+	$Slideshow['count'] = count($items);
+	$Slideshow['start'] = $start;
+	$template->setVariable('Slideshow', $Slideshow);
+
+	$template->javascript('lib/yui/yahoo-dom-event.js');
 	$template->javascript('modules/slideshow/data/lytebox.js');
 	$template->link(array('rel' => 'stylesheet',
 			      'href' => 'modules/slideshow/data/lytebox.css',
