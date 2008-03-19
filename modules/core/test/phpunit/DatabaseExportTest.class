@@ -42,10 +42,12 @@ class DatabaseExportTest extends GalleryTestCase {
 	/* Preload these now, so we don't have to try loading them with the UnitTestPlatform */
 	list ($ret, $info) = GalleryCoreApi::loadPlugin('theme', 'matrix');
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $ret;
 	}
 	list ($ret, $info) = GalleryCoreApi::loadPlugin('theme', 'carbon');
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $ret;
 	}
 
@@ -83,7 +85,7 @@ class DatabaseExportTest extends GalleryTestCase {
 	$platform =& $gallery->getPlatform();
 
 	$this->_export->_callBack = array('callback' => array($this, 'progressCallback'),
-				 'progress' => 0, 'total' => 100);
+					  'progress' => 0, 'total' => 100);
 
 	$modules = array('captcha' => array('active' => 1, 'available' => 1, 'version' => '1.1.5',
 					    'callbacks' => 'getSiteAdminViews',
@@ -95,22 +97,22 @@ class DatabaseExportTest extends GalleryTestCase {
 					 'requiredModuleApi' =>  array(3, 6)),
 			 'core' =>  array('available' => 1, 'version' => '1.2.12', 'active' => '1',
 					  'callbacks' => 'registerEventListeners|getItemLinks|'
-							 . 'getSystemLinks|getSiteAdminViews|'
-					  		 . 'getUserAdminViews|getItemAdminViews',
+					  . 'getSystemLinks|getSiteAdminViews|'
+					  . 'getUserAdminViews|getItemAdminViews',
 					  'requiredCoreApi' =>  array(7, 27),
 					  'requiredModuleApi' => array(3,6))
-	);
+			 );
 
 	$line = '    <plugin-status id="captcha" required-core-api="7.20" required-api="3.6" '
-		 . 'version="1.1.5" active="1" type="module"/>' . "\n";
+	    . 'version="1.1.5" active="1" type="module"/>' . "\n";
 	$platform->setReply('fwrite', array('testHandle', $line, null), strlen($line) + 1);
 
 	$line = '    <plugin-status id="cart" required-core-api="7.27" required-api="3.6" '
-		 . 'version="1.0.8" active="0" type="module"/>' . "\n";
+	    . 'version="1.0.8" active="0" type="module"/>' . "\n";
 	$platform->setReply('fwrite', array('testHandle', $line, null), strlen($line) + 1);
 
 	$line = '    <plugin-status id="core" required-core-api="7.27" required-api="3.6" '
-		 . 'version="1.2.12" active="1" type="module"/>' . "\n";
+	    . 'version="1.2.12" active="1" type="module"/>' . "\n";
 	$platform->setReply('fwrite', array('testHandle', $line, null), strlen($line) + 1);
 
 	$warnings = array();
@@ -120,21 +122,21 @@ class DatabaseExportTest extends GalleryTestCase {
 	}
 
 	$themes = array('matrix' => array('active' => 1, 'available' => 1, 'version' => '1.1.5',
-					    'callbacks' => null,
-					    'requiredCoreApi' => array(7, 20),
-					    'requiredThemeApi' =>  array(2, 4)),
-			 'carbon' => array('available' => 1, 'version' => '1.2.5',
-			 		 'callbacks' => null,
-			 		 'requiredCoreApi' =>  array(7, 20),
-					 'requiredThemeApi' =>  array(2, 5))
-	);
+					  'callbacks' => null,
+					  'requiredCoreApi' => array(7, 20),
+					  'requiredThemeApi' =>  array(2, 4)),
+			'carbon' => array('available' => 1, 'version' => '1.2.5',
+					  'callbacks' => null,
+					  'requiredCoreApi' =>  array(7, 20),
+					  'requiredThemeApi' =>  array(2, 5))
+			);
 
 	$line = '    <plugin-status id="matrix" required-core-api="7.20" required-api="2.4" '
-		 . 'version="1.1.5" active="1" type="theme"/>' . "\n";
+	    . 'version="1.1.5" active="1" type="theme"/>' . "\n";
 	$platform->setReply('fwrite', array('testHandle', $line, null), strlen($line) + 1);
 
 	$line = '    <plugin-status id="carbon" required-core-api="7.20" required-api="2.5" '
-		 . 'version="1.2.5" active="0" type="theme"/>' . "\n";
+	    . 'version="1.2.5" active="0" type="theme"/>' . "\n";
 	$platform->setReply('fwrite', array('testHandle', $line, null), strlen($line) + 1);
 	$ret = $this->_export->_exportPluginStatus('testHandle', 'theme', $themes, $warnings);
 	if ($ret) {
