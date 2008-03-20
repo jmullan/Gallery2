@@ -466,7 +466,6 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	$expected = array();
 	$expected[] = 'blah.ext';
 	if ($isUnix) {
-	    $expected[] = 'foo&lt;body onload=alert(album_xss)&gt;bar';
 	    $expected[] = 'foo&lt;body onload=alert(item_xss)&gt;.ext';
 	}
 	$expected[] = 'foo-' . $item->getId();
