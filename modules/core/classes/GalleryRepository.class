@@ -646,7 +646,7 @@ class GalleryRepository {
 	$pluginName = $pluginDownloadData['name'];
 
 	$preparingText = $module->translate(array('text' => 'Preparing %s', 'arg1' => $pluginName));
-	$downloadingText = $module->translate(array('text' => 'Downloading %s', 
+	$downloadingText = $module->translate(array('text' => 'Downloading %s',
 	    'arg1' => $pluginName));
 
 	$percentage = ++$callback['current'] / $callback['total'];
@@ -663,7 +663,7 @@ class GalleryRepository {
 	    $relativeDescriptorUrl);
 	if ($ret) {
 	    if ($ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
-		/* XXX: storage failure means we failed to download the file properly */ 	 
+		/* XXX: storage failure means we failed to download the file properly */
 		$status['failedToDownload'][$pluginType][$pluginName] = $relativeDescriptorUrl;
 		return array(null, false, $status);
 	    }
@@ -676,13 +676,14 @@ class GalleryRepository {
 
 	    if (++$callback['current'] % 5 == 0) {
 		$percentage = $callback['current'] / $callback['total'];
-		call_user_func($callback['method'], $callback['title'], $preparingText, 
+		call_user_func($callback['method'], $callback['title'], $preparingText,
 		    $percentage);
 	    }
 
 	    /* pre-verify here */
 	    $errors = array_merge(
-		$errors, $this->_utilities->preVerifyPackage($packageName, $descriptor));
+		$errors, $this->_utilities->preVerifyPackage(
+		    $pluginType, $pluginId, $packageName, $descriptor));
 	}
 
 	$errors = array_unique($errors);
@@ -721,7 +722,7 @@ class GalleryRepository {
 	    }
 
 	    /* Check the unpacked files' integrity. */
-	    $ret = $this->_utilities->verifyPackageIntegrity($descriptor['pluginType'], 
+	    $ret = $this->_utilities->verifyPackageIntegrity($descriptor['pluginType'],
 		$descriptor['pluginId'], $packageName, $descriptor['contents']);
 	    if ($ret) {
 		return array($ret, null, null);
@@ -753,7 +754,7 @@ class GalleryRepository {
      * @return array of files that can't be overwritten (empty array if everything is ok)
      */
     function preVerifyPackage($packageName, $descriptor) {
-	return $this->_utilities->preVerifyPackage($descriptor['pluginType'], 
+	return $this->_utilities->preVerifyPackage($descriptor['pluginType'],
 	    $descriptor['pluginId'], $packageName, $descriptor);
     }
 
@@ -765,7 +766,7 @@ class GalleryRepository {
      * @return GalleryStatus a status code
      */
     function verifyPackageIntegrity($packageName, $descriptor) {
-	return $this->_utilities->verifyPackageIntegrity($descriptor['pluginType'], 
+	return $this->_utilities->verifyPackageIntegrity($descriptor['pluginType'],
 	    $descriptor['pluginId'], $packageName, $descriptor['contents']);
     }
 
@@ -951,13 +952,13 @@ class GalleryRepository {
 
 	$utilities = $this->_utilities;
 
-	list ($ret, $aggregateFile) = 
+	list ($ret, $aggregateFile) =
 	    $utilities->downloadAggregatePackages($this->_source, $filesToDownload);
 	if ($ret) {
 	    return array($ret, null, null);
 	}
 
-	call_user_func($callback['method'], $callback['title'], '', 
+	call_user_func($callback['method'], $callback['title'], '',
 	    ++$callback['current'] / $callback['total']);
 
 	list ($ret, $packages) = $utilities->splitAggregatePackage($this->_source, $aggregateFile,
@@ -977,9 +978,9 @@ class GalleryRepository {
 	foreach ($packages as $pluginType => $plugins) {
 	    foreach ($plugins as $pluginId => $data) {
 		if (!empty($status['failedToInstall'][$pluginType][$pluginId])) {
-		    $callback['current'] += 
+		    $callback['current'] +=
 			count($status['failedToInstall'][$pluginType][$pluginId]);
-		    call_user_func($callback['method'], $callback['title'], '', 
+		    call_user_func($callback['method'], $callback['title'], '',
 			$callback['current'] / $callback['total']);
 		    continue;
 		}
@@ -992,7 +993,7 @@ class GalleryRepository {
 		    $utilities->unpackPackage($cacheDir . $packageFile[1], $pluginOutputDir);
 		    $installedPackageCount++;
 
-		    $ret = $utilities->verifyPackageIntegrity($pluginType, $pluginId, 
+		    $ret = $utilities->verifyPackageIntegrity($pluginType, $pluginId,
 			$packageFile[0], $descriptor);
 		    if ($ret) {
 			return array($ret, null, null);
@@ -1010,7 +1011,7 @@ class GalleryRepository {
 			return array($ret, null, null);
 		    }
 
-		    call_user_func($callback['method'], $callback['title'], '', 
+		    call_user_func($callback['method'], $callback['title'], '',
 			++$callback['current'] / $callback['total']);
 		}
 	    }
@@ -1046,7 +1047,7 @@ class GalleryRepository {
 		if (!empty($data['descriptor'])) {
 		    $descriptor = $data['descriptor'];
 		    foreach ($data['files'] as $packageFile) {
-			$lockedFiles = $this->_utilities->preVerifyPackage($pluginType, $pluginId, 
+			$lockedFiles = $this->_utilities->preVerifyPackage($pluginType, $pluginId,
 			    $packageFile[0], $descriptor);
 			if (!empty($lockedFiles)) {
 			    $status['failedToInstall'][$pluginType][$pluginId][] = $packageFile[1];
