@@ -35,7 +35,7 @@ class WebHelper_simple {
      *       header to verify that we got all the data we expected.
      *
      */
-    function fetchWebFile($url, $outputFile, $extraHeaders=array(), $postDataArray=array(), 
+    function fetchWebFile($url, $outputFile, $extraHeaders=array(), $postDataArray=array(),
 	    $depth=0) {
 	global $gallery;
 
@@ -118,7 +118,7 @@ class WebHelper_simple {
 	    $redirectUrl = WebHelper_simple::_parseLocation($headers['Location'], $urlComponents);
 
 	    /* Returning output directly from fetchWebFile() confuses the CodeAudit */
-	    $result = WebHelper_simple::fetchWebFile($redirectUrl, $outputFile, $extraHeaders, 
+	    $result = WebHelper_simple::fetchWebFile($redirectUrl, $outputFile, $extraHeaders,
 		$postDataArray, $depth+1);
 	    return array($result[0], $result[1], $result[2], $result[3]);
 	}
@@ -202,7 +202,7 @@ class WebHelper_simple {
 
     /**
      * Encode the post data.  For each key/value pair, urlencode both the key and the value and then
-     * concatenate together.  As per the specification, each key/value pair is separated with an 
+     * concatenate together.  As per the specification, each key/value pair is separated with an
      * ampersand (&)
      * @param array $postDataArray the key/value post data
      * @param array $extraHeaders extra headers to pass to the server
