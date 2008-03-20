@@ -49,15 +49,15 @@ class RepositoryDownloadPackagesTest extends GalleryTestCase {
 	$this->_repository->_source = 'test';
 
 	/* Prepare sample descriptor */
-	include(dirname(__FILE__) 
+	include(dirname(__FILE__)
 	    . '/../../../../lib/tools/repository/test/data/SampleDescriptors.inc');
 	$this->_descriptor = $sampleModuleDescriptor;
 
 	$this->_templateAdapter = new MockTemplateAdapter();
-	$this->_callback = array('method' => array($this->_templateAdapter, 'updateProgressBar'),
-		  'title' => $this->name(), 'current' => 0, 'total' => 0);
+	$this->_callback = array('method' => array(&$this->_templateAdapter, 'updateProgressBar'),
+				 'title' => $this->name(), 'current' => 0, 'total' => 0);
 
-	$this->_versions = array('base' => array('1.0.0', '44444'), 
+	$this->_versions = array('base' => array('1.0.0', '44444'),
 	    'lang-en_GB' => array('22222', '33333'), 'lang-pt_PT' => array('22222', '33333'));
     }
 
@@ -66,7 +66,7 @@ class RepositoryDownloadPackagesTest extends GalleryTestCase {
 	$platform =& $gallery->getPlatform();
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
-	$this->assert($this->_repository->_utilities->isComplete(), 
+	$this->assert($this->_repository->_utilities->isComplete(),
 	    $this->_repository->_utilities->getRemaining());
 
 	$ret = parent::tearDown();
@@ -92,24 +92,25 @@ class RepositoryDownloadPackagesTest extends GalleryTestCase {
 	    return;
 	}
 
-	$platform->setReply('file_exists', array($outputDir), 
+	$platform->setReply('file_exists', array($outputDir),
 	    empty($params['outputDirectoryNonExistent']));
 	if (!empty($params['outputDirectoryNonExistent'])) {
 	    $platform->setReply('mkdir', array($outputDir, 755), false);
 	    return;
 	}
-	$platform->setReply('file_put_contents', 
+	$platform->setReply('file_put_contents',
 	    array($cachePath . 'testModule-descriptor', serialize($this->_descriptor)), true);
 
 	/* Preverify both language packages */
-	$response = empty($params['descriptorPreVerifyFailureResponse']) ? array() 
+	$response = empty($params['descriptorPreVerifyFailureResponse']) ? array()
 	    : $params['descriptorPreVerifyFailureResponse'];
 	$errors = false;
 	$wrappedDescriptor = array('pluginType' => 'module', 'pluginId' => 'testModule',
 	    'contents' => $this->_descriptor);
 	foreach (array('base', 'lang-en_GB', 'lang-pt_PT') as $package) {
-	    $this->_repository->_utilities->setReply('preVerifyPackage', 
-		array($package, $wrappedDescriptor),
+	    $this->_repository->_utilities->setReply(
+		'preVerifyPackage',
+		array('module', 'testModule', $package, $wrappedDescriptor),
 		empty($response[$package]) ? array() : $response[$package]);
 	    $errors |= !empty($response[$package]);
 	}
@@ -142,17 +143,19 @@ class RepositoryDownloadPackagesTest extends GalleryTestCase {
 		$platform->setReply('mkdir', array($outputDir, 755), false);
 		return;
 	    }
-	    $platform->setReply('file_put_contents', 
+	    $platform->setReply('file_put_contents',
 		array($cachePath . $relativeFile, $packageFile), true);
 
 	    $retCode = !empty($responses[$package]) ? $responses[$package] : false;
 	    $this->_repository->_utilities->setReply('unpackPackage',
 		array($cachePath . $relativeFile, $outputDir), null);
-	    $this->_repository->_utilities->setReply('verifyPackageIntegrity',
-		array($package, $wrappedDescriptor), null);
-	    $this->_repository->_utilities->setReply('updatePackageMetaData',
+	    $this->_repository->_utilities->setReply(
+		'verifyPackageIntegrity',
+		array('module', 'testModule', $package, $this->_descriptor), null);
+	    $this->_repository->_utilities->setReply(
+		'updatePackageMetaData',
 		array('module', 'testModule', $package, $this->_versions[$package][0],
-		    $this->_versions[$package][1], 0), null);
+		      $this->_versions[$package][1], 0), null);
 	}
     }
 
@@ -175,7 +178,7 @@ class RepositoryDownloadPackagesTest extends GalleryTestCase {
 
 	$this->assert($reactivate, 'Unexpected don\'t re-activate');
 	$this->assertEquals(7, $this->_callback['current'], 'Callback didn\'t match');
-	$this->assertEquals(array('0.13', '0.5', '0.5'), $this->_templateAdapter->_progress, 
+	$this->assertEquals(array('0.13', '0.5', '0.5'), $this->_templateAdapter->_progress,
 	    'Reported progress didn\'t match');
 	$this->assertEquals(array(), $status, 'Unexpected returned status');
     }
@@ -202,9 +205,9 @@ class RepositoryDownloadPackagesTest extends GalleryTestCase {
 
 	$this->assert(!$reactivate, 'Unexpected don\'t re-activate');
 	$this->assertEquals(1, $this->_callback['current'], 'Callback didn\'t match');
-	$this->assertEquals(array('0.13'), $this->_templateAdapter->_progress, 
+	$this->assertEquals(array('0.13'), $this->_templateAdapter->_progress,
 	    'Reported progress didn\'t match');
-	$expected = array('failedToDownload' => array('module' => array('Test Module' => 
+	$expected = array('failedToDownload' => array('module' => array('Test Module' =>
 	    'testModule-descriptor')));
 	$this->assertEquals($expected, $status, 'Unexpected returned status');
     }
@@ -240,7 +243,7 @@ class RepositoryDownloadPackagesTest extends GalleryTestCase {
 	$platform =& $gallery->getPlatform();
 
 	/* Set up repository responses */
-	$this->_setRepositoryResponses(array('descriptorPreVerifyFailureResponse' => 
+	$this->_setRepositoryResponses(array('descriptorPreVerifyFailureResponse' =>
 	    array('lang-en_GB' => array('en_GB-package'))));
 
 	$downloadData = array('name' => 'Test Module',
@@ -258,9 +261,9 @@ class RepositoryDownloadPackagesTest extends GalleryTestCase {
 
 	$this->assert(!$reactivate, 'Unexpected don\'t re-activate');
 	$this->assertEquals(4, $this->_callback['current'], 'Callback didn\'t match');
-	$this->assertEquals(array('0.13'), $this->_templateAdapter->_progress, 
+	$this->assertEquals(array('0.13'), $this->_templateAdapter->_progress,
 	    'Reported progress didn\'t match');
-	$expected = array('failedToInstall' => array('module' => array('Test Module' => 
+	$expected = array('failedToInstall' => array('module' => array('Test Module' =>
 	    array('en_GB-package'))));
 	$this->assertEquals($expected, $status, 'Should have errors');
    }
@@ -270,7 +273,7 @@ class RepositoryDownloadPackagesTest extends GalleryTestCase {
 	$platform =& $gallery->getPlatform();
 
 	/* Set up repository responses */
-	$this->_setRepositoryResponses(array('downloadPackageFailure' => 
+	$this->_setRepositoryResponses(array('downloadPackageFailure' =>
 	    array('base' => true)));
 
 	$downloadData = array('name' => 'Test Module',
@@ -288,7 +291,7 @@ class RepositoryDownloadPackagesTest extends GalleryTestCase {
 
 	$this->assert(!$reactivate, 'Unexpected don\'t re-activate');
 	$this->assertEquals(5, $this->_callback['current'], 'Callback didn\'t match');
-	$this->assertEquals(array('0.13', '0.5', '0.5'), $this->_templateAdapter->_progress, 
+	$this->assertEquals(array('0.13', '0.5', '0.5'), $this->_templateAdapter->_progress,
 	    'Reported progress didn\'t match');
 	$expected = array('failedToDownload' => array('module' => array('Test Module' => array(
 	    'testModule-base-package'))));
@@ -300,7 +303,7 @@ class RepositoryDownloadPackagesTest extends GalleryTestCase {
 	$platform =& $gallery->getPlatform();
 
 	/* Set up repository responses */
-	$this->_setRepositoryResponses(array('downloadPackageOtherFailure' => 
+	$this->_setRepositoryResponses(array('downloadPackageOtherFailure' =>
 	    array('base' => true)));
 
 	$downloadData = array('name' => 'Test Module',
@@ -327,7 +330,7 @@ class RepositoryDownloadPackagesTest extends GalleryTestCase {
 	$platform =& $gallery->getPlatform();
 
 	/* Set up repository responses */
-	$this->_setRepositoryResponses(array('downloadPackageFailure' => 
+	$this->_setRepositoryResponses(array('downloadPackageFailure' =>
 	    array('lang-en_GB' => true)));
 
 	$downloadData = array('name' => 'Test Module',
@@ -344,7 +347,7 @@ class RepositoryDownloadPackagesTest extends GalleryTestCase {
 	}
 	$this->assert($reactivate, 'Unexpected don\'t re-activate');
 	$this->assertEquals(7, $this->_callback['current'], 'Callback didn\'t match');
-	$this->assertEquals(array('0.13', '0.5', '0.5'), $this->_templateAdapter->_progress, 
+	$this->assertEquals(array('0.13', '0.5', '0.5'), $this->_templateAdapter->_progress,
 	    'Reported progress didn\'t match');
 	$expected = array('failedToDownload' => array('module' => array('Test Module' => array(
 	    'testModule-en_GB-package'))));
@@ -356,7 +359,7 @@ class RepositoryDownloadPackagesTest extends GalleryTestCase {
 	$platform =& $gallery->getPlatform();
 
 	/* Set up repository responses */
-	$this->_setRepositoryResponses(array('downloadPackageOtherFailure' => 
+	$this->_setRepositoryResponses(array('downloadPackageOtherFailure' =>
 	    array('lang-en_GB' => true)));
 
 	$downloadData = array('name' => 'Test Module',
