@@ -695,7 +695,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	$gallery->setPlatform($platform);
 
 	$utilties = new GalleryRepositoryUtilities();
-	$ret = $utilties->verifyPackageIntegrity('module', 'testModule', 'package1', 
+	$ret = $utilties->verifyPackageIntegrity('module', 'testModule', 'package1',
 	    $testDescriptor);
 	if ($ret) {
 	    return ($ret);
@@ -723,7 +723,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 		    $phpVm->setReply('gzinflate', array($data, null), $data);
 		    $file = substr($file, 0, -3);
 		}
-		$platform->setReply('file_put_contents', 
+		$platform->setReply('file_put_contents',
 		    array("{$repositoryCachePath}test/$file", $data), true);
 	    } else {
 		$phpVm->setReply('function_exists', array('gzinflate'), false);
@@ -743,23 +743,23 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	$gallery->setConfig('repository.cache', '/cache/');
 
 	$platform->setReply('fopen', array('tempOut', 'r', null), 'handle');
-	$this->_setSplitPackagesResponses('modules/testModule-1.0-22222.descriptor', 
+	$this->_setSplitPackagesResponses('modules/testModule-1.0-22222.descriptor',
 	    'Module Descriptor Data');
-	$this->_setSplitPackagesResponses('modules/testModule-1.0-22222-base.package', 
+	$this->_setSplitPackagesResponses('modules/testModule-1.0-22222-base.package',
 	    'Module Base Data');
-	$this->_setSplitPackagesResponses('modules/testModule-lang-en_GB-11111-22222.package', 
+	$this->_setSplitPackagesResponses('modules/testModule-lang-en_GB-11111-22222.package',
 	    'Module Language en_GB Data');
-	$this->_setSplitPackagesResponses('themes/testTheme-1.0.1-22222.descriptor.gz', 
+	$this->_setSplitPackagesResponses('themes/testTheme-1.0.1-22222.descriptor.gz',
 	    'Theme Descriptor Data');
-	$this->_setSplitPackagesResponses('themes/testTheme-1.0.1.123-22222-base.package.gz', 
+	$this->_setSplitPackagesResponses('themes/testTheme-1.0.1.123-22222-base.package.gz',
 	    'Theme Base Data');
-	$this->_setSplitPackagesResponses('themes/testTheme-lang-en_GB-11111-22222.package.gz', 
+	$this->_setSplitPackagesResponses('themes/testTheme-lang-en_GB-11111-22222.package.gz',
 	    'Theme Language en_GB Data');
 	$platform->setReply('fgets', array('handle', 4096), false);
 	$platform->setReply('fclose', array('handle'), true);
 
 	$mockAdapter = new MockTemplateAdapter();
-	$callback = array('method' => array($mockAdapter, 'updateProgressBar'),
+	$callback = array('method' => array(&$mockAdapter, 'updateProgressBar'),
 		'title' => 'Test', 'current' => 0, 'total' => 10);
 
 	$utilities = new GalleryRepositoryUtilities();
@@ -782,7 +782,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 
 	$this->assertEquals($expected, $packages, 'Unexpected Package list returned');
 	$this->assertEquals(6, $callback['current'], 'Callback didn\'t match');
-	$this->assertEquals(array('0.1', '0.2', '0.3', '0.4', '0.5', '0.6'), 
+	$this->assertEquals(array('0.1', '0.2', '0.3', '0.4', '0.5', '0.6'),
 	    $mockAdapter->_progress, 'Reported progress didn\'t match');
 	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
@@ -795,7 +795,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	$gallery->setConfig('repository.cache', '/cache/');
 
 	$platform->setReply('fopen', array('tempOut', 'r', null), 'handle');
-	$this->_setSplitPackagesResponses('themes/testTheme-11111-22222.descriptor', 
+	$this->_setSplitPackagesResponses('themes/testTheme-11111-22222.descriptor',
 	    'Descriptor Data', array('invalid' => 1));
 	$platform->setReply('fclose', array('handle'), true);
 
@@ -820,9 +820,9 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	$gallery->setConfig('repository.cache', '/cache/');
 
 	$platform->setReply('fopen', array('tempOut', 'r', null), 'handle');
-	$this->_setSplitPackagesResponses('modules/testModule-1.0-22222.descriptor', 
+	$this->_setSplitPackagesResponses('modules/testModule-1.0-22222.descriptor',
 	    'Module Descriptor Data');
-	$this->_setSplitPackagesResponses('modules/testModule-1.0-22222-base.package.gz', 
+	$this->_setSplitPackagesResponses('modules/testModule-1.0-22222-base.package.gz',
 	    'Module Base Data', array('returnGzip' => 1));
 	$platform->setReply('fclose', array('handle'), true);
 
@@ -844,16 +844,16 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	$platform =& $gallery->getPlatform();
 
 	if (!empty($failed['download'])) {
-	    $platform->setReply('fgets', array($handle, 4096), 
+	    $platform->setReply('fgets', array($handle, 4096),
 		"HTTP/1.1 {$failed['download']}\r\n");
 	    $platform->setReply('feof', array('fd'), true);
 	} else {
 	    $platform->setReply('fgets', array($handle, 4096), "HTTP/1.1 200 OK\r\n");
 	    $platform->setReply('feof', array($handle), false);
-	    $platform->setReply('fgets', array($handle, 4096), 
+	    $platform->setReply('fgets', array($handle, 4096),
 		"Expires: Sun, 19 Nov 1978 05:00:00 GMT\r\n");
 	    $platform->setReply('feof', array($handle), false);
-	    $platform->setReply('fgets', array($handle, 4096), 
+	    $platform->setReply('fgets', array($handle, 4096),
 		"Content-Type: application/g2-multipart-pkg; charset=utf-8\r\n");
 	    $platform->setReply('feof', array($handle), false);
 	    $platform->setReply('fgets', array($handle, 4096), "\r\n");
@@ -905,7 +905,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	    $platform->setReply('feof', array('fd'), false);
 
 	    $platform->setReply('fread', array('fd', 4096), $responseData);
-	    $platform->setReply('fwrite', array('handle', $responseData, null), 
+	    $platform->setReply('fwrite', array('handle', $responseData, null),
 		strlen($responseData));
 	}
 
@@ -956,7 +956,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 		       'modules/testModule-1.0.9-22222-base.package' => '0123456789',
 		       'modules/testModule-lang-en_GB-11111-22222.package' => '0123456789');
 
-	$this->_setAggregrateDownloadResponses($files, 
+	$this->_setAggregrateDownloadResponses($files,
 	    array('download' => '500 Internal Server Error'));
 
 	$utilities = new GalleryRepositoryUtilities();
