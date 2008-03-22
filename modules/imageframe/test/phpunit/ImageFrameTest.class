@@ -51,6 +51,16 @@ class ImageFrameTest extends GalleryTestCase {
 	}
     }
 
+    function _resetIFCounter() {
+	if (!function_exists('smarty_function_counter')) {
+	    GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.counter.php');
+	}
+	$smarty = new Smarty();
+	$params = array('name' => 'ImageFrame_counter', 'print' => true, 'direction' => 'down');
+	while (smarty_function_counter($params, $smarty) > 1);
+	$params['direction'] = 'up';
+	$this->assertEquals(0, smarty_function_counter($params, $smarty));
+    }
 
     function testImageFrameList() {
 	list ($ret, $list) = $this->_imageframe->getImageFrameList();
@@ -113,6 +123,8 @@ class ImageFrameTest extends GalleryTestCase {
 	 * not in $smarty so we can use it.  This unit test verifies this behavior
 	 * (in case it changes in a future version of smarty).
 	 */
+    	$this->_resetIFCounter();
+
 	$template1 = new GalleryTemplate(dirname(dirname(__FILE__)), true, true);
 	$template2 = new GalleryTemplate(dirname(dirname(__FILE__)), true, true);
 
