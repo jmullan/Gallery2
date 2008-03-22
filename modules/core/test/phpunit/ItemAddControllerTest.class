@@ -445,7 +445,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	$isUnix = strncasecmp(PHP_OS, 'win', 3);
 	$status = $this->_getStatusFromProgressBar();
 	$addedItems = $status['addedFiles'];
-	$this->assertEquals($isUnix ? 6 : 3, count($addedItems), 'added wrong # of items');
+	$this->assertEquals($isUnix ? 5 : 3, count($addedItems), 'added wrong # of items');
 
 	/*
 	 * Sort the added files list by filename because we can't guarantee
