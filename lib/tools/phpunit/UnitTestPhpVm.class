@@ -140,5 +140,9 @@ class UnitTestPhpVm extends MockObject {
     function defined($name) {
 	return $this->_makeReply('defined', array($name));
     }
+
+    function date($format, $timestamp=null) {
+	return $this->_makeReply('date', array($format, $timestamp));
+    }
 }
 ?>

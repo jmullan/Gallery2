@@ -284,7 +284,7 @@ class GalleryPhpVm {
     }
 
     /**
-     * Returns the IP address of the Internet host specified by hostname
+     * Returns the IP address of the Internet host specified by hostname.
      *
      * @param string $hostname
      * @return string ip address
@@ -301,6 +301,17 @@ class GalleryPhpVm {
      */
     function defined($name) {
 	return defined($name);
+    }
+
+    /**
+     * Format a local time/date
+     *
+     * @param string $format the string format
+     * @param int timestamp the timestamp
+     * @see http://us.php.net/manual/en/function.date.php
+     */
+    function date($format, $timestamp=null) {
+	return date($format, $timestamp);
     }
 }
 ?>
