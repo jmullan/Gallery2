@@ -71,6 +71,10 @@ class UnitTestStorage extends MockObject {
        parent::setReply($function, $inputs, $outputs, $optional);
     }
 
+    function getType() {
+	return $this->_makeReply('getType', array());
+    }
+
     function getAdoDbType() {
 	return $this->_makeReply('getAdoDbType', array());
     }
@@ -150,7 +154,7 @@ class UnitTestStorage extends MockObject {
     }
 
     function removeAllMapEntries($mapName, $useNonTransactionalConnection=false) {
-	return $this->_makeReply('removeAllMapEntries', 
+	return $this->_makeReply('removeAllMapEntries',
 	    array($mapName, $useNonTransactionalConnection));
     }
 
