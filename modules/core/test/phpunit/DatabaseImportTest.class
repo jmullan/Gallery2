@@ -43,7 +43,7 @@ class DatabaseImportTest extends GalleryTestCase {
     	global $gallery;
 
 	$this->_xmlParser =& new GalleryXmlProcessor($this);
-	
+
     	$gallery->setPlatform(new UnitTestPlatform());
     	$gallery->_storage = new UnitTestStorage();
     	$storage =& $gallery->getStorage();
@@ -53,20 +53,12 @@ class DatabaseImportTest extends GalleryTestCase {
 
     function tearDown() {
     	global $gallery;
-    	$platform =& $gallery->getPlatform();
-    	$storage =& $gallery->getStorage();
-
 	$this->_xmlParser->release();
-	
-	$this->assert($platform->isComplete(), $platform->getRemaining());
-	$this->assert($storage->isComplete(), $storage->getRemaining());
-	$extras =& $storage->_getExtras();
-	$this->assert($extras->isComplete(), $extras->getRemaining());
 
-	$ret = parent::tearDown();
-	if ($ret) {
-	   return $ret;
-	}
+	$this->assert($gallery->_platform->isComplete(), $gallery->_platform->getRemaining());
+	$this->assert($gallery->_storage->isComplete(), $gallery->_storage->getRemaining());
+
+	return parent::tearDown();
     }
 
     /*
@@ -232,7 +224,7 @@ class DatabaseImportTest extends GalleryTestCase {
 	$storage->setReply('setDebug', array($gallery->getDebug()), null);
 
 	if (!$this->_xmlParser->xmlParse($inputXml, true)) {
-	    return $this->_xmlParser->getParserError(); 
+	    return $this->_xmlParser->getParserError();
 	}
     }
 
@@ -244,9 +236,9 @@ class DatabaseImportTest extends GalleryTestCase {
 	$storage->setExtrasReply('createSequence', array('testSequence', '46'), null);
 
     	$inputXml = '<sequence name="testSequence" start-value="46" />';
-	
+
 	if (!$this->_xmlParser->xmlParse($inputXml, true)) {
-	    return $this->_xmlParser->getParserError(); 
+	    return $this->_xmlParser->getParserError();
 	}
     }
 
@@ -274,7 +266,7 @@ class DatabaseImportTest extends GalleryTestCase {
 		  . '</table>';
 
 	if (!$this->_xmlParser->xmlParse($inputXml, true)) {
-	    return $this->_xmlParser->getParserError(); 
+	    return $this->_xmlParser->getParserError();
 	}
     }
 
@@ -337,7 +329,7 @@ class DatabaseImportTest extends GalleryTestCase {
         </data>';
 
 	if (!$this->_xmlParser->xmlParse($inputXml, true)) {
-	    return $this->_xmlParser->getParserError(); 
+	    return $this->_xmlParser->getParserError();
 	}
     }
 
