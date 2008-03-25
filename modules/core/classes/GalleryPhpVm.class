@@ -311,7 +311,11 @@ class GalleryPhpVm {
      * @see http://us.php.net/manual/en/function.date.php
      */
     function date($format, $timestamp=null) {
-	return date($format, $timestamp);
+	if (isset($timestamp)) {
+	    return date($format, $timestamp);
+	} else {
+	    return date($format);
+	}
     }
 }
 ?>
