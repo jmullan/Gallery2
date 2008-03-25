@@ -201,7 +201,7 @@ class RssGenerator {
 
 	$platform =& $gallery->getPlatform();
 	$lf = $platform->getLineEnding();
-	
+
 	if (isset($this->_properties['useMedia']) && $this->_properties['useMedia'] == 1) {
 	    $data = '<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">';
 	} else {
@@ -244,6 +244,7 @@ class RssGenerator {
 		'</title>' . $lf .
 		' <link>' . $this->_properties['image']['link'] . '</link></image>' . $lf : '');
 
+	$userMap = array();
 	foreach ($this->_items as $item) {
 	    if (isset($item['title']) && isset($item['link']) && isset($item['description'])) {
 		$data .= '<item>' . $lf .
@@ -255,9 +256,26 @@ class RssGenerator {
 		    $this->cdata(GalleryUtilities::markup($item['description']))
 		    . '</description>' . $lf;
 
-		if (isset($item['author'])) {
-		    $data .= ' <author>' . GalleryUtilities::markup($item['author']) .
-			     '</author>' . $lf;
+		if (isset($item['ownerId'])) {
+		    $ownerId = $item['ownerId'];
+		    if (!isset($userMap[$item['ownerId']])) {
+			list ($ret, $userMap[$ownerId]) =
+			    GalleryCoreApi::loadEntitiesById($ownerId);
+			if ($ret) {
+			    /**
+			     * This method has no way of returning errors, so swallow them for now
+			     * @todo convert this to an exception in 2.4
+			     */
+			}
+		    }
+
+		    if (isset($userMap[$ownerId])) {
+			$name = $userMap[$ownerId]->getFullName();
+			if (empty($name)) {
+			    $name = $userMap[$ownerId]->getUsername();
+			}
+			$data .= ' <author>' . GalleryUtilities::markup($name) . '</author>' . $lf;
+		    }
 		}
 
 		if (isset($item['category'])) {
@@ -278,20 +296,20 @@ class RssGenerator {
 
 		if (isset($this->_properties['useMedia']) && $this->_properties['useMedia']) {
 		    if (isset($item['media'])) {
-			$data .= ' <media:content url="' . $item['media']['url'] 
-			    . '" type="' . $item['media']['type'] 
-			    . '" height="' . $item['media']['height'] 
+			$data .= ' <media:content url="' . $item['media']['url']
+			    . '" type="' . $item['media']['type']
+			    . '" height="' . $item['media']['height']
 			    . '" width="' . $item['media']['width'] . '" />' . $lf;
-			
+
 		    }
-		    
+
 		    $data .= ' <media:title>'
 			. $this->cdata(GalleryUtilities::markup($item['title']))
 			. '</media:title>' . $lf
 			. ' <media:text type="html">'
 			. $this->cdata(GalleryUtilities::markup($item['description']))
 			. '</media:text>' . $lf;
-		    
+
 		    if (isset($item['thumbnail'])) {
 			$data .= ' <media:thumbnail url="' . $item['thumbnail']['url'] . '" width="'
 			    . $item['thumbnail']['width'] . '" height="'

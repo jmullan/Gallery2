@@ -200,7 +200,7 @@ class RssHelper {
 		}
 
 		break;
-		
+
 	    case 'commentsRecursive':
 		list ($ret, $items) = GalleryCommentHelper::fetchAllComments($id,
 		    $param['count'], null, ORDER_DESCENDING);
@@ -210,15 +210,15 @@ class RssHelper {
 
 		break;
 	}
-	
+
 	/* if necessary, fetch the thumbnails */
 	if (! strstr($param['feedType'], 'comments')) {
 	    $itemIds = array();
-	    
+
 	    foreach ($items as $item) {
 		$itemIds[] = $item->getId();
 	    }
-	    
+
 	    list ($ret, $param['thumbnails']) =
 		GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
 	    if ($ret) {
@@ -298,7 +298,7 @@ class RssHelper {
 		'" width="' . $thumbnail->getWidth() .
 		'" height="' . $thumbnail->getHeight() .
 		'"/></a>' . (!empty($description) ? '<br/>' . $description : $description);
-	
+
 	    $itemSettings['thumbnail']['url'] = $url;
 	    $itemSettings['thumbnail']['width'] = $thumbnail->getWidth();
 	    $itemSettings['thumbnail']['height'] = $thumbnail->getHeight();
@@ -338,10 +338,11 @@ class RssHelper {
 	}
 
 	$itemSettings['pubDate'] = date('r', $item->getModificationTimestamp());
+	$itemSettings['ownerId'] = $item->getOwnerId();
 
 	/* check if the enclosure tag should be used */
 	if (GalleryUtilities::isA($item, 'GalleryPhotoItem')
-		&& ((isset($param['useEnclosure']) && $param['useEnclosure'] == '1') 
+		&& ((isset($param['useEnclosure']) && $param['useEnclosure'] == '1')
 		  || (isset($param['useMedia']) && $param['useMedia'] == '1'))) {
 	    $imageUrl = $urlGenerator->generateUrl(
 		array(
@@ -350,7 +351,7 @@ class RssHelper {
 		array(
 		    'forceSessionId' => false,
 		    'forceFullUrl' => true));
-	    
+
 	    if (isset($param['useEnclosure']) && $param['useEnclosure'] == '1') {
 		$itemSettings['enclosure'] = array(
 		    'url' => $imageUrl,
@@ -482,7 +483,7 @@ class RssHelper {
 	if ($ret) {
 	    return array($ret, null);
 	}
-	
+
 	if ($itemId == $rootId) {
 	    $parentSequence = '';
 	} else {
@@ -508,7 +509,7 @@ class RssHelper {
 	    $newDays = 21; /* Use default on error or zero setting */
 	}
 	$timeCutOff = time() - 3600 * 24 * $newDays;
-	
+
 	if ($random) {
 	    /* get the random function for the DB */
 	    list ($ret, $orderBy) = $storage->getFunctionSql('RAND', array());
@@ -518,38 +519,38 @@ class RssHelper {
 	} else {
 	    $orderBy = "[GalleryEntity::$timestamp] DESC";
 	}
-	
+
 	$query = "
 	    SELECT
 	      [$table::id]";
-	
+
 	if ($perAlbumLimit != 0) {
 	    $query .= ', [GalleryItemAttributesMap::parentSequence]';
 	}
-	
+
 	$query .= "
 	    FROM
 	      [$table], [GalleryItemAttributesMap],
 	      [GalleryAccessSubscriberMap], [GalleryEntity]
 	    WHERE ";
-	
+
 	if (! $random) {
 	    $query .= "
 	      [GalleryEntity::$timestamp] >= $timeCutOff
 	      AND ";
 	}
-	
+
 	$query .= "
 	      [$table::id] = [GalleryItemAttributesMap::itemId]
 	      AND
 	      [$table::id] = [GalleryEntity::id]";
-	
+
 	if (!empty($parentSequence)) {
 	    $query .= "
 	      AND
 	      [GalleryItemAttributesMap::parentSequence] LIKE '$parentSequence/%'";
 	}
-	
+
 	$query .= "
 	      AND
 	      [$table::id] = [GalleryAccessSubscriberMap::itemId]
@@ -623,7 +624,7 @@ class RssHelper {
 		'commentsRecursive' =>
 		    $module->translate('Comments for an album and its subalbums'),
 		'photosRandom' => $module->translate('Random items in an album'),
-		'photosRandomRecursive' => 
+		'photosRandomRecursive' =>
 		    $module->translate('Random items in an album and its subalbums'),
 		    ));
     }

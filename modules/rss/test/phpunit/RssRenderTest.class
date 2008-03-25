@@ -215,6 +215,7 @@ class RssRenderTest extends GalleryControllerTestCase {
 	ob_end_clean();
 	$platform =& $gallery->getPlatform();
 
+	$user = $gallery->getActiveUser();
 	$this->assertEquals(
 	    array(
 		'Header: Content-type: text/xml; charset=UTF-8',
@@ -232,6 +233,7 @@ class RssRenderTest extends GalleryControllerTestCase {
 		' <link>url:' . $this->_album->getId() . '</link>',
 		' <guid isPermaLink="false">url:' . $this->_album->getId() . '</guid>',
 		' <description><![CDATA[This is my description]]></description>',
+		' <author>' . $user->getFullName() . '</author>',
 		' <category>album</category>',
 		' <pubDate>' . date('r', 1234567890) . '</pubDate>',
 		'</item>',
@@ -267,6 +269,7 @@ class RssRenderTest extends GalleryControllerTestCase {
 	ob_end_clean();
 	$platform =& $gallery->getPlatform();
 
+	$user = $gallery->getActiveUser();
 	$this->assertEquals(
 	    array(
 		'Header: Content-type: text/xml; charset=UTF-8',
@@ -284,6 +287,7 @@ class RssRenderTest extends GalleryControllerTestCase {
 		' <link>url:' . $this->_item1->getId() . '</link>',
 		' <guid isPermaLink="false">url:' . $this->_item1->getId() . '</guid>',
 		' <description><![CDATA[This is a description]]></description>',
+		' <author>' . $user->getFullName() . '</author>',
 		' <category>photo</category>',
 		' <pubDate>' . date('r', 1234567890) . '</pubDate>',
 		'</item>',
