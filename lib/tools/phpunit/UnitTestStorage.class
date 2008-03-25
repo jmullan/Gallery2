@@ -71,6 +71,16 @@ class UnitTestStorage extends MockObject {
        parent::setReply($function, $inputs, $outputs, $optional);
     }
 
+    function isComplete() {
+	return parent::isComplete()
+	    && !empty($this->_extras) ? $this->_extras->isComplete() : true;
+    }
+
+    function getRemaining() {
+	return  parent::getRemaining()
+	    . (!empty($this->_extras) ? $this->_extras->getRemaining() : '');
+    }
+
     function getType() {
 	return $this->_makeReply('getType', array());
     }
