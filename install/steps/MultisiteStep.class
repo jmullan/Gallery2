@@ -41,8 +41,6 @@ class MultisiteStep extends InstallStep {
 	    processAutoCompleteRequest();
 	    return false;
 	} else if (isset($_POST['isMultisite'])) {
-	    $this->_configPath = rtrim($this->sanitize($_POST['configPath']),
-				       ' ' . DIRECTORY_SEPARATOR);
 	    if ($_POST['isMultisite'] == '0') {
 		$this->_isMultisite = false;
 		$baseDir = dirname(dirname(dirname(__FILE__)));
@@ -61,6 +59,9 @@ class MultisiteStep extends InstallStep {
 
 		header('Location: ' . getBaseUrl() . $uri);
 		return false;
+	    } else {
+		$this->_configPath = rtrim($this->sanitize($_POST['configPath']),
+					   ' ' . DIRECTORY_SEPARATOR);
 	    }
 	}
 	return true;

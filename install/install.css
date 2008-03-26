@@ -311,6 +311,11 @@ input, select {
     margin-bottom: 10px;
 }
 
+.multisite p {
+    padding-top: 0em;
+    text-indent: 0em;
+}
+
 .multisite + .multisite { margin-bottom: 0; }
 .multisite pre, .multisite .error {
     text-indent: 0;
@@ -323,6 +328,7 @@ input, select {
 }
 
 .disabled {
+  background: #eee;
   color: #999;
   font-style: italic;
 }
@@ -394,11 +400,6 @@ input, select {
 
 .autoCompleteContainer li.yui-ac-highlight {
   background-color: #eee;
-}
-
-/* undo the text-indent set for .multisite */
-.multisite .autoCompleteContainer li {
-    text-indent: 0.0em;
 }
 
 label.radio {
