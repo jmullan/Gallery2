@@ -20,7 +20,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.28\n"
+"Project-Id-Version: Gallery: Core 1.2.31\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-08-25 16:49+0200\n"
 "PO-Revision-Date: 2007-09-23 23:26+0100\n"
@@ -93,6 +93,22 @@ msgstr "Link"
 #, c-format
 msgid "Page %d of %d"
 msgstr "Pagina %d di %d"
+
+#, fuzzy
+msgid "Updating Language Settings"
+msgstr "Configurazione Lingua"
+
+msgid "Update completed with errors."
+msgstr "Aggiornamento completato con errori."
+
+msgid "Update complete."
+msgstr "Aggiornamento completato."
+
+msgid "Deleting Language Packs"
+msgstr "Eliminazione dei Language Packs in corso"
+
+msgid "Synchronizing Language Packs"
+msgstr "Sincronizzazione dei Language Packs in corso"
 
 msgid "No acceleration"
 msgstr "Nessuna accelerazione"
@@ -552,6 +568,9 @@ msgstr "Prestazioni"
 msgid "Event Logs"
 msgstr "Registri Eventi"
 
+msgid "Language Settings"
+msgstr "Configurazione Lingua"
+
 msgid "Toolkit Priority"
 msgstr "Priorità Strumenti"
 
@@ -570,18 +589,6 @@ msgstr "Aggiornamento dei Pacchetti in corso"
 #, c-format
 msgid "Activating %s"
 msgstr "Attivazione di %s in corso"
-
-msgid "Deleting Language Packs"
-msgstr "Eliminazione dei Language Packs in corso"
-
-msgid "Update completed with errors."
-msgstr "Aggiornamento completato con errori."
-
-msgid "Update complete."
-msgstr "Aggiornamento completato."
-
-msgid "Synchronizing Language Packs"
-msgstr "Sincronizzazione dei Language Packs in corso"
 
 msgid "Updating Repository Index"
 msgstr "Aggiornamento Indice Deposito"
@@ -794,6 +801,14 @@ msgstr ""
 "Non è stato possibile creare la sottocartella per la cache. Assicurati che il server web "
 "abbia i permessi di scrittura in essa."
 
+#, c-format
+msgid "Preparing %s"
+msgstr "Preparazione in corso di %s"
+
+#, c-format
+msgid "Downloading %s"
+msgstr "Scaricamento in corso di %s"
+
 msgid "Official Release Repository"
 msgstr "Deposito Release Ufficiale"
 
@@ -813,14 +828,6 @@ msgstr "Errore nello scaricamento della hash dell'indice da '%s'."
 
 msgid "Index integrity check failed."
 msgstr "Controllo integrità indice fallito."
-
-#, c-format
-msgid "Preparing %s"
-msgstr "Preparazione in corso di %s"
-
-#, c-format
-msgid "Downloading %s"
-msgstr "Scaricamento in corso di %s"
 
 msgid "&laquo; default sort order &raquo;"
 msgstr "&laquo; ordinamento predefinito &raquo;"
@@ -1190,34 +1197,6 @@ msgstr ""
 
 msgid "Error sending test email, see below for details."
 msgstr "Errore nell'invio dell'email di test, vedi i dettagli qui sotto."
-
-msgid "Language Settings"
-msgstr "Configurazione Lingua"
-
-msgid ""
-"Select language defaults for Gallery. Individual users can override this setting in their "
-"personal preferences or via the language selector block if available. Gallery will try to "
-"automatically detect the language preference of each user if the browser preference check is "
-"enabled."
-msgstr ""
-"Seleziona la lingua predefinita di Gallery. Gli utenti individuali possono scavalcare questa "
-"configurazione nelle loro preferenze personali oppure tramite il bocco di selezione della "
-"lingua se disponibile. Gallery proverà a rilevare le preferenze della lingua per ogni utente "
-"se è attivato il controllo delle preferenze del browser."
-
-msgid "Default language"
-msgstr "Lingua predefinita"
-
-msgid "Check Browser Preference"
-msgstr "Controlla le Preferenze del Browser"
-
-#, c-format
-msgid ""
-"Your webserver does not support localization.  Please instruct your system administrator to "
-"reconfigure PHP with the %s option enabled."
-msgstr ""
-"Il tuo webserver non supporta la localizzazione.  Chiedi al tuo amministratore di "
-"riconfigurare PHP con l'opzione %s attivata."
 
 msgid "Date Formats"
 msgstr "Formati Data"
@@ -1785,6 +1764,152 @@ msgid_plural "%d groups match your filter"
 msgstr[0] "%d gruppo corrisponde al tuo filtro"
 msgstr[1] "%d gruppi corrispondono al tuo filtro"
 
+msgid "Please make sure that your internet connection is set up properly or try again later."
+msgstr ""
+"Assicurati che la tua connessione ad internet sia configurata correttamente oppure prova più "
+"tardi."
+
+#, c-format
+msgid "Failed to scan status from plugin: %s."
+msgstr "Scansione stato fallita per il plugin: %s."
+
+msgid ""
+"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
+"list again."
+msgstr ""
+"La tua copia locale del deposito era danneggiata ed è stata riparata. Scarica di nuovo la "
+"lista dei plugin."
+
+#, fuzzy, c-format
+msgid "Failed to delete the locale directory for %s."
+msgstr "Impossibile eliminare la cartella: %s"
+
+#, fuzzy, c-format
+msgid "Failed to download the following language packages for the %s plugin:"
+msgstr "È fallito lo scaricamento dei seguenti pacchetti per il plugin %s:"
+
+#, fuzzy, c-format
+msgid ""
+"Failed to install language packages for %s plugin because the following files/directories "
+"could not be modified:"
+msgstr ""
+"L'installazione del plugin %s è fallita perché i file/cartelle seguenti non possono essere "
+"modificati:"
+
+#, fuzzy
+msgid "The repository index has been successfully refreshed."
+msgstr "L'indice del deposito è stato aggiornato con successo."
+
+#, fuzzy
+msgid "The language settings have been saved."
+msgstr "Non è stato selezionato nessun pacchetto."
+
+#, fuzzy, c-format
+msgid "%d language pack upgraded or downloaded."
+msgid_plural "%d language packs upgraded or downloaded."
+msgstr[0] "Eliminato %d language pack."
+msgstr[1] "Eliminati %d language pack."
+
+#, c-format
+msgid "%d language pack deleted."
+msgid_plural "%d language packs deleted."
+msgstr[0] "Eliminato %d language pack."
+msgstr[1] "Eliminati %d language pack."
+
+msgid "All the language packages for the selected languages are current"
+msgstr ""
+
+msgid ""
+"Select language defaults for Gallery. Individual users can override this setting in their "
+"personal preferences or via the language selector block if available. Gallery will try to "
+"automatically detect the language preference of each user if the browser preference check is "
+"enabled."
+msgstr ""
+"Seleziona la lingua predefinita di Gallery. Gli utenti individuali possono scavalcare questa "
+"configurazione nelle loro preferenze personali oppure tramite il bocco di selezione della "
+"lingua se disponibile. Gallery proverà a rilevare le preferenze della lingua per ogni utente "
+"se è attivato il controllo delle preferenze del browser."
+
+msgid "Default language"
+msgstr "Lingua predefinita"
+
+msgid "Check Browser Preference"
+msgstr "Controlla le Preferenze del Browser"
+
+#, c-format
+msgid ""
+"Your webserver does not support localization.  Please instruct your system administrator to "
+"reconfigure PHP with the %s option enabled."
+msgstr ""
+"Il tuo webserver non supporta la localizzazione.  Chiedi al tuo amministratore di "
+"riconfigurare PHP con l'opzione %s attivata."
+
+msgid "Configure your Gallery"
+msgstr "Configura la tua Gallery"
+
+msgid ""
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
+msgstr ""
+"Prima di continuare, devi cambiare alcuni permessi in modo che Gallery possa installare i "
+"plugin al posto tuo. È facile. Basta eseguire quanto segue in una shell o nel tuo client ftp:"
+
+msgid ""
+"Before you can proceed, please insure the following directories and sub-directories are "
+"writable, so that Gallery can install plugins for you:"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Check Again button to proceed."
+msgstr ""
+"Se hai problemi nella modifica dei permessi, chiedi assistenza all'amministratore del tuo "
+"sistema. Quando hai risolto i problemi con i permessi, clicca sul bottone Continua per "
+"procedere."
+
+#, fuzzy
+msgid "Check Again"
+msgstr "Seleziona Tutti"
+
+#, fuzzy
+msgid "Add or Remove Languages"
+msgstr "Aggiungi/Elimina Utenti"
+
+msgid ""
+"Please click on the link below to go to 'Download Plugin List' and choose 'Update Plugin "
+"List' to get the latest language package information."
+msgstr ""
+
+#, fuzzy
+msgid "Administer Repositories"
+msgstr "Deposito della Comunità"
+
+#, fuzzy
+msgid "Upgrade"
+msgstr "aggiorna"
+
+msgid "Remove"
+msgstr "Elimina"
+
+#, fuzzy
+msgid "Download"
+msgstr "scarica"
+
+#, fuzzy
+msgid "No Change"
+msgstr "Modifica"
+
+#, fuzzy
+msgid "Select All"
+msgstr "Selezionato"
+
+msgid ""
+"There are no local repository indices from which to determine language packages. Please "
+"click on the link below to go to \"Download Plugin List\" and choose \"Update Plugin List\" "
+"to get the latest language package information."
+msgstr ""
+
 msgid "System Maintenance"
 msgstr "Manutenzione Sistema"
 
@@ -2114,22 +2239,6 @@ msgstr "incompatibile"
 msgid "Repository"
 msgstr "Deposito"
 
-msgid "Please make sure that your internet connection is set up properly or try again later."
-msgstr ""
-"Assicurati che la tua connessione ad internet sia configurata correttamente oppure prova più "
-"tardi."
-
-#, c-format
-msgid "Failed to scan status from plugin: %s."
-msgstr "Scansione stato fallita per il plugin: %s."
-
-msgid ""
-"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
-"list again."
-msgstr ""
-"La tua copia locale del deposito era danneggiata ed è stata riparata. Scarica di nuovo la "
-"lista dei plugin."
-
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
 msgstr "È fallito lo scaricamento dei seguenti pacchetti per il plugin %s:"
@@ -2159,12 +2268,6 @@ msgstr "Tutti i plugin sono già aggiornati."
 #, c-format
 msgid "%s plugin updated."
 msgstr "Aggiornato plugin %s."
-
-#, c-format
-msgid "%d language pack deleted."
-msgid_plural "%d language packs deleted."
-msgstr[0] "Eliminato %d language pack."
-msgstr[1] "Eliminati %d language pack."
 
 msgid ""
 "No personal information about you or your Gallery installation is sent to the Gallery server "
@@ -2214,21 +2317,6 @@ msgstr "Devi selezionare almeno un deposito."
 
 msgid "Ok"
 msgstr "Ok"
-
-msgid "Configure your Gallery"
-msgstr "Configura la tua Gallery"
-
-msgid ""
-"Before you can proceed, you have to change some permissions so that Gallery can install "
-"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
-msgstr ""
-"Prima di continuare, devi cambiare alcuni permessi in modo che Gallery possa installare i "
-"plugin al posto tuo. È facile. Basta eseguire quanto segue in una shell o nel tuo client ftp:"
-
-msgid ""
-"Before you can proceed, please insure the following directories and sub-directories are "
-"writable, so that Gallery can install plugins for you:"
-msgstr ""
 
 msgid ""
 "If you have trouble changing permissions, ask your system administrator for assistance.  "
@@ -2332,10 +2420,10 @@ msgstr "Scarica %s"
 msgid "No packages have been selected."
 msgstr "Non è stato selezionato nessun pacchetto."
 
+#, fuzzy
 msgid ""
 "Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
-"of the package to download.  Language packages are optional, You only need to download the "
-"ones that you want to use on your site."
+"of the package to download."
 msgstr ""
 "Scarica un pacchetto per usare questo plugin. Puoi fare l'aggiornamento scegliendo una nuova "
 "versione del pacchetto da scaricare. I pacchetti lingua sono facoltativi, scarica solo "
@@ -2356,12 +2444,9 @@ msgstr "%s: versione %s (build %s) %sil downgrading non è supportato!%s"
 msgid "%sCurrently Installed%s: version %s (build %s)"
 msgstr "%sAttualmente Installato%s: versione %s (build %s)"
 
-msgid "Language Packages"
-msgstr "Pacchetti Lingua"
-
-#, c-format
-msgid "(%sselect all%s%sselect none%s)"
-msgstr "(%sseleziona tutti%s%sdeseleziona tutti%s)"
+#, fuzzy
+msgid "The following language packages are available for this plugin"
+msgstr "Nessun pacchetto lingua compatibile disponibile"
 
 #, c-format
 msgid "%s version %s (upgrading from %s)"
@@ -2381,9 +2466,6 @@ msgstr "%s versione %s (attualmente installata)"
 
 msgid "No compatible language packages available"
 msgstr "Nessun pacchetto lingua compatibile disponibile"
-
-msgid "You must select a base package before choosing language packs."
-msgstr "Devi selezionare un pacchetto base prima di selezionare un pacchetto lingua."
 
 msgid "Update"
 msgstr "Aggiorna"
@@ -2468,9 +2550,6 @@ msgstr "Seleziona un blocco"
 
 msgid "Selected"
 msgstr "Selezionato"
-
-msgid "Remove"
-msgstr "Elimina"
 
 msgid "Move Up"
 msgstr "Sposta in Alto"
@@ -3947,6 +4026,15 @@ msgstr "Blocco di login"
 
 msgid "Links to album/photo peers"
 msgstr "Link ai peers della foto/album"
+
+#~ msgid "Language Packages"
+#~ msgstr "Pacchetti Lingua"
+
+#~ msgid "(%sselect all%s%sselect none%s)"
+#~ msgstr "(%sseleziona tutti%s%sdeseleziona tutti%s)"
+
+#~ msgid "You must select a base package before choosing language packs."
+#~ msgstr "Devi selezionare un pacchetto base prima di selezionare un pacchetto lingua."
 
 #~ msgid "Back to %s"
 #~ msgstr "Torna a %s"

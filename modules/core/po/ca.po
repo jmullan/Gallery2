@@ -22,7 +22,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.28\n"
+"Project-Id-Version: Gallery: Core 1.2.31\n"
 "Report-Msgid-Bugs-To: <gallery-devel@lists.sourceforge.net>\n"
 "POT-Creation-Date: 2005-10-25 17:54+0200\n"
 "PO-Revision-Date: 2007-03-14 15:57+0100\n"
@@ -94,6 +94,26 @@ msgstr "Iniciar Sessió"
 #, c-format
 msgid "Page %d of %d"
 msgstr "Pàgina %d de %d"
+
+#, fuzzy
+msgid "Updating Language Settings"
+msgstr "Configuració de l'Idioma"
+
+#, fuzzy
+msgid "Update completed with errors."
+msgstr "Càrrega Completa"
+
+#, fuzzy
+msgid "Update complete."
+msgstr "Càrrega Completa"
+
+#, fuzzy
+msgid "Deleting Language Packs"
+msgstr "Idioma per defecte"
+
+#, fuzzy
+msgid "Synchronizing Language Packs"
+msgstr "Idioma per defecte"
 
 msgid "No acceleration"
 msgstr "Sense acceleració"
@@ -555,6 +575,9 @@ msgstr "Rendiment"
 msgid "Event Logs"
 msgstr ""
 
+msgid "Language Settings"
+msgstr "Configuració de l'Idioma"
+
 msgid "Toolkit Priority"
 msgstr "Prioritat de las Eines"
 
@@ -573,22 +596,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Activating %s"
 msgstr "Accions"
-
-#, fuzzy
-msgid "Deleting Language Packs"
-msgstr "Idioma per defecte"
-
-#, fuzzy
-msgid "Update completed with errors."
-msgstr "Càrrega Completa"
-
-#, fuzzy
-msgid "Update complete."
-msgstr "Càrrega Completa"
-
-#, fuzzy
-msgid "Synchronizing Language Packs"
-msgstr "Idioma per defecte"
 
 #, fuzzy
 msgid "Updating Repository Index"
@@ -801,6 +808,14 @@ msgstr ""
 "No s'ha pogut crear el subdirectori de cache. Assegureu-vos que el servidor web hi té permís "
 "d'escriptura."
 
+#, fuzzy, c-format
+msgid "Preparing %s"
+msgstr "Processant..."
+
+#, c-format
+msgid "Downloading %s"
+msgstr "Descarregant %s"
+
 msgid "Official Release Repository"
 msgstr ""
 
@@ -822,14 +837,6 @@ msgstr "S'ha produït un error mentre es descarregavà l'índex de \"hash\" desd
 
 msgid "Index integrity check failed."
 msgstr "S'ha produït un error en comprovar l'integritat de l'índex"
-
-#, fuzzy, c-format
-msgid "Preparing %s"
-msgstr "Processant..."
-
-#, c-format
-msgid "Downloading %s"
-msgstr "Descarregant %s"
 
 msgid "&laquo; default sort order &raquo;"
 msgstr "&laquo; ordre de col·locació per defecte &raquo;"
@@ -1190,32 +1197,6 @@ msgstr "Hi ha hagut un problema processant la teva petició, veure abaix els det
 
 msgid "Error sending test email, see below for details."
 msgstr "Hi ha hagut un problema enviant el correu de prova, veure abaix els detalls."
-
-msgid "Language Settings"
-msgstr "Configuració de l'Idioma"
-
-msgid ""
-"Select language defaults for Gallery. Individual users can override this setting in their "
-"personal preferences or via the language selector block if available. Gallery will try to "
-"automatically detect the language preference of each user if the browser preference check is "
-"enabled."
-msgstr ""
-"Selecciona l'idioma per defecte de Gallery. Els usuaris poden anul·lar aquesta configuració "
-"en les seves preferències personals o via bloc selector d'idioma si hi és disponible."
-
-msgid "Default language"
-msgstr "Idioma per defecte"
-
-msgid "Check Browser Preference"
-msgstr "Comprova la preferència del navegador"
-
-#, c-format
-msgid ""
-"Your webserver does not support localization.  Please instruct your system administrator to "
-"reconfigure PHP with the %s option enabled."
-msgstr ""
-"El teu servidor web no suporta localització.  Si us plau, avisa al teu administrador del "
-"sistema que reconfiguri PHP amb la opció %s habilitada."
 
 msgid "Date Formats"
 msgstr "Formats de Data"
@@ -1790,6 +1771,140 @@ msgid_plural "%d groups match your filter"
 msgstr[0] "%d grup coincideix amb el teu filtre"
 msgstr[1] "%d grups coincideixen amb el teu filtre"
 
+msgid "Please make sure that your internet connection is set up properly or try again later."
+msgstr ""
+"Assegureu-vos que la vostra connexió a internet està ben configurada i torneu a intentar-ho "
+"més tard."
+
+#, c-format
+msgid "Failed to scan status from plugin: %s."
+msgstr ""
+
+msgid ""
+"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
+"list again."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Failed to delete the locale directory for %s."
+msgstr "No es possible eliminar el directori %s"
+
+#, c-format
+msgid "Failed to download the following language packages for the %s plugin:"
+msgstr ""
+
+#, c-format
+msgid ""
+"Failed to install language packages for %s plugin because the following files/directories "
+"could not be modified:"
+msgstr ""
+
+#, fuzzy
+msgid "The repository index has been successfully refreshed."
+msgstr "S'ha actualitzat correctament l'índex del magatzem."
+
+#, fuzzy
+msgid "The language settings have been saved."
+msgstr "No s'ha seleccionat cap paquet."
+
+#, c-format
+msgid "%d language pack upgraded or downloaded."
+msgid_plural "%d language packs upgraded or downloaded."
+msgstr[0] ""
+msgstr[1] ""
+
+#, c-format
+msgid "%d language pack deleted."
+msgid_plural "%d language packs deleted."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "All the language packages for the selected languages are current"
+msgstr ""
+
+msgid ""
+"Select language defaults for Gallery. Individual users can override this setting in their "
+"personal preferences or via the language selector block if available. Gallery will try to "
+"automatically detect the language preference of each user if the browser preference check is "
+"enabled."
+msgstr ""
+"Selecciona l'idioma per defecte de Gallery. Els usuaris poden anul·lar aquesta configuració "
+"en les seves preferències personals o via bloc selector d'idioma si hi és disponible."
+
+msgid "Default language"
+msgstr "Idioma per defecte"
+
+msgid "Check Browser Preference"
+msgstr "Comprova la preferència del navegador"
+
+#, c-format
+msgid ""
+"Your webserver does not support localization.  Please instruct your system administrator to "
+"reconfigure PHP with the %s option enabled."
+msgstr ""
+"El teu servidor web no suporta localització.  Si us plau, avisa al teu administrador del "
+"sistema que reconfiguri PHP amb la opció %s habilitada."
+
+msgid "Configure your Gallery"
+msgstr ""
+
+msgid ""
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
+msgstr ""
+
+msgid ""
+"Before you can proceed, please insure the following directories and sub-directories are "
+"writable, so that Gallery can install plugins for you:"
+msgstr ""
+
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Check Again button to proceed."
+msgstr ""
+
+#, fuzzy
+msgid "Check Again"
+msgstr "Seleccionar tots"
+
+#, fuzzy
+msgid "Add or Remove Languages"
+msgstr "Agregar/Eliminar Usuaris"
+
+msgid ""
+"Please click on the link below to go to 'Download Plugin List' and choose 'Update Plugin "
+"List' to get the latest language package information."
+msgstr ""
+
+#, fuzzy
+msgid "Administer Repositories"
+msgstr "Magatzem"
+
+#, fuzzy
+msgid "Upgrade"
+msgstr "actualitzar"
+
+msgid "Remove"
+msgstr "Esborrar"
+
+#, fuzzy
+msgid "Download"
+msgstr "baixar"
+
+#, fuzzy
+msgid "No Change"
+msgstr "Canviar"
+
+#, fuzzy
+msgid "Select All"
+msgstr "Seleccionat"
+
+msgid ""
+"There are no local repository indices from which to determine language packages. Please "
+"click on the link below to go to \"Download Plugin List\" and choose \"Update Plugin List\" "
+"to get the latest language package information."
+msgstr ""
+
 msgid "System Maintenance"
 msgstr "Mantenimient del Sistema"
 
@@ -2122,20 +2237,6 @@ msgstr "&iexcl;Mòdul Incompatible"
 msgid "Repository"
 msgstr "Magatzem"
 
-msgid "Please make sure that your internet connection is set up properly or try again later."
-msgstr ""
-"Assegureu-vos que la vostra connexió a internet està ben configurada i torneu a intentar-ho "
-"més tard."
-
-#, c-format
-msgid "Failed to scan status from plugin: %s."
-msgstr ""
-
-msgid ""
-"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
-"list again."
-msgstr ""
-
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
 msgstr ""
@@ -2161,12 +2262,6 @@ msgstr "Tots els plugins estan actualitzats"
 #, c-format
 msgid "%s plugin updated."
 msgstr ""
-
-#, c-format
-msgid "%d language pack deleted."
-msgid_plural "%d language packs deleted."
-msgstr[0] ""
-msgstr[1] ""
 
 msgid ""
 "No personal information about you or your Gallery installation is sent to the Gallery server "
@@ -2207,19 +2302,6 @@ msgid "You must select at least one repository."
 msgstr "Has d'escollir un usuari per eliminar"
 
 msgid "Ok"
-msgstr ""
-
-msgid "Configure your Gallery"
-msgstr ""
-
-msgid ""
-"Before you can proceed, you have to change some permissions so that Gallery can install "
-"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
-msgstr ""
-
-msgid ""
-"Before you can proceed, please insure the following directories and sub-directories are "
-"writable, so that Gallery can install plugins for you:"
 msgstr ""
 
 msgid ""
@@ -2328,8 +2410,7 @@ msgstr "No s'ha seleccionat cap paquet."
 
 msgid ""
 "Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
-"of the package to download.  Language packages are optional, You only need to download the "
-"ones that you want to use on your site."
+"of the package to download."
 msgstr ""
 
 #, fuzzy
@@ -2348,12 +2429,7 @@ msgstr ""
 msgid "%sCurrently Installed%s: version %s (build %s)"
 msgstr ""
 
-#, fuzzy
-msgid "Language Packages"
-msgstr "Configuració de l'Idioma"
-
-#, c-format
-msgid "(%sselect all%s%sselect none%s)"
+msgid "The following language packages are available for this plugin"
 msgstr ""
 
 #, c-format
@@ -2373,9 +2449,6 @@ msgid "%s version %s (currently installed)"
 msgstr ""
 
 msgid "No compatible language packages available"
-msgstr ""
-
-msgid "You must select a base package before choosing language packs."
 msgstr ""
 
 msgid "Update"
@@ -2459,9 +2532,6 @@ msgstr "Escull un bloc"
 
 msgid "Selected"
 msgstr "Seleccionat"
-
-msgid "Remove"
-msgstr "Esborrar"
 
 msgid "Move Up"
 msgstr "Pujar"
@@ -3925,6 +3995,10 @@ msgstr "Bloc d'Inici de Sessió"
 
 msgid "Links to album/photo peers"
 msgstr "Enllaços als parells d'àlbum/foto"
+
+#, fuzzy
+#~ msgid "Language Packages"
+#~ msgstr "Configuració de l'Idioma"
 
 #~ msgid "Back to %s"
 #~ msgstr "Tornar a %s"

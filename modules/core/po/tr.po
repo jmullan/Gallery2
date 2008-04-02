@@ -23,7 +23,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.28\n"
+"Project-Id-Version: Gallery: Core 1.2.31\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2007-06-07 09:29-0700\n"
 "PO-Revision-Date: 2007-09-15 21:08+0200\n"
@@ -96,6 +96,22 @@ msgstr "Bağlantı"
 #, c-format
 msgid "Page %d of %d"
 msgstr "Sayfa %d / %d"
+
+#, fuzzy
+msgid "Updating Language Settings"
+msgstr "Dil Ayarları"
+
+msgid "Update completed with errors."
+msgstr "Güncelleme hatalı sona erdi."
+
+msgid "Update complete."
+msgstr "Güncelleme tamamlandı."
+
+msgid "Deleting Language Packs"
+msgstr "Dil Paketleri Silinecek"
+
+msgid "Synchronizing Language Packs"
+msgstr "Dil Paketleri Eşlenecek"
 
 msgid "No acceleration"
 msgstr "Hızlandırma yok"
@@ -551,6 +567,9 @@ msgstr "Performans"
 msgid "Event Logs"
 msgstr "Olay takıp listesi"
 
+msgid "Language Settings"
+msgstr "Dil Ayarları"
+
 msgid "Toolkit Priority"
 msgstr "Araç Önceliği"
 
@@ -569,18 +588,6 @@ msgstr "Paketleri güncellenecek"
 #, c-format
 msgid "Activating %s"
 msgstr "%s etkilenecek"
-
-msgid "Deleting Language Packs"
-msgstr "Dil Paketleri Silinecek"
-
-msgid "Update completed with errors."
-msgstr "Güncelleme hatalı sona erdi."
-
-msgid "Update complete."
-msgstr "Güncelleme tamamlandı."
-
-msgid "Synchronizing Language Packs"
-msgstr "Dil Paketleri Eşlenecek"
 
 msgid "Updating Repository Index"
 msgstr "Depo indeksi güncellenecek"
@@ -771,6 +778,14 @@ msgid ""
 "Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr ""
 
+#, c-format
+msgid "Preparing %s"
+msgstr "%s hazırlanıyor"
+
+#, c-format
+msgid "Downloading %s"
+msgstr "%s indirilecek"
+
 msgid "Official Release Repository"
 msgstr "Güncel Sürümünün Deposu"
 
@@ -790,14 +805,6 @@ msgstr ""
 
 msgid "Index integrity check failed."
 msgstr ""
-
-#, c-format
-msgid "Preparing %s"
-msgstr "%s hazırlanıyor"
-
-#, c-format
-msgid "Downloading %s"
-msgstr "%s indirilecek"
 
 msgid "&laquo; default sort order &raquo;"
 msgstr "&laquo; varsayılan sıralama &raquo;"
@@ -1145,34 +1152,6 @@ msgstr "İşlemenizi gerçekleştirirken bir problem oluştu, ayrıntılar için
 
 msgid "Error sending test email, see below for details."
 msgstr "Test emailı'ı gönderilirken bir hata oluştu, ayrıntıları görmek için aşağıyı okuyunuz."
-
-msgid "Language Settings"
-msgstr "Dil Ayarları"
-
-msgid ""
-"Select language defaults for Gallery. Individual users can override this setting in their "
-"personal preferences or via the language selector block if available. Gallery will try to "
-"automatically detect the language preference of each user if the browser preference check is "
-"enabled."
-msgstr ""
-"Galeri için varsayılan dili seç. Kullanıcılar sonra bunu kendi kişisel ayarlarında "
-"değiştirebilirler. Dil bölümü kenar çubuğunda eklendiyse dil orada da seçilir. Üstelik "
-"'Tarayıcının bölgesel ayarlarına bırak' seçildiği zaman Galeri'yi açarken kullanıldığı "
-"tarayıcının ayarları bakarak kullanacak dili de seçebilir."
-
-msgid "Default language"
-msgstr "Varsayılan Dil"
-
-msgid "Check Browser Preference"
-msgstr "Tarayıcının bölgesel ayarlarına bırak"
-
-#, c-format
-msgid ""
-"Your webserver does not support localization.  Please instruct your system administrator to "
-"reconfigure PHP with the %s option enabled."
-msgstr ""
-"Web serverinizin yerelleştirme desteklemiyor.  PHP ayarlarında %s eksik. Lütfen sistem "
-"yöneticisine başvurunuz."
 
 msgid "Date Formats"
 msgstr "Tarih Biçimi"
@@ -1684,6 +1663,140 @@ msgid_plural "%d groups match your filter"
 msgstr[0] ""
 msgstr[1] ""
 
+msgid "Please make sure that your internet connection is set up properly or try again later."
+msgstr ""
+
+#, c-format
+msgid "Failed to scan status from plugin: %s."
+msgstr ""
+
+msgid ""
+"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
+"list again."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Failed to delete the locale directory for %s."
+msgstr "Klasör silinmiyor: %s"
+
+#, c-format
+msgid "Failed to download the following language packages for the %s plugin:"
+msgstr ""
+
+#, c-format
+msgid ""
+"Failed to install language packages for %s plugin because the following files/directories "
+"could not be modified:"
+msgstr ""
+
+#, fuzzy
+msgid "The repository index has been successfully refreshed."
+msgstr "Depo indeksi başarıyla güncellendi."
+
+#, fuzzy
+msgid "The language settings have been saved."
+msgstr "Hiç bir paket seçilmedi."
+
+#, fuzzy, c-format
+msgid "%d language pack upgraded or downloaded."
+msgid_plural "%d language packs upgraded or downloaded."
+msgstr[0] "%d dil paketi silindi."
+msgstr[1] "%d dil paketi silindi."
+
+#, c-format
+msgid "%d language pack deleted."
+msgid_plural "%d language packs deleted."
+msgstr[0] "%d dil paketi silindi."
+msgstr[1] "%d dil paketi silindi."
+
+msgid "All the language packages for the selected languages are current"
+msgstr ""
+
+msgid ""
+"Select language defaults for Gallery. Individual users can override this setting in their "
+"personal preferences or via the language selector block if available. Gallery will try to "
+"automatically detect the language preference of each user if the browser preference check is "
+"enabled."
+msgstr ""
+"Galeri için varsayılan dili seç. Kullanıcılar sonra bunu kendi kişisel ayarlarında "
+"değiştirebilirler. Dil bölümü kenar çubuğunda eklendiyse dil orada da seçilir. Üstelik "
+"'Tarayıcının bölgesel ayarlarına bırak' seçildiği zaman Galeri'yi açarken kullanıldığı "
+"tarayıcının ayarları bakarak kullanacak dili de seçebilir."
+
+msgid "Default language"
+msgstr "Varsayılan Dil"
+
+msgid "Check Browser Preference"
+msgstr "Tarayıcının bölgesel ayarlarına bırak"
+
+#, c-format
+msgid ""
+"Your webserver does not support localization.  Please instruct your system administrator to "
+"reconfigure PHP with the %s option enabled."
+msgstr ""
+"Web serverinizin yerelleştirme desteklemiyor.  PHP ayarlarında %s eksik. Lütfen sistem "
+"yöneticisine başvurunuz."
+
+msgid "Configure your Gallery"
+msgstr "Gallery sistemi ayarla"
+
+msgid ""
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
+msgstr ""
+
+msgid ""
+"Before you can proceed, please insure the following directories and sub-directories are "
+"writable, so that Gallery can install plugins for you:"
+msgstr ""
+
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Check Again button to proceed."
+msgstr ""
+
+#, fuzzy
+msgid "Check Again"
+msgstr "Hepsini işaretle"
+
+#, fuzzy
+msgid "Add or Remove Languages"
+msgstr "Kullanıcı Ekle/Kaldır"
+
+msgid ""
+"Please click on the link below to go to 'Download Plugin List' and choose 'Update Plugin "
+"List' to get the latest language package information."
+msgstr ""
+
+#, fuzzy
+msgid "Administer Repositories"
+msgstr "Topluluk Deposu"
+
+#, fuzzy
+msgid "Upgrade"
+msgstr "güncelle"
+
+msgid "Remove"
+msgstr "Kaldır"
+
+#, fuzzy
+msgid "Download"
+msgstr "yükle"
+
+#, fuzzy
+msgid "No Change"
+msgstr "Değiştir"
+
+#, fuzzy
+msgid "Select All"
+msgstr "Seçilmiş"
+
+msgid ""
+"There are no local repository indices from which to determine language packages. Please "
+"click on the link below to go to \"Download Plugin List\" and choose \"Update Plugin List\" "
+"to get the latest language package information."
+msgstr ""
+
 msgid "System Maintenance"
 msgstr "Sistem Bakımı"
 
@@ -1979,18 +2092,6 @@ msgstr "uyumsuz"
 msgid "Repository"
 msgstr "Depo"
 
-msgid "Please make sure that your internet connection is set up properly or try again later."
-msgstr ""
-
-#, c-format
-msgid "Failed to scan status from plugin: %s."
-msgstr ""
-
-msgid ""
-"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
-"list again."
-msgstr ""
-
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
 msgstr ""
@@ -2016,12 +2117,6 @@ msgstr "Bütün eklentiler zaten güncel."
 #, c-format
 msgid "%s plugin updated."
 msgstr "%s eklenti güncellendi"
-
-#, c-format
-msgid "%d language pack deleted."
-msgid_plural "%d language packs deleted."
-msgstr[0] "%d dil paketi silindi."
-msgstr[1] "%d dil paketi silindi."
 
 msgid ""
 "No personal information about you or your Gallery installation is sent to the Gallery server "
@@ -2061,19 +2156,6 @@ msgstr "En azından bir tane depo seçilmeli"
 
 msgid "Ok"
 msgstr "Tamam"
-
-msgid "Configure your Gallery"
-msgstr "Gallery sistemi ayarla"
-
-msgid ""
-"Before you can proceed, you have to change some permissions so that Gallery can install "
-"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
-msgstr ""
-
-msgid ""
-"Before you can proceed, please insure the following directories and sub-directories are "
-"writable, so that Gallery can install plugins for you:"
-msgstr ""
 
 msgid ""
 "If you have trouble changing permissions, ask your system administrator for assistance.  "
@@ -2167,8 +2249,7 @@ msgstr "Hiç bir paket seçilmedi."
 
 msgid ""
 "Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
-"of the package to download.  Language packages are optional, You only need to download the "
-"ones that you want to use on your site."
+"of the package to download."
 msgstr ""
 
 msgid "Base Packages"
@@ -2186,12 +2267,8 @@ msgstr "%s: sürüm %s (yapımı %s) %sönceki sürümüne geçmesi desteklenmiy
 msgid "%sCurrently Installed%s: version %s (build %s)"
 msgstr "%sGeçerli Kuruldu olan%s: sürümü %s (yapımı %s)"
 
-msgid "Language Packages"
-msgstr "Dil Paketleri"
-
-#, c-format
-msgid "(%sselect all%s%sselect none%s)"
-msgstr "(%shepsini seç%s%shiç birisi seç%s)"
+msgid "The following language packages are available for this plugin"
+msgstr ""
 
 #, c-format
 msgid "%s version %s (upgrading from %s)"
@@ -2210,9 +2287,6 @@ msgid "%s version %s (currently installed)"
 msgstr "%s sürüm %s (gerçerli kuruldu)"
 
 msgid "No compatible language packages available"
-msgstr ""
-
-msgid "You must select a base package before choosing language packs."
 msgstr ""
 
 msgid "Update"
@@ -2295,9 +2369,6 @@ msgstr "Blok seç"
 
 msgid "Selected"
 msgstr "Seçilmiş"
-
-msgid "Remove"
-msgstr "Kaldır"
 
 msgid "Move Up"
 msgstr "Yukarı Taşı"
@@ -3601,6 +3672,12 @@ msgstr "Giriş bloğu"
 
 msgid "Links to album/photo peers"
 msgstr ""
+
+#~ msgid "Language Packages"
+#~ msgstr "Dil Paketleri"
+
+#~ msgid "(%sselect all%s%sselect none%s)"
+#~ msgstr "(%shepsini seç%s%shiç birisi seç%s)"
 
 #~ msgid "Back to %s"
 #~ msgstr "Geri Dön %s"

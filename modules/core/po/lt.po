@@ -21,7 +21,7 @@
 # Stasys Drazdauskas <stasys@drazdauskas.lt>, 2007.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.28\n"
+"Project-Id-Version: Gallery: Core 1.2.31\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2007-06-07 09:29-0700\n"
 "PO-Revision-Date: 2007-07-22 18:05+0200\n"
@@ -101,6 +101,23 @@ msgstr "Prisijungti"
 #, c-format
 msgid "Page %d of %d"
 msgstr "Puslapis %d iš %d"
+
+#, fuzzy
+msgid "Updating Language Settings"
+msgstr "Kalbos nustatymai"
+
+msgid "Update completed with errors."
+msgstr "Atnaujinimas atliktas su klaidomis."
+
+msgid "Update complete."
+msgstr "Atnaujinimas atliktas."
+
+msgid "Deleting Language Packs"
+msgstr "Šalinami kalbų paketai"
+
+#, fuzzy
+msgid "Synchronizing Language Packs"
+msgstr "Šalinami kalbų paketai"
 
 msgid "No acceleration"
 msgstr "Be akseleracijos"
@@ -561,6 +578,9 @@ msgstr "Našumas"
 msgid "Event Logs"
 msgstr ""
 
+msgid "Language Settings"
+msgstr "Kalbos nustatymai"
+
 msgid "Toolkit Priority"
 msgstr "Įrankių prioritetai"
 
@@ -579,19 +599,6 @@ msgstr "Atnaujinami paketai"
 #, c-format
 msgid "Activating %s"
 msgstr "Aktyvuojamas %s"
-
-msgid "Deleting Language Packs"
-msgstr "Šalinami kalbų paketai"
-
-msgid "Update completed with errors."
-msgstr "Atnaujinimas atliktas su klaidomis."
-
-msgid "Update complete."
-msgstr "Atnaujinimas atliktas."
-
-#, fuzzy
-msgid "Synchronizing Language Packs"
-msgstr "Šalinami kalbų paketai"
 
 msgid "Updating Repository Index"
 msgstr "Atnaujinamas indeksas"
@@ -800,6 +807,14 @@ msgid ""
 msgstr ""
 "Nepavyko sukurti talpyklos aplanko. Įsitikinkite, kad web serveris turi teisę į jį rašyti."
 
+#, c-format
+msgid "Preparing %s"
+msgstr "Ruošiamas %s"
+
+#, c-format
+msgid "Downloading %s"
+msgstr "Atsiunčiama %s"
+
 msgid "Official Release Repository"
 msgstr "Oficialus leidimas"
 
@@ -819,14 +834,6 @@ msgstr "Nepavyko atsisiųsti indekso kontrolinės sumos iš „%s“."
 
 msgid "Index integrity check failed."
 msgstr "Indeksas nėra vientisas."
-
-#, c-format
-msgid "Preparing %s"
-msgstr "Ruošiamas %s"
-
-#, c-format
-msgid "Downloading %s"
-msgstr "Atsiunčiama %s"
 
 msgid "&laquo; default sort order &raquo;"
 msgstr "&laquo; numatyta rūšiavimo tvarka &raquo;"
@@ -1182,33 +1189,6 @@ msgstr "Vykdant Jūsų užklausą kilo problemų, žemiau rasite daugiau informa
 
 msgid "Error sending test email, see below for details."
 msgstr "Nepavyko išsiųsti bandomojo el. laiško, žemiau rasite daugiau informacijos."
-
-msgid "Language Settings"
-msgstr "Kalbos nustatymai"
-
-msgid ""
-"Select language defaults for Gallery. Individual users can override this setting in their "
-"personal preferences or via the language selector block if available. Gallery will try to "
-"automatically detect the language preference of each user if the browser preference check is "
-"enabled."
-msgstr ""
-"Nurodykite numatytą galerijos kalbą. Atskiri vartotojai galės pakeisti kalbą savo nuožiūra "
-"pasinaudodami kalbos pasirinkimo bloku, jei jis prieinamas. Jei įjungtas naršyklės nustatymų "
-"tikrinimas, tuomet Galerija bandys nustatyti kalbą automatiškai."
-
-msgid "Default language"
-msgstr "Numatyta kalba"
-
-msgid "Check Browser Preference"
-msgstr "Tikrinti naršyklės nustatymus"
-
-#, c-format
-msgid ""
-"Your webserver does not support localization.  Please instruct your system administrator to "
-"reconfigure PHP with the %s option enabled."
-msgstr ""
-"Jūsų web serveris nepalaiko lokalizavimo. Paprašykite sistemos administratoriaus, kad "
-"suderintų PHP su %s palaikymu."
 
 msgid "Date Formats"
 msgstr "Datos formatas"
@@ -1787,6 +1767,148 @@ msgstr[0] "Jūsų filtrą atitiko %d grupė"
 msgstr[1] "Jūsų filtrą atitiko %d grupės"
 msgstr[2] "Jūsų filtrą atitiko %d grupių"
 
+msgid "Please make sure that your internet connection is set up properly or try again later."
+msgstr "Įsitikinkite, kad Jūsų interneto ryšys nustatytas tinkamai ar pabandykite vėliau."
+
+#, c-format
+msgid "Failed to scan status from plugin: %s."
+msgstr "Nepavyko nuskaityti priedo %s statuso."
+
+msgid ""
+"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
+"list again."
+msgstr ""
+"Lokali Jūsų saugyklos kopija buvo sugadinta ir dabar sutvarkyta. Atsisiųskite priedų sąrašą "
+"iš naujo."
+
+#, fuzzy, c-format
+msgid "Failed to delete the locale directory for %s."
+msgstr "Negaliu pašalinti aplanko: %s"
+
+#, c-format
+msgid "Failed to download the following language packages for the %s plugin:"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"Failed to install language packages for %s plugin because the following files/directories "
+"could not be modified:"
+msgstr "Nepavyko gauti priedo %s, nes šie failai/aplankai negali būti keičiami:"
+
+#, fuzzy
+msgid "The repository index has been successfully refreshed."
+msgstr "Saugyklos indeksas sėkmingai atnaujintas."
+
+#, fuzzy
+msgid "The language settings have been saved."
+msgstr "Nepažymėti jokie paketai."
+
+#, fuzzy, c-format
+msgid "%d language pack upgraded or downloaded."
+msgid_plural "%d language packs upgraded or downloaded."
+msgstr[0] "%d kalbos paketas pašalintas."
+msgstr[1] "%d kalbos paketai pašalinti."
+msgstr[2] "%d kalbos paketų pašalinta."
+
+#, c-format
+msgid "%d language pack deleted."
+msgid_plural "%d language packs deleted."
+msgstr[0] "%d kalbos paketas pašalintas."
+msgstr[1] "%d kalbos paketai pašalinti."
+msgstr[2] "%d kalbos paketų pašalinta."
+
+msgid "All the language packages for the selected languages are current"
+msgstr ""
+
+msgid ""
+"Select language defaults for Gallery. Individual users can override this setting in their "
+"personal preferences or via the language selector block if available. Gallery will try to "
+"automatically detect the language preference of each user if the browser preference check is "
+"enabled."
+msgstr ""
+"Nurodykite numatytą galerijos kalbą. Atskiri vartotojai galės pakeisti kalbą savo nuožiūra "
+"pasinaudodami kalbos pasirinkimo bloku, jei jis prieinamas. Jei įjungtas naršyklės nustatymų "
+"tikrinimas, tuomet Galerija bandys nustatyti kalbą automatiškai."
+
+msgid "Default language"
+msgstr "Numatyta kalba"
+
+msgid "Check Browser Preference"
+msgstr "Tikrinti naršyklės nustatymus"
+
+#, c-format
+msgid ""
+"Your webserver does not support localization.  Please instruct your system administrator to "
+"reconfigure PHP with the %s option enabled."
+msgstr ""
+"Jūsų web serveris nepalaiko lokalizavimo. Paprašykite sistemos administratoriaus, kad "
+"suderintų PHP su %s palaikymu."
+
+msgid "Configure your Gallery"
+msgstr "Konfigūruoti Galeriją"
+
+msgid ""
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
+msgstr ""
+"Prieš pradedant reikia pakeisti keletą prieigos teisių, kad Galerija galėtų įdiegti priedus. "
+"Tai paprasta. Reikia tik įvykdyti šias komandas komandinėje aplinkoje arba ftp kliente:"
+
+msgid ""
+"Before you can proceed, please insure the following directories and sub-directories are "
+"writable, so that Gallery can install plugins for you:"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Check Again button to proceed."
+msgstr ""
+"Jei jums nepavyksta pakeisti prieigos teisių, paprašykite pagalbos pas sistemos "
+"administratorių. Kai sutvarkysite visas teises, spauskite mygtuką Tęsti."
+
+#, fuzzy
+msgid "Check Again"
+msgstr "Žymėti viską"
+
+#, fuzzy
+msgid "Add or Remove Languages"
+msgstr "Pridėti/Šalinti vartotojus"
+
+msgid ""
+"Please click on the link below to go to 'Download Plugin List' and choose 'Update Plugin "
+"List' to get the latest language package information."
+msgstr ""
+
+#, fuzzy
+msgid "Administer Repositories"
+msgstr "Bendruomenės leidimas"
+
+#, fuzzy
+msgid "Upgrade"
+msgstr "atnaujinti"
+
+msgid "Remove"
+msgstr "Pašalinti"
+
+#, fuzzy
+msgid "Download"
+msgstr "atsisiųsti"
+
+#, fuzzy
+msgid "No Change"
+msgstr "Keisti"
+
+#, fuzzy
+msgid "Select All"
+msgstr "Pasirinkta"
+
+msgid ""
+"There are no local repository indices from which to determine language packages. Please "
+"click on the link below to go to \"Download Plugin List\" and choose \"Update Plugin List\" "
+"to get the latest language package information."
+msgstr ""
+
 msgid "System Maintenance"
 msgstr "Sistemos tvarkymas"
 
@@ -2109,20 +2231,6 @@ msgstr "nesuderinamas"
 msgid "Repository"
 msgstr "Saugykla"
 
-msgid "Please make sure that your internet connection is set up properly or try again later."
-msgstr "Įsitikinkite, kad Jūsų interneto ryšys nustatytas tinkamai ar pabandykite vėliau."
-
-#, c-format
-msgid "Failed to scan status from plugin: %s."
-msgstr "Nepavyko nuskaityti priedo %s statuso."
-
-msgid ""
-"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
-"list again."
-msgstr ""
-"Lokali Jūsų saugyklos kopija buvo sugadinta ir dabar sutvarkyta. Atsisiųskite priedų sąrašą "
-"iš naujo."
-
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
 msgstr ""
@@ -2148,13 +2256,6 @@ msgstr "Visų priedų versijos jau yra pačios naujausios."
 #, c-format
 msgid "%s plugin updated."
 msgstr "priedas %s atnaujintas."
-
-#, c-format
-msgid "%d language pack deleted."
-msgid_plural "%d language packs deleted."
-msgstr[0] "%d kalbos paketas pašalintas."
-msgstr[1] "%d kalbos paketai pašalinti."
-msgstr[2] "%d kalbos paketų pašalinta."
 
 msgid ""
 "No personal information about you or your Gallery installation is sent to the Gallery server "
@@ -2203,21 +2304,6 @@ msgstr "Reikia pažymėti bent vieną saugyklą"
 
 msgid "Ok"
 msgstr "Ok"
-
-msgid "Configure your Gallery"
-msgstr "Konfigūruoti Galeriją"
-
-msgid ""
-"Before you can proceed, you have to change some permissions so that Gallery can install "
-"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
-msgstr ""
-"Prieš pradedant reikia pakeisti keletą prieigos teisių, kad Galerija galėtų įdiegti priedus. "
-"Tai paprasta. Reikia tik įvykdyti šias komandas komandinėje aplinkoje arba ftp kliente:"
-
-msgid ""
-"Before you can proceed, please insure the following directories and sub-directories are "
-"writable, so that Gallery can install plugins for you:"
-msgstr ""
 
 msgid ""
 "If you have trouble changing permissions, ask your system administrator for assistance.  "
@@ -2319,10 +2405,10 @@ msgstr "Gauti %s"
 msgid "No packages have been selected."
 msgstr "Nepažymėti jokie paketai."
 
+#, fuzzy
 msgid ""
 "Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
-"of the package to download.  Language packages are optional, You only need to download the "
-"ones that you want to use on your site."
+"of the package to download."
 msgstr ""
 "Norint naudoti šį priedą reikia atsisiųsti paketą. Atnaujinti galite pasirinkdami naujesnę "
 "paketo versiją. Kalbos paketai nebūtini, atsisiųskite tik tuos, kuriuos naudosite savo "
@@ -2343,12 +2429,9 @@ msgstr "%s: versija %s (surinkimas %s) %satsisiuntimas nepalaikomas!%s"
 msgid "%sCurrently Installed%s: version %s (build %s)"
 msgstr "%sĮdiegta%s: versija %s (surinkimas %s)"
 
-msgid "Language Packages"
-msgstr "Kalbos paketai"
-
-#, c-format
-msgid "(%sselect all%s%sselect none%s)"
-msgstr "(%spažymėti viską%s%snežymėti nieko%s)"
+#, fuzzy
+msgid "The following language packages are available for this plugin"
+msgstr "Suderinamų kalbos paketų nėra"
 
 #, c-format
 msgid "%s version %s (upgrading from %s)"
@@ -2368,9 +2451,6 @@ msgstr "%s versija %s (jau įdiegta)"
 
 msgid "No compatible language packages available"
 msgstr "Suderinamų kalbos paketų nėra"
-
-msgid "You must select a base package before choosing language packs."
-msgstr "Prieš pasirenkant kalbos paketus, reikia pasirinkti bazinį paketą."
 
 msgid "Update"
 msgstr "Atnaujinti"
@@ -2455,9 +2535,6 @@ msgstr "Pasirinkite bloką"
 
 msgid "Selected"
 msgstr "Pasirinkta"
-
-msgid "Remove"
-msgstr "Pašalinti"
 
 msgid "Move Up"
 msgstr "Aukščiau"
@@ -3926,6 +4003,15 @@ msgstr "Prisijungimo blokas"
 
 msgid "Links to album/photo peers"
 msgstr "Nuorodos į albumus/nuotraukas"
+
+#~ msgid "Language Packages"
+#~ msgstr "Kalbos paketai"
+
+#~ msgid "(%sselect all%s%sselect none%s)"
+#~ msgstr "(%spažymėti viską%s%snežymėti nieko%s)"
+
+#~ msgid "You must select a base package before choosing language packs."
+#~ msgstr "Prieš pasirenkant kalbos paketus, reikia pasirinkti bazinį paketą."
 
 #~ msgid "Back to %s"
 #~ msgstr "Atgal į %s"

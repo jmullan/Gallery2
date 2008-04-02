@@ -23,7 +23,7 @@
 # Gidie <gidie at users.sourceforge REMOVE THIS dot net>, 2005
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.28\n"
+"Project-Id-Version: Gallery: Core 1.2.31\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
 "PO-Revision-Date: 2008-01-03 12:12+0100\n"
 "Last-Translator: Marijke <marijke@primosite.nl>\n"
@@ -93,6 +93,22 @@ msgstr "Link"
 #, c-format
 msgid "Page %d of %d"
 msgstr "Pagina %d van %d"
+
+#, fuzzy
+msgid "Updating Language Settings"
+msgstr "Taal Instellingen"
+
+msgid "Update completed with errors."
+msgstr "Update compleet met fouten."
+
+msgid "Update complete."
+msgstr "Update compleet."
+
+msgid "Deleting Language Packs"
+msgstr "Taal Pakketten verwijderen"
+
+msgid "Synchronizing Language Packs"
+msgstr "Taal Pakketten Synchronizeren"
 
 msgid "No acceleration"
 msgstr "Geen versnelling"
@@ -549,6 +565,9 @@ msgstr "Prestatie"
 msgid "Event Logs"
 msgstr "Gebeurtenissen Logs"
 
+msgid "Language Settings"
+msgstr "Taal Instellingen"
+
 msgid "Toolkit Priority"
 msgstr "Toolkit Prioriteit"
 
@@ -567,18 +586,6 @@ msgstr "Pakketten worden bijgewerkt"
 #, c-format
 msgid "Activating %s"
 msgstr "Activeren %s"
-
-msgid "Deleting Language Packs"
-msgstr "Taal Pakketten verwijderen"
-
-msgid "Update completed with errors."
-msgstr "Update compleet met fouten."
-
-msgid "Update complete."
-msgstr "Update compleet."
-
-msgid "Synchronizing Language Packs"
-msgstr "Taal Pakketten Synchronizeren"
 
 msgid "Updating Repository Index"
 msgstr "Index Repository Bijwerken"
@@ -787,6 +794,14 @@ msgid ""
 msgstr ""
 "Kan de cache directory niet aanmaken, zorg dat de web server hier de juiste rechten heeft. "
 
+#, c-format
+msgid "Preparing %s"
+msgstr "Voorbereiden %s"
+
+#, c-format
+msgid "Downloading %s"
+msgstr "Downloaden van %s"
+
 msgid "Official Release Repository"
 msgstr "Officieel Uitgebrachte Repository"
 
@@ -806,14 +821,6 @@ msgstr "Fout bij het downloaden van index hash van '%s'."
 
 msgid "Index integrity check failed."
 msgstr "Index integriteit controle mislukt."
-
-#, c-format
-msgid "Preparing %s"
-msgstr "Voorbereiden %s"
-
-#, c-format
-msgid "Downloading %s"
-msgstr "Downloaden van %s"
 
 msgid "&laquo; default sort order &raquo;"
 msgstr "&laquo; standaard storteervolgorde &raquo;"
@@ -1181,34 +1188,6 @@ msgstr ""
 
 msgid "Error sending test email, see below for details."
 msgstr "Fout bij het verzenden van test email, zie hieronder voor details."
-
-msgid "Language Settings"
-msgstr "Taal Instellingen"
-
-msgid ""
-"Select language defaults for Gallery. Individual users can override this setting in their "
-"personal preferences or via the language selector block if available. Gallery will try to "
-"automatically detect the language preference of each user if the browser preference check is "
-"enabled."
-msgstr ""
-"Selecteer de standaard taal instellingen voor Gallery. Gebruikers kunnen dit individueel "
-"aanpassen in hun persoonlijke instellingen of indien beschikbaar in het taalkiezer blok."
-"Gallery zal proberen om van elke gebruiker de taalvoorkeur automatisch vast te stellen, als "
-"de controle voor bowser voorkeur aan staat."
-
-msgid "Default language"
-msgstr "Standaard taal"
-
-msgid "Check Browser Preference"
-msgstr "Controleer Browser Voorkeur"
-
-#, c-format
-msgid ""
-"Your webserver does not support localization.  Please instruct your system administrator to "
-"reconfigure PHP with the %s option enabled."
-msgstr ""
-"Uw webserver ondersteund geen meerdere talen. Raadpleeg uw beheerder om in PHP de %s "
-"functionaliteit aan te zetten."
 
 msgid "Date Formats"
 msgstr "Datum Opmaak"
@@ -1776,6 +1755,149 @@ msgid_plural "%d groups match your filter"
 msgstr[0] "%d groep komt overeen met uw filter"
 msgstr[1] "%d groepen komen overeen met uw filter"
 
+msgid "Please make sure that your internet connection is set up properly or try again later."
+msgstr "Zorg dat uw internet verbinding juist is ingesteld of probeer het later opnieuw."
+
+#, c-format
+msgid "Failed to scan status from plugin: %s."
+msgstr "Status van plugin %s controleren is mislukt."
+
+msgid ""
+"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
+"list again."
+msgstr ""
+"Er waren problemen met uw locale kopie van de repository, deze zijn opgelost. Laad de plugin "
+"lijst nogmaals."
+
+#, fuzzy, c-format
+msgid "Failed to delete the locale directory for %s."
+msgstr "Kan directory niet verwijderen: %s"
+
+#, fuzzy, c-format
+msgid "Failed to download the following language packages for the %s plugin:"
+msgstr "Downloaden is mislukt van de volgende pakketten voor de %s plugin:"
+
+#, fuzzy, c-format
+msgid ""
+"Failed to install language packages for %s plugin because the following files/directories "
+"could not be modified:"
+msgstr ""
+"Installeren is mislukt van %s plugin omdat de volgende bestanden/mappen niet bewerkt kunnen "
+"worden:"
+
+#, fuzzy
+msgid "The repository index has been successfully refreshed."
+msgstr "De repository index is succesvol bijgewerkt."
+
+#, fuzzy
+msgid "The language settings have been saved."
+msgstr "Er zijn geen paketten geselecteerd."
+
+#, fuzzy, c-format
+msgid "%d language pack upgraded or downloaded."
+msgid_plural "%d language packs upgraded or downloaded."
+msgstr[0] "%d taal pakket verwijderd"
+msgstr[1] "%d taal pakketten verwijderd"
+
+#, c-format
+msgid "%d language pack deleted."
+msgid_plural "%d language packs deleted."
+msgstr[0] "%d taal pakket verwijderd"
+msgstr[1] "%d taal pakketten verwijderd"
+
+msgid "All the language packages for the selected languages are current"
+msgstr ""
+
+msgid ""
+"Select language defaults for Gallery. Individual users can override this setting in their "
+"personal preferences or via the language selector block if available. Gallery will try to "
+"automatically detect the language preference of each user if the browser preference check is "
+"enabled."
+msgstr ""
+"Selecteer de standaard taal instellingen voor Gallery. Gebruikers kunnen dit individueel "
+"aanpassen in hun persoonlijke instellingen of indien beschikbaar in het taalkiezer blok."
+"Gallery zal proberen om van elke gebruiker de taalvoorkeur automatisch vast te stellen, als "
+"de controle voor bowser voorkeur aan staat."
+
+msgid "Default language"
+msgstr "Standaard taal"
+
+msgid "Check Browser Preference"
+msgstr "Controleer Browser Voorkeur"
+
+#, c-format
+msgid ""
+"Your webserver does not support localization.  Please instruct your system administrator to "
+"reconfigure PHP with the %s option enabled."
+msgstr ""
+"Uw webserver ondersteund geen meerdere talen. Raadpleeg uw beheerder om in PHP de %s "
+"functionaliteit aan te zetten."
+
+msgid "Configure your Gallery"
+msgstr "Configureer uw Gallery"
+
+msgid ""
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
+msgstr ""
+"Voor u door kunt gaan moet u een aantal rechter veranderder zodat Gallery de plugins kan "
+"installeren. Dit is makkelijk. Voer het volgende uit in een shell of via uw ftp client:"
+
+msgid ""
+"Before you can proceed, please insure the following directories and sub-directories are "
+"writable, so that Gallery can install plugins for you:"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Check Again button to proceed."
+msgstr ""
+"Als u problemen heeft met het veranderen van rechten, vraag dan uw systeembeheerder voor "
+"assistentie. Als de rechten veranderd zijn druk dan op de Doorgaan knop om verder te gaan."
+
+#, fuzzy
+msgid "Check Again"
+msgstr "Selecteer Alles"
+
+#, fuzzy
+msgid "Add or Remove Languages"
+msgstr "Gebruikers toevoegen/verwijderen"
+
+msgid ""
+"Please click on the link below to go to 'Download Plugin List' and choose 'Update Plugin "
+"List' to get the latest language package information."
+msgstr ""
+
+#, fuzzy
+msgid "Administer Repositories"
+msgstr "Community Repository"
+
+#, fuzzy
+msgid "Upgrade"
+msgstr "opwaarderen"
+
+msgid "Remove"
+msgstr "Verwijderen"
+
+#, fuzzy
+msgid "Download"
+msgstr "download"
+
+#, fuzzy
+msgid "No Change"
+msgstr "Wijzigen"
+
+#, fuzzy
+msgid "Select All"
+msgstr "Geselecteerd"
+
+msgid ""
+"There are no local repository indices from which to determine language packages. Please "
+"click on the link below to go to \"Download Plugin List\" and choose \"Update Plugin List\" "
+"to get the latest language package information."
+msgstr ""
+
 msgid "System Maintenance"
 msgstr "Systeem Onderhoud"
 
@@ -2101,20 +2223,6 @@ msgstr "niet compatibele "
 msgid "Repository"
 msgstr "Repository"
 
-msgid "Please make sure that your internet connection is set up properly or try again later."
-msgstr "Zorg dat uw internet verbinding juist is ingesteld of probeer het later opnieuw."
-
-#, c-format
-msgid "Failed to scan status from plugin: %s."
-msgstr "Status van plugin %s controleren is mislukt."
-
-msgid ""
-"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
-"list again."
-msgstr ""
-"Er waren problemen met uw locale kopie van de repository, deze zijn opgelost. Laad de plugin "
-"lijst nogmaals."
-
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
 msgstr "Downloaden is mislukt van de volgende pakketten voor de %s plugin:"
@@ -2144,12 +2252,6 @@ msgstr "De plugins zijn reeds bijgewerkt."
 #, c-format
 msgid "%s plugin updated."
 msgstr "%s plugin is geupdate"
-
-#, c-format
-msgid "%d language pack deleted."
-msgid_plural "%d language packs deleted."
-msgstr[0] "%d taal pakket verwijderd"
-msgstr[1] "%d taal pakketten verwijderd"
 
 msgid ""
 "No personal information about you or your Gallery installation is sent to the Gallery server "
@@ -2196,21 +2298,6 @@ msgstr "U moet een repository selecteren om te verwijderen."
 
 msgid "Ok"
 msgstr "Ok"
-
-msgid "Configure your Gallery"
-msgstr "Configureer uw Gallery"
-
-msgid ""
-"Before you can proceed, you have to change some permissions so that Gallery can install "
-"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
-msgstr ""
-"Voor u door kunt gaan moet u een aantal rechter veranderder zodat Gallery de plugins kan "
-"installeren. Dit is makkelijk. Voer het volgende uit in een shell of via uw ftp client:"
-
-msgid ""
-"Before you can proceed, please insure the following directories and sub-directories are "
-"writable, so that Gallery can install plugins for you:"
-msgstr ""
 
 msgid ""
 "If you have trouble changing permissions, ask your system administrator for assistance.  "
@@ -2314,10 +2401,10 @@ msgstr "Download %s"
 msgid "No packages have been selected."
 msgstr "Er zijn geen paketten geselecteerd."
 
+#, fuzzy
 msgid ""
 "Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
-"of the package to download.  Language packages are optional, You only need to download the "
-"ones that you want to use on your site."
+"of the package to download."
 msgstr ""
 "Download een pakket om deze plugin te gebruiken. U kunt upgraden door een nieuwere versie te "
 "kiezen van het te downloaden pakket. Taal pakketten zijn optioneel. U hoeft alleen de taal "
@@ -2338,12 +2425,9 @@ msgstr "%s: versie %s (bouw %s) %sdowngrading wordt niet ondersteund!%s"
 msgid "%sCurrently Installed%s: version %s (build %s)"
 msgstr "%sNu geïnstalleerd%s: versie %s (bouw %s)"
 
-msgid "Language Packages"
-msgstr "Taal Pakketten"
-
-#, c-format
-msgid "(%sselect all%s%sselect none%s)"
-msgstr "(%sselecteer alles%s%sselecteer niks%s)"
+#, fuzzy
+msgid "The following language packages are available for this plugin"
+msgstr "Geen compatibele taal pakketten beschikbaar"
 
 #, c-format
 msgid "%s version %s (upgrading from %s)"
@@ -2363,9 +2447,6 @@ msgstr "%s versie %s (is nu geïnstalleerd)"
 
 msgid "No compatible language packages available"
 msgstr "Geen compatibele taal pakketten beschikbaar"
-
-msgid "You must select a base package before choosing language packs."
-msgstr "U moet een basis pakket selecteren voor u een taal pakketten kan selecteren."
 
 msgid "Update"
 msgstr "Bijwerken"
@@ -2450,9 +2531,6 @@ msgstr "Kies een blok"
 
 msgid "Selected"
 msgstr "Geselecteerd"
-
-msgid "Remove"
-msgstr "Verwijderen"
 
 msgid "Move Up"
 msgstr "Naar Boven"
@@ -3928,6 +4006,15 @@ msgstr "Inlog blok"
 
 msgid "Links to album/photo peers"
 msgstr "Linken naar album/foto gelijken"
+
+#~ msgid "Language Packages"
+#~ msgstr "Taal Pakketten"
+
+#~ msgid "(%sselect all%s%sselect none%s)"
+#~ msgstr "(%sselecteer alles%s%sselecteer niks%s)"
+
+#~ msgid "You must select a base package before choosing language packs."
+#~ msgstr "U moet een basis pakket selecteren voor u een taal pakketten kan selecteren."
 
 #~ msgid "Back to %s"
 #~ msgstr "Terug naar %s"

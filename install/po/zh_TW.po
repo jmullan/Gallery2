@@ -948,16 +948,13 @@ msgstr "Gallery 已經不再使用這些檔案。它們大概不會造成任何�
 msgid "Errors occurred. Please see messages below."
 msgstr "發生錯誤。請見下列訊息。"
 
-msgid "Please select the installation type"
-msgstr "請選擇安裝類型"
-
 msgid "Standard installation"
 msgstr "標準安裝"
 
-#, c-format
+#, fuzzy
 msgid ""
-"This is the default installation type. Choose this installation type if you want to install "
-"a new Gallery in the directory %s which will be accessible with the URL %s."
+"This is the most common type of installation. Your Gallery will be in the directory %s which "
+"will be accessible at <a href=\"%2$s\">%2$s</a>."
 msgstr ""
 "這是預設的安裝類型。如果你要在 %s 目錄中安裝一個全新的 Gallery，並可用 %s 網址存取的話，請選"
 "這個安裝類型。"
@@ -965,30 +962,20 @@ msgstr ""
 msgid "Multisite installation"
 msgstr "多站台安裝"
 
-msgid ""
-"Gallery can support multiple independent sites with a single installation of the code. "
-"Choose this installation type if you want to install a new Gallery on the same webserver but "
-"in a different path, subdomain or URL domain."
-msgstr ""
-"Gallery 可以用一份單獨的安裝來支援多個獨立的網站。如果你要在同一個網頁伺服器上的不同路徑、子"
-"網域或網址上安裝一個全新的 Gallery 的話，請選這個安裝類型。"
-
 #, c-format
 msgid ""
-"The multisites don't share albums, photos, users, or anything else. They all need their own "
-"database and their own storage directory. For more information and explanations about "
-"Multisite installations, visit the %s page."
+"This is for multiple Gallery installations on a single web server.  Each Gallery is totally "
+"independent with its own database of photos, albums, and users.  For more details, refer to "
+"the %s page."
 msgstr ""
-"多站台並不共用相簿、照片、用戶、或其他任何項目。它們都需要自己的資料庫和自己的儲存目錄。前參"
-"閱 %s 頁面中有關多站台安裝的資訊和解釋。"
 
 msgid "You must enter a directory"
 msgstr "你必需輸入一個目錄"
 
+#, fuzzy, c-format
 msgid ""
-"The directory you entered is the codebase directory. If you want to install a Gallery in the "
-"codebase directory, select the standard installation type. If you want to install a "
-"multisite, choose another directory."
+"You entered the %s directory. If you want to install a Gallery there, select the standard "
+"installation type. If you want to install a multisite, choose a different directory."
 msgstr ""
 "你所輸入的目錄是程式所在的目錄。如果你要把一個 Gallery 安裝到程式目錄中，請選擇標準安裝類型。"
 "如果你要安裝多站台，請選一個不同的目錄。"
@@ -1003,10 +990,11 @@ msgstr ""
 "你必需選用一個在這些目錄下的目錄，或者更改你的 PHP 設定中的 <b>open_basedir</b> 以允許使用新"
 "的目錄。"
 
+#, fuzzy
 msgid ""
-"If your multisite install is in a different virtual host, you should contact your system "
-"administrator and request that they configure your <b>open_basedir</b> setting so that your "
-"virtual hosts can access each other."
+"If your multisite installation is in a different virtual host, you should contact your "
+"system administrator and request that they configure your <b>open_basedir</b> setting so "
+"that your virtual hosts can access each other."
 msgstr ""
 "如果你的多站台安裝是在一個不同的虛擬主機上，你必需連絡你的系統管理員並要求他們設定你的 "
 "<b>open_basedir</b> 來讓你的虛擬主機可以互相存取彼此的檔案。"
@@ -1022,18 +1010,8 @@ msgstr "無法存取你所輸入的目錄。請改變它的存取權限讓網頁
 msgid "Unable to create multisite files. Ensure the files listed below are writeable."
 msgstr "無法產生多站台檔案。請確定下列檔案可以寫入。"
 
-msgid "All multisites are installed from this central code repository (codebase)."
-msgstr "所有的站台都是從這個中央程式庫（基礎程式）安裝出來。"
-
-msgid ""
-"Enter the directory for the new multisite below. The path must be different from this "
-"codebase installation's path:"
-msgstr "在下面輸入新的站台的目錄。這個路徑不能和基礎程式安裝的路徑相同。"
-
-msgid ""
-"The directory must be writeable by your webserver/php user or contain the following "
-"writeable files:"
-msgstr "目錄必需可以讓你的網頁伺服器或 PHP 用戶寫入或含有下列可寫入的檔案："
+msgid "Directory for the new Gallery installation (example: /var/www/example.com/gallery2) "
+msgstr ""
 
 msgid "Select Directory"
 msgstr "選擇目錄"
@@ -1268,3 +1246,35 @@ msgstr "開始"
 
 msgid "Begin Installation&raquo;"
 msgstr "開始安裝&raquo;"
+
+#~ msgid "Please select the installation type"
+#~ msgstr "請選擇安裝類型"
+
+#~ msgid ""
+#~ "Gallery can support multiple independent sites with a single installation of the code. "
+#~ "Choose this installation type if you want to install a new Gallery on the same webserver "
+#~ "but in a different path, subdomain or URL domain."
+#~ msgstr ""
+#~ "Gallery 可以用一份單獨的安裝來支援多個獨立的網站。如果你要在同一個網頁伺服器上的不同路徑、"
+#~ "子網域或網址上安裝一個全新的 Gallery 的話，請選這個安裝類型。"
+
+#~ msgid ""
+#~ "The multisites don't share albums, photos, users, or anything else. They all need their "
+#~ "own database and their own storage directory. For more information and explanations about "
+#~ "Multisite installations, visit the %s page."
+#~ msgstr ""
+#~ "多站台並不共用相簿、照片、用戶、或其他任何項目。它們都需要自己的資料庫和自己的儲存目錄。前"
+#~ "參閱 %s 頁面中有關多站台安裝的資訊和解釋。"
+
+#~ msgid "All multisites are installed from this central code repository (codebase)."
+#~ msgstr "所有的站台都是從這個中央程式庫（基礎程式）安裝出來。"
+
+#~ msgid ""
+#~ "Enter the directory for the new multisite below. The path must be different from this "
+#~ "codebase installation's path:"
+#~ msgstr "在下面輸入新的站台的目錄。這個路徑不能和基礎程式安裝的路徑相同。"
+
+#~ msgid ""
+#~ "The directory must be writeable by your webserver/php user or contain the following "
+#~ "writeable files:"
+#~ msgstr "目錄必需可以讓你的網頁伺服器或 PHP 用戶寫入或含有下列可寫入的檔案："

@@ -19,7 +19,7 @@
 # Piarres Beobide <pi@beobide.net>, 2005, 2007.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.28\n"
+"Project-Id-Version: Gallery: Core 1.2.31\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-10-31 14:44+0100\n"
 "PO-Revision-Date: 2007-06-26 12:36+0200\n"
@@ -91,6 +91,22 @@ msgstr "Lotu"
 #, c-format
 msgid "Page %d of %d"
 msgstr "%d orrialde %d-tik"
+
+#, fuzzy
+msgid "Updating Language Settings"
+msgstr "Hizkuntza Ezarpenak"
+
+msgid "Update completed with errors."
+msgstr "Eguneraketa erroreekin burutu da."
+
+msgid "Update complete."
+msgstr "Egunerakea burutua"
+
+msgid "Deleting Language Packs"
+msgstr "Hizkuntza Paketeak Ezabatzen"
+
+msgid "Synchronizing Language Packs"
+msgstr "Hizkuntza Paketeak Sinkronizatzen"
 
 msgid "No acceleration"
 msgstr "Azeleraziorik ez"
@@ -552,6 +568,9 @@ msgstr "Performantzia"
 msgid "Event Logs"
 msgstr "Gertaera erregistroak"
 
+msgid "Language Settings"
+msgstr "Hizkuntza Ezarpenak"
+
 msgid "Toolkit Priority"
 msgstr "Tresnajoko lehentasuna"
 
@@ -570,18 +589,6 @@ msgstr "Paketeak Eguneratzen"
 #, c-format
 msgid "Activating %s"
 msgstr "%s Aktibatzen"
-
-msgid "Deleting Language Packs"
-msgstr "Hizkuntza Paketeak Ezabatzen"
-
-msgid "Update completed with errors."
-msgstr "Eguneraketa erroreekin burutu da."
-
-msgid "Update complete."
-msgstr "Egunerakea burutua"
-
-msgid "Synchronizing Language Packs"
-msgstr "Hizkuntza Paketeak Sinkronizatzen"
 
 msgid "Updating Repository Index"
 msgstr "Errepositorio Indizea Eguneratu"
@@ -790,6 +797,14 @@ msgstr ""
 "Ezinda katxe azpidirektorioa sortu. Ziurtatu zaitez web zerbitzariak bertan idazteko baimena "
 "duela."
 
+#, c-format
+msgid "Preparing %s"
+msgstr "%s Prestatzen"
+
+#, c-format
+msgid "Downloading %s"
+msgstr "%s deskargatzen"
+
 msgid "Official Release Repository"
 msgstr "Bertsio Errepositorio Ofiziala"
 
@@ -809,14 +824,6 @@ msgstr "Errorea '%s'-tik indize egiaztapen deskargatzerakoan."
 
 msgid "Index integrity check failed."
 msgstr "Indize osotasun egiaztapenak huts egin du."
-
-#, c-format
-msgid "Preparing %s"
-msgstr "%s Prestatzen"
-
-#, c-format
-msgid "Downloading %s"
-msgstr "%s deskargatzen"
 
 msgid "&laquo; default sort order &raquo;"
 msgstr "&laquo; lehenetsi ordena &raquo;"
@@ -1172,34 +1179,6 @@ msgstr "Errore bat gertatu da zure eskakizuna prozesatzerakoan, xehetasun gehiag
 
 msgid "Error sending test email, see below for details."
 msgstr "Huts proba eposta bidaltzerakoan, ikusi xehetasunak behean."
-
-msgid "Language Settings"
-msgstr "Hizkuntza Ezarpenak"
-
-msgid ""
-"Select language defaults for Gallery. Individual users can override this setting in their "
-"personal preferences or via the language selector block if available. Gallery will try to "
-"automatically detect the language preference of each user if the browser preference check is "
-"enabled."
-msgstr ""
-"Galeriaren lehenetsiriko hizkuntza ezarri. Banakako erabiltzaileek ezarpen hau gainidatzi "
-"ditzakete ezarpen pertsonaletan erabilgarri egon ezkero hizkuntza aukeratzailearen bidez. "
-"Nabigatzailean hizkuntza hobespenak ezarririk badaude Gallery hauek automatikoki atzematen "
-"saiatuko da."
-
-msgid "Default language"
-msgstr "Lehenetsiriko hizkuntza"
-
-msgid "Check Browser Preference"
-msgstr "Nabigatzaile Hobespenak Arakatu"
-
-#, c-format
-msgid ""
-"Your webserver does not support localization.  Please instruct your system administrator to "
-"reconfigure PHP with the %s option enabled."
-msgstr ""
-"Zure web zerbitzariak ez du lokalizazio hau onartzen. Mesedez eskatu sistema kudeatzaileari %"
-"s aukera gaituaz PHP berkonfiguratzeko."
 
 msgid "Date Formats"
 msgstr "Data Formatuak"
@@ -1760,6 +1739,150 @@ msgid_plural "%d groups match your filter"
 msgstr[0] "talde %d zure iragazkiaren pareko da"
 msgstr[1] "%d  talde zure iragazkiaren pareko dira"
 
+msgid "Please make sure that your internet connection is set up properly or try again later."
+msgstr ""
+"Ziurtatu zaitez zure interneteriko konexioa martxan dagoela edo saiatu zaitez beranduago."
+
+#, c-format
+msgid "Failed to scan status from plugin: %s."
+msgstr "Huts pluginaren egoera arakatzean: %s."
+
+msgid ""
+"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
+"list again."
+msgstr ""
+"Errepositorioaren zure kopia lokala hondaturik zegoen eta konpondua izan da. Mesedez plugin "
+"zerrenda berriz deskargatu."
+
+#, fuzzy, c-format
+msgid "Failed to delete the locale directory for %s."
+msgstr "Ezin da direktorioa ezabatu: %s"
+
+#, fuzzy, c-format
+msgid "Failed to download the following language packages for the %s plugin:"
+msgstr "Huts %s pluginarentzat hurrengo paketeak deskargatzerakoan:"
+
+#, fuzzy, c-format
+msgid ""
+"Failed to install language packages for %s plugin because the following files/directories "
+"could not be modified:"
+msgstr ""
+"Huts %s plugina instalatzerakoan hurrengo fitxategi/direktorioak ezin bait dira aldatu:"
+
+#, fuzzy
+msgid "The repository index has been successfully refreshed."
+msgstr "Errepositorio indizea behar bezala eguneratu da."
+
+#, fuzzy
+msgid "The language settings have been saved."
+msgstr "Ez duzu paketerik aukeratu."
+
+#, fuzzy, c-format
+msgid "%d language pack upgraded or downloaded."
+msgid_plural "%d language packs upgraded or downloaded."
+msgstr[0] "Hizkuntza pakete %d ezabaturik."
+msgstr[1] "%d hizkuntza pakete ezabaturik."
+
+#, c-format
+msgid "%d language pack deleted."
+msgid_plural "%d language packs deleted."
+msgstr[0] "Hizkuntza pakete %d ezabaturik."
+msgstr[1] "%d hizkuntza pakete ezabaturik."
+
+msgid "All the language packages for the selected languages are current"
+msgstr ""
+
+msgid ""
+"Select language defaults for Gallery. Individual users can override this setting in their "
+"personal preferences or via the language selector block if available. Gallery will try to "
+"automatically detect the language preference of each user if the browser preference check is "
+"enabled."
+msgstr ""
+"Galeriaren lehenetsiriko hizkuntza ezarri. Banakako erabiltzaileek ezarpen hau gainidatzi "
+"ditzakete ezarpen pertsonaletan erabilgarri egon ezkero hizkuntza aukeratzailearen bidez. "
+"Nabigatzailean hizkuntza hobespenak ezarririk badaude Gallery hauek automatikoki atzematen "
+"saiatuko da."
+
+msgid "Default language"
+msgstr "Lehenetsiriko hizkuntza"
+
+msgid "Check Browser Preference"
+msgstr "Nabigatzaile Hobespenak Arakatu"
+
+#, c-format
+msgid ""
+"Your webserver does not support localization.  Please instruct your system administrator to "
+"reconfigure PHP with the %s option enabled."
+msgstr ""
+"Zure web zerbitzariak ez du lokalizazio hau onartzen. Mesedez eskatu sistema kudeatzaileari %"
+"s aukera gaituaz PHP berkonfiguratzeko."
+
+msgid "Configure your Gallery"
+msgstr "Zure Galeria Konfiguratu"
+
+msgid ""
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
+msgstr ""
+"Aurrera jarraitu ahal izateko zenbait baimen aldatu behar dituzu Gallery pluginak "
+"instalatzeko gai izan dadin. Erraza da.  Aski da hurrengo hau shell batetan edo ftp "
+"bezeroaren bidez exekutatzearekin:"
+
+msgid ""
+"Before you can proceed, please insure the following directories and sub-directories are "
+"writable, so that Gallery can install plugins for you:"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Check Again button to proceed."
+msgstr ""
+"Baimenak aldatzen arazorik izanez gero, eskatu laguntza sistema kudeatzaileari.  Behin "
+"baimenak konpondu dituzunean, Jarraitu botoia zanpatu aurrera jotzeko."
+
+#, fuzzy
+msgid "Check Again"
+msgstr "Markatu Denak"
+
+#, fuzzy
+msgid "Add or Remove Languages"
+msgstr "Erabiltzaileak Gehitu/Kendu"
+
+msgid ""
+"Please click on the link below to go to 'Download Plugin List' and choose 'Update Plugin "
+"List' to get the latest language package information."
+msgstr ""
+
+#, fuzzy
+msgid "Administer Repositories"
+msgstr "Komunitate Errepositorioa"
+
+#, fuzzy
+msgid "Upgrade"
+msgstr "bertsio-berritu"
+
+msgid "Remove"
+msgstr "Kendu"
+
+#, fuzzy
+msgid "Download"
+msgstr "deskargatu"
+
+#, fuzzy
+msgid "No Change"
+msgstr "Aldatu"
+
+#, fuzzy
+msgid "Select All"
+msgstr "Hautatuta"
+
+msgid ""
+"There are no local repository indices from which to determine language packages. Please "
+"click on the link below to go to \"Download Plugin List\" and choose \"Update Plugin List\" "
+"to get the latest language package information."
+msgstr ""
+
 msgid "System Maintenance"
 msgstr "Sistema Mantenua"
 
@@ -2083,21 +2206,6 @@ msgstr "baterezina"
 msgid "Repository"
 msgstr "Errepositorioa"
 
-msgid "Please make sure that your internet connection is set up properly or try again later."
-msgstr ""
-"Ziurtatu zaitez zure interneteriko konexioa martxan dagoela edo saiatu zaitez beranduago."
-
-#, c-format
-msgid "Failed to scan status from plugin: %s."
-msgstr "Huts pluginaren egoera arakatzean: %s."
-
-msgid ""
-"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
-"list again."
-msgstr ""
-"Errepositorioaren zure kopia lokala hondaturik zegoen eta konpondua izan da. Mesedez plugin "
-"zerrenda berriz deskargatu."
-
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
 msgstr "Huts %s pluginarentzat hurrengo paketeak deskargatzerakoan:"
@@ -2126,12 +2234,6 @@ msgstr "Dagoeneko plugin guztiak eguneraturik daude."
 #, c-format
 msgid "%s plugin updated."
 msgstr "%s plugin eguneraturik"
-
-#, c-format
-msgid "%d language pack deleted."
-msgid_plural "%d language packs deleted."
-msgstr[0] "Hizkuntza pakete %d ezabaturik."
-msgstr[1] "%d hizkuntza pakete ezabaturik."
 
 msgid ""
 "No personal information about you or your Gallery installation is sent to the Gallery server "
@@ -2180,22 +2282,6 @@ msgstr "Behintzat errepositorio bat hautatu behar duzu."
 
 msgid "Ok"
 msgstr "Ados"
-
-msgid "Configure your Gallery"
-msgstr "Zure Galeria Konfiguratu"
-
-msgid ""
-"Before you can proceed, you have to change some permissions so that Gallery can install "
-"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
-msgstr ""
-"Aurrera jarraitu ahal izateko zenbait baimen aldatu behar dituzu Gallery pluginak "
-"instalatzeko gai izan dadin. Erraza da.  Aski da hurrengo hau shell batetan edo ftp "
-"bezeroaren bidez exekutatzearekin:"
-
-msgid ""
-"Before you can proceed, please insure the following directories and sub-directories are "
-"writable, so that Gallery can install plugins for you:"
-msgstr ""
 
 msgid ""
 "If you have trouble changing permissions, ask your system administrator for assistance.  "
@@ -2298,10 +2384,10 @@ msgstr "%s deskargatu"
 msgid "No packages have been selected."
 msgstr "Ez duzu paketerik aukeratu."
 
+#, fuzzy
 msgid ""
 "Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
-"of the package to download.  Language packages are optional, You only need to download the "
-"ones that you want to use on your site."
+"of the package to download."
 msgstr ""
 "Plugin hau erabiltzeko beharrezko pakete bat deskargatu.  Paketearen bertsio berriago bat "
 "deskargatzea hautatuaz bertsio berritu dezakezu.  Hizkuntza paketeak aukerakoak dira,  Zure "
@@ -2322,12 +2408,9 @@ msgstr "%s: %s bertsioa (%s eraikina) %sezin da atzera egin!%s"
 msgid "%sCurrently Installed%s: version %s (build %s)"
 msgstr "%sInstalaturik Dagoena%s: %s bertsioa (%s eraikina)"
 
-msgid "Language Packages"
-msgstr "Hizkuntza Paketeak"
-
-#, c-format
-msgid "(%sselect all%s%sselect none%s)"
-msgstr "(%sdenak hautatu%s%sbatez hautatu%s)"
+#, fuzzy
+msgid "The following language packages are available for this plugin"
+msgstr "Ez da hizkuntza pakete bateragarririk aurkitu"
 
 #, c-format
 msgid "%s version %s (upgrading from %s)"
@@ -2347,9 +2430,6 @@ msgstr "%s %s bertsioa (instalaturik dago)"
 
 msgid "No compatible language packages available"
 msgstr "Ez da hizkuntza pakete bateragarririk aurkitu"
-
-msgid "You must select a base package before choosing language packs."
-msgstr "Oinarri pakete bat hautatu behar duzu hizkuntza paketeak hautatu aurretik."
 
 msgid "Update"
 msgstr "Eguneratu"
@@ -2433,9 +2513,6 @@ msgstr "Bloke bat hautatu"
 
 msgid "Selected"
 msgstr "Hautatuta"
-
-msgid "Remove"
-msgstr "Kendu"
 
 msgid "Move Up"
 msgstr "Eraman gora"
@@ -3893,6 +3970,15 @@ msgstr "Saio-hasiera blokea"
 
 msgid "Links to album/photo peers"
 msgstr "Ondoko album/argazkietara loturak"
+
+#~ msgid "Language Packages"
+#~ msgstr "Hizkuntza Paketeak"
+
+#~ msgid "(%sselect all%s%sselect none%s)"
+#~ msgstr "(%sdenak hautatu%s%sbatez hautatu%s)"
+
+#~ msgid "You must select a base package before choosing language packs."
+#~ msgstr "Oinarri pakete bat hautatu behar duzu hizkuntza paketeak hautatu aurretik."
 
 #~ msgid "Back to %s"
 #~ msgstr "%s-(e)ra Atzera"

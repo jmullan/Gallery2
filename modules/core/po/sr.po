@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.28\n"
+"Project-Id-Version: Gallery: Core 1.2.31\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-14 16:52+0200\n"
 "PO-Revision-Date: 2007-04-16 15:06+0100\n"
@@ -91,6 +91,23 @@ msgstr "Veži"
 #, c-format
 msgid "Page %d of %d"
 msgstr "%d. strana od %d"
+
+#, fuzzy
+msgid "Updating Language Settings"
+msgstr "Jezički parametri"
+
+msgid "Update completed with errors."
+msgstr "Nadogradnja završena sa greškama."
+
+msgid "Update complete."
+msgstr "Ažuriranje završeno."
+
+msgid "Deleting Language Packs"
+msgstr "Brisanje jezičkih paketa"
+
+#, fuzzy
+msgid "Synchronizing Language Packs"
+msgstr "Brisanje jezičkih paketa"
 
 msgid "No acceleration"
 msgstr "Bez ubrzanja"
@@ -550,6 +567,9 @@ msgstr "Performanse"
 msgid "Event Logs"
 msgstr ""
 
+msgid "Language Settings"
+msgstr "Jezički parametri"
+
 msgid "Toolkit Priority"
 msgstr "Prioritet alatki"
 
@@ -568,19 +588,6 @@ msgstr "Ažuriranje paketa"
 #, c-format
 msgid "Activating %s"
 msgstr "Aktiviram %s"
-
-msgid "Deleting Language Packs"
-msgstr "Brisanje jezičkih paketa"
-
-msgid "Update completed with errors."
-msgstr "Nadogradnja završena sa greškama."
-
-msgid "Update complete."
-msgstr "Ažuriranje završeno."
-
-#, fuzzy
-msgid "Synchronizing Language Packs"
-msgstr "Brisanje jezičkih paketa"
 
 msgid "Updating Repository Index"
 msgstr "Ažuriranje indeksa skladišta"
@@ -792,6 +799,14 @@ msgstr ""
 "Nije bilo moguće pravljenje poddirektorijuma u kešu. Proverite da li web server u njemu ima "
 "prava upisa."
 
+#, c-format
+msgid "Preparing %s"
+msgstr "Pripremam %s"
+
+#, c-format
+msgid "Downloading %s"
+msgstr "Preuzimanje %s"
+
 msgid "Official Release Repository"
 msgstr "Zvanično skladište"
 
@@ -811,14 +826,6 @@ msgstr "Greška prilikom preuzimanja heša indeksa sa '%s'."
 
 msgid "Index integrity check failed."
 msgstr "Greška prilikom provere integriteta indeksa."
-
-#, c-format
-msgid "Preparing %s"
-msgstr "Pripremam %s"
-
-#, c-format
-msgid "Downloading %s"
-msgstr "Preuzimanje %s"
 
 msgid "&laquo; default sort order &raquo;"
 msgstr "&laquo; podrazumevan redosled sortiranja &raquo;"
@@ -1174,34 +1181,6 @@ msgstr "Došlo je do problema prilikom obrade vašeg zahteva, pogledajte detalje
 
 msgid "Error sending test email, see below for details."
 msgstr "Greška prilikom slanja testnog emaila, pogledajte detalje ispod."
-
-msgid "Language Settings"
-msgstr "Jezički parametri"
-
-msgid ""
-"Select language defaults for Gallery. Individual users can override this setting in their "
-"personal preferences or via the language selector block if available. Gallery will try to "
-"automatically detect the language preference of each user if the browser preference check is "
-"enabled."
-msgstr ""
-"Izaberite podrazumevan jezik za Galeriju. Korisnici mogu pojedinačno da izmene ovu opciju u "
-"svojim ličnim parametrima ili preko bloka za biranje jezika, ako je dostupan. Galerija će "
-"pokušati automatski da odredi željen jezik svakog korisnika, ako je uključena opcija "
-"detekcije jezika iz web čitača."
-
-msgid "Default language"
-msgstr "Podrazumevan jezik"
-
-msgid "Check Browser Preference"
-msgstr "Odredi jezik iz web čitača"
-
-#, c-format
-msgid ""
-"Your webserver does not support localization.  Please instruct your system administrator to "
-"reconfigure PHP with the %s option enabled."
-msgstr ""
-"Vaš web server ne podržava lokalizaciju. Prenesite vašem administratoru sistema da "
-"rekonfiguriše PHP sa uključenom %s opcijom."
 
 msgid "Date Formats"
 msgstr "Datumski formati"
@@ -1772,6 +1751,150 @@ msgid_plural "%d groups match your filter"
 msgstr[0] "%d grupa odgovara vašem filteru"
 msgstr[1] "%d grupa odgovara vašem filteru"
 
+msgid "Please make sure that your internet connection is set up properly or try again later."
+msgstr ""
+"Molimo vas da proverite da li je vaša veza sa internetu ispravna ili pokušajte kasnije."
+
+#, c-format
+msgid "Failed to scan status from plugin: %s."
+msgstr "Neuspešno skeniranje statusa modula: %s."
+
+msgid ""
+"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
+"list again."
+msgstr ""
+"Vaša lokalna kopija skladišta je bila oštećena i sada je popravljena. Molimo vas da ponovo "
+"preuzmete spisak modula i pokušate ponovo."
+
+#, fuzzy, c-format
+msgid "Failed to delete the locale directory for %s."
+msgstr "Direktorijum nije moguće obrisati: %s"
+
+#, c-format
+msgid "Failed to download the following language packages for the %s plugin:"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"Failed to install language packages for %s plugin because the following files/directories "
+"could not be modified:"
+msgstr ""
+"Preuzimanje modula %s je bilo neuspešno, jer sledeće datoteke ili direktorijumu ne mogu da "
+"se menjaju:"
+
+#, fuzzy
+msgid "The repository index has been successfully refreshed."
+msgstr "Indeks skladišta je uspešno ažuriran."
+
+#, fuzzy
+msgid "The language settings have been saved."
+msgstr "Nema obeleženih paketa."
+
+#, fuzzy, c-format
+msgid "%d language pack upgraded or downloaded."
+msgid_plural "%d language packs upgraded or downloaded."
+msgstr[0] "Izbrisan %d jezički paket."
+msgstr[1] "Izbrisano %d jezičkih paketa."
+
+#, c-format
+msgid "%d language pack deleted."
+msgid_plural "%d language packs deleted."
+msgstr[0] "Izbrisan %d jezički paket."
+msgstr[1] "Izbrisano %d jezičkih paketa."
+
+msgid "All the language packages for the selected languages are current"
+msgstr ""
+
+msgid ""
+"Select language defaults for Gallery. Individual users can override this setting in their "
+"personal preferences or via the language selector block if available. Gallery will try to "
+"automatically detect the language preference of each user if the browser preference check is "
+"enabled."
+msgstr ""
+"Izaberite podrazumevan jezik za Galeriju. Korisnici mogu pojedinačno da izmene ovu opciju u "
+"svojim ličnim parametrima ili preko bloka za biranje jezika, ako je dostupan. Galerija će "
+"pokušati automatski da odredi željen jezik svakog korisnika, ako je uključena opcija "
+"detekcije jezika iz web čitača."
+
+msgid "Default language"
+msgstr "Podrazumevan jezik"
+
+msgid "Check Browser Preference"
+msgstr "Odredi jezik iz web čitača"
+
+#, c-format
+msgid ""
+"Your webserver does not support localization.  Please instruct your system administrator to "
+"reconfigure PHP with the %s option enabled."
+msgstr ""
+"Vaš web server ne podržava lokalizaciju. Prenesite vašem administratoru sistema da "
+"rekonfiguriše PHP sa uključenom %s opcijom."
+
+msgid "Configure your Gallery"
+msgstr "Podesite vašu Galeriju"
+
+msgid ""
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
+msgstr ""
+"Pre nego što nastavite, morate promeniti neka prava da bi Galerija mogla da vam instalira "
+"module. Lako je. Samo izvršite sledeće u shell-u ili preko vašeg FTP klijenta:"
+
+msgid ""
+"Before you can proceed, please insure the following directories and sub-directories are "
+"writable, so that Gallery can install plugins for you:"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Check Again button to proceed."
+msgstr ""
+"Ako imate problema sa izmenom prava, zamolite administratora vašeg sistema za pomoć. Kada "
+"ste podesili prava, kliknite na dugme Nastavi."
+
+#, fuzzy
+msgid "Check Again"
+msgstr "Obeleži sve"
+
+#, fuzzy
+msgid "Add or Remove Languages"
+msgstr "Dodavanje/uklanjanje korisnika"
+
+msgid ""
+"Please click on the link below to go to 'Download Plugin List' and choose 'Update Plugin "
+"List' to get the latest language package information."
+msgstr ""
+
+#, fuzzy
+msgid "Administer Repositories"
+msgstr "Skladište zajednice"
+
+#, fuzzy
+msgid "Upgrade"
+msgstr "nadogradi"
+
+msgid "Remove"
+msgstr "Ukloni"
+
+#, fuzzy
+msgid "Download"
+msgstr "preuzmi"
+
+#, fuzzy
+msgid "No Change"
+msgstr "Promeni"
+
+#, fuzzy
+msgid "Select All"
+msgstr "Izabrani"
+
+msgid ""
+"There are no local repository indices from which to determine language packages. Please "
+"click on the link below to go to \"Download Plugin List\" and choose \"Update Plugin List\" "
+"to get the latest language package information."
+msgstr ""
+
 msgid "System Maintenance"
 msgstr "Održavanje sistema"
 
@@ -2097,21 +2220,6 @@ msgstr "nekompatibilan"
 msgid "Repository"
 msgstr "Skladište"
 
-msgid "Please make sure that your internet connection is set up properly or try again later."
-msgstr ""
-"Molimo vas da proverite da li je vaša veza sa internetu ispravna ili pokušajte kasnije."
-
-#, c-format
-msgid "Failed to scan status from plugin: %s."
-msgstr "Neuspešno skeniranje statusa modula: %s."
-
-msgid ""
-"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
-"list again."
-msgstr ""
-"Vaša lokalna kopija skladišta je bila oštećena i sada je popravljena. Molimo vas da ponovo "
-"preuzmete spisak modula i pokušate ponovo."
-
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
 msgstr ""
@@ -2139,12 +2247,6 @@ msgstr "Nema novih verzija nijednog modula."
 #, c-format
 msgid "%s plugin updated."
 msgstr "Modul %s nadograđen."
-
-#, c-format
-msgid "%d language pack deleted."
-msgid_plural "%d language packs deleted."
-msgstr[0] "Izbrisan %d jezički paket."
-msgstr[1] "Izbrisano %d jezičkih paketa."
 
 msgid ""
 "No personal information about you or your Gallery installation is sent to the Gallery server "
@@ -2191,21 +2293,6 @@ msgstr "Morate izabrati bar jedno skladište dodataka."
 
 msgid "Ok"
 msgstr "Ok"
-
-msgid "Configure your Gallery"
-msgstr "Podesite vašu Galeriju"
-
-msgid ""
-"Before you can proceed, you have to change some permissions so that Gallery can install "
-"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
-msgstr ""
-"Pre nego što nastavite, morate promeniti neka prava da bi Galerija mogla da vam instalira "
-"module. Lako je. Samo izvršite sledeće u shell-u ili preko vašeg FTP klijenta:"
-
-msgid ""
-"Before you can proceed, please insure the following directories and sub-directories are "
-"writable, so that Gallery can install plugins for you:"
-msgstr ""
 
 msgid ""
 "If you have trouble changing permissions, ask your system administrator for assistance.  "
@@ -2308,10 +2395,10 @@ msgstr "Preuzmi %s"
 msgid "No packages have been selected."
 msgstr "Nema obeleženih paketa."
 
+#, fuzzy
 msgid ""
 "Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
-"of the package to download.  Language packages are optional, You only need to download the "
-"ones that you want to use on your site."
+"of the package to download."
 msgstr ""
 "Preuzmite paket da biste koristili ovaj modul. Možete izvršiti nadogradnju biranjem novije "
 "verzije paketa. Paketi sa jezikom nisu obavezni, preuzmite samo one koje želite da koristite "
@@ -2332,12 +2419,9 @@ msgstr "%s: verzija %s (izgradnja %s) %sprelazak na stariju verziju nije moguć!
 msgid "%sCurrently Installed%s: version %s (build %s)"
 msgstr "%sTrenutno instalirano%s: verzija %s (izgradnja %s)"
 
-msgid "Language Packages"
-msgstr "Jezički paketi"
-
-#, c-format
-msgid "(%sselect all%s%sselect none%s)"
-msgstr "(%sobeleži sve%s%sobeleži ni jedan%s)"
+#, fuzzy
+msgid "The following language packages are available for this plugin"
+msgstr "Nema kompatibilnih jezičkih paketa"
 
 #, c-format
 msgid "%s version %s (upgrading from %s)"
@@ -2357,9 +2441,6 @@ msgstr "%s verzija %s (trenutno instalirana)"
 
 msgid "No compatible language packages available"
 msgstr "Nema kompatibilnih jezičkih paketa"
-
-msgid "You must select a base package before choosing language packs."
-msgstr "Morate izabrati bazni paket pre nego što izaberete jezičke pakete."
 
 msgid "Update"
 msgstr "Nadogradi"
@@ -2441,9 +2522,6 @@ msgstr "Izaberite blok"
 
 msgid "Selected"
 msgstr "Izabrani"
-
-msgid "Remove"
-msgstr "Ukloni"
 
 msgid "Move Up"
 msgstr "Pomeri na gore"
@@ -3899,6 +3977,15 @@ msgstr "Prijavni blok"
 msgid "Links to album/photo peers"
 msgstr "Veze ka ravnopravnim albumima i fotografijama"
 
+#~ msgid "Language Packages"
+#~ msgstr "Jezički paketi"
+
+#~ msgid "(%sselect all%s%sselect none%s)"
+#~ msgstr "(%sobeleži sve%s%sobeleži ni jedan%s)"
+
+#~ msgid "You must select a base package before choosing language packs."
+#~ msgstr "Morate izabrati bazni paket pre nego što izaberete jezičke pakete."
+
 #~ msgid "Back to %s"
 #~ msgstr "Povratak na %s"
 
@@ -4009,10 +4096,6 @@ msgstr "Veze ka ravnopravnim albumima i fotografijama"
 #, fuzzy
 #~ msgid "Performing Maintenance Tasks"
 #~ msgstr "Održavanje sistema"
-
-#, fuzzy
-#~ msgid "Upgrade"
-#~ msgstr "nadogradi"
 
 #, fuzzy
 #~ msgid "Plugins directory does not exist."

@@ -22,7 +22,7 @@
 # along with this program; if not, write to the Free Software
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.28\n"
+"Project-Id-Version: Gallery: Core 1.2.31\n"
 "POT-Creation-Date: 2003-06-25 11:44+0100\n"
 "PO-Revision-Date: 2007-03-14 15:09+0100\n"
 "Last-Translator: Yurii Smetana <Yura@stryi.com.ua>\n"
@@ -94,6 +94,26 @@ msgstr "Вхід В Систему"
 #, c-format
 msgid "Page %d of %d"
 msgstr "Сторінка %d з %d"
+
+#, fuzzy
+msgid "Updating Language Settings"
+msgstr "Налаштування Мови"
+
+#, fuzzy
+msgid "Update completed with errors."
+msgstr "Завантаження завершено."
+
+#, fuzzy
+msgid "Update complete."
+msgstr "Завантаження завершено."
+
+#, fuzzy
+msgid "Deleting Language Packs"
+msgstr "Типова мова"
+
+#, fuzzy
+msgid "Synchronizing Language Packs"
+msgstr "Типова мова"
 
 msgid "No acceleration"
 msgstr "Без пришвидшення"
@@ -572,6 +592,9 @@ msgstr "Продуктивність"
 msgid "Event Logs"
 msgstr ""
 
+msgid "Language Settings"
+msgstr "Налаштування Мови"
+
 msgid "Toolkit Priority"
 msgstr "Приорітет Інструментарію"
 
@@ -590,22 +613,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Activating %s"
 msgstr "Дії"
-
-#, fuzzy
-msgid "Deleting Language Packs"
-msgstr "Типова мова"
-
-#, fuzzy
-msgid "Update completed with errors."
-msgstr "Завантаження завершено."
-
-#, fuzzy
-msgid "Update complete."
-msgstr "Завантаження завершено."
-
-#, fuzzy
-msgid "Synchronizing Language Packs"
-msgstr "Типова мова"
 
 #, fuzzy
 msgid "Updating Repository Index"
@@ -816,6 +823,14 @@ msgid ""
 msgstr ""
 "Неможливо створити підтеки кешу. Переконайтесь що вебсервер володіє необхідними правами."
 
+#, fuzzy, c-format
+msgid "Preparing %s"
+msgstr "Працюю..."
+
+#, c-format
+msgid "Downloading %s"
+msgstr "Завантаження %s"
+
 msgid "Official Release Repository"
 msgstr ""
 
@@ -837,14 +852,6 @@ msgstr "Сталася помилка при спробі завантажити
 
 msgid "Index integrity check failed."
 msgstr "Не вдалося перевірити цілісність індексів."
-
-#, fuzzy, c-format
-msgid "Preparing %s"
-msgstr "Працюю..."
-
-#, c-format
-msgid "Downloading %s"
-msgstr "Завантаження %s"
 
 msgid "&laquo; default sort order &raquo;"
 msgstr "&laquo; типовий порядок сортування &raquo;"
@@ -1206,34 +1213,6 @@ msgstr "Під час здійснення запиту трапилась по�
 
 msgid "Error sending test email, see below for details."
 msgstr "Не вдалося надіслати тестовий ел. лист, деталі подано нижче."
-
-msgid "Language Settings"
-msgstr "Налаштування Мови"
-
-msgid ""
-"Select language defaults for Gallery. Individual users can override this setting in their "
-"personal preferences or via the language selector block if available. Gallery will try to "
-"automatically detect the language preference of each user if the browser preference check is "
-"enabled."
-msgstr ""
-"Оберіть типову мову для Галереї. Користувачі можуть змінювати це налаштування, особисто для "
-"себе, в персональних налаштуваннях або за допомогою випадаючого списку мов, якщо його "
-"дозволено. Галерея намагатиметься автоматично визначити мову відображення для кожного "
-"відвідувача ґрунтуючись на налаштуваннях веб-оглядача, якщо це ввімкнено."
-
-msgid "Default language"
-msgstr "Типова мова"
-
-msgid "Check Browser Preference"
-msgstr "Перевіряти Налаштування Веб Оглядача"
-
-#, c-format
-msgid ""
-"Your webserver does not support localization.  Please instruct your system administrator to "
-"reconfigure PHP with the %s option enabled."
-msgstr ""
-"Ваш веб-сервер не підтримує локалізацію. Будь-ласка, проконсультуйтесь з Вашим системним "
-"адміністратором щодо конфігурації PHP з ввімкненою опцією %s."
 
 msgid "Date Formats"
 msgstr "Формат Дати"
@@ -1804,6 +1783,142 @@ msgid_plural "%d groups match your filter"
 msgstr[0] "%d група підпадає під заданий Вами фільтр"
 msgstr[1] "%d груп підпадає під заданий Вами фільтр"
 
+msgid "Please make sure that your internet connection is set up properly or try again later."
+msgstr ""
+"Будь-ласка, переконайтесь що з'єднання з мережею Інтернет налаштовано правильно або "
+"спробуйте пізніше."
+
+#, c-format
+msgid "Failed to scan status from plugin: %s."
+msgstr ""
+
+msgid ""
+"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
+"list again."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Failed to delete the locale directory for %s."
+msgstr "Неможливо видалити теку: %s"
+
+#, c-format
+msgid "Failed to download the following language packages for the %s plugin:"
+msgstr ""
+
+#, c-format
+msgid ""
+"Failed to install language packages for %s plugin because the following files/directories "
+"could not be modified:"
+msgstr ""
+
+#, fuzzy
+msgid "The repository index has been successfully refreshed."
+msgstr "Індекси сховища успішно оновлено."
+
+#, fuzzy
+msgid "The language settings have been saved."
+msgstr "Жодного пакету не вибрано"
+
+#, c-format
+msgid "%d language pack upgraded or downloaded."
+msgid_plural "%d language packs upgraded or downloaded."
+msgstr[0] ""
+msgstr[1] ""
+
+#, c-format
+msgid "%d language pack deleted."
+msgid_plural "%d language packs deleted."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "All the language packages for the selected languages are current"
+msgstr ""
+
+msgid ""
+"Select language defaults for Gallery. Individual users can override this setting in their "
+"personal preferences or via the language selector block if available. Gallery will try to "
+"automatically detect the language preference of each user if the browser preference check is "
+"enabled."
+msgstr ""
+"Оберіть типову мову для Галереї. Користувачі можуть змінювати це налаштування, особисто для "
+"себе, в персональних налаштуваннях або за допомогою випадаючого списку мов, якщо його "
+"дозволено. Галерея намагатиметься автоматично визначити мову відображення для кожного "
+"відвідувача ґрунтуючись на налаштуваннях веб-оглядача, якщо це ввімкнено."
+
+msgid "Default language"
+msgstr "Типова мова"
+
+msgid "Check Browser Preference"
+msgstr "Перевіряти Налаштування Веб Оглядача"
+
+#, c-format
+msgid ""
+"Your webserver does not support localization.  Please instruct your system administrator to "
+"reconfigure PHP with the %s option enabled."
+msgstr ""
+"Ваш веб-сервер не підтримує локалізацію. Будь-ласка, проконсультуйтесь з Вашим системним "
+"адміністратором щодо конфігурації PHP з ввімкненою опцією %s."
+
+msgid "Configure your Gallery"
+msgstr ""
+
+msgid ""
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
+msgstr ""
+
+msgid ""
+"Before you can proceed, please insure the following directories and sub-directories are "
+"writable, so that Gallery can install plugins for you:"
+msgstr ""
+
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Check Again button to proceed."
+msgstr ""
+
+#, fuzzy
+msgid "Check Again"
+msgstr "Відмітити усі"
+
+#, fuzzy
+msgid "Add or Remove Languages"
+msgstr "Додати/Видалити Користувачів"
+
+msgid ""
+"Please click on the link below to go to 'Download Plugin List' and choose 'Update Plugin "
+"List' to get the latest language package information."
+msgstr ""
+
+#, fuzzy
+msgid "Administer Repositories"
+msgstr "Сховище"
+
+#, fuzzy
+msgid "Upgrade"
+msgstr "оновити"
+
+msgid "Remove"
+msgstr "Видалити"
+
+#, fuzzy
+msgid "Download"
+msgstr "завантаження"
+
+#, fuzzy
+msgid "No Change"
+msgstr "Змінити"
+
+#, fuzzy
+msgid "Select All"
+msgstr "Вибрані"
+
+msgid ""
+"There are no local repository indices from which to determine language packages. Please "
+"click on the link below to go to \"Download Plugin List\" and choose \"Update Plugin List\" "
+"to get the latest language package information."
+msgstr ""
+
 msgid "System Maintenance"
 msgstr "Обслуговування Системи"
 
@@ -2140,20 +2255,6 @@ msgstr "Несумісний Додаток"
 msgid "Repository"
 msgstr "Сховище"
 
-msgid "Please make sure that your internet connection is set up properly or try again later."
-msgstr ""
-"Будь-ласка, переконайтесь що з'єднання з мережею Інтернет налаштовано правильно або "
-"спробуйте пізніше."
-
-#, c-format
-msgid "Failed to scan status from plugin: %s."
-msgstr ""
-
-msgid ""
-"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
-"list again."
-msgstr ""
-
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
 msgstr ""
@@ -2179,12 +2280,6 @@ msgstr "Додаток вже найновіший."
 #, c-format
 msgid "%s plugin updated."
 msgstr ""
-
-#, c-format
-msgid "%d language pack deleted."
-msgid_plural "%d language packs deleted."
-msgstr[0] ""
-msgstr[1] ""
 
 msgid ""
 "No personal information about you or your Gallery installation is sent to the Gallery server "
@@ -2225,19 +2320,6 @@ msgid "You must select at least one repository."
 msgstr "Ви повинні вибрати користувача для видалення."
 
 msgid "Ok"
-msgstr ""
-
-msgid "Configure your Gallery"
-msgstr ""
-
-msgid ""
-"Before you can proceed, you have to change some permissions so that Gallery can install "
-"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
-msgstr ""
-
-msgid ""
-"Before you can proceed, please insure the following directories and sub-directories are "
-"writable, so that Gallery can install plugins for you:"
 msgstr ""
 
 msgid ""
@@ -2347,8 +2429,7 @@ msgstr "Жодного пакету не вибрано"
 
 msgid ""
 "Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
-"of the package to download.  Language packages are optional, You only need to download the "
-"ones that you want to use on your site."
+"of the package to download."
 msgstr ""
 
 #, fuzzy
@@ -2367,12 +2448,7 @@ msgstr ""
 msgid "%sCurrently Installed%s: version %s (build %s)"
 msgstr ""
 
-#, fuzzy
-msgid "Language Packages"
-msgstr "Налаштування Мови"
-
-#, c-format
-msgid "(%sselect all%s%sselect none%s)"
+msgid "The following language packages are available for this plugin"
 msgstr ""
 
 #, c-format
@@ -2392,9 +2468,6 @@ msgid "%s version %s (currently installed)"
 msgstr ""
 
 msgid "No compatible language packages available"
-msgstr ""
-
-msgid "You must select a base package before choosing language packs."
 msgstr ""
 
 msgid "Update"
@@ -2479,9 +2552,6 @@ msgstr "Виберіть блок"
 
 msgid "Selected"
 msgstr "Вибрані"
-
-msgid "Remove"
-msgstr "Видалити"
 
 msgid "Move Up"
 msgstr "Догори"
@@ -3935,6 +4005,10 @@ msgstr "Блок входу в систему"
 
 msgid "Links to album/photo peers"
 msgstr "Посилання на інші елементи альбому/фото"
+
+#, fuzzy
+#~ msgid "Language Packages"
+#~ msgstr "Налаштування Мови"
 
 #~ msgid "Back to %s"
 #~ msgstr "Назад в %s"

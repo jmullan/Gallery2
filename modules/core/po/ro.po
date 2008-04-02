@@ -20,7 +20,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.28\n"
+"Project-Id-Version: Gallery: Core 1.2.31\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-08-25 16:49+0200\n"
 "PO-Revision-Date: 2006-03-16 16:27+0100\n"
@@ -95,6 +95,23 @@ msgstr "Login"
 #, c-format
 msgid "Page %d of %d"
 msgstr "Pagina %d din %d"
+
+#, fuzzy
+msgid "Updating Language Settings"
+msgstr "Configurari de limba"
+
+msgid "Update completed with errors."
+msgstr "Actualizarea s-a facut cu erori."
+
+msgid "Update complete."
+msgstr "Actualizare completa"
+
+msgid "Deleting Language Packs"
+msgstr "Sterg module de limba"
+
+#, fuzzy
+msgid "Synchronizing Language Packs"
+msgstr "Sterg module de limba"
 
 msgid "No acceleration"
 msgstr "Fara accelerare"
@@ -553,6 +570,9 @@ msgstr "Performanta"
 msgid "Event Logs"
 msgstr ""
 
+msgid "Language Settings"
+msgstr "Configurari de limba"
+
 msgid "Toolkit Priority"
 msgstr "Prioritate instrumente"
 
@@ -571,19 +591,6 @@ msgstr "Actualizeaza modulele"
 #, c-format
 msgid "Activating %s"
 msgstr "Activez %s"
-
-msgid "Deleting Language Packs"
-msgstr "Sterg module de limba"
-
-msgid "Update completed with errors."
-msgstr "Actualizarea s-a facut cu erori."
-
-msgid "Update complete."
-msgstr "Actualizare completa"
-
-#, fuzzy
-msgid "Synchronizing Language Packs"
-msgstr "Sterg module de limba"
 
 msgid "Updating Repository Index"
 msgstr "Actualizeaza Index"
@@ -787,6 +794,14 @@ msgstr ""
 "Nu pot crea sub-folderul pentru cache. Verifica daca serverul web are drepturi de scriere "
 "acolo"
 
+#, c-format
+msgid "Preparing %s"
+msgstr "Prepara %s"
+
+#, c-format
+msgid "Downloading %s"
+msgstr "Descarca %s"
+
 msgid "Official Release Repository"
 msgstr "Repository-ul oficial"
 
@@ -806,14 +821,6 @@ msgstr "Eroare la descarcarea index-ului hash de la '%s'."
 
 msgid "Index integrity check failed."
 msgstr "Verificarea integritatii index-ului a fost nereusita."
-
-#, c-format
-msgid "Preparing %s"
-msgstr "Prepara %s"
-
-#, c-format
-msgid "Downloading %s"
-msgstr "Descarca %s"
 
 msgid "&laquo; default sort order &raquo;"
 msgstr "&laquo; ordinea de sortare default &raquo;"
@@ -1170,33 +1177,6 @@ msgstr "Este o problema la procesarea cererii, vezi mai jos pentru detalii."
 
 msgid "Error sending test email, see below for details."
 msgstr "Eroare la trimiterea e-mail-ului de teste, vezi mai jos pentru detalii"
-
-msgid "Language Settings"
-msgstr "Configurari de limba"
-
-msgid ""
-"Select language defaults for Gallery. Individual users can override this setting in their "
-"personal preferences or via the language selector block if available. Gallery will try to "
-"automatically detect the language preference of each user if the browser preference check is "
-"enabled."
-msgstr ""
-"Selectati limba predefinita pentru Gallery. Fiecare utilizator poate schimba aceasta in "
-"pagina de preferinte personale sau in modulul de selectie limba. Gallery va incerca sa "
-"detecteze limba preferata a fiecarui utilizator daca browser-ul are activata aceasta optiune"
-
-msgid "Default language"
-msgstr "Limba predefinita"
-
-msgid "Check Browser Preference"
-msgstr "Verifica setarile din browser"
-
-#, c-format
-msgid ""
-"Your webserver does not support localization.  Please instruct your system administrator to "
-"reconfigure PHP with the %s option enabled."
-msgstr ""
-"Webserver-ul tau nu suporta localizare. Administratorul tau trebuie sa iti reconfigureze PHP "
-"cu optiunea %s activata."
 
 msgid "Date Formats"
 msgstr "Formatul datei"
@@ -1769,6 +1749,148 @@ msgid_plural "%d groups match your filter"
 msgstr[0] "%d grup se potriveste filtrului"
 msgstr[1] "%d grupuri se potrivesc filtrului"
 
+msgid "Please make sure that your internet connection is set up properly or try again later."
+msgstr "Verifica daca conexiunea la Internet este in regula si mai incearca o data"
+
+#, c-format
+msgid "Failed to scan status from plugin: %s."
+msgstr "Am esuat in identificarea starii modulului: %s."
+
+msgid ""
+"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
+"list again."
+msgstr ""
+"Copia locala a repository-ului era stricata si a fost reparata. Descarca lista modulelor  "
+"inca o data."
+
+#, fuzzy, c-format
+msgid "Failed to delete the locale directory for %s."
+msgstr "Nu pot sterge folderul: %s"
+
+#, c-format
+msgid "Failed to download the following language packages for the %s plugin:"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"Failed to install language packages for %s plugin because the following files/directories "
+"could not be modified:"
+msgstr ""
+"Am esuat sa descarc modulul %s pentru ca urmatoarele fisiere/foldere nu pot fi modificate:"
+
+#, fuzzy
+msgid "The repository index has been successfully refreshed."
+msgstr "Index-ul repository a fost actualizat."
+
+#, fuzzy
+msgid "The language settings have been saved."
+msgstr "Nici un pachet nu a fost selectat."
+
+#, fuzzy, c-format
+msgid "%d language pack upgraded or downloaded."
+msgid_plural "%d language packs upgraded or downloaded."
+msgstr[0] "%d modul de limba sters."
+msgstr[1] "%d module de limba sterse."
+
+#, c-format
+msgid "%d language pack deleted."
+msgid_plural "%d language packs deleted."
+msgstr[0] "%d modul de limba sters."
+msgstr[1] "%d module de limba sterse."
+
+msgid "All the language packages for the selected languages are current"
+msgstr ""
+
+msgid ""
+"Select language defaults for Gallery. Individual users can override this setting in their "
+"personal preferences or via the language selector block if available. Gallery will try to "
+"automatically detect the language preference of each user if the browser preference check is "
+"enabled."
+msgstr ""
+"Selectati limba predefinita pentru Gallery. Fiecare utilizator poate schimba aceasta in "
+"pagina de preferinte personale sau in modulul de selectie limba. Gallery va incerca sa "
+"detecteze limba preferata a fiecarui utilizator daca browser-ul are activata aceasta optiune"
+
+msgid "Default language"
+msgstr "Limba predefinita"
+
+msgid "Check Browser Preference"
+msgstr "Verifica setarile din browser"
+
+#, c-format
+msgid ""
+"Your webserver does not support localization.  Please instruct your system administrator to "
+"reconfigure PHP with the %s option enabled."
+msgstr ""
+"Webserver-ul tau nu suporta localizare. Administratorul tau trebuie sa iti reconfigureze PHP "
+"cu optiunea %s activata."
+
+msgid "Configure your Gallery"
+msgstr "Configureaza Gallery"
+
+msgid ""
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
+msgstr ""
+"Inainte sa mergi mai departe, trebuie sa modifici niste permisiuni pentru ca Gallery sa "
+"poata instala modulele pentru tine. Lanseaza urmatoarea comanda in shell sau prin clientul "
+"ftp:"
+
+msgid ""
+"Before you can proceed, please insure the following directories and sub-directories are "
+"writable, so that Gallery can install plugins for you:"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Check Again button to proceed."
+msgstr ""
+"Daca ai probleme cu schimbarea permisiunilor, intreaba administratorul de system pentru "
+"asistenta. Cind ai rezolvat problema cu permisiunile, apasa pe butonul Continua."
+
+#, fuzzy
+msgid "Check Again"
+msgstr "Selecteaza tot"
+
+#, fuzzy
+msgid "Add or Remove Languages"
+msgstr "Adauga/Sterge utilizatori"
+
+msgid ""
+"Please click on the link below to go to 'Download Plugin List' and choose 'Update Plugin "
+"List' to get the latest language package information."
+msgstr ""
+
+#, fuzzy
+msgid "Administer Repositories"
+msgstr "Repository-ul comunitatii"
+
+#, fuzzy
+msgid "Upgrade"
+msgstr "actualizeaza"
+
+msgid "Remove"
+msgstr "Sterge"
+
+#, fuzzy
+msgid "Download"
+msgstr "descarca"
+
+#, fuzzy
+msgid "No Change"
+msgstr "Modifica"
+
+#, fuzzy
+msgid "Select All"
+msgstr "Selectat"
+
+msgid ""
+"There are no local repository indices from which to determine language packages. Please "
+"click on the link below to go to \"Download Plugin List\" and choose \"Update Plugin List\" "
+"to get the latest language package information."
+msgstr ""
+
 msgid "System Maintenance"
 msgstr "Mentenanta sistem"
 
@@ -2086,20 +2208,6 @@ msgstr "incompatibil"
 msgid "Repository"
 msgstr "Repository"
 
-msgid "Please make sure that your internet connection is set up properly or try again later."
-msgstr "Verifica daca conexiunea la Internet este in regula si mai incearca o data"
-
-#, c-format
-msgid "Failed to scan status from plugin: %s."
-msgstr "Am esuat in identificarea starii modulului: %s."
-
-msgid ""
-"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
-"list again."
-msgstr ""
-"Copia locala a repository-ului era stricata si a fost reparata. Descarca lista modulelor  "
-"inca o data."
-
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
 msgstr ""
@@ -2126,12 +2234,6 @@ msgstr "Toate modulele sunt actualizate la zi."
 #, c-format
 msgid "%s plugin updated."
 msgstr "modulul %s actualizat."
-
-#, c-format
-msgid "%d language pack deleted."
-msgid_plural "%d language packs deleted."
-msgstr[0] "%d modul de limba sters."
-msgstr[1] "%d module de limba sterse."
 
 msgid ""
 "No personal information about you or your Gallery installation is sent to the Gallery server "
@@ -2178,22 +2280,6 @@ msgstr "Trebuie sa selectezi cel putin un repository."
 
 msgid "Ok"
 msgstr "Ok"
-
-msgid "Configure your Gallery"
-msgstr "Configureaza Gallery"
-
-msgid ""
-"Before you can proceed, you have to change some permissions so that Gallery can install "
-"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
-msgstr ""
-"Inainte sa mergi mai departe, trebuie sa modifici niste permisiuni pentru ca Gallery sa "
-"poata instala modulele pentru tine. Lanseaza urmatoarea comanda in shell sau prin clientul "
-"ftp:"
-
-msgid ""
-"Before you can proceed, please insure the following directories and sub-directories are "
-"writable, so that Gallery can install plugins for you:"
-msgstr ""
 
 msgid ""
 "If you have trouble changing permissions, ask your system administrator for assistance.  "
@@ -2298,8 +2384,7 @@ msgstr "Nici un pachet nu a fost selectat."
 
 msgid ""
 "Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
-"of the package to download.  Language packages are optional, You only need to download the "
-"ones that you want to use on your site."
+"of the package to download."
 msgstr ""
 
 msgid "Base Packages"
@@ -2317,12 +2402,9 @@ msgstr "%s: version %s (build %s) %sdowngrading is not supported!%s"
 msgid "%sCurrently Installed%s: version %s (build %s)"
 msgstr "%sInstalat acum%s: version %s (build %s)"
 
-msgid "Language Packages"
-msgstr "Module de limba"
-
-#, c-format
-msgid "(%sselect all%s%sselect none%s)"
-msgstr "(%sselecteaza tot%s%sdeselecteaza tot%s)"
+#, fuzzy
+msgid "The following language packages are available for this plugin"
+msgstr "Nici un modul de limba compatibil disponibil"
 
 #, c-format
 msgid "%s version %s (upgrading from %s)"
@@ -2342,9 +2424,6 @@ msgstr "%s version %s (instalata)"
 
 msgid "No compatible language packages available"
 msgstr "Nici un modul de limba compatibil disponibil"
-
-msgid "You must select a base package before choosing language packs."
-msgstr "Trebuie sa selectezi un modul de baza inainte sa selectezi un pachet de limba."
 
 msgid "Update"
 msgstr "Actualizeaza"
@@ -2427,9 +2506,6 @@ msgstr "Selecteaza un bloc"
 
 msgid "Selected"
 msgstr "Selectat"
-
-msgid "Remove"
-msgstr "Sterge"
 
 msgid "Move Up"
 msgstr "Muta in sus"
@@ -3877,6 +3953,15 @@ msgstr "Bloc login"
 
 msgid "Links to album/photo peers"
 msgstr "Link-uri catre albume/corespondenti"
+
+#~ msgid "Language Packages"
+#~ msgstr "Module de limba"
+
+#~ msgid "(%sselect all%s%sselect none%s)"
+#~ msgstr "(%sselecteaza tot%s%sdeselecteaza tot%s)"
+
+#~ msgid "You must select a base package before choosing language packs."
+#~ msgstr "Trebuie sa selectezi un modul de baza inainte sa selectezi un pachet de limba."
 
 #~ msgid "Back to %s"
 #~ msgstr "Inapoi la %s"

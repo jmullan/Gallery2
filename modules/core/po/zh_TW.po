@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.28\n"
+"Project-Id-Version: Gallery: Core 1.2.31\n"
 "POT-Creation-Date: 2005-07-27 23:11-0400\n"
 "PO-Revision-Date: 2005-08-24 14:00-0400\n"
 "Last-Translator: Stephen Chu <stephen@ju-ju.com>\n"
@@ -86,6 +86,23 @@ msgstr "登入"
 #, c-format
 msgid "Page %d of %d"
 msgstr "第 %2$d 之 %1$d 頁"
+
+#, fuzzy
+msgid "Updating Language Settings"
+msgstr "語言設定"
+
+msgid "Update completed with errors."
+msgstr "更新完畢但有錯誤。"
+
+msgid "Update complete."
+msgstr "更新完畢。"
+
+msgid "Deleting Language Packs"
+msgstr "正在刪除語文包"
+
+#, fuzzy
+msgid "Synchronizing Language Packs"
+msgstr "正在刪除語文包"
 
 msgid "No acceleration"
 msgstr "無加速"
@@ -543,6 +560,9 @@ msgstr "效能"
 msgid "Event Logs"
 msgstr ""
 
+msgid "Language Settings"
+msgstr "語言設定"
+
 msgid "Toolkit Priority"
 msgstr "工具優先次序"
 
@@ -561,19 +581,6 @@ msgstr "正在更新軟體包"
 #, c-format
 msgid "Activating %s"
 msgstr "正在啟用 %s"
-
-msgid "Deleting Language Packs"
-msgstr "正在刪除語文包"
-
-msgid "Update completed with errors."
-msgstr "更新完畢但有錯誤。"
-
-msgid "Update complete."
-msgstr "更新完畢。"
-
-#, fuzzy
-msgid "Synchronizing Language Packs"
-msgstr "正在刪除語文包"
 
 msgid "Updating Repository Index"
 msgstr "更新軟體庫索引"
@@ -775,6 +782,14 @@ msgid ""
 "Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr "無法產生快取子目錄。請確定網頁伺服器有寫入的權限。"
 
+#, c-format
+msgid "Preparing %s"
+msgstr "準備%s中..."
+
+#, c-format
+msgid "Downloading %s"
+msgstr "正在下載 %s"
+
 msgid "Official Release Repository"
 msgstr "正式版本軟體庫"
 
@@ -794,14 +809,6 @@ msgstr "從「%s」下載索引雜湊表時發生錯誤。"
 
 msgid "Index integrity check failed."
 msgstr "索引完整性驗証失敗。"
-
-#, c-format
-msgid "Preparing %s"
-msgstr "準備%s中..."
-
-#, c-format
-msgid "Downloading %s"
-msgstr "正在下載 %s"
 
 msgid "&laquo; default sort order &raquo;"
 msgstr "&laquo; 預設排序 &raquo;"
@@ -1151,30 +1158,6 @@ msgstr "處理你的請求時出現問題，詳情如下。"
 
 msgid "Error sending test email, see below for details."
 msgstr "發送測試電子郵件時發生錯誤，詳情如下。"
-
-msgid "Language Settings"
-msgstr "語言設定"
-
-msgid ""
-"Select language defaults for Gallery. Individual users can override this setting in their "
-"personal preferences or via the language selector block if available. Gallery will try to "
-"automatically detect the language preference of each user if the browser preference check is "
-"enabled."
-msgstr ""
-"選擇 Gallery 的預設語言。個別用戶可以在他們的個人偏好設定或語言選單區塊中改變這個設定。如果檢"
-"查瀏覽程式偏好的選項是打開的，Gallery 會試著自動偵測個別用戶的語言偏好。"
-
-msgid "Default language"
-msgstr "預設語言"
-
-msgid "Check Browser Preference"
-msgstr "檢查瀏覽程式偏好"
-
-#, c-format
-msgid ""
-"Your webserver does not support localization.  Please instruct your system administrator to "
-"reconfigure PHP with the %s option enabled."
-msgstr "你的網頁伺服器不支援本土化。請聯絡你的系統管理員重新設定 PHP 以啟動 %s 選項。"
 
 msgid "Date Formats"
 msgstr "日期格式"
@@ -1720,6 +1703,138 @@ msgid "%d group matches your filter"
 msgid_plural "%d groups match your filter"
 msgstr[0] "%d 個成員組符合你的過濾設定"
 
+msgid "Please make sure that your internet connection is set up properly or try again later."
+msgstr "請確定你的網路連線的設定是正確的或稍後再試。"
+
+#, c-format
+msgid "Failed to scan status from plugin: %s."
+msgstr "無法掃描外掛組件%s的狀況。"
+
+msgid ""
+"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
+"list again."
+msgstr "你在本機的軟體庫拷貝損壞了但已經修復。請再下載一次外掛組件清單。"
+
+#, fuzzy, c-format
+msgid "Failed to delete the locale directory for %s."
+msgstr "無法刪除目錄：%s"
+
+#, c-format
+msgid "Failed to download the following language packages for the %s plugin:"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"Failed to install language packages for %s plugin because the following files/directories "
+"could not be modified:"
+msgstr "下載%s外掛組件失敗了。因為無法修改下列的檔案或目錄："
+
+#, fuzzy
+msgid "The repository index has been successfully refreshed."
+msgstr "成功更新軟體庫索引。"
+
+#, fuzzy
+msgid "The language settings have been saved."
+msgstr "沒有選取任何軟體包。"
+
+#, fuzzy, c-format
+msgid "%d language pack upgraded or downloaded."
+msgid_plural "%d language packs upgraded or downloaded."
+msgstr[0] "刪除了%d個語文包。"
+
+#, c-format
+msgid "%d language pack deleted."
+msgid_plural "%d language packs deleted."
+msgstr[0] "刪除了%d個語文包。"
+
+msgid "All the language packages for the selected languages are current"
+msgstr ""
+
+msgid ""
+"Select language defaults for Gallery. Individual users can override this setting in their "
+"personal preferences or via the language selector block if available. Gallery will try to "
+"automatically detect the language preference of each user if the browser preference check is "
+"enabled."
+msgstr ""
+"選擇 Gallery 的預設語言。個別用戶可以在他們的個人偏好設定或語言選單區塊中改變這個設定。如果檢"
+"查瀏覽程式偏好的選項是打開的，Gallery 會試著自動偵測個別用戶的語言偏好。"
+
+msgid "Default language"
+msgstr "預設語言"
+
+msgid "Check Browser Preference"
+msgstr "檢查瀏覽程式偏好"
+
+#, c-format
+msgid ""
+"Your webserver does not support localization.  Please instruct your system administrator to "
+"reconfigure PHP with the %s option enabled."
+msgstr "你的網頁伺服器不支援本土化。請聯絡你的系統管理員重新設定 PHP 以啟動 %s 選項。"
+
+msgid "Configure your Gallery"
+msgstr "設定你的 Gallery"
+
+msgid ""
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
+msgstr ""
+"在繼續之前，你必需更改一些存取權限，Gallery 才能為你安裝外掛組件。這個動作很簡單。只要透過指"
+"令列或你的 FTP 軟體執行下列的指令："
+
+msgid ""
+"Before you can proceed, please insure the following directories and sub-directories are "
+"writable, so that Gallery can install plugins for you:"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Check Again button to proceed."
+msgstr ""
+"如果你無法變更存取權限，請要求𡌅的系統管理員幫忙。當你修改好了存取權限後，請按「繼續」。"
+
+#, fuzzy
+msgid "Check Again"
+msgstr "選擇全部"
+
+#, fuzzy
+msgid "Add or Remove Languages"
+msgstr "增加／刪除用戶"
+
+msgid ""
+"Please click on the link below to go to 'Download Plugin List' and choose 'Update Plugin "
+"List' to get the latest language package information."
+msgstr ""
+
+#, fuzzy
+msgid "Administer Repositories"
+msgstr "社區共享軟體庫"
+
+#, fuzzy
+msgid "Upgrade"
+msgstr "升級"
+
+msgid "Remove"
+msgstr "刪除"
+
+#, fuzzy
+msgid "Download"
+msgstr "下載"
+
+#, fuzzy
+msgid "No Change"
+msgstr "變更"
+
+#, fuzzy
+msgid "Select All"
+msgstr "選擇"
+
+msgid ""
+"There are no local repository indices from which to determine language packages. Please "
+"click on the link below to go to \"Download Plugin List\" and choose \"Update Plugin List\" "
+"to get the latest language package information."
+msgstr ""
+
 msgid "System Maintenance"
 msgstr "系統維護"
 
@@ -2029,18 +2144,6 @@ msgstr "不相容"
 msgid "Repository"
 msgstr "軟體庫"
 
-msgid "Please make sure that your internet connection is set up properly or try again later."
-msgstr "請確定你的網路連線的設定是正確的或稍後再試。"
-
-#, c-format
-msgid "Failed to scan status from plugin: %s."
-msgstr "無法掃描外掛組件%s的狀況。"
-
-msgid ""
-"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
-"list again."
-msgstr "你在本機的軟體庫拷貝損壞了但已經修復。請再下載一次外掛組件清單。"
-
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
 msgstr ""
@@ -2066,11 +2169,6 @@ msgstr "所有外掛組件都已經是最新版。"
 #, c-format
 msgid "%s plugin updated."
 msgstr "%s外掛組件已更新。"
-
-#, c-format
-msgid "%d language pack deleted."
-msgid_plural "%d language packs deleted."
-msgstr[0] "刪除了%d個語文包。"
 
 msgid ""
 "No personal information about you or your Gallery installation is sent to the Gallery server "
@@ -2113,21 +2211,6 @@ msgstr "你必須至少選擇一個軟體庫。"
 
 msgid "Ok"
 msgstr "OK"
-
-msgid "Configure your Gallery"
-msgstr "設定你的 Gallery"
-
-msgid ""
-"Before you can proceed, you have to change some permissions so that Gallery can install "
-"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
-msgstr ""
-"在繼續之前，你必需更改一些存取權限，Gallery 才能為你安裝外掛組件。這個動作很簡單。只要透過指"
-"令列或你的 FTP 軟體執行下列的指令："
-
-msgid ""
-"Before you can proceed, please insure the following directories and sub-directories are "
-"writable, so that Gallery can install plugins for you:"
-msgstr ""
 
 msgid ""
 "If you have trouble changing permissions, ask your system administrator for assistance.  "
@@ -2224,10 +2307,10 @@ msgstr "下載 %s"
 msgid "No packages have been selected."
 msgstr "沒有選取任何軟體包。"
 
+#, fuzzy
 msgid ""
 "Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
-"of the package to download.  Language packages are optional, You only need to download the "
-"ones that you want to use on your site."
+"of the package to download."
 msgstr ""
 "下載一個軟體包以使用這個外掛組件。你可以透過下載那個軟體包的新版本來升級。語文包是可選用的，"
 "你只要下載你的網站要用的語文就可以了。"
@@ -2247,12 +2330,9 @@ msgstr "%s：版本 %s（建立版號 %s）%s不支援降級！%s"
 msgid "%sCurrently Installed%s: version %s (build %s)"
 msgstr "%s目前安裝%s：版本 %s（建立版號 %s）"
 
-msgid "Language Packages"
-msgstr "語文包"
-
-#, c-format
-msgid "(%sselect all%s%sselect none%s)"
-msgstr "（%s全選%s%s全不選%s）"
+#, fuzzy
+msgid "The following language packages are available for this plugin"
+msgstr "沒有相容的語文包"
 
 #, c-format
 msgid "%s version %s (upgrading from %s)"
@@ -2272,9 +2352,6 @@ msgstr "%s 版本 %s（目前安裝版本）"
 
 msgid "No compatible language packages available"
 msgstr "沒有相容的語文包"
-
-msgid "You must select a base package before choosing language packs."
-msgstr "你必需先選一個基礎軟體包才能選擇語文包。"
 
 msgid "Update"
 msgstr "更新"
@@ -2354,9 +2431,6 @@ msgstr "選擇一個區塊"
 
 msgid "Selected"
 msgstr "選擇"
-
-msgid "Remove"
-msgstr "刪除"
 
 msgid "Move Up"
 msgstr "向上"
@@ -3717,6 +3791,15 @@ msgstr "登入區塊"
 
 msgid "Links to album/photo peers"
 msgstr "連到同級相簿或照片"
+
+#~ msgid "Language Packages"
+#~ msgstr "語文包"
+
+#~ msgid "(%sselect all%s%sselect none%s)"
+#~ msgstr "（%s全選%s%s全不選%s）"
+
+#~ msgid "You must select a base package before choosing language packs."
+#~ msgstr "你必需先選一個基礎軟體包才能選擇語文包。"
 
 #~ msgid "Back to %s"
 #~ msgstr "返回%s"

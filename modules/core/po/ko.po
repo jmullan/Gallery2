@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.28\n"
+"Project-Id-Version: Gallery: Core 1.2.31\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-04-03 16:03+0900\n"
 "PO-Revision-Date: 2007-03-14 14:48+0100\n"
@@ -90,6 +90,26 @@ msgstr "로그인"
 #, c-format
 msgid "Page %d of %d"
 msgstr "%d 페이지( 총 %d 페이지중)"
+
+#, fuzzy
+msgid "Updating Language Settings"
+msgstr "언어 설정"
+
+#, fuzzy
+msgid "Update completed with errors."
+msgstr "파일이 추가 되었습니다."
+
+#, fuzzy
+msgid "Update complete."
+msgstr "파일이 추가 되었습니다."
+
+#, fuzzy
+msgid "Deleting Language Packs"
+msgstr "기본 언어"
+
+#, fuzzy
+msgid "Synchronizing Language Packs"
+msgstr "기본 언어"
 
 msgid "No acceleration"
 msgstr ""
@@ -554,6 +574,9 @@ msgstr "성능"
 msgid "Event Logs"
 msgstr ""
 
+msgid "Language Settings"
+msgstr "언어 설정"
+
 msgid "Toolkit Priority"
 msgstr ""
 
@@ -572,22 +595,6 @@ msgstr ""
 #, c-format
 msgid "Activating %s"
 msgstr ""
-
-#, fuzzy
-msgid "Deleting Language Packs"
-msgstr "기본 언어"
-
-#, fuzzy
-msgid "Update completed with errors."
-msgstr "파일이 추가 되었습니다."
-
-#, fuzzy
-msgid "Update complete."
-msgstr "파일이 추가 되었습니다."
-
-#, fuzzy
-msgid "Synchronizing Language Packs"
-msgstr "기본 언어"
 
 #, fuzzy
 msgid "Updating Repository Index"
@@ -786,6 +793,14 @@ msgid ""
 "Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr ""
 
+#, fuzzy, c-format
+msgid "Preparing %s"
+msgstr "실행중...."
+
+#, c-format
+msgid "Downloading %s"
+msgstr "%s 내려받기"
+
 msgid "Official Release Repository"
 msgstr ""
 
@@ -807,14 +822,6 @@ msgstr "'%s' 불필요한 인덱스를 내려 받는중 오류발생했습니다
 
 msgid "Index integrity check failed."
 msgstr "인덱스 보전성 확인 검사 실패"
-
-#, fuzzy, c-format
-msgid "Preparing %s"
-msgstr "실행중...."
-
-#, c-format
-msgid "Downloading %s"
-msgstr "%s 내려받기"
 
 msgid "&laquo; default sort order &raquo;"
 msgstr "&laquo; 기본 정열  &raquo;"
@@ -1170,34 +1177,6 @@ msgstr "당신의 요청을 처리하는 중 문제가 발생했습니다. 아�
 
 msgid "Error sending test email, see below for details."
 msgstr "시험 전자 편지 발송에 오류가 발생하였습니다. 아래에서 자세한 내용을 확인하십시요."
-
-msgid "Language Settings"
-msgstr "언어 설정"
-
-msgid ""
-"Select language defaults for Gallery. Individual users can override this setting in their "
-"personal preferences or via the language selector block if available. Gallery will try to "
-"automatically detect the language preference of each user if the browser preference check is "
-"enabled."
-msgstr ""
-"기본으로 사용할 언어를 선택하십시오. 여기서 선택한 언어는 Gallery에서 기본으로 사용될 언어입"
-"니다. 언어 선택기가 사용이 가능하도록 한다면, 방문자는 개인적으로 이 언어 선택기를 사용할 수 "
-"있습니다. 또한, Gallery에서는 각 브라우저의 언어 환경을 알아낼 수 있다면, 각 방문자에게 맞는 "
-"언어를 자동으로 보여 줄 수 있습니다."
-
-msgid "Default language"
-msgstr "기본 언어"
-
-msgid "Check Browser Preference"
-msgstr "브라우저 환경 설정 검사"
-
-#, c-format
-msgid ""
-"Your webserver does not support localization.  Please instruct your system administrator to "
-"reconfigure PHP with the %s option enabled."
-msgstr ""
-"당신의 웹 서버는 지역화를 지원하지 않습니다. 시스템 관리자에게 %s 옵션이 가능하도록 PHP를 설"
-"정해 줄 것을 요청하십시오."
 
 msgid "Date Formats"
 msgstr "날짜 형식"
@@ -1739,6 +1718,137 @@ msgid "%d group matches your filter"
 msgid_plural "%d groups match your filter"
 msgstr[0] "%d의 동아리를 찾았습니다."
 
+msgid "Please make sure that your internet connection is set up properly or try again later."
+msgstr ""
+
+#, c-format
+msgid "Failed to scan status from plugin: %s."
+msgstr ""
+
+msgid ""
+"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
+"list again."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Failed to delete the locale directory for %s."
+msgstr "디렉터리를 지울 수 없습니다. : %s"
+
+#, c-format
+msgid "Failed to download the following language packages for the %s plugin:"
+msgstr ""
+
+#, c-format
+msgid ""
+"Failed to install language packages for %s plugin because the following files/directories "
+"could not be modified:"
+msgstr ""
+
+msgid "The repository index has been successfully refreshed."
+msgstr ""
+
+#, fuzzy
+msgid "The language settings have been saved."
+msgstr "선텍된 꾸러미가 없습니다."
+
+#, c-format
+msgid "%d language pack upgraded or downloaded."
+msgid_plural "%d language packs upgraded or downloaded."
+msgstr[0] ""
+
+#, c-format
+msgid "%d language pack deleted."
+msgid_plural "%d language packs deleted."
+msgstr[0] ""
+
+msgid "All the language packages for the selected languages are current"
+msgstr ""
+
+msgid ""
+"Select language defaults for Gallery. Individual users can override this setting in their "
+"personal preferences or via the language selector block if available. Gallery will try to "
+"automatically detect the language preference of each user if the browser preference check is "
+"enabled."
+msgstr ""
+"기본으로 사용할 언어를 선택하십시오. 여기서 선택한 언어는 Gallery에서 기본으로 사용될 언어입"
+"니다. 언어 선택기가 사용이 가능하도록 한다면, 방문자는 개인적으로 이 언어 선택기를 사용할 수 "
+"있습니다. 또한, Gallery에서는 각 브라우저의 언어 환경을 알아낼 수 있다면, 각 방문자에게 맞는 "
+"언어를 자동으로 보여 줄 수 있습니다."
+
+msgid "Default language"
+msgstr "기본 언어"
+
+msgid "Check Browser Preference"
+msgstr "브라우저 환경 설정 검사"
+
+#, c-format
+msgid ""
+"Your webserver does not support localization.  Please instruct your system administrator to "
+"reconfigure PHP with the %s option enabled."
+msgstr ""
+"당신의 웹 서버는 지역화를 지원하지 않습니다. 시스템 관리자에게 %s 옵션이 가능하도록 PHP를 설"
+"정해 줄 것을 요청하십시오."
+
+msgid "Configure your Gallery"
+msgstr ""
+
+msgid ""
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
+msgstr ""
+
+msgid ""
+"Before you can proceed, please insure the following directories and sub-directories are "
+"writable, so that Gallery can install plugins for you:"
+msgstr ""
+
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Check Again button to proceed."
+msgstr ""
+
+#, fuzzy
+msgid "Check Again"
+msgstr "모두 체크"
+
+#, fuzzy
+msgid "Add or Remove Languages"
+msgstr "사용자 추가/제거"
+
+msgid ""
+"Please click on the link below to go to 'Download Plugin List' and choose 'Update Plugin "
+"List' to get the latest language package information."
+msgstr ""
+
+#, fuzzy
+msgid "Administer Repositories"
+msgstr "창고"
+
+#, fuzzy
+msgid "Upgrade"
+msgstr "판올림"
+
+msgid "Remove"
+msgstr "제거"
+
+#, fuzzy
+msgid "Download"
+msgstr "내려받기"
+
+#, fuzzy
+msgid "No Change"
+msgstr "바꿉니다."
+
+#, fuzzy
+msgid "Select All"
+msgstr "선택됨"
+
+msgid ""
+"There are no local repository indices from which to determine language packages. Please "
+"click on the link below to go to \"Download Plugin List\" and choose \"Update Plugin List\" "
+"to get the latest language package information."
+msgstr ""
+
 msgid "System Maintenance"
 msgstr "시스템 유지 관리"
 
@@ -2050,18 +2160,6 @@ msgstr "호한되는 플러그인"
 msgid "Repository"
 msgstr "창고"
 
-msgid "Please make sure that your internet connection is set up properly or try again later."
-msgstr ""
-
-#, c-format
-msgid "Failed to scan status from plugin: %s."
-msgstr ""
-
-msgid ""
-"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
-"list again."
-msgstr ""
-
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
 msgstr ""
@@ -2087,11 +2185,6 @@ msgstr "모든 플러그인은 이미 최근의 것들입니다."
 #, c-format
 msgid "%s plugin updated."
 msgstr ""
-
-#, c-format
-msgid "%d language pack deleted."
-msgid_plural "%d language packs deleted."
-msgstr[0] ""
 
 msgid ""
 "No personal information about you or your Gallery installation is sent to the Gallery server "
@@ -2132,19 +2225,6 @@ msgid "You must select at least one repository."
 msgstr "제거할 사용자를 선택하십시오."
 
 msgid "Ok"
-msgstr ""
-
-msgid "Configure your Gallery"
-msgstr ""
-
-msgid ""
-"Before you can proceed, you have to change some permissions so that Gallery can install "
-"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
-msgstr ""
-
-msgid ""
-"Before you can proceed, please insure the following directories and sub-directories are "
-"writable, so that Gallery can install plugins for you:"
 msgstr ""
 
 msgid ""
@@ -2250,8 +2330,7 @@ msgstr "선텍된 꾸러미가 없습니다."
 
 msgid ""
 "Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
-"of the package to download.  Language packages are optional, You only need to download the "
-"ones that you want to use on your site."
+"of the package to download."
 msgstr ""
 
 #, fuzzy
@@ -2270,12 +2349,7 @@ msgstr ""
 msgid "%sCurrently Installed%s: version %s (build %s)"
 msgstr ""
 
-#, fuzzy
-msgid "Language Packages"
-msgstr "언어 설정"
-
-#, c-format
-msgid "(%sselect all%s%sselect none%s)"
+msgid "The following language packages are available for this plugin"
 msgstr ""
 
 #, c-format
@@ -2295,9 +2369,6 @@ msgid "%s version %s (currently installed)"
 msgstr ""
 
 msgid "No compatible language packages available"
-msgstr ""
-
-msgid "You must select a base package before choosing language packs."
 msgstr ""
 
 msgid "Update"
@@ -2382,9 +2453,6 @@ msgstr "사용할 항목을 선택하세요."
 
 msgid "Selected"
 msgstr "선택됨"
-
-msgid "Remove"
-msgstr "제거"
 
 msgid "Move Up"
 msgstr "위로 이동"
@@ -3759,6 +3827,10 @@ msgstr "로그인 상자"
 
 msgid "Links to album/photo peers"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Language Packages"
+#~ msgstr "언어 설정"
 
 #~ msgid "Back to %s"
 #~ msgstr "%s으(로) 돌아가기"

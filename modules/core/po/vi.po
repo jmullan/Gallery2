@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.28\n"
+"Project-Id-Version: Gallery: Core 1.2.31\n"
 "POT-Creation-Date: 2005-05-04 16:46-0400\n"
 "PO-Revision-Date: 2007-08-22 11:30-0000\n"
 "Last-Translator: Trung Dong Huynh <trungdong@donggiang.com>\n"
@@ -89,6 +89,22 @@ msgstr "Đường dẫn"
 #, c-format
 msgid "Page %d of %d"
 msgstr "Trang %d trên %d"
+
+#, fuzzy
+msgid "Updating Language Settings"
+msgstr "Thông số ngôn ngữ"
+
+msgid "Update completed with errors."
+msgstr "Cập nhật hoàn tất nhưng có lỗi."
+
+msgid "Update complete."
+msgstr "Cập nhật hoàn tất."
+
+msgid "Deleting Language Packs"
+msgstr "Xóa các gói ngôn ngữ"
+
+msgid "Synchronizing Language Packs"
+msgstr "Đồng bộ hóa các gói ngôn ngữ"
 
 msgid "No acceleration"
 msgstr "Không tăng tốc"
@@ -546,6 +562,9 @@ msgstr "Hiệu suất"
 msgid "Event Logs"
 msgstr "Nhật ký sự kiện"
 
+msgid "Language Settings"
+msgstr "Thông số ngôn ngữ"
+
 msgid "Toolkit Priority"
 msgstr "Thứ tự ưu tiên bộ công cụ"
 
@@ -564,18 +583,6 @@ msgstr "Đang cập nhật các gói phần mềm"
 #, c-format
 msgid "Activating %s"
 msgstr "Đang kích hoạt %s"
-
-msgid "Deleting Language Packs"
-msgstr "Xóa các gói ngôn ngữ"
-
-msgid "Update completed with errors."
-msgstr "Cập nhật hoàn tất nhưng có lỗi."
-
-msgid "Update complete."
-msgstr "Cập nhật hoàn tất."
-
-msgid "Synchronizing Language Packs"
-msgstr "Đồng bộ hóa các gói ngôn ngữ"
 
 msgid "Updating Repository Index"
 msgstr "Đang cập nhật chỉ mục kho plugin"
@@ -776,6 +783,14 @@ msgid ""
 msgstr ""
 "Không thể tạo thư mục con cho cache. Hãy bảo đảm máy chủ web có quyền ghi vào thư mục cache."
 
+#, c-format
+msgid "Preparing %s"
+msgstr "Đang chuẩn bị %s"
+
+#, c-format
+msgid "Downloading %s"
+msgstr "Đang tải %s"
+
 msgid "Official Release Repository"
 msgstr "Kho plugin chính thức"
 
@@ -795,14 +810,6 @@ msgstr "Lỗi khi tải bảng băm chỉ mục từ '%s'."
 
 msgid "Index integrity check failed."
 msgstr "Kiểm tra toàn vẹn của chỉ mục thất bại."
-
-#, c-format
-msgid "Preparing %s"
-msgstr "Đang chuẩn bị %s"
-
-#, c-format
-msgid "Downloading %s"
-msgstr "Đang tải %s"
 
 msgid "&laquo; default sort order &raquo;"
 msgstr "&laquo; thứ tự sắp xếp mặc định &raquo;"
@@ -1159,34 +1166,6 @@ msgstr "Có trở ngại khi xử lý yêu cầu của bạn, hãy xem chi tiế
 
 msgid "Error sending test email, see below for details."
 msgstr "Lỗi khi gửi thử email, xem chi tiết bên dưới."
-
-msgid "Language Settings"
-msgstr "Thông số ngôn ngữ"
-
-msgid ""
-"Select language defaults for Gallery. Individual users can override this setting in their "
-"personal preferences or via the language selector block if available. Gallery will try to "
-"automatically detect the language preference of each user if the browser preference check is "
-"enabled."
-msgstr ""
-"Hãy chọn ngôn ngữ mặc định cho Gallery. Từng người dùng có thể đặt lại ngôn ngữ khác trong "
-"Tùy chọn cá nhân của họ hoặc bằng thanh chọn ngôn ngữ nếu có. Gallery sẽ thử tự động phát "
-"hiện chọn lựa ngôn ngữ của người dùng nếu hộp Kiểm tra ngôn ngữ ưu tiên của trình duyệt được "
-"bật."
-
-msgid "Default language"
-msgstr "Ngôn ngữ mặc định"
-
-msgid "Check Browser Preference"
-msgstr "Kiểm tra ngôn ngữ ưu tiên của trình duyệt"
-
-#, c-format
-msgid ""
-"Your webserver does not support localization.  Please instruct your system administrator to "
-"reconfigure PHP with the %s option enabled."
-msgstr ""
-"Webserver của bạn không hỗ trợ địa phương hóa. Hãy yêu cầu quản trị hệ thống của bạn cấu "
-"hình lại PHP với chọn lựa %s được chọn."
 
 msgid "Date Formats"
 msgstr "Định dạnh Ngày Tháng"
@@ -1742,6 +1721,140 @@ msgid_plural "%d groups match your filter"
 msgstr[0] "có %d nhóm trùng với lọc của bạn"
 msgstr[1] "có %d nhóm trùng với lọc của bạn"
 
+msgid "Please make sure that your internet connection is set up properly or try again later."
+msgstr ""
+
+#, c-format
+msgid "Failed to scan status from plugin: %s."
+msgstr "Thất bại khi dò tình trạng của plugin: %s."
+
+msgid ""
+"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
+"list again."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Failed to delete the locale directory for %s."
+msgstr "Không thể xóa thư mục: %s"
+
+#, c-format
+msgid "Failed to download the following language packages for the %s plugin:"
+msgstr ""
+
+#, c-format
+msgid ""
+"Failed to install language packages for %s plugin because the following files/directories "
+"could not be modified:"
+msgstr ""
+
+#, fuzzy
+msgid "The repository index has been successfully refreshed."
+msgstr "Chỉ mục của kho plugin đã được cập nhật."
+
+#, fuzzy
+msgid "The language settings have been saved."
+msgstr "Không có gói phần mềm nào được chọn."
+
+#, fuzzy, c-format
+msgid "%d language pack upgraded or downloaded."
+msgid_plural "%d language packs upgraded or downloaded."
+msgstr[0] "%d bộ ngôn ngữ đã bị xóa."
+msgstr[1] "%d bộ ngôn ngữ đã bị xóa."
+
+#, c-format
+msgid "%d language pack deleted."
+msgid_plural "%d language packs deleted."
+msgstr[0] "%d bộ ngôn ngữ đã bị xóa."
+msgstr[1] "%d bộ ngôn ngữ đã bị xóa."
+
+msgid "All the language packages for the selected languages are current"
+msgstr ""
+
+msgid ""
+"Select language defaults for Gallery. Individual users can override this setting in their "
+"personal preferences or via the language selector block if available. Gallery will try to "
+"automatically detect the language preference of each user if the browser preference check is "
+"enabled."
+msgstr ""
+"Hãy chọn ngôn ngữ mặc định cho Gallery. Từng người dùng có thể đặt lại ngôn ngữ khác trong "
+"Tùy chọn cá nhân của họ hoặc bằng thanh chọn ngôn ngữ nếu có. Gallery sẽ thử tự động phát "
+"hiện chọn lựa ngôn ngữ của người dùng nếu hộp Kiểm tra ngôn ngữ ưu tiên của trình duyệt được "
+"bật."
+
+msgid "Default language"
+msgstr "Ngôn ngữ mặc định"
+
+msgid "Check Browser Preference"
+msgstr "Kiểm tra ngôn ngữ ưu tiên của trình duyệt"
+
+#, c-format
+msgid ""
+"Your webserver does not support localization.  Please instruct your system administrator to "
+"reconfigure PHP with the %s option enabled."
+msgstr ""
+"Webserver của bạn không hỗ trợ địa phương hóa. Hãy yêu cầu quản trị hệ thống của bạn cấu "
+"hình lại PHP với chọn lựa %s được chọn."
+
+msgid "Configure your Gallery"
+msgstr "Cấu hình Gallery của bạn"
+
+msgid ""
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
+msgstr ""
+
+msgid ""
+"Before you can proceed, please insure the following directories and sub-directories are "
+"writable, so that Gallery can install plugins for you:"
+msgstr ""
+
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Check Again button to proceed."
+msgstr ""
+
+#, fuzzy
+msgid "Check Again"
+msgstr "đánh dấu tất cả"
+
+#, fuzzy
+msgid "Add or Remove Languages"
+msgstr "Thêm/Xóa thành viên"
+
+msgid ""
+"Please click on the link below to go to 'Download Plugin List' and choose 'Update Plugin "
+"List' to get the latest language package information."
+msgstr ""
+
+#, fuzzy
+msgid "Administer Repositories"
+msgstr "Kho plugin do cộng đồng cung cấp"
+
+#, fuzzy
+msgid "Upgrade"
+msgstr "nâng cấp"
+
+msgid "Remove"
+msgstr "Xóa"
+
+#, fuzzy
+msgid "Download"
+msgstr "tải xuống"
+
+#, fuzzy
+msgid "No Change"
+msgstr "Thay đổi"
+
+#, fuzzy
+msgid "Select All"
+msgstr "Được chọn"
+
+msgid ""
+"There are no local repository indices from which to determine language packages. Please "
+"click on the link below to go to \"Download Plugin List\" and choose \"Update Plugin List\" "
+"to get the latest language package information."
+msgstr ""
+
 msgid "System Maintenance"
 msgstr "Bảo dưỡng hệ thống"
 
@@ -2041,18 +2154,6 @@ msgstr "không tương thích"
 msgid "Repository"
 msgstr "Kho plugin"
 
-msgid "Please make sure that your internet connection is set up properly or try again later."
-msgstr ""
-
-#, c-format
-msgid "Failed to scan status from plugin: %s."
-msgstr "Thất bại khi dò tình trạng của plugin: %s."
-
-msgid ""
-"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
-"list again."
-msgstr ""
-
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
 msgstr ""
@@ -2078,12 +2179,6 @@ msgstr "Tất cả các plugin đều là bản mới nhất."
 #, c-format
 msgid "%s plugin updated."
 msgstr "%s plugin đã được cập nhật."
-
-#, c-format
-msgid "%d language pack deleted."
-msgid_plural "%d language packs deleted."
-msgstr[0] "%d bộ ngôn ngữ đã bị xóa."
-msgstr[1] "%d bộ ngôn ngữ đã bị xóa."
 
 msgid ""
 "No personal information about you or your Gallery installation is sent to the Gallery server "
@@ -2123,19 +2218,6 @@ msgstr "Bạn phải chọn ít nhất một kho plugin."
 
 msgid "Ok"
 msgstr "Ok"
-
-msgid "Configure your Gallery"
-msgstr "Cấu hình Gallery của bạn"
-
-msgid ""
-"Before you can proceed, you have to change some permissions so that Gallery can install "
-"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
-msgstr ""
-
-msgid ""
-"Before you can proceed, please insure the following directories and sub-directories are "
-"writable, so that Gallery can install plugins for you:"
-msgstr ""
 
 msgid ""
 "If you have trouble changing permissions, ask your system administrator for assistance.  "
@@ -2229,8 +2311,7 @@ msgstr "Không có gói phần mềm nào được chọn."
 
 msgid ""
 "Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
-"of the package to download.  Language packages are optional, You only need to download the "
-"ones that you want to use on your site."
+"of the package to download."
 msgstr ""
 
 msgid "Base Packages"
@@ -2248,12 +2329,9 @@ msgstr "%s: phiên bản %s (build %s) %schuyển về phiên bản cũ hơn kh�
 msgid "%sCurrently Installed%s: version %s (build %s)"
 msgstr "%sHiện đang được cài%s: phiên bản %s (build %s)"
 
-msgid "Language Packages"
-msgstr "Các gói ngôn ngữ"
-
-#, c-format
-msgid "(%sselect all%s%sselect none%s)"
-msgstr "(%schọn tất cả%s%skhông chọn cái nào cả%s)"
+#, fuzzy
+msgid "The following language packages are available for this plugin"
+msgstr "Không có bộ ngôn ngữ nào tương thích"
 
 #, c-format
 msgid "%s version %s (upgrading from %s)"
@@ -2273,9 +2351,6 @@ msgstr "%s phiên bản %s (đang được cài)"
 
 msgid "No compatible language packages available"
 msgstr "Không có bộ ngôn ngữ nào tương thích"
-
-msgid "You must select a base package before choosing language packs."
-msgstr "Bạn phải chọn một gói phần mềm cơ sở trước khi chọn các gói ngôn ngữ."
 
 msgid "Update"
 msgstr "Cập nhật"
@@ -2361,9 +2436,6 @@ msgstr "Hãy chọn một khối"
 
 msgid "Selected"
 msgstr "Được chọn"
-
-msgid "Remove"
-msgstr "Xóa"
 
 msgid "Move Up"
 msgstr "Di chuyển lên"
@@ -3794,6 +3866,15 @@ msgstr "Khối đăng nhập"
 
 msgid "Links to album/photo peers"
 msgstr "Liên kết đến các album/ảnh ngang mức"
+
+#~ msgid "Language Packages"
+#~ msgstr "Các gói ngôn ngữ"
+
+#~ msgid "(%sselect all%s%sselect none%s)"
+#~ msgstr "(%schọn tất cả%s%skhông chọn cái nào cả%s)"
+
+#~ msgid "You must select a base package before choosing language packs."
+#~ msgstr "Bạn phải chọn một gói phần mềm cơ sở trước khi chọn các gói ngôn ngữ."
 
 #~ msgid "Back to %s"
 #~ msgstr "Quay lại %s"

@@ -22,7 +22,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.28\n"
+"Project-Id-Version: Gallery: Core 1.2.31\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-10-15 09:02+0200\n"
 "PO-Revision-Date: 2007-09-03 20:40+0100\n"
@@ -93,6 +93,22 @@ msgstr "Link"
 #, c-format
 msgid "Page %d of %d"
 msgstr "Side %d af %d"
+
+#, fuzzy
+msgid "Updating Language Settings"
+msgstr "Opsætning af sprog"
+
+msgid "Update completed with errors."
+msgstr "Opdatering udført med fejl."
+
+msgid "Update complete."
+msgstr "Opdatering udført."
+
+msgid "Deleting Language Packs"
+msgstr "Sletter sprogpakker"
+
+msgid "Synchronizing Language Packs"
+msgstr "Synkronisere sprogpakker"
 
 msgid "No acceleration"
 msgstr "Ingen acceleration"
@@ -550,6 +566,9 @@ msgstr "Ydeevne"
 msgid "Event Logs"
 msgstr "Hændelseslog"
 
+msgid "Language Settings"
+msgstr "Opsætning af sprog"
+
 msgid "Toolkit Priority"
 msgstr "Værktøjsprioritet"
 
@@ -568,18 +587,6 @@ msgstr "Opdaterer pakker"
 #, c-format
 msgid "Activating %s"
 msgstr "Aktiverer %s"
-
-msgid "Deleting Language Packs"
-msgstr "Sletter sprogpakker"
-
-msgid "Update completed with errors."
-msgstr "Opdatering udført med fejl."
-
-msgid "Update complete."
-msgstr "Opdatering udført."
-
-msgid "Synchronizing Language Packs"
-msgstr "Synkronisere sprogpakker"
 
 msgid "Updating Repository Index"
 msgstr "Opdaterer katalogindeks"
@@ -790,6 +797,14 @@ msgid ""
 msgstr ""
 "Kunne ikke oprette cache underbibliotek. Sørg for at webserveren har skriverettigheder deri."
 
+#, c-format
+msgid "Preparing %s"
+msgstr "Forbereder %s"
+
+#, c-format
+msgid "Downloading %s"
+msgstr "Henter %s"
+
 msgid "Official Release Repository"
 msgstr "Katalog for Officielle Udgivelser"
 
@@ -809,14 +824,6 @@ msgstr "Kunne ikke hente indeks-hash fra '%s'."
 
 msgid "Index integrity check failed."
 msgstr "Kontrol af indeksintegritet fejlede."
-
-#, c-format
-msgid "Preparing %s"
-msgstr "Forbereder %s"
-
-#, c-format
-msgid "Downloading %s"
-msgstr "Henter %s"
 
 msgid "&laquo; default sort order &raquo;"
 msgstr "&laquo; standard sortering &raquo;"
@@ -1181,34 +1188,6 @@ msgstr "Din forespørgsel kunne ikke udføres, se nedenstående for flere oplysn
 
 msgid "Error sending test email, see below for details."
 msgstr "Kunne ikke sende test-email, se nedenstående for detaljer."
-
-msgid "Language Settings"
-msgstr "Opsætning af sprog"
-
-msgid ""
-"Select language defaults for Gallery. Individual users can override this setting in their "
-"personal preferences or via the language selector block if available. Gallery will try to "
-"automatically detect the language preference of each user if the browser preference check is "
-"enabled."
-msgstr ""
-"Vælg  Gallerys standardsprog. Brugere kan tilsidesætte denne indstilling i deres personlige "
-"indstillinger eller ved hjælp af sprogvælgeren, hvis den er aktiveret nedenfor. Gallery vil "
-"forsøge automatisk at afgøre det foretrukne sprog for hver bruger hvis browser præference er "
-"markeret."
-
-msgid "Default language"
-msgstr "Standard sprog"
-
-msgid "Check Browser Preference"
-msgstr "Kontroller browser præference"
-
-#, c-format
-msgid ""
-"Your webserver does not support localization.  Please instruct your system administrator to "
-"reconfigure PHP with the %s option enabled."
-msgstr ""
-"Din webserver har ikke flersprogsunderstøttelse. Bed venligst din system administrator "
-"genkonfigurere PHP med %s slået til."
 
 msgid "Date Formats"
 msgstr "Datoformater"
@@ -1768,6 +1747,148 @@ msgid_plural "%d groups match your filter"
 msgstr[0] "%d gruppe matcher dit filter"
 msgstr[1] "%d grupper matcher dit filter"
 
+msgid "Please make sure that your internet connection is set up properly or try again later."
+msgstr "Sørg for at internetforbindelsen virker eller prøv igen senere."
+
+#, c-format
+msgid "Failed to scan status from plugin: %s."
+msgstr "Kunne ikke skanne status fra plugin: %s."
+
+msgid ""
+"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
+"list again."
+msgstr ""
+"Den lokale kopi af kataloget var i stykker, men er blevet ordnet. Download plugin listen "
+"igen."
+
+#, fuzzy, c-format
+msgid "Failed to delete the locale directory for %s."
+msgstr "Kunne ikke slette biblioteket: %s"
+
+#, fuzzy, c-format
+msgid "Failed to download the following language packages for the %s plugin:"
+msgstr "Kunne ikke downloade følgende pakker for %s plugin'et:"
+
+#, fuzzy, c-format
+msgid ""
+"Failed to install language packages for %s plugin because the following files/directories "
+"could not be modified:"
+msgstr "Kunne ikke installere %s pluginet da nedenstående filer/mapper ikke kunne ændres:"
+
+#, fuzzy
+msgid "The repository index has been successfully refreshed."
+msgstr "Katalog indekset er blevet opdateret"
+
+#, fuzzy
+msgid "The language settings have been saved."
+msgstr "Ingen pakker er blevet valgt."
+
+#, fuzzy, c-format
+msgid "%d language pack upgraded or downloaded."
+msgid_plural "%d language packs upgraded or downloaded."
+msgstr[0] "%d sprog-pakke slettet."
+msgstr[1] "%d sprog-pakker slettet."
+
+#, c-format
+msgid "%d language pack deleted."
+msgid_plural "%d language packs deleted."
+msgstr[0] "%d sprog-pakke slettet."
+msgstr[1] "%d sprog-pakker slettet."
+
+msgid "All the language packages for the selected languages are current"
+msgstr ""
+
+msgid ""
+"Select language defaults for Gallery. Individual users can override this setting in their "
+"personal preferences or via the language selector block if available. Gallery will try to "
+"automatically detect the language preference of each user if the browser preference check is "
+"enabled."
+msgstr ""
+"Vælg  Gallerys standardsprog. Brugere kan tilsidesætte denne indstilling i deres personlige "
+"indstillinger eller ved hjælp af sprogvælgeren, hvis den er aktiveret nedenfor. Gallery vil "
+"forsøge automatisk at afgøre det foretrukne sprog for hver bruger hvis browser præference er "
+"markeret."
+
+msgid "Default language"
+msgstr "Standard sprog"
+
+msgid "Check Browser Preference"
+msgstr "Kontroller browser præference"
+
+#, c-format
+msgid ""
+"Your webserver does not support localization.  Please instruct your system administrator to "
+"reconfigure PHP with the %s option enabled."
+msgstr ""
+"Din webserver har ikke flersprogsunderstøttelse. Bed venligst din system administrator "
+"genkonfigurere PHP med %s slået til."
+
+msgid "Configure your Gallery"
+msgstr "Konfigurer dit 'Gallery'"
+
+msgid ""
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
+msgstr ""
+"Før du kan fortsætte skal nogle tilladelser i filsystemet ændres for at Gallery kan "
+"installere plugins for dig. Det er ikke særlig vanskeligt. Udfør blot de følgende kommandoer "
+"på en kommandolinie eller via din ftp klient:"
+
+msgid ""
+"Before you can proceed, please insure the following directories and sub-directories are "
+"writable, so that Gallery can install plugins for you:"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Check Again button to proceed."
+msgstr ""
+"Hvis du ikke kan ændre tilladelserne må du bede administratoren om hjælp. Når tilladelserne "
+"er blevet ordnet kan du klikke på 'Fortsæt' knappen."
+
+#, fuzzy
+msgid "Check Again"
+msgstr "Markér alle"
+
+#, fuzzy
+msgid "Add or Remove Languages"
+msgstr "Tilføj/fjern brugere"
+
+msgid ""
+"Please click on the link below to go to 'Download Plugin List' and choose 'Update Plugin "
+"List' to get the latest language package information."
+msgstr ""
+
+#, fuzzy
+msgid "Administer Repositories"
+msgstr "'Community' Katalog"
+
+#, fuzzy
+msgid "Upgrade"
+msgstr "opgradér"
+
+msgid "Remove"
+msgstr "Fjern"
+
+#, fuzzy
+msgid "Download"
+msgstr "hent"
+
+#, fuzzy
+msgid "No Change"
+msgstr "Ændrer"
+
+#, fuzzy
+msgid "Select All"
+msgstr "Valgt"
+
+msgid ""
+"There are no local repository indices from which to determine language packages. Please "
+"click on the link below to go to \"Download Plugin List\" and choose \"Update Plugin List\" "
+"to get the latest language package information."
+msgstr ""
+
 msgid "System Maintenance"
 msgstr "Systemvedligeholdese"
 
@@ -2091,20 +2212,6 @@ msgstr "Inkompatibelt"
 msgid "Repository"
 msgstr "Katalog"
 
-msgid "Please make sure that your internet connection is set up properly or try again later."
-msgstr "Sørg for at internetforbindelsen virker eller prøv igen senere."
-
-#, c-format
-msgid "Failed to scan status from plugin: %s."
-msgstr "Kunne ikke skanne status fra plugin: %s."
-
-msgid ""
-"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
-"list again."
-msgstr ""
-"Den lokale kopi af kataloget var i stykker, men er blevet ordnet. Download plugin listen "
-"igen."
-
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
 msgstr "Kunne ikke downloade følgende pakker for %s plugin'et:"
@@ -2132,12 +2239,6 @@ msgstr "Alle plugins er allerede up-to-date."
 #, c-format
 msgid "%s plugin updated."
 msgstr "%s plugin opdateret."
-
-#, c-format
-msgid "%d language pack deleted."
-msgid_plural "%d language packs deleted."
-msgstr[0] "%d sprog-pakke slettet."
-msgstr[1] "%d sprog-pakker slettet."
 
 msgid ""
 "No personal information about you or your Gallery installation is sent to the Gallery server "
@@ -2187,22 +2288,6 @@ msgstr "Du skal vælge mindst et katalog."
 
 msgid "Ok"
 msgstr "Ok"
-
-msgid "Configure your Gallery"
-msgstr "Konfigurer dit 'Gallery'"
-
-msgid ""
-"Before you can proceed, you have to change some permissions so that Gallery can install "
-"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
-msgstr ""
-"Før du kan fortsætte skal nogle tilladelser i filsystemet ændres for at Gallery kan "
-"installere plugins for dig. Det er ikke særlig vanskeligt. Udfør blot de følgende kommandoer "
-"på en kommandolinie eller via din ftp klient:"
-
-msgid ""
-"Before you can proceed, please insure the following directories and sub-directories are "
-"writable, so that Gallery can install plugins for you:"
-msgstr ""
 
 msgid ""
 "If you have trouble changing permissions, ask your system administrator for assistance.  "
@@ -2305,10 +2390,10 @@ msgstr "Download %s"
 msgid "No packages have been selected."
 msgstr "Ingen pakker er blevet valgt."
 
+#, fuzzy
 msgid ""
 "Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
-"of the package to download.  Language packages are optional, You only need to download the "
-"ones that you want to use on your site."
+"of the package to download."
 msgstr ""
 "download en pakke for at kunne benytte denne plugin. Du kan opgradere ved at vælge at "
 "downloade en nyere version af pakken. Sprog pakker kan vælges om du vil. Det er kun "
@@ -2329,12 +2414,9 @@ msgstr "%s: version %s (build %s) %s'nedgradering' er ikke understøttet!%s"
 msgid "%sCurrently Installed%s: version %s (build %s)"
 msgstr "%sInstalleret på nuværende tidspunkt%s version %s (build %s)"
 
-msgid "Language Packages"
-msgstr "Sprog-pakker"
-
-#, c-format
-msgid "(%sselect all%s%sselect none%s)"
-msgstr "(%svælg alle%s%svælg ingen%s)"
+#, fuzzy
+msgid "The following language packages are available for this plugin"
+msgstr "Ingen kompatible sprog-pakker er tilgængelige"
 
 #, c-format
 msgid "%s version %s (upgrading from %s)"
@@ -2354,9 +2436,6 @@ msgstr "%s version %s (installeret for øjeblikket)"
 
 msgid "No compatible language packages available"
 msgstr "Ingen kompatible sprog-pakker er tilgængelige"
-
-msgid "You must select a base package before choosing language packs."
-msgstr "Du skal vælge en basis pakke før du vælger sprog pakker."
 
 msgid "Update"
 msgstr "Opdater"
@@ -2440,9 +2519,6 @@ msgstr "Vælg en blok"
 
 msgid "Selected"
 msgstr "Valgt"
-
-msgid "Remove"
-msgstr "Fjern"
 
 msgid "Move Up"
 msgstr "Flyt Op"
@@ -3890,6 +3966,15 @@ msgstr "Loginblok"
 # peers?
 msgid "Links to album/photo peers"
 msgstr "Links til album/foto 'peers'"
+
+#~ msgid "Language Packages"
+#~ msgstr "Sprog-pakker"
+
+#~ msgid "(%sselect all%s%sselect none%s)"
+#~ msgstr "(%svælg alle%s%svælg ingen%s)"
+
+#~ msgid "You must select a base package before choosing language packs."
+#~ msgstr "Du skal vælge en basis pakke før du vælger sprog pakker."
 
 #~ msgid "Back to %s"
 #~ msgstr "Tilbage til %s"

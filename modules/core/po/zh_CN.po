@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.28\n"
+"Project-Id-Version: Gallery: Core 1.2.31\n"
 "POT-Creation-Date: 2005-03-28 14:00+0800\n"
 "PO-Revision-Date: 2007-03-14 16:16+0100\n"
 "Last-Translator: Lyric <lyric@lyricli.com>\n"
@@ -90,6 +90,26 @@ msgstr "登录"
 #, c-format
 msgid "Page %d of %d"
 msgstr "第 %d 页，共 %d 页"
+
+#, fuzzy
+msgid "Updating Language Settings"
+msgstr "语言设置"
+
+#, fuzzy
+msgid "Update completed with errors."
+msgstr "上传完成"
+
+#, fuzzy
+msgid "Update complete."
+msgstr "上传完成"
+
+#, fuzzy
+msgid "Deleting Language Packs"
+msgstr "默认语言"
+
+#, fuzzy
+msgid "Synchronizing Language Packs"
+msgstr "默认语言"
 
 msgid "No acceleration"
 msgstr "不加速"
@@ -551,6 +571,9 @@ msgstr "性能"
 msgid "Event Logs"
 msgstr ""
 
+msgid "Language Settings"
+msgstr "语言设置"
+
 msgid "Toolkit Priority"
 msgstr "工具优先级"
 
@@ -569,22 +592,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Activating %s"
 msgstr "操作"
-
-#, fuzzy
-msgid "Deleting Language Packs"
-msgstr "默认语言"
-
-#, fuzzy
-msgid "Update completed with errors."
-msgstr "上传完成"
-
-#, fuzzy
-msgid "Update complete."
-msgstr "上传完成"
-
-#, fuzzy
-msgid "Synchronizing Language Packs"
-msgstr "默认语言"
 
 #, fuzzy
 msgid "Updating Repository Index"
@@ -788,6 +795,14 @@ msgid ""
 "Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr "不能创建缓存子目录，确保Web服务器有写权限。"
 
+#, fuzzy, c-format
+msgid "Preparing %s"
+msgstr "处理中..."
+
+#, c-format
+msgid "Downloading %s"
+msgstr "正在下载 %s"
+
 msgid "Official Release Repository"
 msgstr ""
 
@@ -809,14 +824,6 @@ msgstr "从%s下载索引哈希码错误。"
 
 msgid "Index integrity check failed."
 msgstr "索引完整性检查失败"
-
-#, fuzzy, c-format
-msgid "Preparing %s"
-msgstr "处理中..."
-
-#, c-format
-msgid "Downloading %s"
-msgstr "正在下载 %s"
 
 msgid "&laquo; default sort order &raquo;"
 msgstr "&laquo; 默认排序 &raquo;"
@@ -1172,30 +1179,6 @@ msgstr "处理您的请求时发生问题，请参考下面的详情。"
 
 msgid "Error sending test email, see below for details."
 msgstr "测试邮件发送错误，请查看详细信息。"
-
-msgid "Language Settings"
-msgstr "语言设置"
-
-msgid ""
-"Select language defaults for Gallery. Individual users can override this setting in their "
-"personal preferences or via the language selector block if available. Gallery will try to "
-"automatically detect the language preference of each user if the browser preference check is "
-"enabled."
-msgstr ""
-"选择图库的默认语言。各用户在其个人偏好设定中的语言设定将优先于此设定。如果启用了浏览器偏好设"
-"定功能，图库会自动检测用户浏览器的语言偏好。"
-
-msgid "Default language"
-msgstr "默认语言"
-
-msgid "Check Browser Preference"
-msgstr "检查浏览器偏好选项"
-
-#, c-format
-msgid ""
-"Your webserver does not support localization.  Please instruct your system administrator to "
-"reconfigure PHP with the %s option enabled."
-msgstr "您的服务器不支持本地化。请联络您的系统管理员重新设定PHP以开启 %s 选项。"
 
 msgid "Date Formats"
 msgstr "日期格式:"
@@ -1743,6 +1726,136 @@ msgid_plural "%d groups match your filter"
 msgstr[0] "%d 个成员组符合您的过滤设定"
 msgstr[1] "%d 个成员组符合您的过滤设定"
 
+msgid "Please make sure that your internet connection is set up properly or try again later."
+msgstr "确保互联网连接正确然后再试验一次。"
+
+#, c-format
+msgid "Failed to scan status from plugin: %s."
+msgstr ""
+
+msgid ""
+"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
+"list again."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Failed to delete the locale directory for %s."
+msgstr "不能删除目录：%s"
+
+#, c-format
+msgid "Failed to download the following language packages for the %s plugin:"
+msgstr ""
+
+#, c-format
+msgid ""
+"Failed to install language packages for %s plugin because the following files/directories "
+"could not be modified:"
+msgstr ""
+
+#, fuzzy
+msgid "The repository index has been successfully refreshed."
+msgstr "仓库索引已经成功更新。"
+
+#, fuzzy
+msgid "The language settings have been saved."
+msgstr "没有包被选择。"
+
+#, c-format
+msgid "%d language pack upgraded or downloaded."
+msgid_plural "%d language packs upgraded or downloaded."
+msgstr[0] ""
+msgstr[1] ""
+
+#, c-format
+msgid "%d language pack deleted."
+msgid_plural "%d language packs deleted."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "All the language packages for the selected languages are current"
+msgstr ""
+
+msgid ""
+"Select language defaults for Gallery. Individual users can override this setting in their "
+"personal preferences or via the language selector block if available. Gallery will try to "
+"automatically detect the language preference of each user if the browser preference check is "
+"enabled."
+msgstr ""
+"选择图库的默认语言。各用户在其个人偏好设定中的语言设定将优先于此设定。如果启用了浏览器偏好设"
+"定功能，图库会自动检测用户浏览器的语言偏好。"
+
+msgid "Default language"
+msgstr "默认语言"
+
+msgid "Check Browser Preference"
+msgstr "检查浏览器偏好选项"
+
+#, c-format
+msgid ""
+"Your webserver does not support localization.  Please instruct your system administrator to "
+"reconfigure PHP with the %s option enabled."
+msgstr "您的服务器不支持本地化。请联络您的系统管理员重新设定PHP以开启 %s 选项。"
+
+msgid "Configure your Gallery"
+msgstr ""
+
+msgid ""
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
+msgstr ""
+
+msgid ""
+"Before you can proceed, please insure the following directories and sub-directories are "
+"writable, so that Gallery can install plugins for you:"
+msgstr ""
+
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Check Again button to proceed."
+msgstr ""
+
+#, fuzzy
+msgid "Check Again"
+msgstr "选择全部"
+
+#, fuzzy
+msgid "Add or Remove Languages"
+msgstr "添加/删除用户"
+
+msgid ""
+"Please click on the link below to go to 'Download Plugin List' and choose 'Update Plugin "
+"List' to get the latest language package information."
+msgstr ""
+
+#, fuzzy
+msgid "Administer Repositories"
+msgstr "仓库"
+
+#, fuzzy
+msgid "Upgrade"
+msgstr "升级"
+
+msgid "Remove"
+msgstr "删除"
+
+#, fuzzy
+msgid "Download"
+msgstr "下载"
+
+#, fuzzy
+msgid "No Change"
+msgstr "变更"
+
+#, fuzzy
+msgid "Select All"
+msgstr "已选择"
+
+msgid ""
+"There are no local repository indices from which to determine language packages. Please "
+"click on the link below to go to \"Download Plugin List\" and choose \"Update Plugin List\" "
+"to get the latest language package information."
+msgstr ""
+
 msgid "System Maintenance"
 msgstr "系统维护"
 
@@ -2066,18 +2179,6 @@ msgstr "模块不兼容"
 msgid "Repository"
 msgstr "仓库"
 
-msgid "Please make sure that your internet connection is set up properly or try again later."
-msgstr "确保互联网连接正确然后再试验一次。"
-
-#, c-format
-msgid "Failed to scan status from plugin: %s."
-msgstr ""
-
-msgid ""
-"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
-"list again."
-msgstr ""
-
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
 msgstr ""
@@ -2103,12 +2204,6 @@ msgstr "所有插件都是最新的。"
 #, c-format
 msgid "%s plugin updated."
 msgstr ""
-
-#, c-format
-msgid "%d language pack deleted."
-msgid_plural "%d language packs deleted."
-msgstr[0] ""
-msgstr[1] ""
 
 msgid ""
 "No personal information about you or your Gallery installation is sent to the Gallery server "
@@ -2149,19 +2244,6 @@ msgid "You must select at least one repository."
 msgstr "您必须选择一个用户来删除。"
 
 msgid "Ok"
-msgstr ""
-
-msgid "Configure your Gallery"
-msgstr ""
-
-msgid ""
-"Before you can proceed, you have to change some permissions so that Gallery can install "
-"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
-msgstr ""
-
-msgid ""
-"Before you can proceed, please insure the following directories and sub-directories are "
-"writable, so that Gallery can install plugins for you:"
 msgstr ""
 
 msgid ""
@@ -2265,8 +2347,7 @@ msgstr "没有包被选择。"
 
 msgid ""
 "Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
-"of the package to download.  Language packages are optional, You only need to download the "
-"ones that you want to use on your site."
+"of the package to download."
 msgstr ""
 
 #, fuzzy
@@ -2285,12 +2366,7 @@ msgstr ""
 msgid "%sCurrently Installed%s: version %s (build %s)"
 msgstr ""
 
-#, fuzzy
-msgid "Language Packages"
-msgstr "语言设置"
-
-#, c-format
-msgid "(%sselect all%s%sselect none%s)"
+msgid "The following language packages are available for this plugin"
 msgstr ""
 
 #, c-format
@@ -2310,9 +2386,6 @@ msgid "%s version %s (currently installed)"
 msgstr ""
 
 msgid "No compatible language packages available"
-msgstr ""
-
-msgid "You must select a base package before choosing language packs."
 msgstr ""
 
 msgid "Update"
@@ -2394,9 +2467,6 @@ msgstr "选择功能块"
 
 msgid "Selected"
 msgstr "已选择"
-
-msgid "Remove"
-msgstr "删除"
 
 msgid "Move Up"
 msgstr "上移"
@@ -3755,6 +3825,10 @@ msgstr "登录"
 
 msgid "Links to album/photo peers"
 msgstr "链接到同级相册/相片"
+
+#, fuzzy
+#~ msgid "Language Packages"
+#~ msgstr "语言设置"
 
 #~ msgid "Back to %s"
 #~ msgstr "返回 %s"

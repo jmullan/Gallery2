@@ -21,7 +21,7 @@
 # - Kennichi Uehara <ken.w3m+nospam@gmail.com>
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.28\n"
+"Project-Id-Version: Gallery: Core 1.2.31\n"
 "POT-Creation-Date: 2005-08-06 00:53+0900\n"
 "PO-Revision-Date: 2007-03-15 15:18+0900\n"
 "Last-Translator: Yosuke Suzuki <yosuke.suzuki@gmail.com>\n"
@@ -87,6 +87,22 @@ msgstr "リンク"
 #, c-format
 msgid "Page %d of %d"
 msgstr "ページ %d / %d"
+
+#, fuzzy
+msgid "Updating Language Settings"
+msgstr "言語設定"
+
+msgid "Update completed with errors."
+msgstr "アップデートは完了しましたが、エラーが発生しました"
+
+msgid "Update complete."
+msgstr "更新完了"
+
+msgid "Deleting Language Packs"
+msgstr "言語パックを削除中"
+
+msgid "Synchronizing Language Packs"
+msgstr "言語パックを同期中"
 
 msgid "No acceleration"
 msgstr "高速化なし"
@@ -540,6 +556,9 @@ msgstr "パフォーマンス"
 msgid "Event Logs"
 msgstr "イベントログ"
 
+msgid "Language Settings"
+msgstr "言語設定"
+
 msgid "Toolkit Priority"
 msgstr "ツールキットの優先順位"
 
@@ -558,18 +577,6 @@ msgstr "パッケージを更新しています"
 #, c-format
 msgid "Activating %s"
 msgstr "%s を有効化中"
-
-msgid "Deleting Language Packs"
-msgstr "言語パックを削除中"
-
-msgid "Update completed with errors."
-msgstr "アップデートは完了しましたが、エラーが発生しました"
-
-msgid "Update complete."
-msgstr "更新完了"
-
-msgid "Synchronizing Language Packs"
-msgstr "言語パックを同期中"
 
 msgid "Updating Repository Index"
 msgstr "リポジトリインデックスをアップデート"
@@ -779,6 +786,14 @@ msgstr ""
 "キャッシュサブディレクトリ  を作成できませんでした。ウェブサーバーに書き込み権限を与えてくだ"
 "さい"
 
+#, c-format
+msgid "Preparing %s"
+msgstr "%s を準備中"
+
+#, c-format
+msgid "Downloading %s"
+msgstr "%s をダウンロード中"
+
 msgid "Official Release Repository"
 msgstr "公式リリースリポジトリ"
 
@@ -798,14 +813,6 @@ msgstr "%s からインデックスキャッシュをダウンロード中にエ
 
 msgid "Index integrity check failed."
 msgstr "インデックスの完全性の確認に失敗しました"
-
-#, c-format
-msgid "Preparing %s"
-msgstr "%s を準備中"
-
-#, c-format
-msgid "Downloading %s"
-msgstr "%s をダウンロード中"
 
 msgid "&laquo; default sort order &raquo;"
 msgstr "&laquo; デフォルトのソート順 &laquo;"
@@ -1172,33 +1179,6 @@ msgstr "要求を処理しているときに問題が発生しました、詳細
 
 msgid "Error sending test email, see below for details."
 msgstr "テストメールを送信する際にエラーが生じました。詳細は以下を見てください。"
-
-msgid "Language Settings"
-msgstr "言語設定"
-
-msgid ""
-"Select language defaults for Gallery. Individual users can override this setting in their "
-"personal preferences or via the language selector block if available. Gallery will try to "
-"automatically detect the language preference of each user if the browser preference check is "
-"enabled."
-msgstr ""
-"Galleryのデフォルトの言語を選択してください。それぞれのユーザは個人設定のページでこの設定を上"
-"書きするか、(可能なら)言語セレクター経由で好みの言語を設定することができます。Galleryはユーザ"
-"のブラウザーから自動的に言語を探知しようとします"
-
-msgid "Default language"
-msgstr "デフォルト言語"
-
-msgid "Check Browser Preference"
-msgstr "ブラウザーの設定を確認する"
-
-#, c-format
-msgid ""
-"Your webserver does not support localization.  Please instruct your system administrator to "
-"reconfigure PHP with the %s option enabled."
-msgstr ""
-"このサーバはローカライゼーションに対応していません。%s オプションを有効にしてPHPを設定し直す"
-"ようシステム管理者に連絡してください。"
 
 msgid "Date Formats"
 msgstr "日付のフォーマット"
@@ -1746,6 +1726,147 @@ msgid "%d group matches your filter"
 msgid_plural "%d groups match your filter"
 msgstr[0] "%d グループがフィルタにマッチしました"
 
+msgid "Please make sure that your internet connection is set up properly or try again later."
+msgstr "インターネット接続が正しく設定されているか確認するか、後出ためしてください。"
+
+#, c-format
+msgid "Failed to scan status from plugin: %s."
+msgstr "プラグインから状態をスキャンすることに失敗しました: %s"
+
+msgid ""
+"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
+"list again."
+msgstr ""
+"リポジトリのローカルコピーは破損おり、修復されました。プラグインリストから再度ダウンロードし"
+"てください。"
+
+#, fuzzy, c-format
+msgid "Failed to delete the locale directory for %s."
+msgstr "ディレクトリを削除できませんでした: %s"
+
+#, fuzzy, c-format
+msgid "Failed to download the following language packages for the %s plugin:"
+msgstr "%sプラグインの以下のパッケージをダウンロードできませんでした: "
+
+#, fuzzy, c-format
+msgid ""
+"Failed to install language packages for %s plugin because the following files/directories "
+"could not be modified:"
+msgstr ""
+"以下のファイル/ディレクトリが更新できなかったため、プラグイン%sをインストールできませんでし"
+"た:"
+
+#, fuzzy
+msgid "The repository index has been successfully refreshed."
+msgstr "リポジトリインデックスの更新に成功しました"
+
+#, fuzzy
+msgid "The language settings have been saved."
+msgstr "一つもパッケージが選択されていません"
+
+#, fuzzy, c-format
+msgid "%d language pack upgraded or downloaded."
+msgid_plural "%d language packs upgraded or downloaded."
+msgstr[0] "%d の言語パッケージが削除されました。"
+
+#, c-format
+msgid "%d language pack deleted."
+msgid_plural "%d language packs deleted."
+msgstr[0] "%d の言語パッケージが削除されました。"
+
+msgid "All the language packages for the selected languages are current"
+msgstr ""
+
+msgid ""
+"Select language defaults for Gallery. Individual users can override this setting in their "
+"personal preferences or via the language selector block if available. Gallery will try to "
+"automatically detect the language preference of each user if the browser preference check is "
+"enabled."
+msgstr ""
+"Galleryのデフォルトの言語を選択してください。それぞれのユーザは個人設定のページでこの設定を上"
+"書きするか、(可能なら)言語セレクター経由で好みの言語を設定することができます。Galleryはユーザ"
+"のブラウザーから自動的に言語を探知しようとします"
+
+msgid "Default language"
+msgstr "デフォルト言語"
+
+msgid "Check Browser Preference"
+msgstr "ブラウザーの設定を確認する"
+
+#, c-format
+msgid ""
+"Your webserver does not support localization.  Please instruct your system administrator to "
+"reconfigure PHP with the %s option enabled."
+msgstr ""
+"このサーバはローカライゼーションに対応していません。%s オプションを有効にしてPHPを設定し直す"
+"ようシステム管理者に連絡してください。"
+
+msgid "Configure your Gallery"
+msgstr "Gallery の設定をしてください"
+
+msgid ""
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
+msgstr ""
+"進める前に、Galleryがあなたのためにプラグインをインストールすることができるようにいくつかの"
+"パーミッションを変更しなければなりません。それは簡単です。シェルの中か、ftpクライアントで以下"
+"をただ実行するだけです："
+
+msgid ""
+"Before you can proceed, please insure the following directories and sub-directories are "
+"writable, so that Gallery can install plugins for you:"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Check Again button to proceed."
+msgstr ""
+"パーミッションの変更に問題がある場合は、解決方法をシステム管理者に尋ねてください。パーミッ"
+"ションを修正したら、進めるために続けるボタンをクリックしてください。"
+
+#, fuzzy
+msgid "Check Again"
+msgstr "全てをチェック"
+
+#, fuzzy
+msgid "Add or Remove Languages"
+msgstr "ユーザの追加/削除"
+
+msgid ""
+"Please click on the link below to go to 'Download Plugin List' and choose 'Update Plugin "
+"List' to get the latest language package information."
+msgstr ""
+
+#, fuzzy
+msgid "Administer Repositories"
+msgstr "コミュニティリポジトリ"
+
+#, fuzzy
+msgid "Upgrade"
+msgstr "アップグレード"
+
+msgid "Remove"
+msgstr "削除"
+
+#, fuzzy
+msgid "Download"
+msgstr "ダウンロード"
+
+#, fuzzy
+msgid "No Change"
+msgstr "変更"
+
+#, fuzzy
+msgid "Select All"
+msgstr "選択されたもの"
+
+msgid ""
+"There are no local repository indices from which to determine language packages. Please "
+"click on the link below to go to \"Download Plugin List\" and choose \"Update Plugin List\" "
+"to get the latest language package information."
+msgstr ""
+
 msgid "System Maintenance"
 msgstr "システムメインテナンス"
 
@@ -2067,20 +2188,6 @@ msgstr "非互換"
 msgid "Repository"
 msgstr "リポジトリ"
 
-msgid "Please make sure that your internet connection is set up properly or try again later."
-msgstr "インターネット接続が正しく設定されているか確認するか、後出ためしてください。"
-
-#, c-format
-msgid "Failed to scan status from plugin: %s."
-msgstr "プラグインから状態をスキャンすることに失敗しました: %s"
-
-msgid ""
-"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
-"list again."
-msgstr ""
-"リポジトリのローカルコピーは破損おり、修復されました。プラグインリストから再度ダウンロードし"
-"てください。"
-
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
 msgstr "%sプラグインの以下のパッケージをダウンロードできませんでした: "
@@ -2110,11 +2217,6 @@ msgstr "全てのプラグインは最新です。"
 #, c-format
 msgid "%s plugin updated."
 msgstr "%sプラグインを更新しました。"
-
-#, c-format
-msgid "%d language pack deleted."
-msgid_plural "%d language packs deleted."
-msgstr[0] "%d の言語パッケージが削除されました。"
 
 msgid ""
 "No personal information about you or your Gallery installation is sent to the Gallery server "
@@ -2164,22 +2266,6 @@ msgstr "最低ひとつのリポジトリを選択してください。"
 
 msgid "Ok"
 msgstr "OK"
-
-msgid "Configure your Gallery"
-msgstr "Gallery の設定をしてください"
-
-msgid ""
-"Before you can proceed, you have to change some permissions so that Gallery can install "
-"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
-msgstr ""
-"進める前に、Galleryがあなたのためにプラグインをインストールすることができるようにいくつかの"
-"パーミッションを変更しなければなりません。それは簡単です。シェルの中か、ftpクライアントで以下"
-"をただ実行するだけです："
-
-msgid ""
-"Before you can proceed, please insure the following directories and sub-directories are "
-"writable, so that Gallery can install plugins for you:"
-msgstr ""
 
 msgid ""
 "If you have trouble changing permissions, ask your system administrator for assistance.  "
@@ -2282,10 +2368,10 @@ msgstr "%s をダウンロード"
 msgid "No packages have been selected."
 msgstr "一つもパッケージが選択されていません"
 
+#, fuzzy
 msgid ""
 "Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
-"of the package to download.  Language packages are optional, You only need to download the "
-"ones that you want to use on your site."
+"of the package to download."
 msgstr ""
 "このプラグインを使用するためにパッケージをダウンロードしてください。ダウンロードすべきパッ"
 "ケージのより新しいバージョンを選ぶことで、アップグレードをすることができます。言語パッケージ"
@@ -2306,12 +2392,9 @@ msgstr "%s: バージョン %s (build %s) %sダウングレードはサポート
 msgid "%sCurrently Installed%s: version %s (build %s)"
 msgstr "%s現在インストールされたバージョン%s: %s (build %s)"
 
-msgid "Language Packages"
-msgstr "言語パッケージ"
-
-#, c-format
-msgid "(%sselect all%s%sselect none%s)"
-msgstr "(%s全て選択%s%s全て選択解除%s)"
+#, fuzzy
+msgid "The following language packages are available for this plugin"
+msgstr "互換性のある言語パッケージがありません"
 
 #, c-format
 msgid "%s version %s (upgrading from %s)"
@@ -2331,9 +2414,6 @@ msgstr "%s バージョン %s (現在インストールされています)"
 
 msgid "No compatible language packages available"
 msgstr "互換性のある言語パッケージがありません"
-
-msgid "You must select a base package before choosing language packs."
-msgstr "言語パッケージを選択する前にベースパッケージを選択しなければなりません。"
 
 msgid "Update"
 msgstr "アップデート"
@@ -2415,9 +2495,6 @@ msgstr "ブロックを選択"
 
 msgid "Selected"
 msgstr "選択されたもの"
-
-msgid "Remove"
-msgstr "削除"
 
 msgid "Move Up"
 msgstr "上へ移動"
@@ -3863,3 +3940,12 @@ msgstr "ログインブロック"
 
 msgid "Links to album/photo peers"
 msgstr "アルバム／画像へのリンク"
+
+#~ msgid "Language Packages"
+#~ msgstr "言語パッケージ"
+
+#~ msgid "(%sselect all%s%sselect none%s)"
+#~ msgstr "(%s全て選択%s%s全て選択解除%s)"
+
+#~ msgid "You must select a base package before choosing language packs."
+#~ msgstr "言語パッケージを選択する前にベースパッケージを選択しなければなりません。"
