@@ -18,8 +18,9 @@
     <?php print _('Standard installation') ?>
   </label>
   <p>
-    <?php printf(_('This is the most common type of installation. Your Gallery will be in the directory %s which will be accessible at <a href="%2$s">%2$s</a>.'),
-                   '<b>' . $templateData['galleryDir'] . '</b>', '<b>' . $templateData['galleryUrl'] . '</b>') ?>
+    <?php printf(_('This is the most common type of installation. Your Gallery will be in the directory %s which will be accessible at %s.'),
+                   '<b>' . $templateData['galleryDir'] . '</b>',
+	           sprintf('<b><a href="%1$s">%1$s</a></b>', $templateData['galleryUrl'])) ?>
   </p>
 </div>
 <div class="multisite">
