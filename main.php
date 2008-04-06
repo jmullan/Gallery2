@@ -89,7 +89,7 @@ if ($gallery->isEmbedded()) {
 }
 
 if (!empty($gallerySaveErrorHandler)) {
-    set_error_handler($saveErrorHandler);
+    set_error_handler($gallerySaveErrorHandler);
 }
 
 /**
