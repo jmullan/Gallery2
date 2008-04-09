@@ -1006,13 +1006,13 @@ msgstr "エラーが発生しました。以下のメッセージを参照して
 msgid "Standard installation"
 msgstr "標準インストール"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "This is the most common type of installation. Your Gallery will be in the directory %s which "
 "will be accessible at %s."
 msgstr ""
-"これはデフォルトのインストールタイプです。%2$s のURLからアクセス可能な、新しいGalleryディレク"
-"トリ %1$s にインストールしたい場合はこちらを選択してください。"
+"これはインストールの最も一般的なタイプです。Galleryディレクトリ%sの%sでアクセス可能になりま"
+"す。"
 
 msgid "Multisite installation"
 msgstr "マルチサイトインストール"
@@ -1023,18 +1023,21 @@ msgid ""
 "independent with its own database of photos, albums, and users.  For more details, refer to "
 "the %s page."
 msgstr ""
+"これは一つのウェブサーバ上にGalleryを複数インストールするためのものです。それぞれのGalleryは"
+"自身のユーザ、アルバム画像のデータベースを独自に持っています。詳細については%sページを参照し"
+"てください。"
 
 msgid "You must enter a directory"
 msgstr "ディレクトリを入力しなければなりません"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You entered the %s directory. If you want to install a Gallery there, select the standard "
 "installation type. If you want to install a multisite, choose a different directory."
 msgstr ""
-"あなたが入力したディレクトリは中央コード保管場所(codebase)です。もしこのディレクトリに"
-"Gallery をインストールしたい場合は、標準のインストール方式を選択してください。マルチサイトに"
-"する場合は、別のディレクトリを選んでくさい"
+"あなたは%sディレクトリを入力しました。ここへGalleryをインストールしたいなら基本的なインストー"
+"ルタイプを選択してください。マルチサイトインストールがしたいなら異なるディレクトリを選択して"
+"ください。"
 
 msgid ""
 "The directory you entered either does not exist, or is prohibited by your webserver "
@@ -1047,7 +1050,6 @@ msgstr ""
 "リを選択するか、新しいディレクトリを許可するようにPHPの設定で<b>open_basedir</b>オプションを"
 "変更しなければなりません。"
 
-#, fuzzy
 msgid ""
 "If your multisite installation is in a different virtual host, you should contact your "
 "system administrator and request that they configure your <b>open_basedir</b> setting so "
@@ -1073,7 +1075,7 @@ msgstr ""
 "ください"
 
 msgid "Directory for the new Gallery installation (example: /var/www/example.com/gallery2) "
-msgstr ""
+msgstr "新しいGalleryインストール用のディレクトリ(例: /var/www/example.com/gallery2)"
 
 msgid "Select Directory"
 msgstr "ディレクトリを選択"
@@ -1336,41 +1338,3 @@ msgstr "Go"
 
 msgid "Begin Installation&raquo;"
 msgstr "インストールを始める&raquo;"
-
-#~ msgid "Please select the installation type"
-#~ msgstr "インストールタイプを選択してください。"
-
-#~ msgid ""
-#~ "Gallery can support multiple independent sites with a single installation of the code. "
-#~ "Choose this installation type if you want to install a new Gallery on the same webserver "
-#~ "but in a different path, subdomain or URL domain."
-#~ msgstr ""
-#~ "Galleryはひとつのインストールで、複数の独立したサイトをサポートできます。同じウェブサーバ"
-#~ "だが違うパスやサブドメイン、URLドメインに新しいGalleryをインストールしたい場合は、こちらを"
-#~ "選択してください。"
-
-#~ msgid ""
-#~ "The multisites don't share albums, photos, users, or anything else. They all need their "
-#~ "own database and their own storage directory. For more information and explanations about "
-#~ "Multisite installations, visit the %s page."
-#~ msgstr ""
-#~ "マルチサイトはアルバム、画像、ユーザその他一切を共有しません。それらはそれぞれデータベース"
-#~ "とストレージディレクトリを必要とします。マルチサイトインストールに関するさらなる情報と説明"
-#~ "は、%s ページを参照してください。"
-
-#~ msgid "All multisites are installed from this central code repository (codebase)."
-#~ msgstr "全てのマルチサイトは、この中央コード保管場所(codebase)からインストールされます。"
-
-#~ msgid ""
-#~ "Enter the directory for the new multisite below. The path must be different from this "
-#~ "codebase installation's path:"
-#~ msgstr ""
-#~ "新しいマルチサイトのディレクトリを以下に入力してください。パスはこのcodebaseインストールの"
-#~ "パスとは異なるものでなければなりません:"
-
-#~ msgid ""
-#~ "The directory must be writeable by your webserver/php user or contain the following "
-#~ "writeable files:"
-#~ msgstr ""
-#~ "そのディレクトリはウェブサーバーかPHPの利用者によって書き込みができなければいけません。も"
-#~ "しくは以下の書き込み可能なファイルを含めてください"
