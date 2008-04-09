@@ -181,7 +181,7 @@ class GalleryDatabaseImport extends GalleryImportElement {
 			    if (EXPORT_SCHEMA_VERSION != $versions[1]) {
 				$errors['errors'][] = $coreModule->translate(
 				    array('text' => 'The exported file is not the correct '
-							. 'version. Expecting %s recieved %s.',
+							. 'version. Expecting %s received %s.',
 					  'arg1' => EXPORT_SCHEMA_VERSION, 'arg2' => $versions[1]));
 			    }
 			    continue;
