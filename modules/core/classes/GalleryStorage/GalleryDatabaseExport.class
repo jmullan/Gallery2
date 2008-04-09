@@ -166,11 +166,6 @@ class GalleryDatabaseExport {
 			 null, null);
 	}
 
-	$ret = $this->_exportConfigFile($fileHandle);
-	if ($ret) {
-	    return array($ret, null, null);
-	}
-
 	$this->updateStatus();
 
 	list ($ret, $plugins) = GalleryCoreApi::fetchPluginStatus('module', true);
@@ -282,28 +277,6 @@ class GalleryDatabaseExport {
     function _encodeHtmlSpecialChars($valueToConvert) {
 	return str_replace(array('&', '"', '<', '>'), array('&amp;', '&quot;', '&lt;', '&gt;'),
 			   $valueToConvert);
-    }
-
-    /**
-     * Export the config.php file to the exported stream.
-     * @param resource $handle Handle to output export file.
-     * @return GalleryStatus
-     */
-    function _exportConfigFile($handle) {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-
-	$file = GALLERY_CONFIG_DIR . '/config.php';
-	$contents = $platform->file_get_contents($file);
-
-	$written = $platform->fwrite($handle, '  <config>'
-				. $this->_encodeHtmlSpecialChars($contents) . '</config>' . "\n");
-	if (!$written) {
-	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-					                    'Unable to write to export file');
-	}
-
-	return null;
     }
 
     /**
@@ -682,6 +655,7 @@ class GalleryDatabaseExport {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 	$storage =& $gallery->getStorage();
+	$phpVm = $gallery->getPhpVm();
 
 	if (empty($fileName)) {
 	    $dirName = $gallery->getConfig('data.gallery.backup');
@@ -694,10 +668,12 @@ class GalleryDatabaseExport {
 	    $storeConfig = $gallery->getConfig('storage.config');
 	    $databaseName = $storage->getType() == 'sqlite'
 		? basename($storeConfig['database']) : $storeConfig['database'];
-	    $fileName = $dirName . $databaseName . '_' . date('Y_m_d_Hi') . '.xml';
+	    $rnd = substr($phpVm->md5($phpVm->rand()), 0, 5);
+	    $fileName = $dirName . $databaseName . '_' . $rnd . '_' . $phpVm->date('Y_m_d_Hi') 
+		. '.xml';
 	}
 
-	$handle = $platform->fopen($fileName, 'w');
+	$handle = $platform->fopen($fileName, 'wb');
 	if (!$handle) {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__,
 					'Unable to open the backup file for output'), null, null);

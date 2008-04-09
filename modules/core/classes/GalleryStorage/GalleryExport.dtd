@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!ELEMENT export (plugin-status-list , config, plugin+)>
+<!ELEMENT export (plugin-status-list , plugin+)>
 <!ATTLIST export
 	schema-version CDATA #REQUIRED
 	tables CDATA #REQUIRED
 	core-version CDATA #REQUIRED
 	gallery-version CDATA #REQUIRED>
-<!ELEMENT config (#PCDATA)>
 <!ELEMENT plugin (table | sequence)+ >
 <!ATTLIST plugin
 	id CDATA #REQUIRED

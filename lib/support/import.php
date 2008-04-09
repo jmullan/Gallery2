@@ -74,15 +74,6 @@ if ($ret) {
 	    $doImportFlag = verifyVersions($templateData, $importFile);
 	}
 
-	$configDir = dirname($configFilePath);
-	if (!is_writeable($configFilePath)) {
-	    $templateData['errors'][] = 'Unable to write to the <b>config.php</b> configuration '
-		. 'file in your ' . $configDir . ' directory.  Please change its permissions.  If '
-		. 'you\'re on Unix you can do <i>chmod 666 config.php</i> to fix this.';
-	    $doImportFlag = false;
-	    getBackupFiles($templateData);
-	}
-
 	if ($doImportFlag) {
 	    $template->renderHeader(true);
 	    $template->renderStatusMessage('Restoring Gallery Database', '', 0);
@@ -108,29 +99,12 @@ if ($ret) {
 		$templateData['errors'][] = $ret->getAsHtml();
 	    }
 
-	    $stat = stat($configFilePath);
-	    $fileMode = substr(sprintf('%o', $stat['mode']), -3);
-
-	    $templateData['configFileMode'] = $fileMode;
-	    $templateData['fileSecure'] = !((int)$fileMode{1} & 2 || (int)$fileMode{2} & 2);
-	    $templateData['configFilePath'] = realpath($configFilePath);
 	    $templateData['bodyFile'] = 'ImportFinished.html';
 	    $templateData['hideStatusBlock'] = 1;
 	    $renderFullPage = false;
 	}
     } else {
 	getBackupFiles($templateData);
-
-	$configDir = dirname($configFilePath);
-
-	if (!is_writeable($configFilePath)) {
-	    $templateData['warnings'][] = 'Unable to write to the <b>config.php</b> configuration '
-		. 'file in your ' . $configDir . ' directory.  Please change its permissions.  If '
-		. 'you\'re on Unix you can do <i>chmod 666 config.php</i> to fix this.';
-	    $templateData['canWriteConfig'] = 0;
-	} else {
-	    $templateData['canWriteConfig'] = 1;
-	}
 
 	/* Render the output */
 	$templateData['bodyFile'] = 'ImportRequest.html';

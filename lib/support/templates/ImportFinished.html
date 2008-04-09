@@ -8,20 +8,6 @@
 <?php else: ?>
   <h2>Database Import Completed Successfully.</h2>
   <br/>
-    <?php if (!$templateData['fileSecure']): ?>
-    <p class="description">
-      <?php printf("<b>Reminder</b>: Now update the permissions on config.php to make sure it is not writeable by other people.  Right now your config.php has modes of %s.  We suggest that you do this:", $templateData['configFileMode']) ?>
-    </p>
-    <div class="example">
-      <pre> <?php printf("chmod 644 %s", $templateData['configFilePath']) ?></pre>
-    </div>
-    <?php endif; ?>
-    <br/><br/>
-    <p class="description">
-      <?php print "If you really want to continue, you can.  But we recommend that you take an extra moment to make sure that you're safe." ?>
-    </p>
-      <br/><br/>
-    </p>
     <div class="go">
         <a href="../../" class="btn continue"><i></i><span><span></span><i></i>Go to my Gallery!</span></a>
     </div>

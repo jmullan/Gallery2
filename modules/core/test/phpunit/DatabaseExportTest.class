@@ -36,6 +36,7 @@ class DatabaseExportTest extends GalleryTestCase {
     function setUp() {
 	$ret = parent::setUp();
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $ret;
 	}
 
@@ -56,6 +57,7 @@ class DatabaseExportTest extends GalleryTestCase {
 	$gallery->_storage = new UnitTestStorage();
 	$storage =& $gallery->getStorage();
 	$storage->_tablePrefix = 'g2_';
+	$gallery->_phpVm = new UnitTestPhpVm();
 
 	$this->_export = new GalleryDatabaseExport();
     }
@@ -64,11 +66,11 @@ class DatabaseExportTest extends GalleryTestCase {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 	$storage =& $gallery->getStorage();
+	$phpVm = $gallery->getPhpVm();
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
 	$this->assert($storage->isComplete(), $storage->getRemaining());
-	$extras =& $storage->_getExtras();
-	$this->assert($extras->isComplete(), $extras->getRemaining());
+	$this->assert($phpVm->isComplete(), $phpVm->getRemaining());
 
 	$ret = parent::tearDown();
 	if ($ret) {
@@ -139,39 +141,6 @@ class DatabaseExportTest extends GalleryTestCase {
 	    . 'version="1.2.5" active="0" type="theme"/>' . "\n";
 	$platform->setReply('fwrite', array('testHandle', $line, null), strlen($line) + 1);
 	$ret = $this->_export->_exportPluginStatus('testHandle', 'theme', $themes, $warnings);
-	if ($ret) {
-	    return $ret;
-	}
-    }
-
-    function testExportConfig() {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-
-	$source = '<?php'  . "\n"
-	. '@ini_set(\'display_errors\', 1);'  . "\n"
-	. '$storeConfig[\'tablePrefix\'] = \'g2_\';'  . "\n"
-	. '$storeConfig[\'columnPrefix\'] = \'g_\';'  . "\n"
-	. '$storeConfig[\'usePersistentConnections\'] = false;'  . "\n"
-	. '$gallery->setConfig(\'storage.config\', $storeConfig);'  . "\n"
-	. '$gallery->setConfig(\'baseUri\', \'\');'  . "\n"
-	. '?>';
-
-	$configFile = GALLERY_CONFIG_DIR . '/config.php';
-	$platform->setReply('file_get_contents', array($configFile), $source);
-
-	$outputConfig = '&lt;?php'  . "\n"
-	. '@ini_set(\'display_errors\', 1);'  . "\n"
-	. '$storeConfig[\'tablePrefix\'] = \'g2_\';'  . "\n"
-	. '$storeConfig[\'columnPrefix\'] = \'g_\';'  . "\n"
-	. '$storeConfig[\'usePersistentConnections\'] = false;'  . "\n"
-	. '$gallery-&gt;setConfig(\'storage.config\', $storeConfig);'  . "\n"
-	. '$gallery-&gt;setConfig(\'baseUri\', \'\');'  . "\n"
-	. '?&gt;';
-	$line = '  <config>' . $outputConfig . '</config>' . "\n";
-	$platform->setReply('fwrite', array('testHandle', $line, null), strlen($line));
-
-	$ret = $this->_export->_exportConfigFile('testHandle');
 	if ($ret) {
 	    return $ret;
 	}
@@ -406,6 +375,64 @@ class DatabaseExportTest extends GalleryTestCase {
 	$this->assertEquals($expectedMsg, $warnings[0], 'The message was not equal');
 
 	return null;
+    }
+
+    function testOpenBackupFileForWriting() {
+	global $gallery;
+	$gallery->setConfig('data.gallery.backup', '/path/');
+	$gallery->setConfig('storage.config', array('database' => 'TEST-DB'));
+	$gallery->_platform->setReply('file_exists', array('/path/'), true);
+	$gallery->_platform->setReply('is_dir', array('/path/'), true);
+	$gallery->_phpVm->setReply('rand', array(null, null), 'RAW-RND');
+	$gallery->_phpVm->setReply('md5', array('RAW-RND'), 'MD5MD5MD5MD5MD5');
+	$gallery->_phpVm->setReply('date', array('Y_m_d_Hi', null), 'DATE');
+	$gallery->_platform->setReply(
+	    'fopen', array('/path/TEST-DB_MD5MD_DATE.xml', 'wb', 0), 'TEST-HANDLE');
+	$gallery->_storage->setReply('getType', array(), 'TEST-DB-TYPE');
+
+	list ($ret, $handle, $fileName) = $this->_export->_openBackupFileForWriting();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals('TEST-HANDLE', $handle);
+	$this->assertEquals('/path/TEST-DB_MD5MD_DATE.xml', $fileName);
+    }
+
+    function testOpenBackupFileForWritingSqLitePathsGetTrimmed() {
+	global $gallery;
+	$gallery->setConfig('data.gallery.backup', '/path/');
+	$gallery->setConfig('storage.config', array('database' => '/full/sqlite/path/to/TEST-DB'));
+	$gallery->_platform->setReply('file_exists', array('/path/'), true);
+	$gallery->_platform->setReply('is_dir', array('/path/'), true);
+	$gallery->_phpVm->setReply('rand', array(null, null), 'RAW-RND');
+	$gallery->_phpVm->setReply('md5', array('RAW-RND'), 'MD5MD5MD5MD5MD5');
+	$gallery->_phpVm->setReply('date', array('Y_m_d_Hi', null), 'DATE');
+	$gallery->_platform->setReply(
+	    'fopen', array('/path/TEST-DB_MD5MD_DATE.xml', 'wb', 0), 'TEST-HANDLE');
+	$gallery->_storage->setReply('getType', array(), 'sqlite');
+
+	list ($ret, $handle, $fileName) = $this->_export->_openBackupFileForWriting();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals('TEST-HANDLE', $handle);
+	$this->assertEquals('/path/TEST-DB_MD5MD_DATE.xml', $fileName);
+    }
+
+    function testOpenBackupFileForWritingWithSpecificFilename() {
+	global $gallery;
+	$gallery->setConfig('data.gallery.backup', '/path');
+	$gallery->_platform->setReply('fopen', array('/path/FILE', 'wb', 0), 'TEST-HANDLE');
+
+	list ($ret, $handle, $fileName) = $this->_export->_openBackupFileForWriting('/path/FILE');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals('TEST-HANDLE', $handle);
+	$this->assertEquals('/path/FILE', $fileName);
     }
 }
 ?>

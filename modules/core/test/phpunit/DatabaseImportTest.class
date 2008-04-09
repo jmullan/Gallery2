@@ -202,32 +202,6 @@ class DatabaseImportTest extends GalleryTestCase {
     	$this->_testObj = new _GalleryExportTag($this, $attributes);
     }
 
-    function testImportConfig() {
-    	global $gallery;
-    	$platform =& $gallery->getPlatform();
-    	$storage =& $gallery->getStorage();
-
-    	$configContents = '<?php'
-    			. "\n" . '@ini_set(\'display_errors\', 1);'
-    			. "\n" . '$storeConfig[\'tablePrefix\'] = \'g2_\';'
-    			. "\n" . '$storeConfig[\'columnPrefix\'] = \'g_\';'
-    			. "\n" . '$storeConfig[\'usePersistentConnections\'] = false;'
-    			. "\n" . '$gallery->setConfig(\'storage.config\', $storeConfig);'
-    			. "\n" . '$gallery->setConfig(\'baseUri\', \'\');'
-    			. "\n" . '?>';
-
-    	$inputXml = '<config><![CDATA[' . $configContents . ']]></config>';
-
-	$configFile = GALLERY_CONFIG_DIR . '/config.php';
-
-	$platform->setReply('file_put_contents', array($configFile, $configContents), true);
-	$storage->setReply('setDebug', array($gallery->getDebug()), null);
-
-	if (!$this->_xmlParser->xmlParse($inputXml, true)) {
-	    return $this->_xmlParser->getParserError();
-	}
-    }
-
     function testImportSequence() {
     	global $gallery;
      	$storage =& $gallery->getStorage();

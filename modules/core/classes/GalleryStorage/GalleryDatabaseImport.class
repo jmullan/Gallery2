@@ -420,50 +420,6 @@ class _GalleryExportTag extends GalleryImportElement {
 }
 
 /**
- * Processes the <config> tag and resets the config.php.
- * @private
- */
-class _GalleryConfigTag extends GalleryImportElement {
-    /** Contains the contents of the config.php file included in the input source*/
-    var $_contents;
-
-    function _GalleryConfigTag($parent, $attributes) {
-	parent::GalleryImportElement($parent);
-	$this->_contents = '';
-    }
-
-    /**
-     * @see GalleryXmlHandler::_processCData
-     * @access protected
-     */
-    function _processCData($cdata) {
-	$this->_contents .= $cdata;
-    }
-
-    /**
-     * @see GalleryXmlHandler::_processEndElement
-     * @access protected
-     */
-    function _processEndElement($tag) {
-    	global $gallery;
-	$configFile = GALLERY_CONFIG_DIR . '/config.php';
-	$platform =& $gallery->getPlatform();
-
-	if (!$platform->file_put_contents($configFile, $this->_contents)) {
-	    $this->setError(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__,
-					__LINE__, 'Unable to write to config.php.'));
-	    return;
-	}
-
-	@include($configFile);
-
-	$gallery->setConfig('mode.maintenance', true);
-
-	$this->updateStatus(1, 1);
-    }
-}
-
-/**
  * Processes the <plugin> tag and its children.
  */
 class _GalleryPluginTag extends GalleryImportElement {
