@@ -191,6 +191,23 @@ class TemplateAdapterTest extends GalleryTestCase {
 	$this->assertEquals('Text with a \\\\ backslash', $translated, 'backslash in arg1');
     }
 
+    function testTextPostSprintf() {
+	global $gallery;
+	$gallery->_translator = new TemplateAdapterMockTranslator();
+	$this->_setupAdapterWithMocks();
+	$this->_mockSmarty->_tpl_vars['l10Domain'] = 'modules_foo';
+
+	$translated = $this->_templateAdapter->text(
+		array('text' => 'Test %s', 'arg1' => 'FOO', 'postSprintfArg1' => 'foo'),
+		$this->_mockSmarty);
+	$this->assertEquals('bar', $translated);
+
+	$translated = $this->_templateAdapter->text(
+		array('text' => 'Test %s', 'arg1' => 'FUN', 'postSprintfArg1' => 'fun'),
+		$this->_mockSmarty);
+	$this->assertEquals('TEST FUN', $translated);
+    }
+
     function testThemeUrls() {
 	$this->_setupAdapterWithMocks();
 	$results = $this->_templateAdapter->theme(
@@ -570,10 +587,17 @@ class TemplateAdapterMockUrlGenerator {
 
 class TemplateAdapterMockTranslator {
     function translateDomain($domain, $params) {
+	$result = null;
 	if ($domain == 'modules_testpass' && $params['text'] == 'Test failed') {
-	    return array(null, 'Test passed');
+	    $result = 'Test passed';
+	} else if ($domain == 'modules_foo' && $params === 'Test foo') {
+	    $result = 'bar';
+	} else if ($domain == 'modules_foo' && $params === 'Test fun') {
+	    $result = $params;
+	} else if ($domain == 'modules_foo' && $params['text'] == 'Test %s') {
+	    $result = sprintf('TEST %s', $params['arg1']);
 	}
-	return array(null, null);
+	return array(null, $result);
     }
 }
 ?>

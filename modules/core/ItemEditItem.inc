@@ -358,7 +358,7 @@ class ItemEditItem extends ItemEditPlugin {
 	}
 
 	$ItemEditItem = array('can' => $can,
-			      'typeName' => $item->itemTypeName());
+		'typeName' => array_merge($item->itemTypeName(), $item->itemTypeName(false)));
 
 	/* The originateTimestamp that we can get from our toolkits */
 	list ($ret, $originationTimestamp) = GalleryCoreApi::fetchOriginationTimestamp($item);

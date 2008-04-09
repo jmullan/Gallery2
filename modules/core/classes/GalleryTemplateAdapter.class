@@ -214,7 +214,20 @@ class GalleryTemplateAdapter {
 	    $domain = $smarty->_tpl_vars['l10Domain'];
 	}
 	$translator =& $gallery->getTranslator();
-	list ($ret, $text) = $translator->translateDomain($domain, $params);
+	if (!empty($params['postSprintfArg1'])) {
+	    /*
+	     * Attempt to translate post-sprintf string to allow specific translations
+	     * for particular %s values.  Currently only supports a single arg.
+	     * Fallback to normal translation of given $params.
+	     */
+	    $string = sprintf($params['text'], $params['postSprintfArg1']);
+	    list ($ret, $text) = $translator->translateDomain($domain, $string);
+	    if ($ret || $text == $string) {
+		list ($ret, $text) = $translator->translateDomain($domain, $params);
+	    }
+	} else {
+	    list ($ret, $text) = $translator->translateDomain($domain, $params);
+	}
 	if ($ret) {
 	    return '[Translation error: ' . print_r($params, true) . ']';
 	}

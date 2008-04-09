@@ -108,7 +108,9 @@
 </div>
 
 <div class="gbBlock">
-  <h3> {g->text text="%s Date and Time" arg1=$ItemEditItem.typeName.0} </h3>
+  <h3> {g->text text="%s Date and Time" arg1=$ItemEditItem.typeName.0
+	postSprintfArg1=$ItemEditItem.typeName.2} </h3>
+	{* Specific translations: {g->text text="Link Date and Time"} *}
 
   <p class="giDescription">
     {if !empty($ItemEditItem.isItemPhoto)}
@@ -117,7 +119,9 @@
       {g->text text="Set the date and time to be displayed for this item."}
     {else}
       {g->text text="Set the date and time to be displayed for this %s."
-	       arg1=$ItemEditItem.typeName.1}
+	       arg1=$ItemEditItem.typeName.1 postSprintfArg1=$ItemEditItem.typeName.3}
+      {* Specific translations:
+	 {g->text text="Set the date and time to be displayed for this link."} *}
     {/if}
   </p>
 
