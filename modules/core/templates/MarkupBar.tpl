@@ -15,6 +15,9 @@
       element.value = element.value + '[/' + bbCodeElement + ']';
       button.value = button.value.substring(1);
     }
+    if (typeof(element.selectionStart) != "undefined") {
+      element.selectionStart = element.selectionEnd = element.value.length;
+    }
     element.focus();
     button.g2ToggleMode = !button.g2ToggleMode;
   }
