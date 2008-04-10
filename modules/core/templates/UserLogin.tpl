@@ -7,7 +7,7 @@
 </div>
 
 {capture name="recoverUrl"}{g->url arg1="view=core.UserAdmin" arg2="subView=core.UserRecoverPassword" arg3="return=1"}{/capture}
-{if $user.isGuest}
+{if $user.isGuest || !empty($reauthenticate)}
 <div class="gbBlock">
   {if isset($status.passwordRecovered)}
   <div class="gbBlock"><h2 class="giSuccess">
@@ -15,6 +15,12 @@
   </h2></div>
   {/if}
 
+  {if !empty($reauthenticate)}
+    <div class="giWarning">
+      {g->text text="The administration session has expired, please re-authenticate to access the administration area."}
+    </div>
+    <br/>
+  {/if}
   <h4> {g->text text="Username"} </h4>
 
   <input type="text" id="giFormUsername" size="16"

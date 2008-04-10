@@ -504,7 +504,65 @@ class ViewTest extends GalleryTestCase {
 
 	$head = $template->getVariable('head');
 	$this->assertEquals(array(), $head['meta']);
-    }    
+    }
+
+    function testPermissionCheckNotAdmin() {
+	$galleryView = new GalleryView();
+
+	$this->_becomeGuestUser();
+	list ($ret, $results) = 
+	    $galleryView->_permissionCheck(GalleryCoreApi::error(ERROR_PERMISSION_DENIED));
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(array('redirect' => array ('view' => 'core.UserAdmin',
+	    'subView' => 'core.UserLogin', 'return' => true)), $results, 'Unexpected result');
+    }
+
+    function testPermissionCheckAuthTimeoutExpired() {
+	$galleryView = new GalleryView();
+
+	list ($ret, $results) = 
+	    $galleryView->_permissionCheck(GalleryCoreApi::error(ERROR_PERMISSION_DENIED));
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(array('redirect' => array ('view' => 'core.UserAdmin',
+	    'subView' => 'core.UserLogin', 'return' => true, 'reAuthenticate' => 1)), $results,
+	    'Unexpected result');
+    }
+
+    function testPermissionCheckHasPermission() {
+	$galleryView = new GalleryView();
+
+	list ($ret, $results) = $galleryView->_permissionCheck(null);
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(null, $results, 'Results should be null');
+    }
+
+    function testPermissionCheckErrorMissingObject() {
+	$galleryView = new GalleryView();
+
+	list ($ret, $results) = 
+	    $galleryView->_permissionCheck(GalleryCoreApi::error(ERROR_MISSING_OBJECT));
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(array('redirect' => array ('view' => 'core.UserAdmin',
+	    'subView' => 'core.UserLogin', 'return' => true, 'reAuthenticate' => 1)), $results,
+	    'Unexpected result');
+    }
+
+    function testPermissionCheckOtherError() {
+	$galleryView = new GalleryView();
+
+	list ($ret, $results) = 
+	    $galleryView->_permissionCheck(GalleryCoreApi::error(ERROR_STORAGE_FAILURE));
+	$this->assertErrorEquals(ERROR_STORAGE_FAILURE, $ret, 'Unexpected error code');
+	$this->assertEquals(null, $results, 'Results should be null');
+    }
 }
 
 class ViewTestModule {

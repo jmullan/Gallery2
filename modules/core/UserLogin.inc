@@ -220,6 +220,9 @@ class UserLoginView extends GalleryView {
 	    $form['username'] = '';
 	}
 
+	$reauthenticate = GalleryUtilities::getRequestVariables('reAuthenticate');
+
+	$template->setVariable('reauthenticate', $reauthenticate);
 	$template->setVariable('controller', 'core.UserLogin');
 	return array(null, array('body' => 'modules/core/templates/UserLogin.tpl'));
     }

@@ -1394,6 +1394,25 @@ class GallerySession {
 	    return true;
 	}
     }
+
+    /**
+     * Check if the site admininstration session timeout has expired
+     * @return array GalleryStatus a status code
+     * 		     boolean true if the timeout has expired.
+     * @access public
+     */
+    function hasSiteAdminSessionExpired() {
+	global $gallery;
+	$phpVm = $gallery->getPhpVm();
+
+	list ($ret, $siteAdministrationTimeout) = GalleryCoreApi::getPluginParameter('module',
+	    'core', 'session.siteAdministrationTimeout');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$lastActivity = (int)$this->get('session.siteAdminActivityTimestamp');
+	return array(null, ($lastActivity + (int)$siteAdministrationTimeout) < $phpVm->time());
+    }
 }
 
 /**

@@ -180,6 +180,8 @@ class GalleryUserHelper_medium /* extends GalleryEventListener */ {
      */
     function assertSiteAdministrator() {
 	global $gallery;
+	$session =& $gallery->getSession();
+	$phpVm = $gallery->getPhpVm();
 
 	/* Make sure we have adequate permissions */
 	list ($ret, $inGroup) = GalleryCoreApi::isUserInSiteAdminGroup();
@@ -191,6 +193,16 @@ class GalleryUserHelper_medium /* extends GalleryEventListener */ {
 	    return GalleryCoreApi::error(ERROR_PERMISSION_DENIED);
 	}
 
+	list ($ret, $expired) = $session->hasSiteAdminSessionExpired();
+	if ($ret) {
+	    return $ret;
+	}
+
+	if ($expired) {
+	    return GalleryCoreApi::error(ERROR_PERMISSION_DENIED);
+	}
+
+	$session->put('session.siteAdminActivityTimestamp', $phpVm->time());
 	return null;
     }
 
@@ -335,6 +347,7 @@ class GalleryUserHelper_medium /* extends GalleryEventListener */ {
      */
     function handleEvent($event) {
 	global $gallery;
+	$phpVm = $gallery->getPhpVm();
 
 	if ($event->getEventName() == 'Gallery::Login') {
 	    $user = $event->getEntity();
@@ -350,6 +363,7 @@ class GalleryUserHelper_medium /* extends GalleryEventListener */ {
 	    if ($ret) {
 		return array($ret, null);
 	    }
+	    $session->put('session.siteAdminActivityTimestamp', $phpVm->time());
 	} else if ($event->getEventName() == 'Gallery::FailedLogin') {
 	    $data = $event->getData();
 	    if (!empty($data['userName'])) {

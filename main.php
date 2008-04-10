@@ -248,7 +248,10 @@ function _GalleryMain($embedded=false, $template=null) {
 	/* Let the controller handle the input */
 	list ($ret, $results) = $controller->handleRequest($form);
 	if ($ret) {
-	    return array($ret, null);
+	    list ($ret, $results) = $controller->permissionCheck($ret);
+	    if ($ret) {
+		return array($ret, null);
+	    }
 	}
 
 	/* Check to make sure we got back everything we want */

@@ -276,5 +276,18 @@ class GalleryController {
 
 	return array(null, $item);
     }
+
+    /**
+     * @see GalleryView::_permissionCheck()
+     */
+    function permissionCheck($ret) {
+	GalleryCoreApi::requireOnce('modules/core/classes/GalleryView.class');
+	$view = new GalleryView();
+	list ($ret, $results) = $view->_permissionCheck($ret);
+	if (!empty($results['redirect'])) {
+	    $results['status'] = $results['error'] = array();
+	}
+	return array($ret, $results);
+    }
 }
 ?>

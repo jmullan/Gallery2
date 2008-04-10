@@ -129,6 +129,7 @@ class AdminCoreController extends GalleryController {
 			   'default.theme',
 			   'session.lifetime',
 			   'session.inactivityTimeout',
+			   'session.siteAdministrationTimeout',
 			   'misc.markup',
 			   'smtp.host',
 			   'smtp.from',
@@ -224,6 +225,7 @@ class AdminCoreView extends GalleryView {
 			   'exec.expectedStatus',
 			   'session.lifetime',
 			   'session.inactivityTimeout',
+			   'session.siteAdministrationTimeout',
 			   'misc.markup',
 			   'smtp.host',
 			   'smtp.from',
@@ -293,6 +295,15 @@ class AdminCoreView extends GalleryView {
 	}
 	$sessionTimeList[25 * 365 * 86400] = $module->translate('forever');
 
+	$siteAdminInactivityTimeout = array();
+	foreach (array(5, 10, 15, 20, 30, 45, 60, 90, 120) as $minutes) {
+	    $siteAdminInactivityTimeout[$minutes * 60] =
+		$module->translate(array('one' => '%d minute',
+					 'many' => '%d minutes',
+					 'count' => $minutes,
+					 'arg1' => $minutes));
+	}
+
 	if (GalleryUtilities::isA($platform, 'UnixPlatform')) {
 	    $can['setPermissions'] = true;
 
@@ -317,6 +328,7 @@ class AdminCoreView extends GalleryView {
 
 	$AdminCore['can'] = $can;
 	$AdminCore['sessionTimeList'] = $sessionTimeList;
+	$AdminCore['siteAdminInactivityTimeout'] = $siteAdminInactivityTimeout;
 	$AdminCore['embeddedMarkupList'] = $embeddedMarkupList;
 	$AdminCore['lockSystemList'] = $lockSystemList;
 

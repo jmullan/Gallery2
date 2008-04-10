@@ -2982,6 +2982,23 @@ class SessionTest extends GalleryTestCase {
 
 	$this->assertEquals($sessions['from_url']->getId(), $session->getId());
     }
+
+    function testHasSiteAdminSessionExpired() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	list ($ret, $activeAuthExpirationInterval) = GalleryCoreApi::getPluginParameter('module',
+	    'core', 'session.siteAdministrationTimeout');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$session->put('session.siteAdminActivityTimestamp', 
+	    time() - $activeAuthExpirationInterval - 10);
+
+	list ($ret, $expired) = $session->hasSiteAdminSessionExpired();
+	$this->assert($expired, 'Admin AuthorizationTimeout should have expired');
+    }
 }
 
 class SessionTestPhpVm extends GalleryPhpVm {

@@ -602,6 +602,8 @@ class GalleryView {
      */
     function _permissionCheck($ret) {
 	global $gallery;
+	$session =& $gallery->getSession();
+
 	$result = null;
 	if ($ret) {
 	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
@@ -617,6 +619,15 @@ class GalleryView {
 		    /* Redirect to login view */
 		    $result = array(null,
 				    array('redirect' => $gallery->getConfig('loginRedirect')));
+		}
+		list ($ret2, $inGroup) = GalleryCoreApi::isUserInSiteAdminGroup();
+		if ($ret2) {
+		    return $result;
+		}
+		if ($inGroup) {
+		    $redirect = $gallery->getConfig('loginRedirect');
+		    $redirect['reAuthenticate'] = 1;
+		    $result = array(null, array('redirect' => $redirect));
 		}
 	    }
 	}
