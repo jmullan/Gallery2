@@ -278,6 +278,8 @@ class GalleryDerivative extends GalleryChildEntity {
 	     * Something went wrong with the toolkit
 	     * Mark the derivative as broken for later repair attempts
 	     */
+	    GalleryCoreApi::addEventLogEntry(
+		'Image Error', 'Unable to build image', $ret->getAsText());
 	    $this->setIsBroken(true);
 	    if ($gallery->getDebug()) {
 		$gallery->debug("\n" . $ret->getAsText() . "\n");
@@ -302,8 +304,7 @@ class GalleryDerivative extends GalleryChildEntity {
 			    $this->setDerivativeSize($size);
 			    $status = null;
 			} else {
-			    $status =
-				GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
+			    $status = GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
 			}
 		    } else {
 			$status = $ret;
