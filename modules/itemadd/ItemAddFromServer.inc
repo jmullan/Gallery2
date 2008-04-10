@@ -630,9 +630,8 @@ class ItemAddFromServer extends ItemAddPlugin {
 			if ($platform->is_readable($filePath)) {
 			    if ($platform->is_dir($filePath)) {
 				$filePath = $platform->realpath($filePath);
-				$legal =
-				    GalleryUtilities::isPathInList($filePath,
-							      $localServerDirListInSystemCharset);
+				$legal = GalleryUtilities::isPathInList(
+				    $filePath, $localServerDirListInSystemCharset);
 				if (!$legal && $fileName == '..') {
 				    continue;
 				}
