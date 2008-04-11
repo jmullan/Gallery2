@@ -25,6 +25,9 @@
   function appendTextElement(elementId, bbCodeElement, button) {
     var element = document.getElementById(elementId);
     element.value = element.value + '[' + bbCodeElement + ']';
+    if (typeof(element.selectionStart) != "undefined") {
+      element.selectionStart = element.selectionEnd = element.value.length;
+    }
     element.focus();
   }
 
@@ -58,6 +61,9 @@
       } else {
         var element = document.getElementById(elementId);
         element.value = element.value + '[/color]';
+        if (typeof(element.selectionStart) != "undefined") {
+          element.selectionStart = element.selectionEnd = element.value.length;
+        }
         element.focus();
       }
     }
@@ -74,6 +80,11 @@
       if (text.length) element.value = element.value + '[url=' + url + ']' + text + '[/url]';
       else element.value = element.value + '[url]' + url + '[/url]';
     {rdelim}      
+    {literal}
+    if (typeof(element.selectionStart) != "undefined") {
+      element.selectionStart = element.selectionEnd = element.value.length;
+    }
+    {/literal}
     element.focus();
   {rdelim}
 
@@ -81,6 +92,11 @@
     var element = document.getElementById(elementId);
     var url = prompt('{g->text text="Enter an image URL" forJavascript=true}', '');
     if (url != null) element.value = element.value + '[img]' + url + '[/img]';
+    {literal}
+    if (typeof(element.selectionStart) != "undefined") {
+      element.selectionStart = element.selectionEnd = element.value.length;
+    }
+    {/literal}
     element.focus();
   {rdelim}
   // ]]>
