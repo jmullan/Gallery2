@@ -2545,6 +2545,8 @@ class CoreModuleExtras {
 	    if ($ret) {
 		return $ret;
 	    }
+	case '1.2.32':
+	    /* Set the default baseUri in config.php */
 
 	case 'end of upgrade path':
 	    /*
@@ -2890,6 +2892,15 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.29':
 	case '1.2.30':
 	case '1.2.31':
+	case '1.2.32':
+	    /* Change the baseUri if it's not set. */
+	    $urlGenerator =& $gallery->getUrlGenerator();
+	    $urlPath = preg_replace('|^(.*/)upgrade/index.php.*$|s', '$1',
+				    $urlGenerator->getCurrentUrl()) . GALLERY_MAIN_PHP;
+	    $edit = array();
+	    $edit['regexp'] = '{\$gallery->setConfig\(\'baseUri\', \'\'\);}s';
+	    $edit['replacement'] = '$gallery->setConfig(\'baseUri\', \'' . $urlPath . '\');';
+	    $configChanges[] = array('remove' => array(), 'add' => array(), 'edit' => array($edit));
 
 	case 'end of upgrade path':
 	    /*

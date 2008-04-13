@@ -33,33 +33,33 @@
     <?php printf(_('This is for multiple Gallery installations on a single web server.  Each Gallery is totally independent with its own database of photos, albums, and users.  For more details, refer to the %s page.'),
                  '<a href="http://codex.gallery2.org/index.php/Gallery2:Multisite" target="_blank">Multisite Documentation</a>') ?>
   </p>
-  <?php if (isset($templateData['error'])): ?>
+  <?php if (isset($templateData['error']['dir'])): ?>
       <div class="error" style="padding-top: 0.8em; padding-bottom: 0.9em">
-        <?php if (isset($templateData['error']['missing_value'])): ?>
+        <?php if (isset($templateData['error']['dir']['empty'])): ?>
           <?php print _('You must enter a directory');?>
-        <?php elseif (isset($templateData['error']['codebase_dir'])): ?>
-        <?php printf(_('You entered the %s directory. If you want to install a Gallery there, select the standard installation type. If you want to install a multisite, choose a different directory.'), basename($templateData['configPath'])); ?>
-	  <?php elseif (isset($templateData['error']['missing_dir'])): ?>
-        <?php if (!empty($templateData['openBasedir'])): ?>
-          <?php print _('The directory you entered either does not exist, or is prohibited by your webserver configuration.  Your webserver is configured to only allow access to the following directories.  You must choose a directory under one of these, or you must modify the <b>open_basedir</b> setting in your PHP configuration to allow a new directory.'); ?>
-          <ul>
-          <?php foreach ($templateData['openBasedir'] as $dir): ?>
-            <li> <?php print $dir ?> </li>
-          <?php endforeach; ?>
-          </ul>
-          <?php print _('If your multisite installation is in a different virtual host, you should contact your system administrator and request that they configure your <b>open_basedir</b> setting so that your virtual hosts can access each other.'); ?>
-        <?php else: ?>
-	      <?php print _('The directory you entered does not exist'); ?>
-        <?php endif; ?>
-      <?php elseif (isset($templateData['error']['inaccessible_dir'])): ?>
+        <?php elseif (isset($templateData['error']['dir']['codebase'])): ?>
+          <?php printf(_('You entered the %s directory. If you want to install a Gallery there, select the standard installation type. If you want to install a multisite, choose a different directory.'), basename($templateData['configPath'])); ?>
+        <?php elseif (isset($templateData['error']['dir']['missing'])): ?>
+	  <?php if (!empty($templateData['openBasedir'])): ?>
+	    <?php print _('The directory you entered either does not exist, or is prohibited by your webserver configuration.  Your webserver is configured to only allow access to the following directories.  You must choose a directory under one of these, or you must modify the <b>open_basedir</b> setting in your PHP configuration to allow a new directory.'); ?>
+	    <ul>
+	    <?php foreach ($templateData['openBasedir'] as $dir): ?>
+	      <li> <?php print $dir ?> </li>
+	    <?php endforeach; ?>
+	    </ul>
+	    <?php print _('If your multisite installation is in a different virtual host, you should contact your system administrator and request that they configure your <b>open_basedir</b> setting so that your virtual hosts can access each other.'); ?>
+	  <?php else: ?>
+	    <?php print _('The directory you entered does not exist'); ?>
+	  <?php endif; ?>
+        <?php elseif (isset($templateData['error']['dir']['inaccessible'])): ?>
           <?php print _('The directory you entered is not accessible.  Change the permissions so that the webserver can read this directory.'); ?>
-      <?php elseif (isset($templateData['error']['creation_error'])): ?>
-        <?php print _('Unable to create multisite files. Ensure the files listed below are writeable.'); ?>
-        <br/><br/>
-        <?php foreach (array('main.php', 'index.php', 'embed.php', 'upgrade/index.php', 'lib/support/index.php (optional)') as $file): ?>
-          <?php printf('%s%s%s', $templateData['configPath'], DIRECTORY_SEPARATOR, $file) ?> <br/>
-        <?php endforeach; ?>
-      <?php endif; ?>
+        <?php elseif (isset($templateData['error']['dir']['creation_error'])): ?>
+          <?php print _('Unable to create multisite files. Ensure the files listed below are writeable.'); ?>
+          <br/><br/>
+	  <?php foreach (array('main.php', 'index.php', 'embed.php', 'upgrade/index.php', 'lib/support/index.php (optional)') as $file): ?>
+	    <?php printf('%s%s%s', $templateData['configPath'], DIRECTORY_SEPARATOR, $file) ?> <br/>
+	  <?php endforeach; ?>
+        <?php endif; ?>
 	</div>
  	<br/>
   <?php endif; ?>
@@ -68,6 +68,17 @@
   </p>
   <input type="text" id="dir" name="configPath" size="50"
          value="<?php print $templateData['configPath'] ?>" autocomplete="off"
+	 <?php if (!$templateData['isMultisite']) print 'class="disabled" disabled="disabled"' ?>/>
+  <?php if (isset($templateData['error']['uri']['missing'])): ?>
+    <div class="error" style="margin-top: 1em; padding-top: 0.8em; padding-bottom: 0.9em">
+      <?php print _('You must provide the URL for your new multisite'); ?>
+    </div>
+  <?php endif; ?>
+  <p>
+    <?php print _('URL for the new Gallery installation (example: http://example.com/gallery2/main.php) ') ?>
+  </p>
+  <input type="text" id="url" name="baseUri" size="50"
+         value="<?php print $templateData['baseUri'] ?>"
 	 <?php if (!$templateData['isMultisite']) print 'class="disabled" disabled="disabled"' ?>/>
   <script type="text/javascript">
     // <![CDATA[
@@ -80,11 +91,13 @@
       document.getElementById('linkContinue').style.display = m ? 'none' : 'inline';
       document.getElementById('linkSelect').style.display = m ? 'inline' : 'none';
       var dirEl = document.getElementById('dir');
+      var urlEl = document.getElementById('url');
       dirEl.disabled = m ? '' : 'disabled';
+      urlEl.disabled = m ? '' : 'disabled';
       if (m) {
-        YAHOO.util.Dom.removeClass(dirEl, 'disabled');
+        YAHOO.util.Dom.removeClass(Array(dirEl, urlEl), 'disabled');
       } else {
-        YAHOO.util.Dom.addClass(dirEl, 'disabled');
+        YAHOO.util.Dom.addClass(Array(dirEl, urlEl), 'disabled');
       }
     }
     // ]]>
@@ -98,5 +111,5 @@
     <?php printf(_('Continue to Step %d&raquo;'), $stepNumber + 1) ?></span></a>
   <a href="javascript:document.forms[0].submit()"<?php if (!$templateData['isMultisite']) print ' style="display:none"' ?>
      id="linkSelect" class="btn continue"><i></i><span><span></span><i></i>
-    <?php print _('Select Directory') ?></span></a>
+    <?php print _('Select Directory and URL') ?></span></a>
 </div>
