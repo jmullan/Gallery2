@@ -114,6 +114,12 @@ class AdminRepositoryDownloadAndInstallController extends GalleryController {
 		     * @todo: Refactor this code duplication away
 		     */
 
+		    $templateAdapter->updateProgressBar($titleText,
+			sprintf($module->translate('Cleaning up obsolete files %s'), $pluginName),
+			$currentAction++ / $totalActions);
+
+		    $repository->removeObsoleteFiles($pluginType, $pluginId);
+
 		    $templateAdapter->updateProgressBar(
 			$titleText, sprintf($module->translate('Activating %s'), $pluginName),
 			$currentAction / $totalActions);
@@ -238,8 +244,8 @@ class AdminRepositoryDownloadAndInstallController extends GalleryController {
 		     */
 		    $totalActions += 2 * count($pluginDownloadData['files']) - 1;
 
-		    /* 1 extra action for each plugin (language sync) */
-		    $totalActions += 1;
+		    /* 2 extra action for each plugin (language sync, cleanup) */
+		    $totalActions += 2;
 		}
 	    }
 	}

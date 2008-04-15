@@ -779,6 +779,7 @@ class GalleryRepository {
      */
     function scanPlugin($pluginType, $pluginId) {
 	global $gallery;
+	$platform =& $gallery->getPlatform();
 
 	/* Erase all data for this plugin */
 	$ret = GalleryCoreApi::removeMapEntry(
@@ -787,8 +788,7 @@ class GalleryRepository {
 	    return $ret;
 	}
 
-	$platform =& $gallery->getPlatform();
-	$pluginDir = sprintf('%s%ss/%s', GalleryCoreApi::getCodeBasePath(), $pluginType, $pluginId);
+	$pluginDir = GalleryCoreApi::getCodeBasePath("{$pluginType}s/$pluginId");
 	$manifestPath = "$pluginDir/MANIFEST";
 
 	if (!$platform->file_exists($manifestPath)) {
@@ -1068,6 +1068,32 @@ class GalleryRepository {
 	    }
 	}
 	return array(null, $status);
+    }
+
+    /**
+     * Remove obsolete files when a plugin is updated.
+     *
+     * @param string $pluginType A plugin type (module|theme)
+     * @param string $pluginId A plugin id
+     * @access public
+     */
+    function removeObsoleteFiles($pluginType, $pluginId) {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$manifestPath = GalleryCoreApi::getCodeBasePath("{$pluginType}s/$pluginId/MANIFEST");
+
+	$manifest =  array();
+	GalleryUtilities::readIndividualManifest($manifestPath, $manifest);
+
+	foreach ($manifest as $file => $detail) {
+	    if (!empty($detail['removed'])) {
+		$file = GalleryCoreApi::getCodeBasePath($file);
+		if ($platform->is_writeable($file)) {
+		    $platform->unlink($file);
+		}
+	    }
+	}
     }
 }
 ?>

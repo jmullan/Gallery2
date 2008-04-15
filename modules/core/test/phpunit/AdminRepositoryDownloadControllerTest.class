@@ -41,6 +41,7 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	   return $ret;
 	}
 	global $gallery;
+	$session =& $gallery->getSession();
 
 	$this->_galleryTemplateAdapter =& $gallery->getTemplateAdapter();
 
@@ -71,6 +72,8 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	$supportedLanguages['es']['AR']['description'] = 'Espa&#241;ol (AR)';
 
 	GalleryDataCache::put($cacheKey, $supportedLanguages);
+
+	$session->put('session.siteAdminActivityTimestamp', time());
     }
 
     function tearDown() {
@@ -216,6 +219,10 @@ class AdminRepositoryDownloadControllerTestPhpVm {
 
     function class_exists($class_name) {
 	return $this->_class_exists;
+    }
+
+    function time() {
+	return time();
     }
 }
 ?>

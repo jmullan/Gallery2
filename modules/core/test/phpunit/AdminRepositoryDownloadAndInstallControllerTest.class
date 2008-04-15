@@ -43,6 +43,11 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 	}
 	global $gallery;
 
+	list ($ret, $ignored) = GalleryCoreApi::fetchPluginStatus('module', true);
+	if ($ret) {
+	    return $ret;
+	}
+
 	$this->_originalSession = $gallery->_session;
 	$this->_galleryTemplateAdapter =& $gallery->getTemplateAdapter();
 
@@ -99,8 +104,9 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 				    $pluginDownloadFileList['module'][$testModule],
 				    array('method' => array($startingAdapter, 'updateProgressBar'),
 					  'title' => 'Updating Packages', 'current' => 0,
-					  'total' => 6)),
+					  'total' => 7)),
 			      array(null, true, array()));
+	$repository->setReply('removeObsoleteFiles', array('module', $testModule), null);
 
 	$ret = $this->_controller->performDownloadAndInstallation(
 	    array('test' =>
@@ -150,8 +156,9 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 				    $pluginDownloadFileList['module'][$testModule],
 				    array('method' => array($startingAdapter, 'updateProgressBar'),
 					  'title' => 'Updating Packages', 'current' => 0,
-					  'total' => 4)),
+					  'total' => 5)),
 			      array(null, true, array()));
+	$repository->setReply('removeObsoleteFiles', array('module', $testModule), null);
 
 	$ret = $this->_controller->performDownloadAndInstallation(
 	    array('test' => array('module' => array($testModule => array('base' => 1)))),
@@ -196,8 +203,9 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 				    $pluginDownloadFileList['module'][$testModule],
 				    array('method' => array($startingAdapter, 'updateProgressBar'),
 					  'title' => 'Updating Packages', 'current' => 0,
-					  'total' => 4)),
+					  'total' => 5)),
 			      array(null, true, array()));
+	$repository->setReply('removeObsoleteFiles', array('module', $testModule), null);
 
 	$ret = $this->_controller->performDownloadAndInstallation(
 	    array('test' => array('module' => array($testModule => array('base' => 1)))),
@@ -243,8 +251,9 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 				    $pluginDownloadFileList['module'][$testModule],
 				    array('method' => array($startingAdapter, 'updateProgressBar'),
 					  'title' => 'Updating Packages', 'current' => 0,
-					  'total' => 4)),
+					  'total' => 5)),
 			      array(null, true, array()));
+	$repository->setReply('removeObsoleteFiles', array('module', $testModule), null);
 
 	$ret = $this->_controller->performDownloadAndInstallation(
 	    array('test' => array('module' => array($testModule => array('base' => 1)))),
@@ -296,9 +305,10 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 				    $pluginDownloadFileList['module'][$testModule],
 				    array('method' => array($startingAdapter, 'updateProgressBar'),
 					  'title' => 'Updating Packages', 'current' => 0,
-					  'total' => 8)),
+					  'total' => 9)),
 			      array(null, false, array('failedToDownload' => array('module' =>
 				  array('Test Module' => array('base-package'))))));
+	$repository->setReply('removeObsoleteFiles', array('module', $testModule), null);
 
 	$ret = $this->_controller->performDownloadAndInstallation(
 	    array('test' =>
@@ -353,9 +363,10 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 				    $pluginDownloadFileList['module'][$testModule],
 				    array('method' => array($startingAdapter, 'updateProgressBar'),
 					  'title' => 'Updating Packages', 'current' => 0,
-					  'total' => 8)),
+					  'total' => 9)),
 			      array(null, true, array('failedToDownload' => array('module' =>
 				  array('Test Module' => array('en_GB-package'))))));
+	$repository->setReply('removeObsoleteFiles', array('module', $testModule), null);
 
 	$ret = $this->_controller->performDownloadAndInstallation(
 	    array('test' =>
@@ -526,7 +537,7 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 		    'af' => 'themes/testTheme-af.package',
 		    'cs' => 'themes/testTheme-cs.package')))));
 	$count = $this->_controller->_countInstallActions($sourceFiles);
-	$this->assertEquals(12, $count, 'Unexpected count fromcountInstallActions');
+	$this->assertEquals(14, $count, 'Unexpected count fromcountInstallActions');
     }
 }
 
@@ -564,7 +575,7 @@ class AdminRepositoryDownloadAndInstallControllerTestWrapper
     var $_active = null;
 
     function _fetchPluginStatus($pluginType, $ignoreCache) {
-	list ($ret, $pluginStatus) = parent::_fetchPluginStatus($pluginType, $ignoreCache);
+	list ($ret, $pluginStatus) = parent::_fetchPluginStatus($pluginType, false);
 	if ($ret) {
 	    return array($ret, null);
 	}

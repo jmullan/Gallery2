@@ -142,4 +142,8 @@ class UnitTestRepository extends MockObject {
     function downloadAndUnpackPackages($filesToDownload, &$callback) {
 	return $this->_makeReply('downloadAndUnpackPackages', array($filesToDownload, $callback));
     }
+
+    function removeObsoleteFiles($pluginType, $pluginId) {
+	return $this->_makeReply('removeObsoleteFiles', array($pluginType, $pluginId));
+    }
 }

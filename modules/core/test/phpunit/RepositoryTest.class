@@ -1811,6 +1811,34 @@ class RepositoryTest extends GalleryTestCase {
 	$this->assert($repository->_utilities->isComplete(),
 	    $repository->_utilities->getRemaining());
     }
+
+    function testRemoveObsoleteFiles() {
+	global $gallery;
+	$gallery->setPlatform(new UnitTestPlatform());
+	$platform =& $gallery->getPlatform();
+
+	$repository = new GalleryRepository();
+	$repository->_source = 'test';
+	$repository->_utilities = new UnitTestRepositoryUtilities();
+	$repository->_index = $this->_index;
+
+	$modules = GalleryCoreApi::getCodeBasePath('modules');
+	$platform->setReply('file', array($modules . '/RepositoryTest/MANIFEST', null), 
+	    array('# $Revision$',
+		  '# File crc32 crc32(crlf) size size(crlf)  or  R File',
+		  'modules/RepositoryTest/testfile1.inc	123	123	123	123',
+		  'modules/RepositoryTest/testfile2.inc	456	456	456	456',
+		  'R	modules/RepositoryTest/deleteFile1.class',
+		  'R	modules/RepositoryTest/deleteFile2.tpl'));
+	$platform->setReply('is_writeable', array($modules . '/RepositoryTest/deleteFile1.class'), 
+	    true);
+	$platform->setReply('unlink', array($modules . '/RepositoryTest/deleteFile1.class'), true);
+	$platform->setReply('is_writeable', array($modules . '/RepositoryTest/deleteFile2.tpl'), 
+	    false);
+
+	$repository->removeObsoleteFiles('module', 'RepositoryTest');
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
 }
 
 class RepositoryTest_GalleryRepository {
