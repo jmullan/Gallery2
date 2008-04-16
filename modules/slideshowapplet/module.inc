@@ -91,15 +91,42 @@ class SlideshowAppletModule extends GalleryModule {
      * @see GalleryModule::getItemLinks
      */
     function getItemLinks($items, $wantsDetailedLinks, $permissions) {
+	global $gallery;
+
 	$links = array();
 	foreach ($items as $item) {
 	    $itemId = $item->getId();
 	    if (isset($wantsDetailedLinks[$itemId])) {
-		$links[$itemId][] =
-		    array('text' => $this->translate('View Slideshow (Fullscreen)'),
-			  'params' => array(
-			  'view' => 'slideshowapplet.SlideshowApplet',
-			  'itemId' => $itemId));
+		$showSlideshowLink = false;
+
+		if ($item->getCanContainChildren()) {
+		    if (!isset($userId)) {
+			$userId = $gallery->getActiveUserId();
+		    }
+
+		    list ($ret, $query, $data) = GalleryCoreApi::buildItemQuery(
+			'GalleryChildEntity', 'id', '[GalleryChildEntity::parentId] = ?', null,
+			null, 'GalleryPhotoItem', 'core.view', null, $userId);
+
+		    if (!$ret || !empty($query)) {
+			array_unshift($data, $item->getId());
+			list ($ret, $searchResults) = $gallery->search($query, $data, null);
+
+			if (!$ret) {
+			    $showSlideshowLink = $searchResults->resultCount() > 0;
+			}
+		    }
+		} else {
+		    /** @todo Check with isA instead of entityType (thus matching subclasses). */
+		    $showSlideshowLink = $item->getEntityType() === 'GalleryPhotoItem';
+					}
+		if ($showSlideshowLink) {
+		    $links[$itemId][] =
+			array('text' => $this->translate('View Slideshow (Fullscreen)'),
+			      'params' => array(
+			      'view' => 'slideshowapplet.SlideshowApplet',
+			      'itemId' => $itemId));
+		}
 	    }
 	}
 	return array(null, $links);

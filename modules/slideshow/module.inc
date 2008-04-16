@@ -129,36 +129,67 @@ class SlideshowModule extends GalleryModule {
 	    $itemId = $item->getId();
 	    $jsUrlParams = array('forJavascript' => true, 'forceFullUrl' => true);
 	    if (isset($wantsDetailedLinks[$itemId])) {
-		if ($picLensVersion) {
-		    $script = sprintf(
-			'var p=PicLensLite;'
-			. 'p.setCallbacks({onNoPlugins:function(){location.href=\'%s\'}});'
-			. 'p.setLiteURLs({swf:\'%s\'});'
-			. 'p.start({feedUrl:\'%s\', guid:%d, pid:\'2PWfB4lurT4g\', delay:10})',
-			$urlGenerator->generateUrl(
-			    array('view' => 'slideshow.Slideshow',
-				  'itemId' => $itemId),
-			    $jsUrlParams),
-			$urlGenerator->generateUrl(
-			    array('view' => 'slideshow.DownloadPicLens',
-				  'file' => 'swf',
-				  'v' => $picLensVersion),
-			    $jsUrlParams),
-			$urlGenerator->generateUrl(
-			    array('view' => 'slideshow.SlideshowMediaRss',
-				  'itemId' => $item->getId()),
-			    $jsUrlParams),
-			$itemId);
-		    $links[$itemId][] =
-			array('text' => $this->translate('View Slideshow'),
-			      'params' => array('view' => 'slideshow.Slideshow',
-						'itemId' => $itemId),
-			      'script' => $script);
+		/*
+		 * Photo: do slideshow of parent album, start at this photo.
+		 * Show View Slideshow link, only when album has images in it.
+		 */
+
+		$showSlideshowLink = false;
+
+		if ($item->getCanContainChildren()) {
+		    if (!isset($userId)) {
+			$userId = $gallery->getActiveUserId();
+		    }
+
+		    list ($ret, $query, $data) = GalleryCoreApi::buildItemQuery(
+			'GalleryChildEntity', 'id', '[GalleryChildEntity::parentId] = ?', null,
+			null, 'GalleryPhotoItem', 'core.view', null, $userId);
+
+		    if (!$ret || !empty($query)) {
+			array_unshift($data, $item->getId());
+			list ($ret, $searchResults) = $gallery->search($query, $data, null);
+
+			if (!$ret) {
+			    $showSlideshowLink = $searchResults->resultCount() > 0;
+			}
+		    }
 		} else {
-		    $links[$itemId][] =
-			array('text' => $this->translate('View Slideshow'),
-			      'params' => array('view' => 'slideshow.Slideshow',
-						'itemId' => $itemId));
+		    /** @todo Check with isA instead of entityType (thus matching subclasses). */
+		    $showSlideshowLink = $item->getEntityType() === 'GalleryPhotoItem';
+		}
+
+		if ($showSlideshowLink) {
+		    if ($picLensVersion) {
+			$script = sprintf(
+			    'var p=PicLensLite;'
+			    . 'p.setCallbacks({onNoPlugins:function(){location.href=\'%s\'}});'
+			    . 'p.setLiteURLs({swf:\'%s\'});'
+			    . 'p.start({feedUrl:\'%s\', guid:%d, pid:\'2PWfB4lurT4g\', delay:10})',
+			    $urlGenerator->generateUrl(
+				array('view' => 'slideshow.Slideshow',
+				      'itemId' => $itemId),
+				$jsUrlParams),
+			    $urlGenerator->generateUrl(
+				array('view' => 'slideshow.DownloadPicLens',
+				      'file' => 'swf',
+				      'v' => $picLensVersion),
+				$jsUrlParams),
+			    $urlGenerator->generateUrl(
+				array('view' => 'slideshow.SlideshowMediaRss',
+				      'itemId' => $item->getId()),
+				$jsUrlParams),
+				$itemId);
+			$links[$itemId][] =
+			    array('text' => $this->translate('View Slideshow'),
+				  'params' => array('view' => 'slideshow.Slideshow',
+						    'itemId' => $itemId),
+				  'script' => $script);
+		    } else {
+			$links[$itemId][] =
+			    array('text' => $this->translate('View Slideshow'),
+				  'params' => array('view' => 'slideshow.Slideshow',
+				  'itemId' => $itemId));
+		    }
 		}
 	    }
 	}
