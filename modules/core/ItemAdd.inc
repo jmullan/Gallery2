@@ -156,7 +156,7 @@ class ItemAddController extends GalleryController {
 	}
 
 	/* Start the add process */
-    	list ($ret, $error, $status) = $addPlugin->handleRequest($form, $item, $this);
+	list ($ret, $error, $status) = $addPlugin->handleRequest($form, $item, $this);
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
 	    return $ret;
@@ -356,7 +356,7 @@ class ItemAddController extends GalleryController {
 		    /* For each item, put the items warnings into our status array */
 		    foreach ($optionWarnings as $j => $messages) {
 			$key = $itemsToProcessKeyMap[$j];
-		    	if (!isset($status['addedFiles'][$key]['warnings'])) {
+			if (!isset($status['addedFiles'][$key]['warnings'])) {
 			    $status['addedFiles'][$key]['warnings'] = array();
 			}
 			$status['addedFiles'][$key]['warnings'] =
@@ -478,7 +478,7 @@ class ItemAddController extends GalleryController {
 	foreach ($list as $filename) {
 	    $path = "$dir/$filename";
 	    if ($this->_platform->is_dir($path)) {
-	    	if ($canAddAlbums) {
+		if ($canAddAlbums) {
 		    $title = $filename;
 		    GalleryUtilities::sanitizeInputValues($title);
 		    list ($ret, $album) = GalleryCoreApi::createAlbum(
