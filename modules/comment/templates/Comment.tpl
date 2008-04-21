@@ -8,6 +8,7 @@
 </h3>
 {/if}
 
+{assign var="needSeparator" value="false"}
 {if $can.edit}
 <span class="edit">
   <a href="{g->url arg1="view=comment.EditComment" arg2="itemId=`$item.id`" arg3="commentId=`$comment.id`" arg4="return=true"}">{g->text text="edit"}</a>
