@@ -25,7 +25,7 @@
 {else}
 <div class="gbBlock">
 {foreach from=$ShowComments.comments item=comment}
-  <div id="comment-{$comment.id}" class="one-comment gcBorder2">
+  <div id="comment-{$comment.randomId}" class="one-comment gcBorder2">
   {include file="gallery:modules/comment/templates/Comment.tpl"
 	   comment=$comment item=$ShowComments.item can=$ShowComments.can
 	   user=$ShowComments.commenters[$comment.commenterId]

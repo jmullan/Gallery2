@@ -66,6 +66,7 @@ class ShowAllCommentsView extends GalleryView {
 
 	    /* Extract the member data */
 	    $comments[$i] = (array)$comments[$i];
+	    $comments[$i]['randomId'] = $comments[$i]['id'] . '-' . rand() ;
 	}
 
 	if (!empty($commenters)) {

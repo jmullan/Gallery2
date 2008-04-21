@@ -29,7 +29,7 @@
 {/if}
 <table>
 {foreach from=$ShowAllComments.comments item=comment}
-<tr id="comment-{$comment.id}"><td style="text-align: center; padding: 0 4px">
+<tr id="comment-{$comment.randomId}"><td style="text-align: center; padding: 0 4px">
   {assign var="item" value=$ShowAllComments.itemData[$comment.parentId]}
   <a id="CommentThumb-{$item.id}" href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$item.id`"}">
     {if isset($item.thumb)}

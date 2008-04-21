@@ -71,6 +71,7 @@ class CommentCallbacks {
 
 		    /* Extract the member data */
 		    $comments[$i] = (array)$comments[$i];
+		    $comments[$i]['randomId'] = $comments[$i]['id'] . '-' . rand() ;
 		}
 
 		/* Load all the commenters */
