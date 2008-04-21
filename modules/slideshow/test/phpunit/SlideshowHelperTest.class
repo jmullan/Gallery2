@@ -394,5 +394,91 @@ class SlideshowHelperTest extends GalleryTestCase {
 		      'thumbnail' => (array)$itemInfo[0]['thumbnail'])),
 	    $result);
     }
+
+    function testBuildAlbumSlideshow_Offset() {
+	list ($ret, $album, $itemInfo, $itemIds) = $this->_createAlbumHierarchy(
+	    'thumbnail:thumbnail:thumbnail');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $result, $start) = SlideshowHelper::buildAlbumSlideshow($album, null, 2);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(
+	    array(
+		array('item' => (array)$itemInfo[2]['item'],
+		      'image' => (array)$itemInfo[2]['item'],
+		      'thumbnail' => (array)$itemInfo[2]['thumbnail'])),
+	    $result, 'Photo data should match');
+	$this->assertEquals(0, $start, 'Should start at first photo');
+    }
+
+    /** @todo make this test run faster by overriding SLIDESHOW_MEDIARSS_ITEMS_PER_PAGE */
+    function testPaginateItemSlideshow_NextOffsetOnly() {
+	/* Create three pages of items in the album (3 * SLIDESHOW_MEDIARSS_ITEMS_PER_PAGE + 1) */
+	$options = str_repeat('thumbnail:preferred,nonphoto:thumbnail:',
+	    SLIDESHOW_MEDIARSS_ITEMS_PER_PAGE) . 'thumbnail';
+
+	list ($ret, $album, $itemInfo, $itemIds) = $this->_createAlbumHierarchy($options);
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $prevOffset, $nextOffset) =
+	    SlideshowHelper::paginateItemSlideshow($album->getId(), 0);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(null, $prevOffset, 'Should not be a previous page');
+	$this->assertEquals(SLIDESHOW_MEDIARSS_ITEMS_PER_PAGE, $nextOffset,
+	    'Next page offset should match');
+    }
+
+    function testPaginateItemSlideshow_PrevOffsetOnly() {
+	/* Create three pages of items in the album (3 * SLIDESHOW_MEDIARSS_ITEMS_PER_PAGE + 1) */
+	$options = str_repeat('thumbnail:preferred,nonphoto:thumbnail:',
+	    SLIDESHOW_MEDIARSS_ITEMS_PER_PAGE) . 'thumbnail';
+
+	list ($ret, $album, $itemInfo, $itemIds) = $this->_createAlbumHierarchy($options);
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $prevOffset, $nextOffset) = SlideshowHelper::paginateItemSlideshow(
+	    $album->getId(), SLIDESHOW_MEDIARSS_ITEMS_PER_PAGE * 3 + 1);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(
+	    (SLIDESHOW_MEDIARSS_ITEMS_PER_PAGE * 3 + 1) - SLIDESHOW_MEDIARSS_ITEMS_PER_PAGE,
+	    $prevOffset, 'Previous page offset should match');
+	$this->assertEquals(null, $nextOffset, 'Should be no next page');
+    }
+
+    function testPaginateItemSlideshow_PrevOffsetAndNextOffset() {
+	/* Create three pages of items in the album (3 * SLIDESHOW_MEDIARSS_ITEMS_PER_PAGE + 1) */
+	$options = str_repeat('thumbnail:preferred,nonphoto:thumbnail:',
+	    SLIDESHOW_MEDIARSS_ITEMS_PER_PAGE) . 'thumbnail';
+
+	list ($ret, $album, $itemInfo, $itemIds) = $this->_createAlbumHierarchy($options);
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $prevOffset, $nextOffset) = SlideshowHelper::paginateItemSlideshow(
+	    $album->getId(), SLIDESHOW_MEDIARSS_ITEMS_PER_PAGE);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(0, $prevOffset, 'Previous page offset should match');
+	$this->assertEquals(SLIDESHOW_MEDIARSS_ITEMS_PER_PAGE * 2, $nextOffset,
+	    'Next page offset should match');
+    }
 }
 ?>

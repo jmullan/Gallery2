@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+/** MediaRSS paging items per page */
+define('SLIDESHOW_MEDIARSS_ITEMS_PER_PAGE', 25);
+
 GalleryCoreApi::requireOnce('modules/slideshow/classes/SlideshowInterface_1_0.class');
 
 /**
@@ -36,14 +39,17 @@ class SlideshowHelper {
      * return slideshow data for the parent album of the given item, and set the start of the
      * slideshow to be the location of the item provided.
      *
-     * @param object GalleryItem the item to show
-     * @param int $startId the id that the slideshow should start with
-     * @return array object GalleryStatus a status code
+     * @param GalleryItem the item to show
+     * @param int $startId (optional) the id that the slideshow should start with
+     * @param int $offset (optional) number of items to skip
+     * @return array GalleryStatus a status code
      *               array an array of data for each item requested where
      *                     containing item, image and thumbnail entities
      *               int the index into the data array where the slideshow should start.
+     *               int the offset value for the previous page, null for no previous page
+     *               int the offset value for the next page, null for no next page
      */
-    function buildAlbumSlideshow($item, $startId=null) {
+    function buildAlbumSlideshow($item, $startId=null, $offset=0) {
 	list ($ret, $canView) = GalleryCoreApi::hasItemPermission($item->getId(), 'core.view');
 	if ($ret) {
 	    return array($ret, null, null);
@@ -71,12 +77,24 @@ class SlideshowHelper {
 	    }
 	}
 
-	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
+	/** @todo Make sure startId is in the first page we serve */
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item, $offset,
+	    SLIDESHOW_MEDIARSS_ITEMS_PER_PAGE);
 	if ($ret) {
 	    return array($ret, null, null);
 	}
 
-	return SlideshowHelper::buildItemsSlideshow($childIds, $startId);
+	$itemId = $item->getId();
+	$prevOffset = $nextOffset = null;
+	list ($ret, $prevOffset, $nextOffset) = SlideshowHelper::paginateItemSlideshow($itemId,
+	    $offset);
+	if ($ret) {
+	    return array($ret, null, null);
+        }
+
+	$slideshowData = SlideshowHelper::buildItemsSlideshow($childIds, $startId);
+	array_push($slideshowData, $prevOffset, $nextOffset);
+	return $slideshowData;
     }
 
     /**
@@ -84,8 +102,8 @@ class SlideshowHelper {
      * will only contain images that the user is permitted to see.
      *
      * @param array $childIds ids of GalleryItem instances
-     * @param int $startId the id that the slideshow should start with
-     * @return array object GalleryStatus a status code
+     * @param int $startId (optional) the id that the slideshow should start with
+     * @return array GalleryStatus a status code
      *               array an array of data for each item requested where
      *                     containing item, image and thumbnail entities
      *               int the index into the data array where the slideshow should start.
@@ -192,6 +210,34 @@ class SlideshowHelper {
 	}
 
 	return array(null, $items, isset($start) ? $start : 0);
+    }
+
+    /**
+     * Return offsets for the prevous and next page of slideshow items
+     *
+     * @param int $itemId the id of the item to be paginated 
+     * @param int $offset (optional) the current offset. Default 0.
+     * @return array GalleryStatus a status code
+     *               int the offset value for the previous page, null for no previous page
+     *               int the offset value for the next page, null for no next page
+     */
+    function paginateItemSlideshow($itemId, $offset=0) {
+	list ($ret, $itemCount) = GalleryCoreApi::fetchChildCounts(array($itemId));
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+	$itemCount = $itemCount[$itemId];
+
+	$prevOffset = $offset - SLIDESHOW_MEDIARSS_ITEMS_PER_PAGE;
+	if ($prevOffset < 0 ) {
+	    $prevOffset = null;
+	}
+	$nextOffset = $offset + SLIDESHOW_MEDIARSS_ITEMS_PER_PAGE;
+	if ($nextOffset >= $itemCount) {
+	    $nextOffset = null;
+	}
+
+	return array(null, $prevOffset, $nextOffset);
     }
 }
 ?>

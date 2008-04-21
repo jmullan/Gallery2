@@ -45,7 +45,18 @@ class SlideshowMediaRssView extends GalleryView {
 	$phpVm = $gallery->getPhpVm();
 
 	$SlideShowMediaRss = array();
-	$itemListString = GalleryUtilities::getRequestVariables('itemList');
+
+	$itemId = $prevOffset = $nextOffset = $startId = null;
+
+	list ($itemListString, $startId, $offset) =
+	    GalleryUtilities::getRequestVariables('itemList', 'startId', 'offset');
+        if (isset($startId)) {
+            $startId = (int)$startId;                
+        }
+        if (isset($offset)) {
+            $offset = (int)$offset;
+        }
+
 	if (!empty($itemListString)) {
 	    foreach (explode('|', $itemListString) as $id) {
 		$itemIds[] = (int)$id;
@@ -59,7 +70,11 @@ class SlideshowMediaRssView extends GalleryView {
 	    if ($ret) {
 		return $ret;
 	    }
-	    list ($ret, $items, $start) = SlideshowHelper::buildAlbumSlideshow($item);
+
+	    $itemId = $item->getId();
+
+	    list ($ret, $items, $start, $prevOffset, $nextOffset) =
+		SlideshowHelper::buildAlbumSlideshow($item, $startId, $offset);
 	    if ($ret) {
 		return $ret;
 	    }
@@ -69,7 +84,8 @@ class SlideshowMediaRssView extends GalleryView {
 	    $phpVm->header('Content-Type: text/xml; charset=UTF-8');
 	}
 	$template = new GalleryTemplate(GalleryCoreApi::getCodeBasePath());
-	$template->setVariable('SlideshowMediaRss', array('items' => $items));
+	$template->setVariable('SlideshowMediaRss', array('items' => $items,
+	    'itemId' => $itemId, 'prevOffset' => $prevOffset, 'nextOffset' => $nextOffset));
 	return $template->display('modules/slideshow/templates/SlideshowMediaRss.tpl');
     }
 }

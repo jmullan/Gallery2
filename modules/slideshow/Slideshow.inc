@@ -38,10 +38,13 @@ class SlideshowView extends GalleryView {
 
 	$Slideshow = array();
 
-	list ($itemListString, $startId) =
-	    GalleryUtilities::getRequestVariables('itemList', 'startId');
+	list ($itemListString, $startId, $offset) =
+	    GalleryUtilities::getRequestVariables('itemList', 'startId', 'offset');
 	if (isset($startId)) {
 	    $startId = (int)$startId;
+	}
+	if (isset($offset)) {
+	    $offset = (int)$offset;
 	}
 
 	/**
@@ -62,7 +65,7 @@ class SlideshowView extends GalleryView {
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    list ($ret, $items, $start) = SlideshowHelper::buildAlbumSlideshow($item, $startId);
+	    list ($ret, $items, $start) = SlideshowHelper::buildAlbumSlideshow($item, $startId, $offset);
 	    if ($ret) {
 		return array($ret, null);
 	    }
