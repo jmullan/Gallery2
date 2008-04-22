@@ -38,10 +38,10 @@ class HiddenModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setName($gallery->i18n('Hidden Items'));
 	$this->setDescription($gallery->i18n('Hide items/albums from guests until directly ' .
 					     'accessed with the right URL'));
-	$this->setVersion('1.0.8');
+	$this->setVersion('1.0.9');
 	$this->_templateVersion = 1;
 	$this->setGroup('display', $this->translate('Display'));
-	$this->setRequiredCoreApi(array(7, 43));
+	$this->setRequiredCoreApi(array(7, 53));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
@@ -162,8 +162,6 @@ class HiddenModule extends GalleryModule /* and GalleryEventListener */ {
      * Add session based permission when core.ShowItem accessed directly for this item
      */
     function onLoad(&$item, $duringUpgrade) {
-	global $gallery;
-
 	list ($view, $itemId) = GalleryUtilities::getRequestVariables('view', 'itemId');
 	if ($view == 'core.ShowItem' && $itemId == $item->getId()) {
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($itemId);
@@ -172,14 +170,7 @@ class HiddenModule extends GalleryModule /* and GalleryEventListener */ {
 	    }
 	    if (!isset($permissions['core.view']) && (isset($permissions['core.viewResizes'])
 		    || isset($permissions['core.viewSource']))) {
-		$session =& $gallery->getSession();
-		if (!$session->exists(GALLERY_PERMISSION_SESSION_KEY)) {
-		    $session->put(GALLERY_PERMISSION_SESSION_KEY, array());
-		}
-		$sessionPerms =& $session->get(GALLERY_PERMISSION_SESSION_KEY);
-		if (!in_array($itemId, $sessionPerms)) {
-		    $sessionPerms[] = (int)$itemId;
-		}
+		GalleryCoreApi::addPermissionToSession($itemId);
 
 		/* Use a blunt instrument to clear the permission cache. */
 		GalleryDataCache::reset();

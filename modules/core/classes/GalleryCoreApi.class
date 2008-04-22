@@ -84,9 +84,11 @@ class GalleryCoreApi {
      *   (GalleryTranslator.class and Gallery.class)
      * - delete modules/core/templates/blocks/NavigationLinks.tpl
      * - remove GalleryRepository::getLanguageDescription
+     * - convert the contents of GALLERY_PERMISSION_SESSION_KEY to array indices instead of array
+     *   of values.
      */
     function getApiVersion() {
-	return array(7, 52);
+	return array(7, 53);
     }
 
     /**
@@ -757,6 +759,18 @@ class GalleryCoreApi {
 	    'modules/core/classes/helpers/GalleryPermissionHelper_advanced.class');
 	return GalleryPermissionHelper_advanced::addUserPermission($itemId, $userId,
 								   $permission, $applyToChildren);
+    }
+
+    /**
+     * Grant permissions identified by an entity id to the current user's session.
+     *
+     * @param int $entityId The permission identifier (e.g. a user, group, or entity id) which 
+     *			    grants one or more permissions to one or more items
+     */
+    function addPermissionToSession($entityId) {
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryPermissionHelper_simple.class');
+	return GalleryPermissionHelper_simple::addPermissionToSession($entityId);
     }
 
     /**

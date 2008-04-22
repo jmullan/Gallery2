@@ -38,7 +38,6 @@ class PasswordEntryController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	global $gallery;
 	$status = $error = array();
 
 	if (isset($form['action']['password'])
@@ -119,14 +118,8 @@ class PasswordEntryController extends GalleryController {
 	    }
 
 	    if (empty($error) && $isCorrect) {
-		$session =& $gallery->getSession();
-		if (!$session->exists(GALLERY_PERMISSION_SESSION_KEY)) {
-		    $session->put(GALLERY_PERMISSION_SESSION_KEY, array());
-		}
-		$sessionPerms =& $session->get(GALLERY_PERMISSION_SESSION_KEY);
-		if (!in_array($itemId, $sessionPerms)) {
-		    $sessionPerms[] = (int)$itemId;
-		}
+		GalleryCoreApi::addPermissionToSession($itemId);
+
 		$results['redirect']['view'] = 'core.ShowItem';
 		$results['redirect']['itemId'] = $itemId;
 	    } else if (empty($error)) {

@@ -1463,6 +1463,26 @@ class PermissionTest extends GalleryTestCase {
 	}
 	$this->assert($searchResults->resultCount(), 'Entity still has no ACL entry');
     }
+
+    function testAddPermissionToSession() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	$saveSessionPerms = $session->get(GALLERY_PERMISSION_SESSION_KEY);
+	$session->remove(GALLERY_PERMISSION_SESSION_KEY);
+
+	GalleryCoreApi::addPermissionToSession(12345);
+
+	$results = $session->get(GALLERY_PERMISSION_SESSION_KEY);
+	$this->assertEquals(array(12345), $results);
+
+	GalleryCoreApi::addPermissionToSession(67890);
+
+	$results = $session->get(GALLERY_PERMISSION_SESSION_KEY);
+	$this->assertEquals(array(12345, 67890), $results);
+
+	$session->put(GALLERY_PERMISSION_SESSION_KEY, $saveSessionPerms);
+    }
 }
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryEventListener.class');

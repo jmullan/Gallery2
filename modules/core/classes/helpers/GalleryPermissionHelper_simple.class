@@ -478,5 +478,21 @@ class GalleryPermissionHelper_simple {
 
 	return array(null, $permissions);
     }
+
+    /**
+     * @see GalleryCoreApi::addPermissionToSession
+     */
+    function addPermissionToSession($entityId) {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	if (!$session->exists(GALLERY_PERMISSION_SESSION_KEY)) { 
+	    $session->put(GALLERY_PERMISSION_SESSION_KEY, array());
+	}
+	$sessionPerms =& $session->get(GALLERY_PERMISSION_SESSION_KEY);
+	if (!in_array($entityId, $sessionPerms)) {
+	    $sessionPerms[] = (int)$entityId;
+	}
+    }
 }
 ?>
