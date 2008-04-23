@@ -43,6 +43,16 @@ class GalleryControllerTestCase extends GalleryTestCase {
 	}
     }
 
+    function setUp() {
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
+	global $gallery;
+
+	$gallery->_session->put('session.siteAdminActivityTimestamp', time());
+    }
+
     function handleRequest($errorCode=null) {
 	/* Get our form variables */
 	$form = GalleryUtilities::getFormVariables('form');
