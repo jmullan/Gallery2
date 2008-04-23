@@ -997,13 +997,6 @@ class WebDavHelper {
 	    return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
 	}
 
-	$ret = GalleryCoreApi::addUserPermission($albumItem->getId(), $albumItem->getOwnerId(),
-	    'core.all', false);
-	if ($ret) {
-	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $ret;
-	}
-
 	$ret = GalleryCoreApi::releaseLocks($lockIds);
 	if ($ret) {
 	    return $ret;

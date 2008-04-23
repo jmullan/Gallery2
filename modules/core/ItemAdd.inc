@@ -486,11 +486,6 @@ class ItemAddController extends GalleryController {
 		    if ($ret) {
 			return $ret;
 		    }
-		    $ret = GalleryCoreApi::addUserPermission(
-			$album->getId(), $album->getOwnerId(), 'core.all', false);
-		    if ($ret) {
-			return $ret;
-		    }
 		    list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($album->getId());
 		    if ($ret) {
 			return $ret;

@@ -362,12 +362,6 @@ class ItemAddFromServer extends ItemAddPlugin {
 	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	}
 
-	$ret = GalleryCoreApi::addUserPermission($album->getId(), $album->getOwnerId(),
-						 'core.all', false);
-	if ($ret) {
-	    return array($ret, null);
-	}
-
 	return array(null, $album->getId());
     }
 

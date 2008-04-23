@@ -111,11 +111,6 @@ class UserAlbumHelper {
 		}
 	    }
 	}
-	$ret = GalleryCoreApi::addUserPermission($albumId, $user->getId(), 'core.all');
-	if ($ret) {
-	    GalleryCoreApi::releaseLocks($lockId);
-	    return $ret;
-	}
 
 	$viewPermissions = $module['fullSize'] ? array('core.viewAll')
 					       : array('core.view', 'core.viewResizes');

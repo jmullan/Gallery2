@@ -623,11 +623,14 @@ class ConfirmImportController extends GalleryController {
 			    return $ret;
 			}
 		    }
-		    $ret = GalleryCoreApi::addUserPermission($newAlbumInstance->getId(),
+		    
+		    if ($guestUserId != $owner->getId()) {
+			$ret = GalleryCoreApi::addUserPermission($newAlbumInstance->getId(),
 			    $owner->getId(), 'core.all', true);
-		    if ($ret) {
-			GalleryCoreApi::releaseLocks($importLockIds);
-			return $ret;
+			if ($ret) {
+			    GalleryCoreApi::releaseLocks($importLockIds);
+			    return $ret;
+			}
 		    }
 		}
 

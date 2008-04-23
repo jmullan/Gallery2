@@ -36,11 +36,11 @@ class PublishXpModule extends GalleryModule {
 	$this->setId('publishxp');
 	$this->setName($gallery->i18n('Windows Publishing Wizard'));
 	$this->setDescription($gallery->i18n('Publish photos to Gallery directly from Windows'));
-	$this->setVersion('1.0.12');
+	$this->setVersion('1.0.13');
 	$this->_templateVersion = 1;
 	$this->setGroup('import', $gallery->i18n('Import'));
 	$this->setCallbacks('');
-	$this->setRequiredCoreApi(array(7, 45));
+	$this->setRequiredCoreApi(array(7, 53));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 

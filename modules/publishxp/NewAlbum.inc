@@ -72,12 +72,6 @@ class NewAlbumController extends GalleryController {
 		    return array($ret, null);
 		}
 		if (empty($error)) {
-		    /* Give the creator all permissions on the new album */
-		    $ret = GalleryCoreApi::addUserPermission(
-			$newAlbum->getId(), $newAlbum->getOwnerId(), 'core.all', false);
-		    if ($ret) {
-			return array($ret, null);
-		    }
 		    $redirect['view'] = 'publishxp.SelectAlbum';
 		    $redirect['albumId'] = $newAlbum->getId();
 		}

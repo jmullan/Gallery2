@@ -88,19 +88,14 @@ class ItemAddAlbumController extends GalleryController {
 		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 		}
 
-		$ret = GalleryCoreApi::addUserPermission($instance->getId(),
-							 $instance->getOwnerId(),
-							 'core.all', false);
-		if ($ret) {
-		    GalleryCoreApi::releaseLocks($lockIds);
-		    return array($ret, null);
-		}
-
 		/* Figure out where to redirect upon success */
-		$redirect['view'] = 'core.ItemAdmin';
-		$redirect['subView'] = 'core.ItemEdit';
-		$redirect['editPlugin'] = 'ItemEditAlbum';
 		$redirect['itemId'] = $instance->getId();
+		$ret = GalleryCoreApi::assertHasItemPermission($instance->getId(), 'core.edit');
+		if (empty($ret)) {
+		    $redirect['view'] = 'core.ItemAdmin';
+		    $redirect['subView'] = 'core.ItemEdit';
+		    $redirect['editPlugin'] = 'ItemEditAlbum';
+		}
 
 		/* Prepare our status message */
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');

@@ -678,16 +678,6 @@ class GalleryRemoteController extends GalleryController {
 	    return $ret;
 	}
 
-	/* Give the creator all permissions on the new album */
-	/* todo: do we need to lock since we just created the album? */
-	$ret = GalleryCoreApi::addUserPermission($album->getId(),
-						 $album->getOwnerId(),
-						 'core.all',
-						 false);
-	if ($ret) {
-	    return $ret;
-	}
-
 	$response->setProperty('album_name', $album->getid());
 	$response->setProperty('status', $grStatusCodes['SUCCESS']);
 	$response->setProperty('status_text', 'New-album successful.');

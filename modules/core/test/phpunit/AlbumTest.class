@@ -976,6 +976,136 @@ class AlbumTest extends GalleryTestCase {
 	$this->assertEquals(array(), $tree);
     }
 
+    function testCreateAlbumByGuestUser() {
+	global $gallery;
+
+	$savedUser = $gallery->getActiveUser();
+
+	$albumName = sprintf(' album %d test ', rand());
+	list ($ret, $publicAlbum) = GalleryCoreApi::createAlbum(
+	    $this->_parentAlbum->getId(), $albumName,
+	    'title-test', 'summary', 'description', 'keywords');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $allUsersGroupId) = 
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $publicAlbum->getId(), $allUsersGroupId, 'core.addAlbumItem');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->_becomeGuestUser();
+
+	$albumName = sprintf(' album %d test ', rand());
+	list ($ret, $album) = GalleryCoreApi::createAlbum(
+	    $publicAlbum->getId(), $albumName,
+	    'title', 'summary', 'description', 'keywords');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::assertHasItemPermission($album->getId(), 'core.all');
+	$this->assertErrorEquals(ERROR_PERMISSION_DENIED, $ret);
+
+	$gallery->setActiveUser($savedUser);
+    }
+
+    function testCreateAlbumWithAlternativeGuestUser() {
+	global $gallery;
+
+	$savedUser = $gallery->getActiveUser();
+
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($user);
+
+	$albumName = sprintf(' album %d test ', rand());
+	list ($ret, $publicAlbum) = GalleryCoreApi::createAlbum(
+	    $this->_parentAlbum->getId(), $albumName,
+	    'title-test', 'summary', 'description', 'keywords');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $allUsersGroupId) = 
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $groupId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::removeUserFromGroup($user->getId(), $groupId);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$gallery->setActiveUser($user);
+
+	$albumName = sprintf(' album %d test ', rand());
+	list ($ret, $album) = GalleryCoreApi::createAlbum(
+	    $publicAlbum->getId(), $albumName,
+	    'title', 'summary', 'description', 'keywords');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $guestId) = GalleryCoreApi::getAnonymousUserId();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($guestId != $user->getId(), 'Default guest userid was used');
+	$ret = GalleryCoreApi::assertHasItemPermission($album->getId(), 'core.all');
+	$this->assertErrorEquals(ERROR_PERMISSION_DENIED, $ret);
+
+	$gallery->setActiveUser($savedUser);
+    }
+
+    function testCreateAlbumByRegisteredUser() {
+	global $gallery;
+
+	$savedUser = $gallery->getActiveUser();
+
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($user);
+
+	$gallery->setActiveUser($user);
+
+	$albumName = sprintf(' album %d test ', rand());
+	list ($ret, $album) = GalleryCoreApi::createAlbum(
+	    $this->_parentAlbum->getId(), $albumName,
+	    'title', 'summary', 'description', 'keywords');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $hasPermission) = 
+	    GalleryCoreApi::hasPermission($album->getId(), $user->getId(), 'core.all');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assert($hasPermission, 'core.all not set');
+
+	$gallery->setActiveUser($savedUser);
+    }
+
     function testCreateAlbumWithLeadingAndTrailingSpace() {
 	global $gallery;
 
