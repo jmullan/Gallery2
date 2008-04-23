@@ -192,6 +192,9 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 
 	$platform = new UnitTestPlatform();
 
+	$manifestLines = file($testDataDir . 'MANIFEST');
+	$platform->setReply('file', array($testDataDir . 'MANIFEST', null), $manifestLines);
+
 	$platform->setReply('file_get_contents', array($testDataDir . 'MANIFEST'),
 			    str_repeat('x', 12121));
 	$gallery->setPlatform($platform);
