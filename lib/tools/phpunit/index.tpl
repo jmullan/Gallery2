@@ -250,7 +250,7 @@
     <h2>Summary</h2>
 
     <p><span id="testTime">&nbsp;</span> seconds elapsed</p>
-    <p><span id="testCount">&nbsp;</span> run</p>
+    <p><span id="testCount">&nbsp;</span> run<span id="runThenSkip">&nbsp;</span></p>
     <p><span id="testFailCount">&nbsp;</span> failed
        with <span id="testErrorCount">&nbsp;</span></p>
     <p><a href="http://codex.gallery2.org/Gallery2:Test_Matrix#Unit_Tests">Test Matrix Entry</a>:

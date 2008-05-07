@@ -271,6 +271,7 @@ function loadTests($moduleId, $testDir, $filter) {
 class GalleryTestResult extends TestResult {
     var $_totalElapsed = 0;
     var $_testsFailed = 0;
+    var $_testsRunThenSkipped = 0;
 
     function GalleryTestResult() {
 	$this->TestResult();
@@ -290,6 +291,10 @@ class GalleryTestResult extends TestResult {
 	    print 'function setTxt(i,t) { document.getElementById(i).firstChild.nodeValue=t; }';
 	    printf("setTxt('testTime','%2.4f');", $this->_totalElapsed);
 	    printf("setTxt('testCount','%s test%s');", $nRun, ($nRun == 1) ? '' : 's');
+	    if ($this->_testsRunThenSkipped) {
+		printf("setTxt('runThenSkip',' (of those, %s skipped)');",
+			$this->_testsRunThenSkipped);
+	    }
 	    printf("setTxt('testFailCount','%s test%s');",
 		    $this->_testsFailed, ($this->_testsFailed == 1) ? '' : 's');
 	    printf("setTxt('testErrorCount','%s error%s');",
@@ -378,6 +383,10 @@ class GalleryTestResult extends TestResult {
 	    $extra = 'r.className="skip";';
 	    $elapsed = '0.0000';
 	    $cmd = "updateStats(0, 0, 1, $usedMemory)";
+	    if (!empty($test->fLifeCycle['setUp'])) {
+		/* Test was started, then test skipped itself */
+		$this->_testsRunThenSkipped++;
+	    }
 	} else {
 	    $elapsed = sprintf("%2.4f", $test->elapsed());
 	    $this->_totalElapsed += $elapsed;
