@@ -18,15 +18,15 @@
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
 #
 # Previous translators (as far as known, add yourself here, please):
-# - Oscar Garcia Amor <oscar.garcia@moire.org>
+# - Óscar García Amor <oscar.garcia@moire.org>
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.31\n"
+"Project-Id-Version: Gallery: Core 1.2.33\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2005-10-25 17:54+0200\n"
-"PO-Revision-Date: 2007-06-07 13:58+0200\n"
-"Last-Translator: Oscar Garcia Amor <oscar.garcia@moire.org>\n"
+"PO-Revision-Date: 2008-05-03 12:03+0200\n"
+"Last-Translator: Óscar García Amor <oscar.garcia@moire.org>\n"
 "Language-Team: Spanish <gallery-translations@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -94,9 +94,8 @@ msgstr "Enlace"
 msgid "Page %d of %d"
 msgstr "Página %d de %d"
 
-#, fuzzy
 msgid "Updating Language Settings"
-msgstr "Configuración del Idioma"
+msgstr "Actualizando Configuración del Idioma"
 
 msgid "Update completed with errors."
 msgstr "Actualización completa con errores."
@@ -235,9 +234,8 @@ msgstr "Optimizando tabla AccessSubscriberMap"
 msgid "Upgrading Plugin Translations"
 msgstr "Actualizando las Traducciones de los Plugins"
 
-#, fuzzy
 msgid "Creating Package Map"
-msgstr "Actualizando Paquetes"
+msgstr "Creando Mapa de Paquetes"
 
 msgid "Site Admins"
 msgstr "Administradores del Sitio"
@@ -584,6 +582,10 @@ msgid "Updating Packages"
 msgstr "Actualizando Paquetes"
 
 #, c-format
+msgid "Cleaning up obsolete files %s"
+msgstr "Limpiando los archivos obsoletos %s"
+
+#, c-format
 msgid "Activating %s"
 msgstr "Activando %s"
 
@@ -649,9 +651,8 @@ msgstr "Base de dato convertida a UTF8 con éxito"
 msgid "No conversion required"
 msgstr "No se requiere conversión"
 
-#, fuzzy
 msgid "Backup the database"
-msgstr "Optimizar base de datos"
+msgstr "Hacer una copia de seguridad de la base de datos"
 
 msgid ""
 "Backup all your Gallery data (item data, users, comments, etc.) to a single file in your "
@@ -659,17 +660,30 @@ msgid ""
 "your Gallery installation needs to be set into maintenance mode, as this is not done "
 "automatically."
 msgstr ""
+"Hacer una copia de seguridad de todos los datos de tu Gallery (datos de los elementos, "
+"usuarios, comentarios, etc.) a un único archivo en tu carpeta de almacenamiento.  La copia "
+"de seguridad no incluye los archivos de imagen.  Antes de ejecutar la copia de seguridad, tu "
+"instalación de Gallery necesita ser configurada en modo mantenimiento, ya que esto no se "
+"realiza automáticamente."
 
 msgid "Backing up Gallery Database"
-msgstr ""
+msgstr "Realizando copia de seguridad de la Base de Datos de Gallery"
 
-#, fuzzy
 msgid "Exporting..."
-msgstr "Preparando..."
+msgstr "Exportando..."
 
 #, c-format
 msgid "Database backup completed and the backup file is located at: %s"
 msgstr ""
+"Copia de seguridad de la base de datos completa y el archivo de copia se encuentra en: %s"
+
+msgid ""
+"Please note that your backup contains sensitive data (like passwords) and should not be "
+"stored online! We recommend that you download it from your server and keep it safely offline."
+msgstr ""
+"¡Por favor date cuenta de que tu copia de seguridad contiene información sensible (como las "
+"contraseñas) y no debería de almacenarse en línea! Te recomendamos que la descarges de tu "
+"servidor y la guardes con seguridad fuera de línea."
 
 msgid "Delete user sessions"
 msgstr "Borrar las sesiones de usuario"
@@ -1101,62 +1115,73 @@ msgstr "Filas en la tabla %s = %d"
 
 #, c-format
 msgid "The %s \"%s\" is not installed and will not be backed up."
-msgstr ""
+msgstr "El %s \"%s\" no está instalado y no se le realizará copia de seguridad."
 
 #, c-format
 msgid "\"%s\" has no creation sql and will not be backed up."
-msgstr ""
+msgstr "\"%s\" no ha creado sql y no se le realizará copia de seguridad."
 
 #, c-format
 msgid "Unable to load table description for \"%s\", no data will be exported."
 msgstr ""
+"No ha sido posible cargar la descipción de la tabla para \"%s\", no se exportarán datos."
 
 msgid ""
 "Unable to find the XML parser.  The PHP XML parsing extension must be loaded.  Terminating "
 "database import."
 msgstr ""
+"No ha sido posible encontrar el analizador de sintaxis (parser) de XML.  La extension de PHP "
+"para analizar sintácticamente XML debe ser cargada.  Finalizando la importación de la base "
+"de datos."
 
 #, c-format
 msgid "The exported file is not the correct version. Expecting %s received %s."
-msgstr ""
+msgstr "El archivo exportado no es la versión correcta. Se esperaba %s y se recibió %s."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to close import file: %s"
-msgstr "No es posible eliminar el directorio %s"
+msgstr "No es posible cerrar el archivo a importar: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to open import file: %s"
-msgstr "No es posible eliminar el directorio %s"
+msgstr "No es posible abrir el archivo a importar: %s"
 
 #, c-format
 msgid "Import file doesn't exist: %s"
-msgstr ""
+msgstr "El archivo a importar no existe: %s"
 
 #, c-format
 msgid "Plugin %s is not currently available."
-msgstr ""
+msgstr "El Plugin %s no está disponible actualmente."
 
 #, c-format
 msgid "The available version of plugin \"%s\" may not be compatible with the imported version."
 msgstr ""
+"La version disponible del plugin \"%s\" puede no ser compatible con la versión importada."
 
 #, c-format
 msgid ""
 "The currently installed core API version required by \"%s\" may not be compatible with the "
 "imported version."
 msgstr ""
+"La versión instalada actualmente de la API del núcleo requerida por \"%s\" puede no ser "
+"compatible con la versión importada."
 
 #, c-format
 msgid ""
 "The installed module API version required by \"%s\" may not be compatible with the imported "
 "version."
 msgstr ""
+"La versión de API del módulo instalado requerido por \"%s\" puede no ser compatible con la "
+"versión importada."
 
 #, c-format
 msgid ""
 "The installed theme API version required by \"%s\" is not compatible with the imported "
 "version."
 msgstr ""
+"La versión de API del tema instalado requerido por \"%s\" no es compatible con la versión "
+"importada."
 
 msgid "Successfully saved theme settings"
 msgstr "La configuración del tema se ha guardado con éxito"
@@ -1237,6 +1262,9 @@ msgstr "Tiempo de vida de la Sesión"
 
 msgid "Inactivity Timeout"
 msgstr "Interrupción por Inactividad"
+
+msgid "Site Administration Session Timeout"
+msgstr "Sesión de Administración del Sitio ha vencido por tiempo de inactividad"
 
 msgid "Embedded Markup"
 msgstr "Formato Embebido"
@@ -1767,35 +1795,33 @@ msgstr ""
 "Tu copia local del repositorio estaba rota y ha sido reparada.  Por favor descarga la lista "
 "de plugins de nuevo."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to delete the locale directory for %s."
-msgstr "No es posible eliminar el directorio %s"
+msgstr "Fallo al eliminar el directorio local para %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to download the following language packages for the %s plugin:"
-msgstr "Fallo al descargar los siguientes paquetes para el plugin %s:"
+msgstr "Fallo al descargar los siguientes paquetes de idioma para el plugin %s:"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to install language packages for %s plugin because the following files/directories "
 "could not be modified:"
 msgstr ""
-"Falló al instalar el plugin %s porque los siguientes archivos/directorios no pueden ser "
-"modificados:"
+"Fallo al instalar los paquetes de idioma para el pugin %s porque los siguientes archivos/"
+"directorios no pueden ser modificados:"
 
-#, fuzzy
 msgid "The repository index has been successfully refreshed."
 msgstr "El índice del repositorio ha sido actualizado con éxito."
 
-#, fuzzy
 msgid "The language settings have been saved."
-msgstr "No se han seleccionado paquetes."
+msgstr "La configuración del idioma ha sido guardada."
 
-#, fuzzy, c-format
+#, c-format
 msgid "%d language pack upgraded or downloaded."
 msgid_plural "%d language packs upgraded or downloaded."
-msgstr[0] "%d paquete de idioma borrado."
-msgstr[1] "%d paquetes de idioma borrados."
+msgstr[0] "%d paquete de idioma actualizado o descargado."
+msgstr[1] "%d paquetes de idioma actualizado o descargado."
 
 #, c-format
 msgid "%d language pack deleted."
@@ -1804,7 +1830,7 @@ msgstr[0] "%d paquete de idioma borrado."
 msgstr[1] "%d paquetes de idioma borrados."
 
 msgid "All the language packages for the selected languages are current"
-msgstr ""
+msgstr "Todos los paquetes de idioma para los idiomas seleccionados están actualizados"
 
 msgid ""
 "Select language defaults for Gallery. Individual users can override this setting in their "
@@ -1845,57 +1871,58 @@ msgid ""
 "Before you can proceed, please insure the following directories and sub-directories are "
 "writable, so that Gallery can install plugins for you:"
 msgstr ""
+"Antes de que puedas proceder, por favor asegurate de que en los siguientes directorios y sub-"
+"directorios es posible escribir, para que Gallery pueda instalar plugins por ti:"
 
-#, fuzzy
 msgid ""
 "If you have trouble changing permissions, ask your system administrator for assistance.  "
 "When you've fixed the permissions, click the Check Again button to proceed."
 msgstr ""
 "Si tienes problemas cambiando los permisos, preguntale a tu administrador del sistema para "
-"obtener ayuda.  Cuando hayas solucionado los permisos, haz click en el botón continuar para "
-"proceder."
+"obtener ayuda.  Cuando hayas solucionado los permisos, haz click en el botón Comprobar de "
+"Nuevo para proceder."
 
-#, fuzzy
 msgid "Check Again"
-msgstr "Seleccionar todos"
+msgstr "Comprobar de Nuevo"
 
-#, fuzzy
 msgid "Add or Remove Languages"
-msgstr "Agregar/Eliminar Usuarios"
+msgstr "Agregar/Eliminar Idiomas"
 
 msgid ""
 "Please click on the link below to go to 'Download Plugin List' and choose 'Update Plugin "
 "List' to get the latest language package information."
 msgstr ""
+"Por favor haz click en el siguiente enlace para ir a la 'Lista de Descarga de Plugins' y "
+"elige 'Actualizar la Lista de Pugins' para obtener la última información de los paquetes de "
+"idioma."
 
-#, fuzzy
 msgid "Administer Repositories"
-msgstr "Repositorio de la Comunidad"
+msgstr "Administrar Repositorios"
 
-#, fuzzy
 msgid "Upgrade"
-msgstr "actualizar"
+msgstr "Actualizar"
 
 msgid "Remove"
 msgstr "Quitar"
 
-#, fuzzy
 msgid "Download"
-msgstr "descargar"
+msgstr "Descargar"
 
-#, fuzzy
 msgid "No Change"
-msgstr "Cambiar"
+msgstr "No hay Cambios"
 
-#, fuzzy
 msgid "Select All"
-msgstr "Seleccionado"
+msgstr "Seleccionar Todo"
 
 msgid ""
 "There are no local repository indices from which to determine language packages. Please "
 "click on the link below to go to \"Download Plugin List\" and choose \"Update Plugin List\" "
 "to get the latest language package information."
 msgstr ""
+"No hay indices de repositorio local de donde determinar los paquetes de idioma. Por favor "
+"haz click en el siguiente enlace para ir a la \"Lista de Descarga de Plugins\" y elige "
+"\"Actualizar la Lista de Pugins\" para obtener la última información de los paquetes de "
+"idioma."
 
 msgid "System Maintenance"
 msgstr "Mantenimiento del Sistema"
@@ -2407,14 +2434,12 @@ msgstr "Descarga %s"
 msgid "No packages have been selected."
 msgstr "No se han seleccionado paquetes."
 
-#, fuzzy
 msgid ""
 "Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
 "of the package to download."
 msgstr ""
 "Descarga un paquete para usar este plugin.  Puedes actualizar escogiendo una nueva version "
-"del paquete a descargar.  Los paquetes de idioma son opcionales, sólo necesitas descargar "
-"aquellos que quieras usar en tu sitio."
+"del paquete a descargar."
 
 msgid "Base Packages"
 msgstr "Paquetes de Base"
@@ -2431,9 +2456,8 @@ msgstr "%s: versión %s (build %s) %s&iexcl;El degradar no está soportado!%s"
 msgid "%sCurrently Installed%s: version %s (build %s)"
 msgstr "%sInstalado Actualmente%s: versión %s (build %s)"
 
-#, fuzzy
 msgid "The following language packages are available for this plugin"
-msgstr "Paquetes de idioma compatibles no disponibles"
+msgstr "Los siguientes paquetes de idioma están disponibles para este plugin"
 
 #, c-format
 msgid "%s version %s (upgrading from %s)"
@@ -2875,8 +2899,8 @@ msgstr ""
 #, c-format
 msgid "One item selected on other pages."
 msgid_plural "%d items selected on other pages."
-msgstr[0] "Un elemento seleccionado en otras páginas"
-msgstr[1] "%d elementos seleccionados en otras páginas"
+msgstr[0] "Un elemento seleccionado en otras páginas."
+msgstr[1] "%d elementos seleccionados en otras páginas."
 
 msgid "(data)"
 msgstr "(datos)"
@@ -2905,9 +2929,9 @@ msgstr "Página Anterior"
 msgid "Next Page"
 msgstr "Página Siguiente"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Do you really want to delete %s?"
-msgstr "&iquest;Estás seguro de que quieres borrar "
+msgstr "&iquest;Estás seguro de que quieres borrar %s?"
 
 msgid "Delete more items..."
 msgstr "Borrar mas elementos..."
@@ -3079,6 +3103,9 @@ msgstr "Esta es la descripción larga del elemento."
 msgid "%s Date and Time"
 msgstr "%s Fecha y Hora"
 
+msgid "Link Date and Time"
+msgstr "Fecha y Hora del Enlace"
+
 msgid "Set the date and time when this image was captured."
 msgstr "Ajusta la fecha y hora a cuando la imagen fue capturada."
 
@@ -3088,6 +3115,9 @@ msgstr "Ajusta la fecha y hora para ser mostrada por este elemento."
 #, c-format
 msgid "Set the date and time to be displayed for this %s."
 msgstr "Ajusta la fecha y hora para ser mostrada por este %s."
+
+msgid "Set the date and time to be displayed for this link."
+msgstr "Ajusta la fecha y hora para ser mostrada por este enlace."
 
 msgid "Date:"
 msgstr "Fecha:"
@@ -3702,6 +3732,13 @@ msgstr "Iniciar sesión a tu cuenta"
 msgid "Your password has been recovered, please login."
 msgstr "Tu contraseña ha sido recuperada, por favor inicia sesión."
 
+msgid ""
+"The administration session has expired, please re-authenticate to access the administration "
+"area."
+msgstr ""
+"La sesión de administración ha expirado, por favor re-autenticate para acceder al área de "
+"administración."
+
 #, c-format
 msgid ""
 "Logins to this account are temporarily disabled due to multiple failed login attempts.  Wait "
@@ -3960,7 +3997,7 @@ msgid "Go"
 msgstr "Ir"
 
 msgid "WARNING: block $type doesn't exist."
-msgstr ""
+msgstr "ATENCIÓN: el bloque $type no existe."
 
 msgid "next"
 msgstr "siguiente"
@@ -4014,24 +4051,3 @@ msgstr "Bloque de Inicio de Sesión"
 
 msgid "Links to album/photo peers"
 msgstr "Enlaces a los pares de álbum/foto"
-
-#~ msgid "Language Packages"
-#~ msgstr "Paquetes de Idioma"
-
-#~ msgid "(%sselect all%s%sselect none%s)"
-#~ msgstr "(%sseleccionar todos%s%sdeseleccionar todos%s)"
-
-#~ msgid "You must select a base package before choosing language packs."
-#~ msgstr "Debes seleccionar un paquete de base antes de seleccionar paquetes de idioma."
-
-#~ msgid "Back to %s"
-#~ msgstr "Volver a %s"
-
-#~ msgid "Back"
-#~ msgstr "Atrás"
-
-#~ msgid "Navigation"
-#~ msgstr "Navegación"
-
-#~ msgid "Loading Table Descriptions"
-#~ msgstr "Cargando las Descripciones de la Tabla"

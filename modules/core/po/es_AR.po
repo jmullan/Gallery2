@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.31\n"
+"Project-Id-Version: Gallery: Core 1.2.33\n"
 "POT-Creation-Date: 2003-06-05 16:56-0300\n"
 "PO-Revision-Date: 2007-03-14 15:26+0100\n"
 "Last-Translator: Alvaro Cortizo <alvaro@netpandora.com>\n"
@@ -651,6 +651,10 @@ msgstr "Contrase&ntilde;a"
 msgid "Updating Packages"
 msgstr "Actualizando Paquetes"
 
+#, c-format
+msgid "Cleaning up obsolete files %s"
+msgstr "Limpiando los archivos obsoletos %s"
+
 #, fuzzy, c-format
 msgid "Activating %s"
 msgstr "Acciones"
@@ -732,9 +736,14 @@ msgid ""
 "your Gallery installation needs to be set into maintenance mode, as this is not done "
 "automatically."
 msgstr ""
+"Hacer una copia de seguridad de todos los datos de tu Gallery (datos de los elementos, "
+"usuarios, comentarios, etc.) a un único archivo en tu carpeta de almacenamiento.  La copia "
+"de seguridad no incluye los archivos de imagen.  Antes de ejecutar la copia de seguridad, tu "
+"instalación de Gallery necesita ser configurada en modo mantenimiento, ya que esto no se "
+"realiza automáticamente."
 
 msgid "Backing up Gallery Database"
-msgstr ""
+msgstr "Realizando copia de seguridad de la Base de Datos de Gallery"
 
 #, fuzzy
 msgid "Exporting..."
@@ -743,6 +752,15 @@ msgstr "Procesando..."
 #, c-format
 msgid "Database backup completed and the backup file is located at: %s"
 msgstr ""
+"Copia de seguridad de la base de datos completa y el archivo de copia se encuentra en: %s"
+
+msgid ""
+"Please note that your backup contains sensitive data (like passwords) and should not be "
+"stored online! We recommend that you download it from your server and keep it safely offline."
+msgstr ""
+"¡Por favor date cuenta de que tu copia de seguridad contiene información sensible (como las "
+"contraseñas) y no debería de almacenarse en línea! Te recomendamos que la descarges de tu "
+"servidor y la guardes con seguridad fuera de línea."
 
 #, fuzzy
 msgid "Delete user sessions"
@@ -1225,24 +1243,28 @@ msgstr "Filas en la tabla %s = %d"
 
 #, c-format
 msgid "The %s \"%s\" is not installed and will not be backed up."
-msgstr ""
+msgstr "El %s \"%s\" no está instalado y no se le realizará copia de seguridad."
 
 #, c-format
 msgid "\"%s\" has no creation sql and will not be backed up."
-msgstr ""
+msgstr "\"%s\" no ha creado sql y no se le realizará copia de seguridad."
 
 #, c-format
 msgid "Unable to load table description for \"%s\", no data will be exported."
 msgstr ""
+"No ha sido posible cargar la descipción de la tabla para \"%s\", no se exportarán datos."
 
 msgid ""
 "Unable to find the XML parser.  The PHP XML parsing extension must be loaded.  Terminating "
 "database import."
 msgstr ""
+"No ha sido posible encontrar el analizador de sintaxis (parser) de XML.  La extension de PHP "
+"para analizar sintácticamente XML debe ser cargada.  Finalizando la importación de la base "
+"de datos."
 
 #, c-format
 msgid "The exported file is not the correct version. Expecting %s received %s."
-msgstr ""
+msgstr "El archivo exportado no es la versión correcta. Se esperaba %s y se recibió %s."
 
 #, fuzzy, c-format
 msgid "Unable to close import file: %s"
@@ -1254,33 +1276,40 @@ msgstr "No es posible eliminar el directorio %s"
 
 #, c-format
 msgid "Import file doesn't exist: %s"
-msgstr ""
+msgstr "El archivo a importar no existe: %s"
 
 #, c-format
 msgid "Plugin %s is not currently available."
-msgstr ""
+msgstr "El Plugin %s no está disponible actualmente."
 
 #, c-format
 msgid "The available version of plugin \"%s\" may not be compatible with the imported version."
 msgstr ""
+"La version disponible del plugin \"%s\" puede no ser compatible con la versión importada."
 
 #, c-format
 msgid ""
 "The currently installed core API version required by \"%s\" may not be compatible with the "
 "imported version."
 msgstr ""
+"La versión instalada actualmente de la API del núcleo requerida por \"%s\" puede no ser "
+"compatible con la versión importada."
 
 #, c-format
 msgid ""
 "The installed module API version required by \"%s\" may not be compatible with the imported "
 "version."
 msgstr ""
+"La versión de API del módulo instalado requerido por \"%s\" puede no ser compatible con la "
+"versión importada."
 
 #, c-format
 msgid ""
 "The installed theme API version required by \"%s\" is not compatible with the imported "
 "version."
 msgstr ""
+"La versión de API del tema instalado requerido por \"%s\" no es compatible con la versión "
+"importada."
 
 #, fuzzy
 msgid "Successfully saved theme settings"
@@ -1372,6 +1401,9 @@ msgstr "Caracter&iacute;sticas de sesi&oacute;n"
 
 msgid "Inactivity Timeout"
 msgstr "Timeout por inactividad"
+
+msgid "Site Administration Session Timeout"
+msgstr "Sesión de Administración del Sitio ha vencido por tiempo de inactividad"
 
 msgid "Embedded Markup"
 msgstr "Formato Embebido"
@@ -1979,7 +2011,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "All the language packages for the selected languages are current"
-msgstr ""
+msgstr "Todos los paquetes de idioma para los idiomas seleccionados están actualizados"
 
 #, fuzzy
 msgid ""
@@ -2019,6 +2051,8 @@ msgid ""
 "Before you can proceed, please insure the following directories and sub-directories are "
 "writable, so that Gallery can install plugins for you:"
 msgstr ""
+"Antes de que puedas proceder, por favor asegurate de que en los siguientes directorios y sub-"
+"directorios es posible escribir, para que Gallery pueda instalar plugins por ti:"
 
 #, fuzzy
 msgid ""
@@ -2041,6 +2075,9 @@ msgid ""
 "Please click on the link below to go to 'Download Plugin List' and choose 'Update Plugin "
 "List' to get the latest language package information."
 msgstr ""
+"Por favor haz click en el siguiente enlace para ir a la 'Lista de Descarga de Plugins' y "
+"elige 'Actualizar la Lista de Pugins' para obtener la última información de los paquetes de "
+"idioma."
 
 #, fuzzy
 msgid "Administer Repositories"
@@ -2070,6 +2107,10 @@ msgid ""
 "click on the link below to go to \"Download Plugin List\" and choose \"Update Plugin List\" "
 "to get the latest language package information."
 msgstr ""
+"No hay indices de repositorio local de donde determinar los paquetes de idioma. Por favor "
+"haz click en el siguiente enlace para ir a la \"Lista de Descarga de Plugins\" y elige "
+"\"Actualizar la Lista de Pugins\" para obtener la última información de los paquetes de "
+"idioma."
 
 msgid "System Maintenance"
 msgstr "Mantenimiento del Sistema"
@@ -3348,6 +3389,9 @@ msgstr "Una descripci&oacute; mas larga de este &iacute;m"
 msgid "%s Date and Time"
 msgstr "%s Fecha y Hora"
 
+msgid "Link Date and Time"
+msgstr "Fecha y Hora del Enlace"
+
 msgid "Set the date and time when this image was captured."
 msgstr "Ajusta la fecha y hora a cuando la imagen fue capturada."
 
@@ -3357,6 +3401,9 @@ msgstr "Ajusta la fecha y hora para ser mostrada por este elemento."
 #, c-format
 msgid "Set the date and time to be displayed for this %s."
 msgstr "Ajusta la fecha y hora para ser mostrada por este %s."
+
+msgid "Set the date and time to be displayed for this link."
+msgstr "Ajusta la fecha y hora para ser mostrada por este enlace."
 
 msgid "Date:"
 msgstr "Fecha:"
@@ -4032,6 +4079,13 @@ msgstr "Iniciar sesión a tu cuenta"
 msgid "Your password has been recovered, please login."
 msgstr "Tu contraseña ha sido recuperada, por favor inicia sesión."
 
+msgid ""
+"The administration session has expired, please re-authenticate to access the administration "
+"area."
+msgstr ""
+"La sesión de administración ha expirado, por favor re-autenticate para acceder al área de "
+"administración."
+
 #, fuzzy, c-format
 msgid ""
 "Logins to this account are temporarily disabled due to multiple failed login attempts.  Wait "
@@ -4300,7 +4354,7 @@ msgid "Go"
 msgstr "Ir"
 
 msgid "WARNING: block $type doesn't exist."
-msgstr ""
+msgstr "ATENCIÓN: el bloque $type no existe."
 
 msgid "next"
 msgstr "siguiente"
