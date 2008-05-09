@@ -43,6 +43,7 @@ class ErrorPageView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
+	$theme =& $template->getVariableByReference('theme');
 
 	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	$ErrorPage = array('isAdmin' => !$ret && $isAdmin);
@@ -106,6 +107,12 @@ class ErrorPageView extends GalleryView {
 	    $installedVersions = CoreModule::getInstalledVersions();
 	    $ErrorPage['version'] = $installedVersions['gallery'];
 	}
+
+	/*
+	 * Normally this would be called by GalleryTheme::loadTemplate, but error processing could
+	 * bypass this and call this view directly, so we will set it now.
+	 */
+	$theme['pageType'] = 'error';
 
 	$template->javascript('lib/javascript/BlockToggle.js');
 	$template->setVariable('ErrorPage', $ErrorPage);

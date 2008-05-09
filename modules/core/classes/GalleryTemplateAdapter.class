@@ -392,7 +392,15 @@ class GalleryTemplateAdapter {
 
 	/* Javascript */
 	if (!empty($head['javascript'])) {
-	    $this->_combineJavascriptFiles(array_keys($head['javascript']), $output);
+	    $theme = $templateVars['theme'];
+	    if (empty($theme['pageType']) || $theme['pageType'] != 'error') {
+		$this->_combineJavascriptFiles(array_keys($head['javascript']), $output);
+	    } else {
+		foreach (array_keys($head['javascript']) as $file) {
+		    $output[] = sprintf('<script type="text/javascript" src="%s"></script>',
+			$urlGenerator->generateUrl(array('href' => $file)));
+		}
+	    }
 	}
 
 	/* Tpl to include. */

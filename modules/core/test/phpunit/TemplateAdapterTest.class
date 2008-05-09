@@ -538,6 +538,7 @@ class TemplateAdapterTest extends GalleryTestCase {
 	$template->style('/test.css');
 	$template->link(array('attr1' => 'value1', 'attr2' => 'value2'));
 	$template->javascript('http://test.com/test.js?foo');
+	$template->setVariable('theme', array('pageType' => 'album'));
 
 	$expected = array(
 	    '',
@@ -545,6 +546,36 @@ class TemplateAdapterTest extends GalleryTestCase {
 	    '<link rel="stylesheet" type="text/css" href="/test.css"/>',
 	    '<link attr1="value1" attr2="value2"/>',
 	    '<script type="text/javascript" src="http://test.com/test.js?foo"></script>',
+	    '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>',
+	    '<meta name="test1" content="value 1"/>',
+	    '<meta http-equiv="test2" content="value 2"/>');
+
+	$templateAdapter = new GalleryTemplateAdapter();
+	$output = $templateAdapter->head(array(), $template->_smarty);
+
+	$this->assertEquals(implode("\n", $expected), $output);
+    }
+
+    function testHeadContentFromTemplateNoCombinedJavascript() {
+	/* Use a real GalleryTemplate / smarty instance to test the whole loop */
+	GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
+	$template = new GalleryTemplate(GalleryCoreApi::getCodeBasePath());
+	$template->title('My Test Page');
+	$template->meta('test1', 'value 1');
+	$template->meta('test2', 'value 2', true);
+	$template->style('/test.css');
+	$template->link(array('attr1' => 'value1', 'attr2' => 'value2'));
+	$template->javascript('http://test.com/test.js?foo');
+	$template->javascript('http://test.com/test2.js?foo');
+	$template->setVariable('theme', array('pageType' => 'error'));
+
+	$expected = array(
+	    '',
+	    '<title>My Test Page</title>',
+	    '<link rel="stylesheet" type="text/css" href="/test.css"/>',
+	    '<link attr1="value1" attr2="value2"/>',
+	    '<script type="text/javascript" src="http://test.com/test.js?foo"></script>',
+	    '<script type="text/javascript" src="http://test.com/test2.js?foo"></script>',
 	    '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>',
 	    '<meta name="test1" content="value 1"/>',
 	    '<meta http-equiv="test2" content="value 2"/>');
