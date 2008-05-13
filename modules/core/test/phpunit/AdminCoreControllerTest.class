@@ -210,7 +210,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
     /* Test that we don't accept just any cookie path */
     function testChangeCookiePath() {
 	global $gallery;
-	$session = $gallery->getSession();
+	$session =& $gallery->getSession();
 
 	/* AdminCore expects all the form vars, even if we test here only the cookie path */
 	$valueMap = array('permissions.directory' => 'IGNORED',
@@ -286,7 +286,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
     /* Test that we don't accept just any cookie domain */
     function testChangeCookieDomain() {
 	global $gallery;
-	$session = $gallery->getSession();
+	$session =& $gallery->getSession();
 
 	/* AdminCore expects all the form vars, even if we test here only the cookie path */
 	$valueMap = array('permissions.directory' => 'IGNORED',
