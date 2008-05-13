@@ -681,10 +681,14 @@ class ADODB_mysqli extends ADOConnection {
 	/*	Returns: the last error number from previous database operation	*/	
 	function ErrorNo() 
 	  {
-	    if (empty($this->_connectionID))  
-	      return @mysqli_connect_errno();
-	    else 
-	      return @mysqli_errno($this->_connectionID);
+	    if(extension_loaded("mysqli")) {
+		if (empty($this->_connectionID))  
+		    return @mysqli_connect_errno();
+		else 
+		    return @mysqli_errno($this->_connectionID);
+	    } else {
+		return parent::ErrorNo();
+	    }
 	  }
 	
 	// returns true or false
