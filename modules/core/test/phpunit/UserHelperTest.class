@@ -385,5 +385,9 @@ class UserHelperTestSession {
     function regenerateWasCalled() {
 	return $this->_regenerateWasCalled;
     }
+
+    function put($key, $value) {
+	$this->_sessionData[$key] = $value;
+    }
 }
 ?>
