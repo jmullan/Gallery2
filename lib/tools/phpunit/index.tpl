@@ -20,6 +20,9 @@
       }
       function skip(i) {
       }
+      function updateProgressBar(title, description, percentComplete, timeRemaining, memoryInfo) {
+	/* Dummy updateProgressBar method in case some unit tests actually writes the script to call (ItemAddFromServerTest) */
+      }
     </script>
   </head>
   <body>
