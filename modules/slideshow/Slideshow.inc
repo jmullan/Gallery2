@@ -65,7 +65,8 @@ class SlideshowView extends GalleryView {
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    list ($ret, $items, $start) = SlideshowHelper::buildAlbumSlideshow($item, $startId, $offset);
+	    list ($ret, $items, $start) =
+		SlideshowHelper::buildAlbumSlideshow($item, $startId, $offset);
 	    if ($ret) {
 		return array($ret, null);
 	    }

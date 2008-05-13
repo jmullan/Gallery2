@@ -52,11 +52,11 @@ class SlideshowHelper {
     function buildAlbumSlideshow($item, $startId=null, $offset=0) {
 	list ($ret, $canView) = GalleryCoreApi::hasItemPermission($item->getId(), 'core.view');
 	if ($ret) {
-	    return array($ret, null, null);
+	    return array($ret, null, null, null, null);
 	}
 	if (!$canView) {
 	    /* Avoid information disclosure, act as if the item didn't exist. */
-	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null, null);
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null, null, null, null);
 	}
 
 	if (!$item->getCanContainChildren()) {
@@ -65,15 +65,15 @@ class SlideshowHelper {
 	    list ($ret, $item) =
 		GalleryCoreApi::loadEntitiesById($item->getParentId(), 'GalleryItem');
 	    if ($ret) {
-		return array($ret, null, null);
+		return array($ret, null, null, null, null);
 	    }
 	    list ($ret, $canView) = GalleryCoreApi::hasItemPermission($item->getId(), 'core.view');
 	    if ($ret) {
-		return array($ret, null, null);
+		return array($ret, null, null, null, null);
 	    }
 	    if (!$canView) {
 		/* Avoid information disclosure, act as if the item didn't exist. */
-		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null, null);
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null, null, null, null);
 	    }
 	}
 
@@ -81,7 +81,7 @@ class SlideshowHelper {
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item, $offset,
 	    SLIDESHOW_MEDIARSS_ITEMS_PER_PAGE);
 	if ($ret) {
-	    return array($ret, null, null);
+	    return array($ret, null, null, null, null);
 	}
 
 	$itemId = $item->getId();
@@ -89,12 +89,11 @@ class SlideshowHelper {
 	list ($ret, $prevOffset, $nextOffset) = SlideshowHelper::paginateItemSlideshow($itemId,
 	    $offset);
 	if ($ret) {
-	    return array($ret, null, null);
+	    return array($ret, null, null, null, null);
         }
 
-	$slideshowData = SlideshowHelper::buildItemsSlideshow($childIds, $startId);
-	array_push($slideshowData, $prevOffset, $nextOffset);
-	return $slideshowData;
+	list ($ret, $items, $start) = SlideshowHelper::buildItemsSlideshow($childIds, $startId);
+	return array($ret, $items, $start, $prevOffset, $nextOffset);
     }
 
     /**
