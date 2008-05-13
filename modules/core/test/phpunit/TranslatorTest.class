@@ -576,7 +576,7 @@ class TranslatorTest extends GalleryTestCase {
 	$platform = new UnitTestPlatform();
 	$translator =& $gallery->getTranslator();
 
-	$gallery->setConfig('data.gallery.base', '/g2data/');
+	$gallery->setConfig('data.gallery.locale', '/g2data/locale/');
 	$codeBase = GalleryCoreApi::getCodeBasePath();
 	$locale = $translator->getActiveLanguageCode();
 	if ($locale != 'en_US') {
