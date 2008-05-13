@@ -260,7 +260,7 @@ class RssGenerator {
 		    $ownerId = $item['ownerId'];
 		    if (!isset($userMap[$item['ownerId']])) {
 			list ($ret, $userMap[$ownerId]) =
-			    GalleryCoreApi::loadEntitiesById($ownerId);
+			    GalleryCoreApi::loadEntitiesById($ownerId, 'GalleryUser');
 			if ($ret) {
 			    /**
 			     * This method has no way of returning errors, so swallow them for now
