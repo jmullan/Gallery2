@@ -434,7 +434,7 @@ class MainTest extends GalleryTestCase {
 	$expectedUrl = $urlGenerator->generateUrl($gallery->getConfig('loginRedirect'),
 	    array('forceFullUrl' => true, 'htmlEntities' => false, 'forceSessionId' => false));
 
-	$gallery->setConfig('anonymousUserId', $gallery->getActiveUserId());
+	$this->_becomeGuestUser();
 
 	list ($ret, $g2Data) = _GalleryMain();
 	if ($ret) {
@@ -456,6 +456,12 @@ class MainTest extends GalleryTestCase {
 	}
 	$this->_markForCleanup($item);
 
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($user);
+
 	/* Verify registered user gets error page (used to redirect to root album) */
 	$ret = GalleryCoreApi::removeItemPermissions($item->getId());
 	if ($ret) {
@@ -469,6 +475,8 @@ class MainTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+
+	$gallery->setActiveUser($user);
 
 	list ($ret, $g2Data) = _GalleryMain();
 	if ($ret) {
