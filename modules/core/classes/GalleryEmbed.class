@@ -905,5 +905,55 @@ class GalleryEmbed {
 	}
 	return null;
     }
+
+    /**
+     * Simplify finding the path to embed.php by sending it as a HTTP header
+     * Idea:
+     *   In your integration setup you need to find out
+     *     - the filesystem path for embed.php
+     *     - the g2Uri and the embedUri.
+     * You can get the embed.php path with your g2Uri by fetching
+     * http://example.com/gallery2/embed.php?getEmbedPath=1 via fsockopen.
+     * @static 
+     */
+    function getEmbedPathByHttpRequest() {
+	global $gallery;
+
+	if (!class_exists('GalleryCoreApi')) {
+	    require(dirname(__FILE__) . '/GalleryCoreApi.class');
+	}
+
+	$phpVm = $gallery->getPhpVm();
+
+	$getEmbedPath = GalleryUtilities::getRequestVariablesNoPrefix('getEmbedPath');
+	if (!empty($getEmbedPath) && !$phpVm->headers_sent()){
+	    /*
+	     * Don't use GalleryUtilities::getRemoteHostAddress()
+	     * since it checks headers that can be forged easily too
+	     */
+	    $remotehost = GalleryUtilities::getServerVar('REMOTE_ADDR');
+	    $remotehost = !empty($remotehost) ? $phpVm->gethostbyname($remotehost) : '';
+	    /* Try SERVER_ADDR first, back up is config::baseUri */
+	    $localhost = GalleryUtilities::getServerVar('SERVER_ADDR');
+	    if (empty($localhost)) {
+		$baseUri = $gallery->getConfig('baseUri');
+		$urlComponents = parse_url($baseUri);
+		if (!empty($urlComponents['host'])) {
+		    $localhost = $phpVm->gethostbyname($urlComponents['host']);
+		}
+	    }
+
+	    if (!empty($remotehost) && !empty($localhost) && $remotehost === $localhost) {
+		if ($phpVm->defined('GALLERY_CONFIG_DIR')) {
+		    /* GALLERY_CONFIG_DIR is multisite-aware */
+		    $phpVm->header('X-G2-EMBED-PATH: ' . GALLERY_CONFIG_DIR . '/embed.php');
+		} else {
+		    /* Fallback if G2 isn't installed yet */
+		    $phpVm->header('X-G2-EMBED-PATH: ' 
+					. GalleryCoreApi::getCodeBasePath('embed.php'));
+		}
+	    }
+	}
+    }
 }
 ?>
