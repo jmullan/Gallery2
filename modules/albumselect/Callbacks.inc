@@ -49,11 +49,27 @@ class AlbumSelectCallbacks {
 	    if ($ret) {
 		return $ret;
 	    }
+	    /*
+	     * Respect session permissions in cache-lookup. Might as well switch from
+	     * userId + sessionAclIds to a aclIds as a cache-key.
+	     */
+	    list ($ret, $aclIdsWithSessionPermissions) =
+		GalleryCoreApi::fetchAccessListIds('core.view', $userId, true);
+	    if ($ret) {
+		return $ret;
+	    }
+	    list ($ret, $aclIds) =
+		GalleryCoreApi::fetchAccessListIds('core.view', $userId, false);
+	    if ($ret) {
+		return $ret;
+	    }
+	    $sessionPermissions = implode('-', array_diff($aclIdsWithSessionPermissions, $aclIds));
 	    $cachePathInfo = array('type' => 'module-data',
 				   'module' => 'albumselect',
-				   'itemId' => $userId . '_' . $languageCode .
-				   '_' . substr(md5(serialize(array($callbackParams,
-				   				    $rootAlbumId))), 0, 5));
+				   'itemId' => $userId . '_' . $sessionPermissions
+				   . '_' . $languageCode
+				   . '_' . substr(md5(serialize(array($callbackParams,
+								      $rootAlbumId))), 0, 5));
 	    list ($treeList, $titles, $titlesForJs, $links) =
 		GalleryDataCache::getFromDisk($cachePathInfo);
 	    if (!isset($titles) || !isset($treeList) || !isset($titlesForJs) || !isset($links)) {
