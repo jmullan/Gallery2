@@ -68,7 +68,7 @@
     {if $AdminFfmpeg.canWatermark} {g->text text="See sample at right."} {/if}
   </p>
   {if $AdminFfmpeg.canWatermark}
-    <input type="checkbox" id="cbWatermark" {if $form.useWatermark}checked="checked" {/if}
+    <input type="checkbox" id="cbWatermark" {if $form.useWatermark}checked="checked"{/if}
      name="{g->formVar var="form[useWatermark]"}" style="vertical-align: -5px"/>
     <label for="cbWatermark">
       {g->text text="Watermark new movie thumbnails"}
@@ -138,18 +138,52 @@
   </table>
 </div>
 
-{if $AdminFfmpeg.mimeTypes}
+{if $AdminFfmpeg.mimeTypes || $AdminFfmpeg.mimeTypesEncoder}
 <div class="gbBlock">
   <h3> {g->text text="Supported MIME Types"} </h3>
 
+  {if $AdminFfmpeg.mimeTypes}
   <p class="giDescription">
-    {g->text text="The FFMPEG module can support files with the following MIME types"}
+    {g->text text="The FFMPEG module can decode files of the following MIME types"}
   </p>
   <p class="giDescription">
   {foreach from=$AdminFfmpeg.mimeTypes item=mimeType}
     {$mimeType}<br/>
   {/foreach}
-   </p>
+  </p>
+  {/if}
+
+  {if $AdminFfmpeg.mimeTypesEncoder}
+  <p class="giDescription">
+    {g->text text="The FFMPEG module can encode files to the following MIME types"}
+  </p>
+  <p class="giDescription">
+  {foreach from=$AdminFfmpeg.mimeTypesEncoder item=mimeType}
+    {$mimeType}
+    {if isset($AdminFfmpeg.encodeWarnings.$mimeType)}
+      <div class="giWarning">
+        {if isset($AdminFfmpeg.encodeWarnings.$mimeType.mute)}
+          {g->text text="Missing required audio codec, encoded videos will not contain sound."}
+        {/if}
+      </div>
+    {else}
+      <br/>
+    {/if}
+  {/foreach}
+  </p>
+  {/if}
+
+</div>
+{/if}
+
+{if $AdminFfmpeg.version}
+<div class="gbBlock">
+  <h3> {g->text text="Version Information"} </h3>
+  <p class="giDescription">
+  {foreach from=$AdminFfmpeg.version item=ver}
+    {$ver}<br/>
+  {/foreach}
+  </p>
 </div>
 {/if}
 

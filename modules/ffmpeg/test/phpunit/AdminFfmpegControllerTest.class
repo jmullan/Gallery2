@@ -382,10 +382,10 @@ class AdminFfmpegControllerTestPlatform {
 	switch ($args[0][0]) {
 	case '/validPath/ffmpeg':
 	case '/incompletePath/ffmpeg':
-	    return array(1, array('Input audio/video file formats: mpeg'));
+	    return array(1, array('Input audio/video file formats: mpeg'), array());
 
 	default:
-	    return array(0, array());
+	    return array(0, array(), array());
 	}
     }
 }

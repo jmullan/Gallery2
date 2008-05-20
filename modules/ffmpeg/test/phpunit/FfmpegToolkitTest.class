@@ -96,7 +96,19 @@ class FfmpegToolkitTest extends GalleryTestCase {
 		'mimeTypes' => $expectedMimeTypes),
 	    'dimensions-and-duration' => array(
 		'type' => 'int,int,float',
-		'description' => ('Get the width, height and duration of the movie'),
+		'description' => 'Get the width, height and duration of the movie',
+		'mimeTypes' => $expectedMimeTypes),
+	    'video-framerate' => array(
+		'type' => 'float',
+		'description' => 'Get video frames per seconds of the movie',
+		'mimeTypes' => $expectedMimeTypes),
+	    'audio-samplerate' => array(
+		'type' => 'int',
+		'description' => 'Get audio samples per seconds of the movie',
+		'mimeTypes' => $expectedMimeTypes),
+	    'audio-channels' => array(
+		'type' => 'int',
+		'description' => 'Get number of audio channels in movie',
 		'mimeTypes' => $expectedMimeTypes)),
 	    $results['properties'], 'properties');
     }
@@ -441,6 +453,51 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	$this->assertEquals(array(), $context, 'no offset');
 	$this->assert($this->_chmodWasCalled, 'chmod not called');
     }
+
+    function testPerformSetAudioChannels() {
+ 	$this->_chmodWasCalled = false;
+	list ($ret, $results, $context) =
+	    $this->_toolkit->performOperation('video/avi',
+					      'set-audio-channels',
+					      'testPerformOperation1.avi',
+					      'testPerformOperation2.avi',
+					      array('2'));
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals($results, 'video/avi', 'mime after audiochannels');
+	$this->assertEquals(array('audioChannels' => '2'), $context, 'AudioChannels');
+    }
+
+    function testPerformSetAudioRate() {
+ 	$this->_chmodWasCalled = false;
+	list ($ret, $results, $context) =
+	    $this->_toolkit->performOperation('video/avi',
+					      'set-audio-samplerate',
+					      'testPerformOperation1.avi',
+					      'testPerformOperation2.avi',
+					      array('11025'));
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals($results, 'video/avi', 'mime after audiorate');
+	$this->assertEquals(array('sampleRate' => '11025'), $context, 'audiorate');
+    }
+
+    function testPerformConvertFlv() {
+ 	$this->_chmodWasCalled = false;
+	list ($ret, $results) =
+	    $this->_toolkit->performOperation('video/avi',
+					      'convert-to-video/x-flv',
+					      'testPerformOperation1.avi',
+					      'testPerformOperation2.flv',
+					      array());
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals($results, 'video/x-flv');
+	$this->assert($this->_chmodWasCalled, 'chmod not called');
+    }
 }
 
 /**
@@ -466,6 +523,7 @@ class FfmpegToolkitTestPlatform {
 	$stderr = array();
 	switch(serialize($cmd)) {
 	case serialize(array(array($this->_ffmpegPath, '-i', 'testGetProperties1.avi', '-vstats'))):
+	case serialize(array(array($this->_ffmpegPath, '-i', 'BOGUS', '-vstats'))):
 	    $stderr[] = "Input #0, mov, from '../data/Sample.mov':";
 	    $stderr[] = "  Duration: 00:00:03.1, bitrate: 193 kb/s";
 	    $stderr[] = "  Stream #0.0: Video: svq1, 200x240, 15.00 fps";
@@ -745,6 +803,15 @@ class FfmpegToolkitTestPlatform {
 	    $stderr[] = 'frame=    2 q=0.0 size=       2kB time=0.1 bitrate= 232.4kbits/s    ';
 	    return array(1, $results, $stderr);
 
+	case serialize(array(array($this->_ffmpegPath, '-i', 'testPerformOperation1.avi',
+			     '-y', 'TEMPFILE.flv'))):
+	    $stderr[] = 'Input #0, avi, from \'testPerformOperation2.avi\':';
+	    $stderr[] = '  Duration: 00:00:04.0, bitrate: 329 kb/s';
+	    $stderr[] = '  Stream #0.0: Video: mjpeg, 160x120, 15.00 fps';
+	    $stderr[] = '  Stream #0.1: Audio: pcm_u8, 8000 Hz, mono, 64 kb/s';
+	    $stderr[] = 'Output #0, mjpeg, to \'TEMPFILE.flv\':';
+	    return array(1, $results, $stderr);
+
 	case serialize(array(array($this->_ffmpegPath, '-h'))):
 	case serialize(array(array('/validPath/ffmpeg', '-h'))):
 	case serialize(array(array('/validPath/ffmpeg048FormatsOutput', '-h'))):
@@ -754,8 +821,16 @@ class FfmpegToolkitTestPlatform {
 	case serialize(array(array('/validPath/ffmpeg046FormatsOutput', '-h'))):
 	    return array(1, $results, $stderr);
 
+	case serialize(array(array($this->_ffmpegPath, '-version'))):
+	case serialize(array(array('/validPath/ffmpeg', '-version'))):
+	case serialize(array(array('/validPath/ffmpeg046FormatsOutput', '-version'))):
+	case serialize(array(array('/validPath/ffmpeg048FormatsOutput', '-version'))):
+	    $stderr[] = 'FFmpeg version SVN-r8743, Copyright (c) 2000-2007 Fabrice Bellard, et al.';
+	    return array(0, $results, $stderr);
+
 	case serialize(array(array('/validPath/bogusBinary', '-h'))):
 	case serialize(array(array('/validPath/bogusBinary', '-formats'))):
+	case serialize(array(array('/validPath/bogusBinary', '-version'))):
 	    $results[] = 'Bogus stdout';
 	    $stderr[] = 'Bogus stderr';
 	    return array(1, $results, $stderr);
