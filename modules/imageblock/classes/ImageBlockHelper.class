@@ -562,6 +562,9 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	}
 
 	if ($order == 'random') {
+	    /* Prepare where clause for use in second query below */
+	    $whereRequery = $where;
+	    $whereRequery[] = '[ImageBlockCacheMap::random] < ?';
 	    $where[] = '[ImageBlockCacheMap::random] > ?';
 	    list ($ret, $minMax) = ImageBlockHelper::getRandomKeyRange(
 		(int)$userId, $typeMap[$itemType], $parentSequence);
@@ -586,6 +589,29 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	list ($ret, $results) = ImageBlockHelper::_runQuery($query, $data);
 	if ($ret) {
 	    return array($ret, null);
+	}
+
+	/* Requery if necessary to fill requested count */
+	$remainder = $count - count($results);
+	if ($order == 'random' && $remainder > 0) {
+	    /* Using exact same query as above except for where clause */
+	    $query = 'SELECT ' . implode(', ', $select) .
+		     ' FROM ' . implode(', ', $from) .
+		     ' WHERE ' . implode(' AND ', $whereRequery) .
+		     ' ORDER BY ' . $orderBy;
+
+	    list ($ret, $query) = $storage->getFunctionSql('LIMIT', array($remainder, $query));
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    list ($ret, $resultsRequery) = ImageBlockHelper::_runQuery($query, $data);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    
+	    /* Combine results from both queries */
+	    $results = array_merge($results, $resultsRequery);
 	}
 
 	foreach ($results as $i => $result) {

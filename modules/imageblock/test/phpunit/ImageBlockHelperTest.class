@@ -469,6 +469,48 @@ class ImageBlockHelperTest extends GalleryTestCase {
 	$this->assert($storage->isComplete(), $storage->getRemaining());
     }
 
+    /**
+     * Verify the fix for bug 1878943
+     * http://sourceforge.net/tracker/index.php?func=detail&aid=1878943&group_id=7130&atid=107130
+     */
+    function testFetchViewableDataForMultipleRandomImages() {
+	global $gallery;
+	$max = (int)0x7fffffff;
+	$userId = $gallery->getActiveUserId();
+
+	list ($ret, $album, $items) =
+	    $this->_createSubAlbumWithItems($this->_getRootId());
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($album);
+
+	/* Thumbnails must be generated for the cache to be properly updated */
+	foreach( $items as $item ) {
+	    list ($ret, $thumbnail) = $this->_createDerivative(
+		$item, $item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL, '',
+		'test/file', array('width' => 120, 'width' => 130));
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
+	/* Ensure that wrap around must be used by rigging the random key */
+	$gallery->_phpVm = new UnitTestPhpVm();
+	$phpVm = $gallery->getPhpVm();
+	$phpVm->setReply('rand', '*', $max);
+
+	list($ret, $randItems) =
+	    ImageBlockHelper::fetchViewableData('Image', 'random', count($items), $album->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(count($items), count($randItems),
+	    sprintf("Wrong number of random images returned, asked for %d, but got %d",
+		count($items), count($randItems)));
+    }
+
     function testGetRandomKeyRange() {
 	global $gallery;
 	$gallery->_storage = new UnitTestStorage();
