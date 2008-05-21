@@ -72,6 +72,29 @@ class PlatformTest extends GalleryTestCase {
 	}
     }
 
+    function testTempnam() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	if ($this->_platform->isSymlinkSupported()) {
+	    $sourceDir = $dataBase = $gallery->getConfig('data.gallery.tmp');
+	    foreach (array('platformTest', 'srcDir') as $subDir) {
+	    	$sourceDir .= "$subDir/";
+		$this->assert(mkdir($sourceDir, 0777), 'Failed to create test directory: ' . $subDir);
+	    }
+
+	    $symlink = $dataBase . 'platformTest/data';
+	    $this->assert(symlink($sourceDir, $symlink), 'Failed to create test symlink');
+	    $tempName = $platform->tempnam($symlink, 'test');
+
+	    $this->assertEquals($symlink, dirname($tempName), 'Directories don\'t match');
+	    $this->assert(unlink($tempName), 'Failed to delete temporary file');
+	    $this->assert(unlink($symlink), 'Failed to delete symlink');
+	    $this->assert(rmdir($sourceDir), 'Failed to delete test source directory');
+	    $this->assert(rmdir(dirname($sourceDir)), 'Failed to delete test directory');
+	}
+    }
+
     function testMoveUploadedFile() {
 	/* XXX: How do we test this?  We don't have an uploaded file :-( */
 	$this->assert(!$this->_platform->move_uploaded_file($this->_sourceFile, $this->_destFile));

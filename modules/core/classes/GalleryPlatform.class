@@ -131,7 +131,18 @@ class GalleryPlatform {
 	    $gallery->debug("tempnam($dir, $prefix)");
 	}
 
-	return tempnam($dir, $prefix);
+	$slash = $this->getDirectorySeparator();
+	$dir = $dir{strlen($dir) - 1} == $slash ? substr($dir, -1) : $dir;
+
+	$tempfile = tempnam($dir, $prefix);
+	if ($tempfile !== false) {
+	    $dirname = dirname($tempfile);
+	    if ($dirname !== $dir) {
+		$tempfile = $dir . $slash . basename($tempfile);
+	    }
+	}
+
+	return $tempfile;
     }
 
     /**
