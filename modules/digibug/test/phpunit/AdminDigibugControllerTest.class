@@ -55,7 +55,8 @@ class AdminDigibugControllerTest extends GalleryControllerTestCase {
 			    $results);
     }
 
-    function testAdminDigibugControllerSave() {
+    function testAdminDigibugControllerSaveWithOwnerCredentials() {
+	GalleryUtilities::putRequestVariable('form[digibugIdChoice]', 'owner');
 	GalleryUtilities::putRequestVariable('form[digibugCustomerId]', '1234');
 	GalleryUtilities::putRequestVariable('form[digibugPricelistId]', '4321');
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
@@ -79,11 +80,41 @@ class AdminDigibugControllerTest extends GalleryControllerTestCase {
 	ksort($params);
 
 	$this->assertEquals(array('digibugCustomerId' => '1234',
+				  'digibugIdChoice' => 'owner',
 				  'digibugPricelistId' => '4321'),
 			    $params, 'Verify settings');
     }
 
+    function testAdminDigibugControllerSaveWithDefaultCredentials() {
+	GalleryUtilities::putRequestVariable('form[digibugIdChoice]', 'gallery');
+	GalleryUtilities::putRequestVariable('form[action][save]', '1');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'digibug.AdminDigibug'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'digibug');
+	if ($ret) {
+	    return $ret;
+	}
+	foreach ($params as $key => $value) {
+	    if ($key[0] == '_') {
+		unset($params[$key]);
+	    }
+	}
+	ksort($params);
+
+	$this->assertEquals(array('digibugCustomerId' => '3153',
+				  'digibugIdChoice' => 'gallery',
+				  'digibugPricelistId' => '8491'),
+			    $params, 'Verify settings');
+    }
+
     function testAdminDigibugControllerSaveMissingValues() {
+	GalleryUtilities::putRequestVariable('form[digibugIdChoice]', 'owner');
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
 	$results = $this->handleRequest();
@@ -96,6 +127,7 @@ class AdminDigibugControllerTest extends GalleryControllerTestCase {
     }
 
     function testAdminDigibugControllerSaveInvalidValues() {
+	GalleryUtilities::putRequestVariable('form[digibugIdChoice]', 'owner');
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 	GalleryUtilities::putRequestVariable('form[digibugCustomerId]', '123bsd4');
 	GalleryUtilities::putRequestVariable('form[digibugPricelistId]', '4sds321');

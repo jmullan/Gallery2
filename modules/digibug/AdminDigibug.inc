@@ -46,13 +46,15 @@ class AdminDigibugController extends GalleryController {
 
 	$status = $error = array();
 	if (isset($form['action']['save'])) {
-	    if (empty($form['digibugCustomerId'])
-		    || !preg_match('/^\d+$/', trim($form['digibugCustomerId']))) {
-		$error[] = 'form[error][digibugCustomerId][invalid]';
-	    }
-	    if (empty($form['digibugPricelistId'])
-		    || !preg_match('/^\d+$/', trim($form['digibugPricelistId']))) {
-		$error[] = 'form[error][digibugPricelistId][invalid]';
+	    if ($form['digibugIdChoice'] == 'owner') {
+		if (empty($form['digibugCustomerId'])
+			|| !preg_match('/^\d+$/', trim($form['digibugCustomerId']))) {
+		    $error[] = 'form[error][digibugCustomerId][invalid]';
+		}
+		if (empty($form['digibugPricelistId'])
+			|| !preg_match('/^\d+$/', trim($form['digibugPricelistId']))) {
+		    $error[] = 'form[error][digibugPricelistId][invalid]';
+		}
 	    }
 	    if (empty($error)) {
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'digibug');
@@ -64,10 +66,21 @@ class AdminDigibugController extends GalleryController {
 		    return array($ret, null);
 		}
 
-		foreach (array('digibugCustomerId', 'digibugPricelistId') as $key) {
-		    $ret = $module->setParameter($key, trim($form[$key]));
-		    if ($ret) {
-			return array($ret, null);
+		if ($form['digibugIdChoice'] == 'gallery') {
+		    foreach (array('digibugIdChoice' => 'gallery', 'digibugCustomerId' => '3153', 
+				   'digibugPricelistId' => '8491') as $key => $value) {
+			$ret = $module->setParameter($key, $value);
+			if ($ret) {
+			    return array($ret, null);
+			}
+		    }
+		} else {
+		    foreach (array('digibugIdChoice', 'digibugCustomerId', 'digibugPricelistId') 
+			     as $key) {
+			$ret = $module->setParameter($key, trim($form[$key]));
+			if ($ret) {
+			    return array($ret, null);
+			}
 		    }
 		}
 
@@ -124,7 +137,7 @@ class AdminDigibugView extends GalleryView {
 	}
 
 	if ($form['formName'] != 'AdminDigibug') {
-	    foreach (array('digibugCustomerId', 'digibugPricelistId') as $key) {
+	    foreach (array('digibugIdChoice', 'digibugCustomerId', 'digibugPricelistId') as $key) {
 		list ($ret, $form[$key]) = $module->getParameter($key);
 		if ($ret) {
 		    return array($ret, null);
