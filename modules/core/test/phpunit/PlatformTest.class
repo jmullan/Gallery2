@@ -85,7 +85,7 @@ class PlatformTest extends GalleryTestCase {
 
 	    $symlink = $dataBase . 'platformTest/data';
 	    $this->assert(symlink($sourceDir, $symlink), 'Failed to create test symlink');
-	    $tempName = $platform->tempnam($symlink, 'test');
+	    $tempName = $platform->tempnam($symlink . '/', 'test');
 
 	    $this->assertEquals($symlink, dirname($tempName), 'Directories don\'t match');
 	    $this->assert(unlink($tempName), 'Failed to delete temporary file');
