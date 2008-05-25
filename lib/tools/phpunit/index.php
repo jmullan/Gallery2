@@ -191,10 +191,17 @@ function PhpUnitGalleryMain(&$testSuite, $filter) {
 	return $ret;
     }
 
-    list ($ret, $isSiteAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
-    if ($ret) {
-	print $ret->getAsHtml();
-	return;
+    /*
+     * Use assertUserIsSiteAdministrator instead of isUserInSiteAdminGroup to make sure the admin
+     * session has not expired.
+     */
+    $ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+    if ($ret && ($ret->getErrorCode() & ERROR_PERMISSION_DENIED)) {
+	$isSiteAdmin = false;
+    } else if ($ret) {
+	return $ret;
+    } else {
+	$isSiteAdmin = true;
     }
 
     if ($isSiteAdmin && $filter !== false) {
@@ -499,11 +506,18 @@ if (!$session->isUsingCookies()) {
     $sessionId = $session->getId();
 }
 
-list ($ret, $isSiteAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
-if ($ret) {
-    $ret = $ret;
+/*
+ * Use assertUserIsSiteAdministrator instead of isUserInSiteAdminGroup to make sure the admin
+ * session has not expired.
+ */
+$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+if ($ret && ($ret->getErrorCode() & ERROR_PERMISSION_DENIED)) {
+    $isSiteAdmin = false;
+} else if ($ret) {
     print $ret->getAsHtml();
     return;
+} else {
+    $isSiteAdmin = true;
 }
 
 /* Check that our dev environment is correct */
