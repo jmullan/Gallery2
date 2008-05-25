@@ -180,6 +180,24 @@ class WebDavController extends GalleryController {
     function omitAuthTokenCheck() {
 	return true;
     }
+
+    /**
+     * Overriding permissionCheck() since the WebDAV protocol needs to handle authentication
+     * differently (redirects to a HTML based login view don't work here).
+     * @see GalleryController::permissionCheck()
+     */
+    function permissionCheck($ret) {
+	if ($ret) {
+	    list ($ret2, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	    if ($ret2) {
+		return array($ret, null);
+	    }
+	    if (!$isAdmin && ($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+		$ret->addErrorCode(ERROR_PERMISSION_DENIED);
+	    }
+	}
+	return array($ret, null);
+    }
 }
 
 /**

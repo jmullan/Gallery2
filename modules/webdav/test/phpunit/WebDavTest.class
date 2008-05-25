@@ -144,28 +144,6 @@ class WebDavTest extends GalleryTestCase {
 	return $this->_becomeGuestUser();
     }
 
-    /**
-     * Assert a specific error code.
-     *
-     * @param GalleryStatus|null $ret
-     * @param int $errorCode A GalleryStatus error code (constant)
-     * @param string $failMessage (optional) Message to be shown if there's no error at all.
-     * @return unknown
-     */
-    function _assertError($ret, $errorCode, $failMessage='Operation succeeded unexpectedly') {
-	if ($ret) {
-	    if (!($ret->getErrorCode() & $errorCode)) {
-		$this->fail(sprintf('Wrong error code (expected %s)',
-		    GalleryStatus::getErrorCodeConstants($errorCode)));
-		return $ret;
-	    }
-	} else {
-	    $this->fail($failMessage);
-	}
-
-	return null;
-    }
-
     function tearDown() {
 	$this->_streamWrapperRegistration(true);
 	$ret = parent::tearDown();
@@ -342,10 +320,7 @@ class WebDavTest extends GalleryTestCase {
 	list ($ret, $g2Data) = _GalleryMain();
 	$output = ob_get_contents();
 	ob_end_clean();
-	$ret = $this->_assertError($ret, ERROR_PERMISSION_DENIED);
-	if ($ret) {
-	    return $ret;
-	}
+	$this->assertErrorEquals(ERROR_PERMISSION_DENIED, $ret);
 
 	$this->assertEquals('', $output, 'output');
     }
@@ -785,10 +760,7 @@ class WebDavTest extends GalleryTestCase {
 	list ($ret, $g2Data) = _GalleryMain();
 	$output = ob_get_contents();
 	ob_end_clean();
-	$ret = $this->_assertError($ret, ERROR_PERMISSION_DENIED);
-	if ($ret) {
-	    return $ret;
-	}
+	$this->assertErrorEquals(ERROR_PERMISSION_DENIED, $ret);
 
 	$this->assertEquals('', $output, 'HTTP output');
 
@@ -870,10 +842,7 @@ class WebDavTest extends GalleryTestCase {
 	list ($ret, $g2Data) = _GalleryMain();
 	$output = ob_get_contents();
 	ob_end_clean();
-	$ret = $this->_assertError($ret, ERROR_PERMISSION_DENIED);
-	if ($ret) {
-	    return $ret;
-	}
+	$this->assertErrorEquals(ERROR_PERMISSION_DENIED, $ret);
 	$this->assertEquals('', $output, 'output');
 
 	list ($ret, $newAlbumId) = GalleryCoreApi::fetchItemIdByPath($path);
@@ -941,10 +910,7 @@ class WebDavTest extends GalleryTestCase {
 	list ($ret, $g2Data) = _GalleryMain();
 	$output = ob_get_contents();
 	ob_end_clean();
-	$ret = $this->_assertError($ret, ERROR_PERMISSION_DENIED);
-	if ($ret) {
-	    return $ret;
-	}
+	$this->assertErrorEquals(ERROR_PERMISSION_DENIED, $ret);
 	$this->assertEquals('', $output, 'output');
 
 	/* Make sure the album is still there */
@@ -1123,10 +1089,7 @@ class WebDavTest extends GalleryTestCase {
 	list ($ret, $g2Data) = _GalleryMain();
 	$output = ob_get_contents();
 	ob_end_clean();
-	$ret = $this->_assertError($ret, ERROR_PERMISSION_DENIED);
-	if ($ret) {
-	    return $ret;
-	}
+	$this->assertErrorEquals(ERROR_PERMISSION_DENIED, $ret);
 	$this->assertEquals('', $output, 'HTML output');
 
 	list ($ret, $newItemId) = GalleryCoreApi::fetchItemIdByPath($path);
@@ -1226,11 +1189,7 @@ class WebDavTest extends GalleryTestCase {
 	list ($ret, $g2Data) = _GalleryMain();
 	$output = ob_get_contents();
 	ob_end_clean();
-	$ret = $this->_assertError($ret, ERROR_PERMISSION_DENIED);
-	if ($ret) {
-	    return $ret;
-	}
-
+	$this->assertErrorEquals(ERROR_PERMISSION_DENIED, $ret);
 	$this->assertEquals('', $output);
 
 	list ($ret, $this->_item) = $this->_item->refresh();
@@ -1280,10 +1239,7 @@ class WebDavTest extends GalleryTestCase {
 	list ($ret, $g2Data) = _GalleryMain();
 	$output = ob_get_contents();
 	ob_end_clean();
-	$ret = $this->_assertError($ret, ERROR_PERMISSION_DENIED);
-	if ($ret) {
-	    return $ret;
-	}
+	$this->assertErrorEquals(ERROR_PERMISSION_DENIED, $ret);
 
 	$this->assertEquals('', $output);
 
@@ -1407,10 +1363,7 @@ class WebDavTest extends GalleryTestCase {
 	list ($ret, $g2Data) = _GalleryMain();
 	$output = ob_get_contents();
 	ob_end_clean();
-	$ret = $this->_assertError($ret, ERROR_PERMISSION_DENIED);
-	if ($ret) {
-	    return $ret;
-	}
+	$this->assertErrorEquals(ERROR_PERMISSION_DENIED, $ret);
 
 	$this->assertEquals('', $output);
 
@@ -1475,10 +1428,7 @@ class WebDavTest extends GalleryTestCase {
 	list ($ret, $g2Data) = _GalleryMain();
 	$output = ob_get_contents();
 	ob_end_clean();
-	$ret = $this->_assertError($ret, ERROR_PERMISSION_DENIED);
-	if ($ret) {
-	    return $ret;
-	}
+	$this->assertErrorEquals(ERROR_PERMISSION_DENIED, $ret);
 
 	$this->assertEquals('', $output);
 
@@ -1584,10 +1534,7 @@ class WebDavTest extends GalleryTestCase {
 	list ($ret, $g2Data) = _GalleryMain();
 	$output = ob_get_contents();
 	ob_end_clean();
-	$ret = $this->_assertError($ret, ERROR_PERMISSION_DENIED);
-	if ($ret) {
-	    return $ret;
-	}
+	$this->assertErrorEquals(ERROR_PERMISSION_DENIED, $ret);
 
 	$this->assertEquals('', $output);
 
@@ -1900,7 +1847,7 @@ class WebDavTest extends GalleryTestCase {
 	}
 
 	list ($ret, $ignored) = $this->_testLock();
-	return $this->_assertError($ret, ERROR_PERMISSION_DENIED);
+	$this->assertErrorEquals(ERROR_PERMISSION_DENIED, $ret);
     }
 
     function testMissingObject() {
@@ -1928,7 +1875,11 @@ class WebDavTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$this->assertEquals(GALLERY_ERROR | ERROR_MISSING_OBJECT, $ret->getErrorCode());
+	if ($ret) {
+	    $this->assertEquals(GALLERY_ERROR | ERROR_MISSING_OBJECT, $ret->getErrorCode());
+	} else {
+	    $this->fail('Operation succeeded, but error expected');
+	}
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 404 Not Found'),
 			    $this->_headers);
