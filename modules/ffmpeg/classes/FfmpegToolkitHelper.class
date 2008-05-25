@@ -47,8 +47,9 @@ class FfmpegToolkitHelper {
 	    return array(GalleryCoreApi::error(ERROR_MISSING_VALUE), null);
 	}
 
-	list ($ret, $tests, $mimeTypes, $supportsOffset, $mimeTypesEncoder, $encoderAudioCodecs, $version) =
-	    FfmpegToolkitHelper::testBinary($ffmpegPath);
+	list ($ret, $tests, $mimeTypes, $supportsOffset,
+	      $mimeTypesEncoder, $encoderAudioCodecs, $version) =
+		FfmpegToolkitHelper::testBinary($ffmpegPath);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -73,7 +74,8 @@ class FfmpegToolkitHelper {
 	/* Convert to Flash Video */
 	if (in_array('video/x-flv', $mimeTypesEncoder)) {
 	    $operations['convert-to-video/x-flv']['params'] = array();
-	    $operations['convert-to-video/x-flv']['description'] = $gallery->i18n('Convert to Flash Video');
+	    $operations['convert-to-video/x-flv']['description'] =
+		    $gallery->i18n('Convert to Flash Video');
 	    $operations['convert-to-video/x-flv']['mimeTypes'] = $mimeTypes;
 	    $operations['convert-to-video/x-flv']['outputMimeType'] = 'video/x-flv';
 
@@ -81,7 +83,8 @@ class FfmpegToolkitHelper {
 	    $operations['set-video-dimensions']['params'] = array(
 		array('type' => 'int', 'description' => $gallery->i18n('video width in pixels')),
                 array('type' => 'int', 'description' => $gallery->i18n('video height in pixels')));
-	    $operations['set-video-dimensions']['description'] = $gallery->i18n('Set video dimensions');
+	    $operations['set-video-dimensions']['description'] =
+		    $gallery->i18n('Set video dimensions');
 	    $operations['set-video-dimensions']['mimeTypes'] = $mimeTypes;
 	    $operations['set-video-dimensions']['outputMimeType'] = null;
 
@@ -95,7 +98,8 @@ class FfmpegToolkitHelper {
 	    $operations['set-video-framerate']['outputMimeType'] = null;
 
 	    $operations['set-video-sameq']['params'] = array();
-	    $operations['set-video-sameq']['description'] = $gallery->i18n('Set same video quality');
+	    $operations['set-video-sameq']['description'] =
+		    $gallery->i18n('Set same video quality');
 	    $operations['set-video-sameq']['mimeTypes'] = $mimeTypes;
 	    $operations['set-video-sameq']['outputMimeType'] = null;
 
@@ -179,21 +183,26 @@ class FfmpegToolkitHelper {
 	 */
 	if (!$platform->isRestrictedByOpenBaseDir($ffmpegPath)) {
 	    if (!$platform->file_exists($ffmpegPath) || !$platform->is_file($ffmpegPath)) {
-		return array(GalleryCoreApi::error(ERROR_BAD_PATH), null, null, null);
+		return array(GalleryCoreApi::error(ERROR_BAD_PATH),
+			     null, null, null, null, null, null);
 	    }
 	}
 
 	/* We only care about video for now */
 	/** @todo: Add '3g2' => '3g2', '3gp' => '3gp' when recognized as videos */
-	$relevantTypes = array('mpeg' => 'mpeg', 'asf' => 'asf', 'avi' => 'avi',
-			       'mov' => 'mov', 'wmv1' => 'wmv', 'flv' => 'flv',	'mp4' => 'mp4');
+	$relevantTypes = array('mpeg' => 'mpeg', 'asf' => 'asf', 'avi' => 'avi', 
+			       'mov' => 'mov', 'wmv1' => 'wmv', 'flv' => 'flv', 'mp4' => 'mp4');
 	/* We only care about encoding flash video for now */
 	$relevantEncode = array('flv' => 'flv');
-	/** @todo: Add 'adpcm_swf' => 'adpcm_swf' to relevantAudioCodecs if/when videos play correctly */
+	/**
+	 * @todo: Add 'adpcm_swf' => 'adpcm_swf' to relevantAudioCodecs if/when videos play
+	 *        correctly
+	 */
 	$relevantAudioCodecs = array('mp3' => 'mp3', 'libmp3lame' => 'mp3');
 	list ($ignored, $results) = $platform->exec(array(array($ffmpegPath, '-formats')));
 	$version = array();
-	list ($ignored, $ignored, $version) = $platform->exec(array(array($ffmpegPath, '-version')));
+	list ($ignored, $ignored, $version) =
+		$platform->exec(array(array($ffmpegPath, '-version')));
 
 	$mimeTypes = array();
 	$mimeTypesEncoder = array();
@@ -247,7 +256,7 @@ class FfmpegToolkitHelper {
 			list ($ret, $mime) =
 			    GalleryCoreApi::convertExtensionToMime($relevantTypes[$type]);
 			if ($ret) {
-			    return array($ret, null, null, null);
+			    return array($ret, null, null, null, null, null, null);
 			}
 			$mimeTypes[$mime] = 1;
 		    }
@@ -262,7 +271,7 @@ class FfmpegToolkitHelper {
 			    list ($ret, $mime) = GalleryCoreApi::convertExtensionToMime(
 				$relevantTypes[$type]);
 			    if ($ret) {
-				return array($ret, null, null, null);
+				return array($ret, null, null, null, null, null, null);
 			    }
 			    $mimeTypes[$mime] = 1;
 			}
@@ -291,7 +300,8 @@ class FfmpegToolkitHelper {
 				if (preg_match('|D|', $capabilities)) {
 				    $mimeTypes[$mime] = 1;
 				}
-				if (isset($relevantEncode[$type]) && preg_match('|E|', $capabilities)) {
+				if (isset($relevantEncode[$type])
+					&& preg_match('|E|', $capabilities)) {
 				    $mimeTypesEncoder[$mime] = 1;
 				}
 			    }
@@ -339,8 +349,8 @@ class FfmpegToolkitHelper {
 	    }
 	}
 
-	return array(null, $tests, array_keys($mimeTypes), $supportsOffset, array_keys($mimeTypesEncoder),
-		     array_keys($encoderAudioCodecs), $version);
+	return array(null, $tests, array_keys($mimeTypes), $supportsOffset,
+		     array_keys($mimeTypesEncoder), array_keys($encoderAudioCodecs), $version);
     }
 }
 ?>
