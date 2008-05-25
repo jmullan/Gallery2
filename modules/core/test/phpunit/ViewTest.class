@@ -198,38 +198,50 @@ class ViewTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	/* Make sure it uses the default params / settings */
 	GalleryUtilities::removeRequestVariable('itemId');
-
-	list ($ret, $itemId) = GalleryCoreApi::getDefaultAlbumId();
-	if ($ret) {
-	    return $ret;
-	}
-
-	list ($ret, $defaultTheme) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
-	if ($ret) {
-	    return $ret;
-	}
-
-	list ($ret, $paramValue) =
-	    GalleryCoreApi::getPluginParameter('theme', $defaultTheme, 'dynamicLinks');
-	if ($ret) {
-	    return $ret;
-	}
 
 	list ($ret, $theme, $params, $item) = $view->loadThemeAndParameters();
 	if ($ret) {
 	    return $ret;
 	}
 
+	list ($ret, $defaultAlbumId) = GalleryCoreApi::getDefaultAlbumId();
+	if ($ret) {
+	    return $ret;
+	}
+	list ($ret, $defaultAlbum) =
+		GalleryCoreApi::loadEntitiesById($defaultAlbumId, 'GalleryAlbumItem');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $expectedThemeId) = GalleryCoreApi::fetchThemeId($defaultAlbum);
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $paramValue) = GalleryCoreApi::getPluginParameter(
+		'theme', $expectedThemeId, 'dynamicLinks', $defaultAlbumId);
+	if ($ret) {
+	    return $ret;
+	}
+	if (!isset($paramValue)) {
+	    list ($ret, $paramValue) =
+		    GalleryCoreApi::getPluginParameter('theme', $expectedThemeId, 'dynamicLinks');
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
 	if (isset($theme)) {
-	    $this->assertEquals($defaultTheme, $theme->getId());
+	    $this->assertEquals($expectedThemeId, $theme->getId());
 	} else {
 	    $this->fail('No theme instance returned');
 	}
 
 	if (isset($item)) {
-	    $this->assertEquals($itemId, $item->getId(), 'item id');
+	    $this->assertEquals($defaultAlbumId, $item->getId(), 'item id');
 	} else {
 	    $this->fail('No item instance returned');
 	}
