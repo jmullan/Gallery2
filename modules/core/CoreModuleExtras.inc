@@ -2547,6 +2547,7 @@ class CoreModuleExtras {
 	    }
 	case '1.2.32':
 	    /* Set the default baseUri in config.php */
+	case '1.2.33':
 
 	case 'end of upgrade path':
 	    /*
@@ -2901,6 +2902,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	    $edit['regexp'] = '{\$gallery->setConfig\(\'baseUri\', \'\'\);}s';
 	    $edit['replacement'] = '$gallery->setConfig(\'baseUri\', \'' . $urlPath . '\');';
 	    $configChanges[] = array('remove' => array(), 'add' => array(), 'edit' => array($edit));
+	case '1.2.33':
 
 	case 'end of upgrade path':
 	    /*
@@ -3402,7 +3404,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 
 	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryEventListener',
 	    'GalleryUserHelper_medium', 'GalleryUserHelper_medium',
-	    'modules/core/classes/helpers/GalleryItemHelper_medium.class', 'core',
+	    'modules/core/classes/helpers/GalleryUserHelper_medium.class', 'core',
 	    array('Gallery::FailedLogin',
 		  'Gallery::Login'), 4);
 	if ($ret) {
