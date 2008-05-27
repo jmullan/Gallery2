@@ -53,8 +53,10 @@ class HttpAuthPluginTest extends GalleryTestCase {
 	$this->_saveSession = $gallery->_session;	
 	$gallery->_session = new HttpAuthPluginTestSession();
 
-	$this->_listener = new NullEventListener();
-	$this->_registerTestEventListener('Gallery::FailedLogin', $this->_listener);
+	$ret = $this->_registerEventListener('Gallery::FailedLogin');
+	if ($ret) {
+	    return $ret;
+	}
     }
 
     function tearDown() {
@@ -85,7 +87,7 @@ class HttpAuthPluginTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals($this->_user, $user);
-	$this->assert(!isset($this->_listener->_event), 'There was a FailedLogin event!');
+	$this->assertEventNotFired('Gallery::FailedLogin');
 	$this->assert($session->regenerateWasCalled(), 'Session has not been regenerated!');
     }
 
@@ -100,12 +102,8 @@ class HttpAuthPluginTest extends GalleryTestCase {
 
 	$this->assert(!isset($user));
 
-	if (!isset($this->_listener->_event)) {
-	    $this->assert(false, 'Listener didn\'t receive event!');
-	} else {
-	    $eventData = $this->_listener->_event->getData();
-	    $this->assertEquals($_SERVER['PHP_AUTH_USER'], $eventData['userName']);
-	}
+	$this->assertEventFired('Gallery::FailedLogin', null,
+	    array('userName' => $_SERVER['PHP_AUTH_USER']));
     }
 
     function testValidUserInvalidPassword() {
@@ -119,12 +117,8 @@ class HttpAuthPluginTest extends GalleryTestCase {
 
 	$this->assert(!isset($user));
 
-	if (!isset($this->_listener->_event)) {
-	    $this->assert(false, 'Listener didn\'t receive event!');
-	} else {
-	    $eventData = $this->_listener->_event->getData();
-	    $this->assertEquals($this->_user->getUserName(), $eventData['userName']);
-	}
+	$this->assertEventFired('Gallery::FailedLogin', null,
+	    array('userName' => $this->_user->getUserName()));
     }
 
     function testNoFailedLoginEventForSpecialLogoutUsername() {
@@ -137,7 +131,7 @@ class HttpAuthPluginTest extends GalleryTestCase {
 	}
 
 	$this->assert(!isset($user));
-	$this->assert(!isset($this->_listener->_event), 'There was a FailedLogin event!');
+	$this->assertEventNotFired('Gallery::FailedLogin');
     }
 }
 

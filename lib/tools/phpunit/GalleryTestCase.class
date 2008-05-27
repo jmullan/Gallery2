@@ -48,12 +48,39 @@ class GalleryTestCase extends TestCase {
 	return $_counter;
     }
 
+    /**
+     * Register and event name and associated listener (deprecated).
+     *
+     * @param string $eventName
+     * @param GalleryEventListener $listener
+     * @deprecated Use _registerEventLister.
+     */
     function _registerTestEventListener($eventName, &$listener) {
 	/*
 	 * Right now, this is just a wrapper for the normal core API method.
 	 * The magic is done in setUp and tearDown / markEventListenersForCleanup.
 	 */
 	GalleryCoreApi::registerEventListener($eventName, $listener);
+    }
+
+    /**
+     * Register a The NullEventListener for a test
+     *
+     * @param mixed $events a single evet name or an array of event names to be be rgistered
+     * @param string $classname (optional) event handler class name. Default is NullEventListener.
+     * @return GalleryStatus object
+     */
+    function _registerEventListener($events, $className='NullEventListener') {
+	if (!is_array($events)) {
+	    $events = array($events);
+	}
+	/* We need to set the path to something as there is an if (empty) check. */
+	$ret = $this->_registerFactoryImplementationForTest('GalleryEventListener', 
+	    $className, $className, 'bogus-path', 'phpunit', $events);
+	if ($ret) {
+	    return $ret;
+	}
+	return null;
     }
 
     /**
@@ -1097,6 +1124,41 @@ class GalleryTestCase extends TestCase {
 	    return;
 	}
     }
+
+
+    /**
+     * Fail if the provided event name was not fired.
+     * @param string $eventName
+     * @param GalleryEntity $eventEntity (optional) default is null
+     * @param array $eventData (optional) default is null. should match the expected event data
+     */
+    function assertEventFired($eventName, $eventEntity=null, $eventData=null) {
+	$this->assert(!empty($_SERVER['NullEventListener'][$eventName]), 
+	    $eventName . ' did not fire');
+
+	if (!empty($_SERVER['NullEventListener'][$eventName])) {
+	    $this->assertEquals(1, count($_SERVER['NullEventListener'][$eventName]),
+		"Event '$eventName' fired more than once");
+	    $event = $_SERVER['NullEventListener'][$eventName][0];
+	    if (!empty($eventEntity)) {
+		$this->assertEquals($eventEntity, $event->getEntity(), 
+		    'unexpected entity in event: ' . $eventName);
+	    }
+	    if (!empty($eventData)) {
+		$this->assertEquals($eventData, $event->getData(), 
+		    'unexpected data in event: ' . $eventName);
+	    }
+	}
+    }
+
+    /**
+     * Fail if the provided event name was fired
+     * @param string $eventName
+     */
+    function assertEventNotFired($eventName) {
+	$this->assert(empty($_SERVER['NullEventListener'][$eventName]), 
+		$eventName . ' was fired unexpectedly');
+    }
 }
 
 /**
@@ -1142,9 +1204,18 @@ class EntityCounterEventListener /* extends GalleryEventListener */ {
     }
 }
 
-class NullEventListener {
+/**
+ * Generalized Test Event Handler
+ * @package Gallery
+ * @subpackage PHPUnit
+ */
+class NullEventListener /* implements GalleryEventListener */ {
+    /**
+     * @see GalleryEventListener::handleEvent
+     */
     function handleEvent($event) {
-	$this->_event = $event;
+	$_SERVER['NullEventListener'][$event->getEventName()][] = $event;
+	return array(null, null);
     }
 }
 ?>

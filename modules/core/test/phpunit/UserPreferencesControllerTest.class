@@ -264,8 +264,10 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[language]', 'language');
 	GalleryUtilities::putRequestVariable('form[currentPassword]', 'invalid');
 
-	$listener = new NullEventListener();
-	$this->_registerTestEventListener('Gallery::FailedLogin', $listener);
+	$ret = $this->_registerEventListener('Gallery::FailedLogin');
+	if ($ret) {
+	    return $ret;
+	}
 
 	$results = $this->handleRequest();
 	 $this->assertEquals(array('delegate' => array('view' => 'core.UserAdmin',
@@ -285,9 +287,8 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('te', $this->_user->getLanguage());
 
 	/* Verify our event got posted */
-	$this->assertEquals('Gallery::FailedLogin', $listener->_event->getEventName());
-	$this->assertEquals(array('userName' => $this->_user->getUserName()),
-			    $listener->_event->getData());
+	$this->assertEventFired('Gallery::FailedLogin', null,
+	    array('userName' => $this->_user->getUserName()));
     }
 
     function testEditEmailWithInvalidPassword() {
@@ -299,8 +300,10 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[language]', 'language');
 	GalleryUtilities::putRequestVariable('form[currentPassword]', 'invalid');
 
-	$listener = new NullEventListener();
-	$this->_registerTestEventListener('Gallery::FailedLogin', $listener);
+	$ret = $this->_registerEventListener('Gallery::FailedLogin');
+	if ($ret) {
+	    return $ret;
+	}
 
 	$results = $this->handleRequest();
 	 $this->assertEquals(array('delegate' => array('view' => 'core.UserAdmin',
@@ -320,9 +323,8 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('te', $this->_user->getLanguage());
 
 	/* Verify our event got posted */
-	$this->assertEquals('Gallery::FailedLogin', $listener->_event->getEventName());
-	$this->assertEquals(array('userName' => $this->_user->getUserName()),
-			    $listener->_event->getData());
+	$this->assertEventFired('Gallery::FailedLogin', null,
+	    array('userName' => $this->_user->getUserName()));
     }
 
     function testEditEmailWithoutPassword() {

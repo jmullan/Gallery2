@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/remote/classes/GalleryRemoteConstants.class');
+
 /**
  * GalleryRemote controller tests
  *
@@ -57,6 +59,8 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$this->_code = GalleryRemoteConstants::getStatusCodes();
 	$this->_version = GalleryRemoteConstants::getVersionCodes();
 
+	$this->_unregisterFactoryImplementationForTest('GalleryEventListener');
+
 	$_SERVER['HTTP_USER_AGENT'] = 'RPT-HTTPClient 2.9';
     }
 
@@ -71,12 +75,16 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[uname]', $this->_user->getUserName());
 	GalleryUtilities::putRequestVariable('form[password]', 'pass&word');
 
-	$listener = new NullEventListener();
-	$this->_registerTestEventListener('Gallery::Login', $listener);
+	$ret = $this->_registerEventListener('Gallery::Login');
+	if ($ret) {
+	    return $ret;
+	}
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array(), $results['error'], 'error');
 	$this->assertEquals('remote.GalleryRemote', $results['delegate']['view'], 'delegate');
+
+	$this->assertEventFired('Gallery::Login', $this->_user);
 
 	$response = $results['status']['controllerResponse'];
 	$this->assertEquals($this->_code['SUCCESS'], (int)$response->getProperty('status'));
@@ -85,10 +93,6 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$this->assert($response->hasProperty('status_text'));
 
 	$this->assertEquals($this->_user->getId(), $gallery->getActiveUserId());
-
-	/* Verify our event got posted */
-	$this->assertEquals('Gallery::Login', $listener->_event->getEventName());
-	$this->assertEquals($this->_user, $listener->_event->getEntity());
     }
 
     function testLoginInvalidUser() {
@@ -98,22 +102,23 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[uname]', 'some-bogus-user');
 	GalleryUtilities::putRequestVariable('form[password]', 'password');
 
-	$listener = new NullEventListener();
-	$this->_registerTestEventListener('Gallery::FailedLogin', $listener);
+	$ret = $this->_registerEventListener('Gallery::FailedLogin');
+	if ($ret) {
+	    return $ret;
+	}
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array(), $results['error'], 'error');
 	$this->assertEquals('remote.GalleryRemote', $results['delegate']['view'], 'delegate');
+
+	$this->assertEventFired('Gallery::FailedLogin', null,
+	    array('userName' => 'some-bogus-user'));
 
 	$response = $results['status']['controllerResponse'];
 	$this->assertEquals($this->_code['PASSWORD_WRONG'], (int)$response->getProperty('status'));
 	$this->assert($response->hasProperty('status_text'));
 
 	$this->assertEquals($this->_saveUser->getId(), $gallery->getActiveUserId());
-
-	/* Verify our event got posted */
-	$this->assertEquals('Gallery::FailedLogin', $listener->_event->getEventName());
-	$this->assertEquals(array('userName' => 'some-bogus-user'), $listener->_event->getData());
     }
 
     function testLoginValidUserInvalidPassword() {

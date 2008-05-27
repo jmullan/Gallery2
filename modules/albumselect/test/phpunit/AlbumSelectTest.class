@@ -237,9 +237,19 @@ class AlbumSelectTest extends GalleryTestCase {
 	$smarty = new GallerySmarty();
 	$callbacks = new AlbumSelectCallbacks();
 	GalleryDataCache::setFileCachingEnabled(true);
-	$this->_registerTestEventListener('GalleryEntity::save', new AlbumSelectModule());
-	$this->_registerTestEventListener('Gallery::ViewableTreeChange', new AlbumSelectModule());
-	$this->_registerTestEventListener('Gallery::ItemOrder', new AlbumSelectModule());
+
+	$ret = $this->_registerEventListener('GalleryEntity::save', 'AlbumSelectModule');
+	if ($ret) {
+	    return $ret;
+	}
+	$ret = $this->_registerEventListener('Gallery::ViewableTreeChange', 'AlbumSelectModule');
+	if ($ret) {
+	    return $ret;
+	}
+	$ret = $this->_registerEventListener('Gallery::ItemOrder', 'AlbumSelectModule');
+	if ($ret) {
+	    return $ret;
+	}
 
 	/* Preparation */
 	$userId = $gallery->getActiveUserId();

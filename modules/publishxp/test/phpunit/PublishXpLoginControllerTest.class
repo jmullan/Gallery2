@@ -49,8 +49,10 @@ class PublishXpLoginControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[password]', 'password');
 	GalleryUtilities::putRequestVariable('form[action][login]', 1);
 
-	$listener = new NullEventListener();
-	$this->_registerTestEventListener('Gallery::Login', $listener);
+	$ret = $this->_registerEventListener('Gallery::Login');
+	if ($ret) {
+	    return $ret;
+	}
 
 	$result = $this->handleRequest();
 	$this->assertEquals(
@@ -60,8 +62,7 @@ class PublishXpLoginControllerTest extends GalleryControllerTestCase {
 	    $result);
 
 	/* Verify our event got posted */
-	$this->assertEquals('Gallery::Login', $listener->_event->getEventName(), 'wrong event');
-	$this->assertEquals($this->_user, $listener->_event->getEntity());
+	$this->assertEventFired('Gallery::Login', $this->_user);
     }
 
     function testLoginDisabledUser() {
@@ -74,8 +75,10 @@ class PublishXpLoginControllerTest extends GalleryControllerTestCase {
 	    return $ret;
 	}
 
-	$listener = new NullEventListener();
-	$this->_registerTestEventListener('Gallery::FailedLogin', $listener);
+	$ret = $this->_registerEventListener('Gallery::FailedLogin');
+	if ($ret) {
+	    return $ret;
+	}
 
 	$result = $this->handleRequest();
 	$this->assertEquals(
@@ -85,10 +88,8 @@ class PublishXpLoginControllerTest extends GalleryControllerTestCase {
 	    $result);
 
 	/* Verify our event got posted */
-	$this->assertEquals(
-	    'Gallery::FailedLogin', $listener->_event->getEventName(), 'wrong event');
-	$this->assertEquals(array('userName' => $this->_user->getUserName()),
-			    $listener->_event->getData());
+	$this->assertEventFired('Gallery::FailedLogin', null,
+	    array('userName' => $this->_user->getUserName()));
     }
 }
 ?>

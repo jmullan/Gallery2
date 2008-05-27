@@ -318,8 +318,10 @@ class CommentTest extends GalleryTestCase {
 	}
 
 	/* The event listener is deactivated during unit tests, register it */
-	$listener = new GalleryCommentHelper();
-	$this->_registerTestEventListener('GalleryEntity::delete', $listener);
+	$ret = $this->_registerEventListener('GalleryEntity::delete', 'GalleryCommentHelper');
+	if ($ret) {
+	    return $ret;
+	}
 
 	/* Delete the user (execute the test) */
 	$ret = GalleryCoreApi::deleteEntityById($user->getId(), 'GalleryUser');

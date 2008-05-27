@@ -99,8 +99,10 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[username]', $this->_user->getUserName());
 	GalleryUtilities::putRequestVariable('form[password]', 'password');
 
-	$listener = new NullEventListener();
-	$this->_registerTestEventListener('Gallery::Login', $listener);
+	$ret = $this->_registerEventListener('Gallery::Login');
+	if ($ret) {
+	    return $ret;
+	}
 
 	$results = $this->handleRequest();
 	/* May get a redirect url (like from useralbum module) or return */
@@ -113,8 +115,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 		      '$session->regenerate() was not called');
 
 	/* Verify our event got posted */
-	$this->assertEquals('Gallery::Login', $listener->_event->getEventName(), 'Login event');
-	$this->assertEquals($this->_user, $listener->_event->getEntity(), 'Event entity');
+	$this->assertEventFired('Gallery::Login', $this->_user);
     }
 
     function testLoginDisabledUserName() {
@@ -129,8 +130,10 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	    return $ret;
 	}
 
-	$listener = new NullEventListener();
-	$this->_registerTestEventListener('Gallery::FailedLogin', $listener);
+	$ret = $this->_registerEventListener('Gallery::FailedLogin');
+	if ($ret) {
+	    return $ret;
+	}
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.UserAdmin',
@@ -140,9 +143,8 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	/* Verify our event got posted */
-	$this->assertEquals('Gallery::FailedLogin', $listener->_event->getEventName());
-	$this->assertEquals(array('userName' => $this->_user->getUserName()),
-			    $listener->_event->getData());
+	$this->assertEventFired('Gallery::FailedLogin', null, 
+	    array('userName' => $this->_user->getUserName()));
     }
 
     function testEntityPassword() {
@@ -174,8 +176,10 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	/* From _createRandomUser */
 	GalleryUtilities::putRequestVariable('form[password]', 'password');
 
-	$listener = new NullEventListener();
-	$this->_registerTestEventListener('Gallery::FailedLogin', $listener);
+	$ret = $this->_registerEventListener('Gallery::FailedLogin');
+	if ($ret) {
+	    return $ret;
+	}
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.UserAdmin',
@@ -185,8 +189,8 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	/* Verify our event got posted */
-	$this->assertEquals('Gallery::FailedLogin', $listener->_event->getEventName());
-	$this->assertEquals(array('userName' => 'some-bogus-user'), $listener->_event->getData());
+	$this->assertEventFired('Gallery::FailedLogin', null,
+	    array('userName' => 'some-bogus-user'));
     }
 
     function testLoginValidUserInvalidPassword() {

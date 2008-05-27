@@ -469,8 +469,10 @@ class ViewTest extends GalleryTestCase {
 	 * loadThemeForItem is a public method used e.g. in GalleryTemplate.
 	 * Verify that the loadThemeAndParameters is posted here.
 	 */
-	$listener = new NullEventListener();
-	$this->_registerTestEventListener('Gallery::LoadThemeAndParameters', $listener);
+	$ret = $this->_registerEventListener('Gallery::LoadThemeAndParameters');
+	if ($ret) {
+	    return $ret;
+	}
 
 	list ($ret, $view, $itemId) = $this->_prepareForLoadThemeAndParameters();
 	if ($ret) {
@@ -482,13 +484,8 @@ class ViewTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	if (isset($listener->_event)) {
-	    $data = $listener->_event->getData();
-	    $this->assertEquals(array('viewType' => VIEW_TYPE_SHOW_ITEM, 'viewName' => 'test.test'),
-				$data, 'event data');
-	} else {
-	    $this->fail('Missing loadThemeAndParameters event');
-	}
+	$this->assertEventFired('Gallery::LoadThemeAndParameters', null,
+	    array('viewType' => VIEW_TYPE_SHOW_ITEM, 'viewName' => 'test.test'));
     }
 
     function testDoLoadTemplateAddsNoIndexDirectiveForAdminView() {
