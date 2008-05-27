@@ -203,6 +203,7 @@ class GalleryEmbed /* implements GalleryEventListener */ {
      *               (null or empty for anonymous/guest user)
      * @return GalleryStatus a status object
      * @access private
+     * @todo Ensure that the active user ($gallery->getActiveUser) is changed as well
      */
     function checkActiveUser($activeUserId) {
 	global $gallery;
@@ -214,24 +215,35 @@ class GalleryEmbed /* implements GalleryEventListener */ {
 	}
 
 	$language = $session->get('core.language');
-	if (empty($activeUserId)) {
-	    if ($session->isPersistent()) {
-		/* Logout */
-		$ret = $session->reset();
+
+	/* Logout the existing user from Gallery */
+	if (!empty($idInSession)) {
+	    list ($ret, $anonymousUserId) = GalleryCoreApi::getAnonymousUserId();
+	    if ($ret) {
+		return $ret;
+	    }
+	    $activeUser = $gallery->getActiveUser();
+	    if ($anonymousUserId != $activeUser->getId()) {
+		$event = GalleryCoreApi::newEvent('Gallery::Logout');
+		$event->setEntity($activeUser);
+		list ($ret, $ignored) = GalleryCoreApi::postEvent($event);
 		if ($ret) {
 		    return $ret;
 		}
 	    }
-	    $session->put('embed.id.externalUser', $activeUserId);
-	} else {
-	    /* Set G2 active user */
-	    list ($ret, $user) =
-		GalleryCoreApi::loadEntityByExternalId($activeUserId, 'GalleryUser');
+	    $ret = $session->reset();
 	    if ($ret) {
 		return $ret;
 	    }
-	    $gallery->setActiveUser($user);
 	    $session->put('embed.id.externalUser', $activeUserId);
+	}
+
+	/* Set G2 active user */
+	if (!empty($activeUserId)) {
+	    $ret = GalleryEmbed::login($activeUserId);
+	    if ($ret) {
+		return $ret;
+	    }
 	}
 
 	/* The session language has precedence over the user default language */
@@ -260,10 +272,22 @@ class GalleryEmbed /* implements GalleryEventListener */ {
 	$session =& $gallery->getSession();
 	$session->put('embed.id.externalUser', $extUserId);
 
-	$ret = $session->regenerate();
+	list ($ret, $anonymousUserId) = GalleryCoreApi::getAnonymousUserId();
 	if ($ret) {
 	    return $ret;
 	}
+
+	if ($anonymousUserId != $user->getId()) {
+	    $event = GalleryCoreApi::newEvent('Gallery::Login');
+	    $event->setEntity($user);
+	    list ($ret, $ignored) = GalleryCoreApi::postEvent($event);
+	    if ($ret) {
+		return $ret;
+	    }
+	} else {
+	    $session->regenerate();
+	}
+
 	return null;
     }
 
@@ -288,11 +312,21 @@ class GalleryEmbed /* implements GalleryEventListener */ {
 		return $ret;
 	    }
 	    global $gallery;
+
+	    $event = GalleryCoreApi::newEvent('Gallery::Logout');
+	    $activeUser = $gallery->getActiveUser();
+	    $event->setEntity($activeUser);
+	    list ($ret, $ignored) = GalleryCoreApi::postEvent($event);
+	    if ($ret) {
+		return $ret;
+	    }
+
 	    $session =& $gallery->getSession();
 	    $ret = $session->reset();
 	    if ($ret) {
 		return $ret;
 	    }
+
 	    /* Commit the transaction */
 	    $ret = GalleryEmbed::done();
 	    if ($ret) {
