@@ -128,6 +128,7 @@ class SlideshowModule extends GalleryModule {
 	foreach ($items as $item) {
 	    $itemId = $item->getId();
 	    $jsUrlParams = array('forJavascript' => true, 'forceFullUrl' => true);
+	    $jsUrlParamsDirect = array_merge($jsUrlParams, array('forceDirect' => true));
 	    if (isset($wantsDetailedLinks[$itemId])) {
 		/*
 		 * Photo: do slideshow of parent album, start at this photo.
@@ -173,7 +174,7 @@ class SlideshowModule extends GalleryModule {
 				array('view' => 'slideshow.DownloadPicLens',
 				      'file' => 'swf',
 				      'v' => $picLensVersion),
-				$jsUrlParams),
+				$jsUrlParamsDirect),
 			    $urlGenerator->generateUrl(
 				array('view' => 'slideshow.SlideshowMediaRss',
 				      'itemId' => $item->getId()),
@@ -267,7 +268,8 @@ class SlideshowModule extends GalleryModule {
 		$template->javascript($urlGenerator->generateUrl(
 					  array('view' => 'slideshow.DownloadPicLens',
 						'file' => 'js',
-						'v' => $picLensVersion)));
+						'v' => $picLensVersion),
+					  array('forceDirect' => true, 'forceFullUrl' => true)));
 	    }
 	}
 

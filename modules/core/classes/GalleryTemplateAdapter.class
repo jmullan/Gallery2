@@ -526,7 +526,8 @@ class GalleryTemplateAdapter {
 	    }
 	}
 	return $urlGenerator->generateUrl(
-	    array('view' => 'core.CombinedJavascript', 'key' => $key));
+	    array('view' => 'core.CombinedJavascript', 'key' => $key),
+	    array('forceDirect' => true, 'forceFullUrl' => true));
     }
 
     /**

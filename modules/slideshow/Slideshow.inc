@@ -94,15 +94,17 @@ class SlideshowView extends GalleryView {
 	    $template->javascript($urlGenerator->generateUrl(
 		array('view' => 'slideshow.DownloadPicLens',
 		      'file' => 'js',
-		      'v' => $picLensVersion)));
+		      'v' => $picLensVersion),
+		array('forceDirect' => true, 'forceFullUrl' => true)));
 
 	    $jsUrlParams = array('forJavascript' => true, 'forceFullUrl' => true,
 				 'htmlEntities' => false);
+	    $jsUrlParamsDirect = array_merge($jsUrlParams, array('forceDirect' => true));
 	    $Slideshow['piclensSwfUrl'] = $urlGenerator->generateUrl(
 		array('view' => 'slideshow.DownloadPicLens',
 		      'file' => 'swf',
 		      'v' => $picLensVersion),
-		$jsUrlParams);
+		$jsUrlParamsDirect);
 
 	    if (empty($itemListString)) {
 		$Slideshow['mediaRssUrl'] = $urlGenerator->generateUrl(
