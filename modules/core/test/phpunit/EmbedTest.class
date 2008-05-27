@@ -572,12 +572,12 @@ class EmbedTest extends GalleryTestCase {
 					    array('username' => 'test_' . rand(),
 						  'language' => 'en_GB'));
 	    if ($ret) {
-		return $ret;
+		return array($ret, null, null);
 	    }
 	    list ($ret, $users[$i]) = GalleryCoreApi::loadEntityByExternalId($activeUserIds[$i],
 									    'GalleryUser');
 	    if ($ret) {
-		return $ret;
+		return array($ret, null, null);
 	    }
 	    $this->_markForCleanup($users[$i]);
 	    $this->assertEquals('en_GB', $users[$i]->getlanguage(),
