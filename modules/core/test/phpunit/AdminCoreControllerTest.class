@@ -33,7 +33,6 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
 	global $gallery;
-	$session =& $gallery->getSession();
 
 	$ret = parent::setUp();
 	if ($ret) {
@@ -45,6 +44,10 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	    return $ret;
 	}
 
+	/*
+	 * Don't set session.inactivityTimeout or session.siteAdministrationTimeout as the tests
+	 * will fail with permission errors.
+	 */
 	$this->_valueMap = array(
 	    'permissions.directory' => 'x1',
 	    'permissions.file' => 'x2',
@@ -54,8 +57,6 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	    'default.orderDirection' => 'x5',
 	    'default.theme' => 'x7',
 	    'session.lifetime' => 'x9',
-	    'session.inactivityTimeout' => 'x10',
-	    'session.siteAdministrationTimeout' => 'x19',
 	    'misc.markup' => 'x11',
 	    'cookie.path' => '/sub/',
 	    'cookie.domain' => '.example.com',
@@ -70,8 +71,6 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
 	/* The AdminCore controller uses the url generator to check the cookie path */
 	$gallery->setUrlGenerator(new AdminCoreControllerTestUrlGenerator());
-
-	$session->put('session.siteAdminActivityTimestamp', time());
     }
 
     function _setFormFromValues($valueMap) {
@@ -83,8 +82,6 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
     }
 
     function testChangeValues() {
-	global $gallery;
-
 	$valueMap = $this->_valueMap;
 
 	$this->_setFormFromValues($valueMap);
@@ -110,8 +107,6 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
     }
 
     function testChangeEmailPasswordWithStars() {
-	global $gallery;
-
 	$valueMap = $this->_valueMap;
 
 	/* Set the password to a 3-letter value (it should be b64 encoded, but this is a dummy) */
@@ -145,8 +140,6 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
     }
 
     function testChangeEmailPasswordWithWrongNumberOfStars() {
-	global $gallery;
-
 	$valueMap = $this->_valueMap;
 
 	/* Set the password to a 3-letter value (it should be b64 encoded, but this is a dummy) */
@@ -180,8 +173,6 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
     }
 
     function testSaveEmailPasswordWithHtmlEntity() {
-	global $gallery;
-
 	$valueMap = $this->_valueMap;
 
 	$valueMap['smtp.password'] = 'pass&word';
@@ -209,10 +200,11 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
     /* Test that we don't accept just any cookie path */
     function testChangeCookiePath() {
-	global $gallery;
-	$session =& $gallery->getSession();
-
-	/* AdminCore expects all the form vars, even if we test here only the cookie path */
+	/* 
+	 * AdminCore expects all the form vars, even if we test here only the cookie path.  Don't 
+	 * set session.inactivityTimeout or session.siteAdministrationTimeout as the tests will fail
+	 * with permission errors.
+	 */
 	$valueMap = array('permissions.directory' => 'IGNORED',
 			  'permissions.file' => 'IGNORED',
 			  'exec.expectedStatus' => 'IGNORED',
@@ -222,8 +214,6 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			  'default.language' => 'IGNORED',
 			  'language.useBrowserPref' => 'IGNORED',
 			  'session.lifetime' => 'IGNORED',
-			  'session.inactivityTimeout' => 'IGNORED',
-			  'session.siteAdministrationTimeout' => 'IGNORED',
 			  'misc.markup' => 'IGNORED',
 			  /* Set the cookie path in this test, the domain has to be a valid value */
 			  'cookie.domain' => '.example.com',
@@ -240,7 +230,6 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	$tests[] = array('path' => '/sub/application', 'saved' => 0);
 
 	foreach ($tests as $testCase) {
-	    $session->put('session.siteAdminActivityTimestamp', time());
 	    /* Set the cookie path manually to a known value to check later if it was changed */
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'cookie.path', '/bad/');
 	    if ($ret) {
@@ -285,10 +274,11 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
     /* Test that we don't accept just any cookie domain */
     function testChangeCookieDomain() {
-	global $gallery;
-	$session =& $gallery->getSession();
-
-	/* AdminCore expects all the form vars, even if we test here only the cookie path */
+	/* 
+	 * AdminCore expects all the form vars, even if we test here only the cookie path.  Don't 
+	 * set session.inactivityTimeout or session.siteAdministrationTimeout as the tests will fail
+	 * with permission errors.
+	 */
 	$valueMap = array('permissions.directory' => 'IGNORED',
 			  'permissions.file' => 'IGNORED',
 			  'exec.expectedStatus' => 'IGNORED',
@@ -298,8 +288,6 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			  'default.language' => 'IGNORED',
 			  'language.useBrowserPref' => 'IGNORED',
 			  'session.lifetime' => 'IGNORED',
-			  'session.inactivityTimeout' => 'IGNORED',
-			  'session.siteAdministrationTimeout' => 'IGNORED',
 			  'misc.markup' => 'IGNORED',
 			  /* Set the cookie domain in this test, set the path to a valid value */
 			  'cookie.path' => '/sub/',
@@ -316,7 +304,6 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	$tests[] = array('domain' => '.com', 'saved' => 0);
 
 	foreach ($tests as $testCase) {
-	    $session->put('session.siteAdminActivityTimestamp', time());
 	    /* Set the cookie domain manually to a known value to check later if it was changed */
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'cookie.domain', 'bad');
 	    if ($ret) {
