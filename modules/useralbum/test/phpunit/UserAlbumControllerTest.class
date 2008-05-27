@@ -434,8 +434,9 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$this->assertEquals($secArray, array_intersect_assoc($secArray, $permissions[$albumId]),
-	    'Specific user');
+	/* full size is disabled for this test */
+	$this->assertEquals(array('core.view' => 1, 'core.viewResizes' => 1),
+	    array_intersect_assoc($secArray, $permissions[$albumId]), 'Specific user');
 
 	/* check the permissions of the parent album owner */
 	list ($ret,$permissions) = GalleryCoreApi::fetchPermissionsForItems(
