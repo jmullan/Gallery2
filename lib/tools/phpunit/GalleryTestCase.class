@@ -39,6 +39,12 @@ class GalleryTestCase extends TestCase {
 				'eventListeners' => null);
     }
 
+    /**
+     * Get the entity counter listener whic contains the types and number of elements deleted.
+     * Usage: $counter =& GalleryTestCase::getEntityCounter();
+     * @return EntityCounterEventListener
+     * @static 
+     */
     function &getEntityCounter() {
 	static $_counter;
 	if (!isset($_counter)) {
