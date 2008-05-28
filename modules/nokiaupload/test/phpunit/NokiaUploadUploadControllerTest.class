@@ -38,6 +38,7 @@ class NokiaUploadUploadControllerTest extends GalleryControllerTestCase {
 	   return $ret;
 	}
 	global $gallery;
+	$session =& $gallery->getSession();
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
@@ -89,25 +90,21 @@ class NokiaUploadUploadControllerTest extends GalleryControllerTestCase {
 	    return $ret;
 	}
 	$_SERVER['HTTP_USER_AGENT'] = 'Nokia6630/1.0 (2.39.129) Series60/2.6 Profile/MIDP-2.0';
-    }
 
-    function testUploadController() {
-	global $gallery;
-
-	/* Login our test user */
 	$gallery->setActiveUser($this->_user);
 
-	$session =& $gallery->getSession();
 	$session->remove('permissionCache');
 	$ret = GalleryCoreApi::assertHasItemPermission($this->_getRootId(), 'core.addAlbumItem');
 	if (!$ret) {
 	    return $this->assert(false, 'expected test user to not have addAlbum access in root');
 	}
 
-	/* Missing file */
 	GalleryUtilities::putRequestVariable('Filename', 'uploadTest.jpg', false);
 	GalleryUtilities::putRequestVariable('MimeType', 'image/jpeg', false);
 	GalleryUtilities::putRequestVariable('DirId', $this->_album->getId(), false);
+    }
+
+    function testUploadMissingFile() {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload.Upload'),
 				  'status' => array('success' => NOKIAUPLOAD_ERR_UNKNOWN,
@@ -115,7 +112,9 @@ class NokiaUploadUploadControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results, 'missing parameter');
 
-	/* Empty file */
+    }
+
+    function testUploadEmptyFle() {
 	$_FILES['ImageData'] = array('size' => 0, 'tmp_name' => '');
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload.Upload'),
@@ -123,8 +122,9 @@ class NokiaUploadUploadControllerTest extends GalleryControllerTestCase {
 						    'spaceleft' => 10000000),
 				  'error' => array()),
 			    $results, 'file size');
+    }
 
-	/* Bad parent */
+    function testUploadBadParent() {
 	$_FILES['ImageData'] = array('size' => 1966,
 	    'tmp_name' => GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.jpg'));
 	GalleryUtilities::putRequestVariable('DirId', 'badId', false);
@@ -134,8 +134,11 @@ class NokiaUploadUploadControllerTest extends GalleryControllerTestCase {
 						    'spaceleft' => 10000000),
 				  'error' => array()),
 			    $results, 'bad parent');
+    }
 
-	/* No permission */
+    function testUploadNoPermission() {
+	$_FILES['ImageData'] = array('size' => 1966,
+	    'tmp_name' => GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.jpg'));
 	GalleryUtilities::putRequestVariable('DirId', $this->_subAlbum->getId(), false);
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload.Upload'),
@@ -143,9 +146,13 @@ class NokiaUploadUploadControllerTest extends GalleryControllerTestCase {
 						    'spaceleft' => 10000000),
 				  'error' => array()),
 			    $results, 'permission');
+    }
 
-	/* Valid request */
-	GalleryUtilities::putRequestVariable('DirId', $this->_album->getId(), false);
+    function testUploadValidRequest() {
+	$this->_registerEventListener('GalleryEntity::save', $className='NullEventListener');
+
+	$_FILES['ImageData'] = array('size' => 1966,
+	    'tmp_name' => GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.jpg'));
 	GalleryUtilities::putRequestVariable('Desc', 'this is the description', false);
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload.Upload'),
@@ -154,19 +161,16 @@ class NokiaUploadUploadControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results, 'valid request');
 
-	list ($ret, $itemIds) = GalleryCoreApi::fetchChildItemIdsWithPermission(
-						$this->_album->getId(), 'core.all');
-	if ($ret) {
-	    return $ret;
+	/* the first element is the save we are interested in, the other two are derivatives */
+	$this->assert(!empty($_SERVER['NullEventListener']['GalleryEntity::save'][0]), 
+	    'GalleryEntity::save did not fire');
+	if (isset($_SERVER['NullEventListener']['GalleryEntity::save'][0])) {
+	    $event = $_SERVER['NullEventListener']['GalleryEntity::save'][0];
+	    $item = $event->getEntity();
+	    $this->assert(GalleryUtilities::isA($item, 'GalleryPhotoItem'), 'wrong item type');
+	    $this->assertEquals('this is the description', $item->getDescription(),
+		'description mismatch');
 	}
-	$this->assertEquals(1, count($itemIds), 'one item with core.all permission');
-
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById(array_shift($itemIds), 'GalleryItem');
-	if ($ret) {
-	    return $ret;
-	}
-	$this->assert(GalleryUtilities::isA($item, 'GalleryPhotoItem'), 'item type');
-	$this->assertEquals('this is the description', $item->getDescription(), 'description');
     }
 }
 ?>
