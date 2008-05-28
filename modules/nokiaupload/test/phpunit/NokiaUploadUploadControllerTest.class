@@ -149,8 +149,6 @@ class NokiaUploadUploadControllerTest extends GalleryControllerTestCase {
     }
 
     function testUploadValidRequest() {
-	$this->_registerEventListener('GalleryEntity::save', $className='NullEventListener');
-
 	$_FILES['ImageData'] = array('size' => 1966,
 	    'tmp_name' => GalleryCoreApi::getCodeBasePath('modules/core/test/data/test1.jpg'));
 	GalleryUtilities::putRequestVariable('Desc', 'this is the description', false);
@@ -161,15 +159,18 @@ class NokiaUploadUploadControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results, 'valid request');
 
-	/* the first element is the save we are interested in, the other two are derivatives */
-	$this->assert(!empty($_SERVER['NullEventListener']['GalleryEntity::save'][0]), 
-	    'GalleryEntity::save did not fire');
-	if (isset($_SERVER['NullEventListener']['GalleryEntity::save'][0])) {
-	    $event = $_SERVER['NullEventListener']['GalleryEntity::save'][0];
-	    $item = $event->getEntity();
-	    $this->assert(GalleryUtilities::isA($item, 'GalleryPhotoItem'), 'wrong item type');
+	$listener =& GalleryTestCase::getEntityCounter();
+	$itemId = $listener->getRecentEntityId('GalleryPhotoItem');
+	if ($itemId) {
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryPhotoItem');
+	    if ($ret) {
+		return $ret;
+	    }
 	    $this->assertEquals('this is the description', $item->getDescription(),
-		'description mismatch');
+				'description mismatch');
+	    $this->assertEquals($this->_album->getId(), $item->getParentId(), 'Wrong parent id');
+	} else {
+	    $this->fail('Missing itemId. Has no item been created?');
 	}
     }
 }
