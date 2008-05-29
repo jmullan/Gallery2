@@ -573,6 +573,8 @@ class RepositoryIndexTest extends GalleryTestCase {
     }
 
     function testGetLanguagePackageFilesScalarInput() {
+	global $gallery;
+
 	/* Since we can't mock the core API, we'll use the cache to store our mock plugin. */
 	GalleryDataCache::put('GalleryPluginHelper::loadPlugin(module, testModule)',
 			      new RepositoryIndexTestModule());
@@ -589,6 +591,10 @@ class RepositoryIndexTest extends GalleryTestCase {
 	$this->_setUpRepositoryUtilitiesResponses($utilities);
 	$this->_index->_utilities =& $utilities;
 
+	$ret = $gallery->setActiveLanguageCode('en_GB');
+	if ($ret) {
+	    return $ret;
+	}
 	list ($ret, $files) = $this->_index->getLanguagePackageFiles('en_GB');
 	if ($ret) {
 	    return $ret;
@@ -596,16 +602,20 @@ class RepositoryIndexTest extends GalleryTestCase {
 
 	$this->assert($utilities->isComplete(), $utilities->getRemaining());
 	$expected = array(
-	    'module' => array('testModule' => array('name' => 'Test Module',
-		'files' => array('descriptor' => 'modules/testModule-1.0.0-44444.descriptor',
+	    'module' => array('testModule' => 
+		array('name' => 'en_GB-modules_testModule-Test Module',
+		      'files' => array('descriptor' => 'modules/testModule-1.0.0-44444.descriptor',
 				 'en_GB' => 'modules/testModule-lang-en_GB-22222-33333.package'))),
-	    'theme' => array('testTheme' => array('name' => 'Test Theme',
-		'files' => array('descriptor' => 'themes/testTheme-1.0.0-11111.descriptor',
+	    'theme' => array('testTheme' =>
+		array('name' => 'en_GB-themes_testTheme-Test Theme',
+		      'files' => array('descriptor' => 'themes/testTheme-1.0.0-11111.descriptor',
 				 'en_GB' => 'themes/testTheme-lang-en_GB-22222-22222.package'))));
 	$this->assertEquals($expected, $files, 'Unexpected results for single language');
     }
 
     function testGetLanguagePackageFilesArrayInput() {
+	global $gallery;
+
 	/* Since we can't mock the core API, we'll use the cache to store our mock plugin. */
 	GalleryDataCache::put('GalleryPluginHelper::loadPlugin(module, testModule)',
 			      new RepositoryIndexTestModule());
@@ -621,6 +631,10 @@ class RepositoryIndexTest extends GalleryTestCase {
 	$this->_setUpRepositoryUtilitiesResponses($utilities);
 	$this->_index->_utilities =& $utilities;
 
+	$ret = $gallery->setActiveLanguageCode('en_GB');
+	if ($ret) {
+	    return $ret;
+	}
 	list ($ret, $files) = $this->_index->getLanguagePackageFiles(array('en_GB', 'pt_BR'));
 	if ($ret) {
 	    return $ret;
@@ -628,11 +642,12 @@ class RepositoryIndexTest extends GalleryTestCase {
 
 	$this->assert($utilities->isComplete(), $utilities->getRemaining());
 	$expected = array(
-	    'module' => array('testModule' => array('name' => 'Test Module',
+	    'module' => array('testModule' => array(
+		'name' => 'en_GB-modules_testModule-Test Module',
 		'files' => array('descriptor' => 'modules/testModule-1.0.0-44444.descriptor',
 				 'en_GB' => 'modules/testModule-lang-en_GB-22222-33333.package',
 				 'pt_BR' => 'modules/testModule-lang-pt_BR-22222-33333.package'))),
-	    'theme' => array('testTheme' => array('name' => 'Test Theme',
+	    'theme' => array('testTheme' => array('name' => 'en_GB-themes_testTheme-Test Theme',
 		'files' => array('descriptor' => 'themes/testTheme-1.0.0-11111.descriptor',
 				 'en_GB' => 'themes/testTheme-lang-en_GB-22222-22222.package',
 				 'pt_BR' => 'themes/testTheme-lang-pt_BR-22222-33333.package'))));
@@ -640,6 +655,8 @@ class RepositoryIndexTest extends GalleryTestCase {
     }
 
     function testGetLanguagePackageFilesVersionMisMatch() {
+	global $gallery;
+
 	/* Since we can't mock the core API, we'll use the cache to store our mock plugin. */
 	GalleryDataCache::put('GalleryPluginHelper::loadPlugin(module, testModule)',
 			      new RepositoryIndexTestModule());
@@ -659,6 +676,10 @@ class RepositoryIndexTest extends GalleryTestCase {
 	$this->_setUpRepositoryUtilitiesResponses($utilities, array('noTheme' => 1));
 	$this->_index->_utilities =& $utilities;
 
+	$ret = $gallery->setActiveLanguageCode('en_GB');
+	if ($ret) {
+	    return $ret;
+	}
 	list ($ret, $files) = $this->_index->getLanguagePackageFiles(array('en_GB', 'pt_BR'));
 	if ($ret) {
 	    return $ret;
@@ -666,14 +687,17 @@ class RepositoryIndexTest extends GalleryTestCase {
 
 	$this->assert($utilities->isComplete(), $utilities->getRemaining());
 	$expected = array(
-	    'module' => array('testModule' => array('name' => 'Test Module',
-		'files' => array('descriptor' => 'modules/testModule-1.0.0-44444.descriptor',
+	    'module' => array('testModule' => 
+		array('name' => 'en_GB-modules_testModule-Test Module',
+		      'files' => array('descriptor' => 'modules/testModule-1.0.0-44444.descriptor',
 				 'en_GB' => 'modules/testModule-lang-en_GB-22222-33333.package',
 				 'pt_BR' => 'modules/testModule-lang-pt_BR-22222-33333.package'))));
 	$this->assertEquals($expected, $files, 'Unexpected results for multiple languages');
     }
 
     function testGetLanguagePackageFilesVersionNotAvailable() {
+	global $gallery;
+
 	/* Since we can't mock the core API, we'll use the cache to store our mock plugin. */
 	GalleryDataCache::put('GalleryPluginHelper::loadPlugin(module, testModule)',
 			      new RepositoryIndexTestModule());
@@ -691,12 +715,17 @@ class RepositoryIndexTest extends GalleryTestCase {
 	$this->_setUpRepositoryUtilitiesResponses($utilities);
 	$this->_index->_utilities =& $utilities;
 
+	$ret = $gallery->setActiveLanguageCode('en_GB');
+	if ($ret) {
+	    return $ret;
+	}
 	list ($ret, $files) = $this->_index->getLanguagePackageFiles(array('en_GB', 'pt_BR'));
 	if ($ret) {
 	    return $ret;
 	}
 	$expected = array(
-	    'module' => array('testModule' => array('name' => 'Test Module',
+	    'module' => array('testModule' => array(
+		'name' => 'en_GB-modules_testModule-Test Module',
 		'files' => array('descriptor' => 'modules/testModule-1.0.0-44444.descriptor',
 				 'en_GB' => 'modules/testModule-lang-en_GB-22222-33333.package',
 				 'pt_BR' => 'modules/testModule-lang-pt_BR-22222-33333.package'))));
