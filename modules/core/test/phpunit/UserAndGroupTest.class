@@ -597,6 +597,10 @@ class UserAndGroupTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$ret = GalleryCoreApi::removeUserPermission($subSubAlbumWithoutDeletePermission2->getId(), $user1->getId(), 'core.delete', false);
+	if ($ret) {
+	    return $ret;
+	}
 	$remainingItems[] = $subSubAlbumWithoutDeletePermission2;
 
 	/* A subSub album with delete permission */
@@ -621,6 +625,10 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* A subSubItem without delete permission */
 	list ($ret, $subSubSubItemWithoutDeletePermission2) =
 	    $this->_createRandomDataItem($subSubAlbumWithDeletePermission2->getId());
+	if ($ret) {
+	    return $ret;
+	}
+	$ret = GalleryCoreApi::removeUserPermission($subSubSubItemWithoutDeletePermission2->getId(), $user1->getId(), 'core.delete', false);
 	if ($ret) {
 	    return $ret;
 	}
