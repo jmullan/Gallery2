@@ -234,6 +234,8 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::getRewriteRules
      */
     function getRewriteRules() {
+	global $gallery;
+
 	$rules = array();
 
 	/*
