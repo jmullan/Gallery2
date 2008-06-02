@@ -92,7 +92,12 @@ class NotificationMethodEmail extends NotificationHandler_1_0 {
 	    }
 
 	    $to = implode(',', $recipients);
-	    $subject = $module->translate('Gallery Event Notification');
+
+	    list ($ret, $notificationName) = $notification->getDescription();
+	    if ($ret) {
+		return $ret;
+	    }
+	    $subject = $notificationName;
 
 	    list ($ret, $body) = $notification->getNotificationMessage();
 	    if ($ret) {

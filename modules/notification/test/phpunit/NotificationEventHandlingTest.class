@@ -355,7 +355,7 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 
 	    list ($ret, $currentLanguageCode) = $translator->init($language);
 
-	    $subjects[] = $module->translate('Gallery Event Notification');
+	    $subjects[] = $module->translate('NotificationRouterTest1 Description');
 	}
 
 	list ($ret) = $translator->init($defaultLanguageCode);
@@ -472,7 +472,7 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 class NotificationRouterTest1 extends NotificationEvent_1_0 {
     function getDescription() {
 	global $gallery;
-	return $gallery->i18n('NotificationRouterTest1 Description');
+	return array(null, $gallery->i18n('NotificationRouterTest1 Description'));
     }
 
     function getPermission() {
@@ -500,7 +500,7 @@ class NotificationRouterTest1 extends NotificationEvent_1_0 {
 class NotificationRouterTest2 extends NotificationEvent_1_0 {
     function getDescription() {
 	global $gallery;
-	return $gallery->i18n('NotificationRouterTest2 Description');
+	return array(null, $gallery->i18n('NotificationRouterTest2 Description'));
     }
 
     function getPermission() {

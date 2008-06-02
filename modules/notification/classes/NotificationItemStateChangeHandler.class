@@ -58,8 +58,9 @@ class NotificationItemStateChangeHandler /* extends GalleryEventListener */ {
 		return array($ret, null);
 	    }
 	} else if ($eventName == 'GalleryEntity::delete') {
+	    $deleteByColumn = GalleryUtilities::isA($entity, 'GalleryUser') ? 'userId' : 'itemId';
 	    $ret = GalleryCoreApi::removeMapEntry('SubscriptionMap',
-						  array('itemId' => $entity->getId()));
+						  array($deleteByColumn => $entity->getId()));
 	    if ($ret) {
 		return array($ret, null);
 	    }

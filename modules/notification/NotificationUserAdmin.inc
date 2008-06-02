@@ -74,7 +74,7 @@ class NotificationUserAdminController extends GalleryController {
 			if (empty($formItem['subscribed'])) {
 			    $ret = NotificationHelper::unsubscribe($userId, $formItem['itemId'],
 					     $hints[0], $notificationName, $notification['handler'],
-					     !empty($notification['recursive']));
+					     !empty($formItem['recursive']));
 			} else {
 			    $itemId = (int)$formItem['itemId'];
 			    $authorized = $isAdminGroup;
