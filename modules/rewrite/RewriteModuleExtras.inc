@@ -366,6 +366,8 @@ class RewriteModuleExtras {
 	    /* .mo file migration */
 	case '1.1.13.3':
 	    /* Gallery 2.2.4 security release */
+	case '1.1.13.4':
+	    /* Gallery 2.2.5 security release */
 	case '1.1.14':
 	case '1.1.15':
 	    /* Refactored to new event registration from core API 7.34 */
