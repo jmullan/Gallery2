@@ -24,7 +24,7 @@
   {/literal}</script>
 </head>
 <body onload="go()">
-<form action="http://www.digibug.com/dapi/order.php" method="POST" id="digibugForm">
+<form action="http://www.digibug.com/dapi/order.php" method="post" id="digibugForm">
   <input type="hidden" name="digibug_api_version" value="100"/>
   <input type="hidden" name="company_id" value="{$DigibugPrintPhotos.params.digibugCustomerId}"/>
   <input type="hidden" name="event_id" value="{$DigibugPrintPhotos.params.digibugPricelistId}"/>

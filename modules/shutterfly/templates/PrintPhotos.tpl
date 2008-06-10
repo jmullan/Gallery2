@@ -24,7 +24,7 @@
   {/literal}</script>
 </head>
 <body onload="go()">
-<form action="http://www.shutterfly.com/c4p/UpdateCart.jsp" method="POST" id="shutterflyForm">
+<form action="http://www.shutterfly.com/c4p/UpdateCart.jsp" method="post" id="shutterflyForm">
   <input type="hidden" name="protocol" value="SFP,100"/>
   <input type="hidden" name="pid" value="C4PP"/>
   <input type="hidden" name="psid" value="GALL"/>
