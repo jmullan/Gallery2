@@ -102,6 +102,7 @@ class ExternalView extends GalleryView {
 	    }
 	}
 
+	$phpVm = $gallery->getPhpVm();
 	if ($template->hasVariable('ImageBlockData')) {
 	    $ImageBlockData =& $template->getVariableByReference('ImageBlockData');
 	    $ImageBlockData['forceFullUrl'] = 1;
@@ -117,12 +118,16 @@ class ExternalView extends GalleryView {
 			return $ret;
 		    }
 		    return $view->renderImmediate(null, null);
-		} else if (!headers_sent()) {
-		    header('HTTP/1.0 404 Not Found');
+		} else if (!$phpVm->headers_sent()) {
+		    $phpVm->header('HTTP/1.0 404 Not Found');
 		}
 	    } else {
-		if (!headers_sent()) {
-		    header("Content-type: text/html; charset=UTF-8");
+		if (!$phpVm->headers_sent()) {
+		    $phpVm->header("Content-type: text/html; charset=UTF-8");
+		    $expires = $gallery->getHttpDate($phpVm->time() - 7*24*3600);
+		    $phpVm->header('Cache-Control: no-cache');
+		    $phpVm->header('Pragma: no-cache');
+		    $phpVm->header('Expires: ' . $expires);	    
 		}
 
 		$template->setVariable('l10Domain', 'modules_imageblock');

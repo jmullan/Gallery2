@@ -12,7 +12,7 @@
 </div>
 
 <div class="gbBlock gcBackground1">
-  <h2> {g->text text="Password Protected Item"} </h2>
+  <h2> {g->text text="Password Protected Album"} </h2>
 </div>
 <div class="gbBlock">
   {if isset($form.error.incorrectPassword)}

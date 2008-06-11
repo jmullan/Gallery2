@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/password/classes/PasswordHelper.class');
+
 /**
  * ItemEditOption for adding password protection to an item or album
  * @package Password
@@ -37,7 +39,17 @@ class PasswordOption extends ItemEditOption {
 	if ($ret) {
 	    return array($ret, null);
 	}
-	return array(null, $canChange);
+
+	/*
+	 * Password protected items are not fully protected, but their descendants are. Only show
+	 * the option for non-album items that already are password protected.
+	 */
+	list ($ret, $hasPassword) = PasswordHelper::hasPassword($item);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	return array(null, $canChange && ($hasPassword || $item->getCanContainChildren()));
     }
 
     /**
@@ -62,7 +74,6 @@ class PasswordOption extends ItemEditOption {
 	}
 
 	if (!empty($form['PasswordOption']['remove'])) {
-	    GalleryCoreApi::requireOnce('modules/password/classes/PasswordHelper.class');
 	    $ret = PasswordHelper::removePassword($item, $useProgressBar);
 	    if ($ret) {
 		return array($ret, null, null);

@@ -123,7 +123,7 @@ class ViewTest extends GalleryTestCase {
 	}
 	$this->assertEquals($album->getId(), $item->getId(), 'Alternate default album');
     }
-    
+
     function testGetItemOnlyReturnsItems() {
 	global $gallery;
 
@@ -488,7 +488,16 @@ class ViewTest extends GalleryTestCase {
 	    array('viewType' => VIEW_TYPE_SHOW_ITEM, 'viewName' => 'test.test'));
     }
 
-    function testDoLoadTemplateAddsNoIndexDirectiveForAdminView() {
+    function testDoLoadTemplateAddsNoCacheNoIndexHeadersForAdminView() {
+	global $gallery;
+	$gallery->_phpVm = new UnitTestPhpVm();
+
+	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
+	$gallery->_phpVm->setReply('headers_sent', array(), false);
+	$gallery->_phpVm->setReply('header', array('Cache-Control: no-cache', ''), true);
+	$gallery->_phpVm->setReply('header', array('Pragma: no-cache', ''), true);
+	$gallery->_phpVm->setReply('header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
+
 	$template = new UnitTestTemplate();
 	$view = new ViewTestAdminView();
 	list ($ret, $results, $theme) = $view->doLoadTemplate($template);
@@ -498,13 +507,28 @@ class ViewTest extends GalleryTestCase {
 
 	$head = $template->getVariable('head');
 	$this->assertEquals(
-	    array(array('name' => 'robots', 'content' => 'noindex', 'isHttpEquiv' => false)),
+	    array(array('name' => 'robots', 'content' => 'noindex', 'isHttpEquiv' => false),
+		  array('name' => 'Cache-Control', 'content' => 'no-cache', 'isHttpEquiv' => true),
+		  array('name' => 'Pragma', 'content' => 'no-cache', 'isHttpEquiv' => true),
+		  array('name' => 'Expires', 'content' => 'Sun, 09 Mar 2008 21:00:00 GMT',
+			'isHttpEquiv' => true)),
 	    $head['meta']);
+	$this->assert($gallery->_phpVm->isComplete(), $gallery->_phpVm->getRemaining());
     }
 
     function testDoLoadTemplateDoesNotAddNoIndexDirectiveForNonAdminView() {
+        global $gallery;
+	$gallery->_phpVm = new UnitTestPhpVm();
+
+	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
+	$gallery->_phpVm->setReply('headers_sent', array(), false);
+	$gallery->_phpVm->setReply('header', array('Cache-Control: no-cache', ''), true);
+	$gallery->_phpVm->setReply('header', array('Pragma: no-cache', ''), true);
+	$gallery->_phpVm->setReply('header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
+
 	$template = new UnitTestTemplate();
 	$template->setVariable('head', array('meta' => array()));
+	/* Config view is Module View with no itemId defined */
 	$view = new ViewTestConfigView();
 	list ($ret, $results, $theme) = $view->doLoadTemplate($template);
 	if ($ret) {
@@ -512,14 +536,210 @@ class ViewTest extends GalleryTestCase {
 	}
 
 	$head = $template->getVariable('head');
+	$this->assertEquals(
+	    array(array('name' => 'Cache-Control', 'content' => 'no-cache', 'isHttpEquiv' => true),
+		  array('name' => 'Pragma', 'content' => 'no-cache', 'isHttpEquiv' => true),
+		  array('name' => 'Expires', 'content' => 'Sun, 09 Mar 2008 21:00:00 GMT',
+			'isHttpEquiv' => true)),
+	    $head['meta']);
+	$this->assert($gallery->_phpVm->isComplete(), $gallery->_phpVm->getRemaining());
+    }
+
+    function testDoLoadTemplateDoesNotAddNoCacheForPublicView() {
+        global $gallery;
+	$gallery->_phpVm = new UnitTestPhpVm();
+	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
+
+	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($item);
+	$itemId = $item->getId();
+	list ($ret, $anonymousUserId) = GalleryCoreApi::getAnonymousUserId();
+	if ($ret) {
+	    return $ret;
+	}
+	$ret = GalleryCoreApi::addUserPermission($itemId, $anonymousUserId, 'core.view');
+	if ($ret) {
+	    return $ret;
+	}
+	GalleryUtilities::putRequestVariable('itemId', $itemId);
+
+	$template = new UnitTestTemplate();
+	$template->setVariable('head', array('meta' => array()));
+	$view = new ViewTestItemView();
+	list ($ret, $results, $theme) = $view->doLoadTemplate($template);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$head = $template->getVariable('head');
 	$this->assertEquals(array(), $head['meta']);
+	$this->assert($gallery->_phpVm->isComplete(), $gallery->_phpVm->getRemaining());
+    }
+
+    function testDoLoadTemplateAddsNoCacheForPrivateView() {
+        global $gallery;
+	$gallery->_phpVm = new UnitTestPhpVm();
+	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
+	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
+	$gallery->_phpVm->setReply('headers_sent', array(), false);
+	$gallery->_phpVm->setReply('header', array('Cache-Control: no-cache', ''), true);
+	$gallery->_phpVm->setReply('header', array('Pragma: no-cache', ''), true);
+	$gallery->_phpVm->setReply('header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
+
+	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($item);
+	$itemId = $item->getId();
+	list ($ret, $anonymousUserId) = GalleryCoreApi::getAnonymousUserId();
+	if ($ret) {
+	    return $ret;
+	}
+	$ret = GalleryCoreApi::removeItemPermissions($itemId);
+	if ($ret) {
+	    return $ret;
+	}
+	GalleryUtilities::putRequestVariable('itemId', $itemId);
+
+	$template = new UnitTestTemplate();
+	$template->setVariable('head', array('meta' => array()));
+	$view = new ViewTestItemView();
+	list ($ret, $results, $theme) = $view->doLoadTemplate($template);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$head = $template->getVariable('head');
+	$this->assertEquals(
+	    array(array('name' => 'Cache-Control', 'content' => 'no-cache', 'isHttpEquiv' => true),
+		  array('name' => 'Pragma', 'content' => 'no-cache', 'isHttpEquiv' => true),
+		  array('name' => 'Expires', 'content' => 'Sun, 09 Mar 2008 21:00:00 GMT',
+			'isHttpEquiv' => true)),
+	    $head['meta']);
+	$this->assert($gallery->_phpVm->isComplete(), $gallery->_phpVm->getRemaining());
+    }
+
+    function testLoadViewWithoutAutoCacheControlDoesNotAdd() {
+        global $gallery;
+	$gallery->_phpVm = new UnitTestPhpVm();
+	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
+
+	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($item);
+	$itemId = $item->getId();
+
+	list ($ret, $everybodyGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::removeGroupPermission($itemId, $everybodyGroupId, 'core.view');
+	if ($ret) {
+	    return $ret;
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $itemId);
+
+	$template = new UnitTestTemplate();
+	$template->setVariable('head', array('meta' => array()));
+	/* This view overrides default cache control functionality */
+	$view = new ViewTestNoAutoCacheControlItemView();
+	list ($ret, $results, $theme) = $view->doLoadTemplate($template);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$head = $template->getVariable('head');
+	$this->assertEquals(array(), $head['meta']);
+	$this->assert($gallery->_phpVm->isComplete(), $gallery->_phpVm->getRemaining());
+    }
+
+    function testDoLoadTemplateImmediateView() {
+        global $gallery;
+	$gallery->_phpVm = new UnitTestPhpVm();
+	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
+	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
+	$gallery->_phpVm->setReply('headers_sent', array(), false);
+	$gallery->_phpVm->setReply('header', array('Cache-Control: no-cache', ''), true);
+	$gallery->_phpVm->setReply('header', array('Pragma: no-cache', ''), true);
+	$gallery->_phpVm->setReply('header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
+
+	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($item);
+	$itemId = $item->getId();
+
+	list ($ret, $everybodyGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::removeGroupPermission($itemId, $everybodyGroupId, 'core.view');
+	if ($ret) {
+	    return $ret;
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $itemId);
+
+	/* This template overrides default cache control functionality */
+	$template = new UnitTestTemplate();
+	list ($ret, $view) = GalleryView::loadView('core.ViewTestImmediateItem');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assert($gallery->_phpVm->isComplete(), $gallery->_phpVm->getRemaining());
+    }
+
+    function testDoLoadTemplateImmediateViewWithoutAutoCache() {
+        global $gallery;
+	$gallery->_phpVm = new UnitTestPhpVm();
+	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
+
+	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($item);
+	$itemId = $item->getId();
+
+	list ($ret, $everybodyGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::removeGroupPermission($itemId, $everybodyGroupId, 'core.view');
+	if ($ret) {
+	    return $ret;
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $itemId);
+
+	/* This template overrides default cache control functionality */
+	$template = new UnitTestTemplate();
+	list ($ret, $view) = GalleryView::loadView('core.ViewTestImmediateItemNoAutoCache');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assert($gallery->_phpVm->isComplete(), $gallery->_phpVm->getRemaining());
     }
 
     function testPermissionCheckNotAdmin() {
 	$galleryView = new GalleryView();
 
 	$this->_becomeGuestUser();
-	list ($ret, $results) = 
+	list ($ret, $results) =
 	    $galleryView->_permissionCheck(GalleryCoreApi::error(ERROR_PERMISSION_DENIED));
 	if ($ret) {
 	    return $ret;
@@ -531,7 +751,7 @@ class ViewTest extends GalleryTestCase {
     function testPermissionCheckAuthTimeoutExpired() {
 	$galleryView = new GalleryView();
 
-	list ($ret, $results) = 
+	list ($ret, $results) =
 	    $galleryView->_permissionCheck(GalleryCoreApi::error(ERROR_PERMISSION_DENIED));
 	if ($ret) {
 	    return $ret;
@@ -554,7 +774,7 @@ class ViewTest extends GalleryTestCase {
     function testPermissionCheckErrorMissingObject() {
 	$galleryView = new GalleryView();
 
-	list ($ret, $results) = 
+	list ($ret, $results) =
 	    $galleryView->_permissionCheck(GalleryCoreApi::error(ERROR_MISSING_OBJECT));
 	if ($ret) {
 	    return $ret;
@@ -567,7 +787,7 @@ class ViewTest extends GalleryTestCase {
     function testPermissionCheckOtherError() {
 	$galleryView = new GalleryView();
 
-	list ($ret, $results) = 
+	list ($ret, $results) =
 	    $galleryView->_permissionCheck(GalleryCoreApi::error(ERROR_STORAGE_FAILURE));
 	$this->assertErrorEquals(ERROR_STORAGE_FAILURE, $ret, 'Unexpected error code');
 	$this->assertEquals(null, $results, 'Results should be null');
@@ -589,6 +809,46 @@ class ViewTestConfigView extends GalleryView { }
 class ViewTestAdminView extends GalleryView {
     function getViewType() {
 	return VIEW_TYPE_ADMIN;
+    }
+}
+
+class ViewTestItemView extends GalleryView {
+    function getViewType() {
+	return VIEW_TYPE_SHOW_ITEM;
+    }
+}
+
+class ViewTestNoAutoCacheControlItemView extends GalleryView {
+    function getViewType() {
+	return VIEW_TYPE_SHOW_ITEM;
+    }
+
+    function autoCacheControl() {
+	return false;
+    }
+}
+
+class ViewTestImmediateItemView extends GalleryView {
+    function getViewType() {
+	return VIEW_TYPE_SHOW_ITEM;
+    }
+
+    function isImmediate() {
+	return true;
+    }
+}
+
+class ViewTestImmediateItemNoAutoCacheView extends GalleryView {
+    function getViewType() {
+	return VIEW_TYPE_SHOW_ITEM;
+    }
+
+    function isImmediate() {
+	return true;
+    }
+
+    function autoCacheControl() {
+	return false;
     }
 }
 

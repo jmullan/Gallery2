@@ -26,6 +26,8 @@
 class CommentCallbacks {
 
     function callback($params, &$smarty, $callback, $userId) {
+	global $gallery;
+	$phpVm = $gallery->getPhpVm();
 
 	switch ($callback) {
 	case 'LoadComments':
@@ -46,6 +48,33 @@ class CommentCallbacks {
 		return null;
 	    }
 
+	    /* Pages shouldn't be cached if comments are not accessible for anonymous */ 
+	    if (!$phpVm->headers_sent()) {
+		list ($ret, $anonymousUserId) = GalleryCoreApi::getAnonymousUserId();
+		if ($ret) {
+		    return $ret;
+		}
+		/* If !comment.view || !core.view */
+		list ($ret, $anonymousViewable) = GalleryCoreApi::hasItemPermission(
+		    $itemId, 'comment.view', $anonymousUserId, false);
+		if ($ret) {
+		    return $ret;
+		}
+		if ($anonymousViewable) {
+		    list ($ret, $anonymousViewable) = GalleryCoreApi::hasItemPermission(
+			$itemId, 'core.view', $anonymousUserId, false);
+		    if ($ret) {
+			return $ret;
+		    }
+		}
+		/* Set headers only, since framework doesn't allow include to pollute the namespace */
+		if (!$anonymousViewable) {
+		    $expires = $gallery->getHttpDate($phpVm->time() - 7*24*3600);
+		    $phpVm->header('Cache-Control: no-cache');
+		    $phpVm->header('Pragma: no-cache');
+		    $phpVm->header('Expires: ' . $expires);
+		}
+	    }
 	    $viewMax = $params['show'];
 
 	    GalleryCoreApi::requireOnce('modules/comment/classes/GalleryCommentHelper.class');

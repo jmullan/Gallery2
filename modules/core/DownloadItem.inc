@@ -49,6 +49,13 @@ class DownloadItemView extends GalleryView {
     }
 
     /**
+     * @see GalleryView::autoCacheControl
+     */
+    function autoCacheControl() {
+        return false;
+    }
+    
+    /**
      * @see GalleryView::renderImmediate
      */
     function renderImmediate($status, $error) {

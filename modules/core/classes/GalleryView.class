@@ -204,6 +204,13 @@ class GalleryView {
 	/* Tell the view what module its in */
 	$view->init($module);
 
+	if ($view->isImmediate() && $view->autoCacheControl()) {
+	    $ret = $view->setCacheControl();
+	    if ($ret) {
+	        return array($ret, null);
+	    }
+	}
+	
 	return array(null, $view);
     }
 
@@ -243,6 +250,15 @@ class GalleryView {
 	/* Ask search engines to not index (site|item|user) admin pages */
 	if ($this->getViewType() == VIEW_TYPE_ADMIN) {
 	    $template->meta('robots', 'noindex');
+	}
+	
+	/* -------------------------------------------------- */
+	/* Set cache control headers for the page for security purposes  */
+	if ($this->autoCacheControl()) {
+	    $ret = $this->setCacheControl($template);
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
 	}
 
 	/* -------------------------------------------------- */
@@ -322,7 +338,7 @@ class GalleryView {
      *
      * If not itemId is specified as request variable the default album is returned.
      *
-     * @param bool $checkPermissions (optional) Default true. Whether to enfore the required (view)
+     * @param bool $checkPermissions (optional) Default true. Whether to enforce the required (view)
      *                                          permission.
      * @return array GalleryStatus a status code
      *               GalleryItem an item
@@ -555,6 +571,87 @@ class GalleryView {
 	return array(null, $theme);
     }
 
+    /**
+     * Method to opt-in to managed HTTP cache control
+     *
+     * Override this method in a view to opt-out from the managed cache control and to set the 
+     * cache headers yourself. (Like isImmediate() and similar methods)
+     * 
+     * @return bool (default true) to opt-in to itemId oriented cache control
+     */
+    function autoCacheControl() {
+        return true;
+    }
+
+    /**
+     * Set cache headers for sensitive pages
+     * @param GalleryTemplate $template (optional) Adding HTML cache headers to this template
+     * @param string $access (optional) no-cache
+     * @return GalleryStatus
+     */
+     function setCacheControl(&$template=null, $access=null) {
+	global $gallery;
+	$phpVm = $gallery->getPhpVm();
+	$itemId = (int)GalleryUtilities::getRequestVariables('itemId');
+	
+	if (!isset($access)) {
+	    switch ($this->getViewType()) {
+	    case VIEW_TYPE_ADMIN:
+		$access = 'no-cache';
+		break;
+		
+	    case VIEW_TYPE_MODULE:
+		if (empty($itemId)) {
+		    $access = 'no-cache';
+		    break;
+		}
+		/* If itemId is defined, handle the same way as SHOW_ITEM type */
+		
+	    case VIEW_TYPE_SHOW_ITEM:
+		list ($ret, $anonymousUserId) = GalleryCoreApi::getAnonymousUserId();
+		if ($ret) {
+		    return $ret;
+		}
+		/* Pages shouldn't be cached if not accessible for anonymous */ 
+		if (empty($itemId)) {
+		    /* If we don't have an itemId, default to the root album */
+		    list ($ret, $itemId) = GalleryCoreApi::getDefaultAlbumId();
+		    if ($ret) {
+			return $ret;
+		    }
+		}
+		list ($ret, $anonymousViewable) = GalleryCoreApi::hasItemPermission(
+		    $itemId, 'core.view', $anonymousUserId, false);
+		if ($ret) {
+		    return $ret;
+		}
+		if (!$anonymousViewable) {
+		    $access = 'no-cache';
+		}
+		break;
+		
+	    default:
+		$access = '';
+	    }
+	}
+
+	/* http://www.mnot.net/cache_docs */
+	if ($access == 'no-cache') {
+	    $expires = $gallery->getHttpDate($phpVm->time() - 7*24*3600);
+	    if (!($phpVm->headers_sent())) {
+		$phpVm->header('Cache-Control: ' . $access);
+		$phpVm->header('Pragma: ' . $access);
+		$phpVm->header('Expires: ' . $expires);
+	    }
+	    if (isset($template)) {
+		$template->meta('Cache-Control',  $access, true);
+		$template->meta('Pragma', $access, true);
+		$template->meta('Expires', $expires, true);
+	    }
+	}
+	return null;
+     }
+     
     /**
      * Set standard user information available for every view.
      * @param GalleryTemplate $template

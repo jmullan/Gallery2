@@ -271,6 +271,7 @@ class ImageBlockTest extends GalleryTestCase {
     }
 
     function testExternalImageBlock() {
+	global $gallery;
 	list ($ret, $external) = GalleryView::loadView('imageblock.External');
 	if ($ret) {
 	    return $ret;
@@ -279,6 +280,15 @@ class ImageBlockTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('blocks', 'randomImage');
 	GalleryUtilities::putRequestVariable('show', 'none');
 
+	$gallery->_phpVm = new UnitTestPhpVm();
+	$gallery->_phpVm->setReply('rand', '*', 260300);
+	$gallery->_phpVm->setReply('headers_sent', array(), false);
+	$gallery->_phpVm->setReply('header', array('Content-type: text/html; charset=UTF-8', ''), true);
+	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
+	$gallery->_phpVm->setReply('header', array('Cache-Control: no-cache', ''), true);
+	$gallery->_phpVm->setReply('header', array('Pragma: no-cache', ''), true);
+	$gallery->_phpVm->setReply('header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
+	
 	$template = new ImageBlockDummyGalleryTemplate();
 	$external->setTemplate($template);
 	$ret = $external->renderImmediate(array(), array());
@@ -290,11 +300,18 @@ class ImageBlockTest extends GalleryTestCase {
 	$data = $template->_data;
 	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
 	$this->assertBlock($data['ImageBlockData']['blocks'][0], 'A1', false);
+	$this->assert($gallery->_phpVm->isComplete(), $gallery->_phpVm->getRemaining());
 
 	/* Select more than one recentImage.. should be multiple recent items, not repeats */
 	GalleryUtilities::putRequestVariable('blocks', 'recentImage|recentImage|recentImage');
 	GalleryUtilities::putRequestVariable('show', 'heading');
 
+	$gallery->_phpVm->setReply('headers_sent', array(), false);
+	$gallery->_phpVm->setReply('header', array('Content-type: text/html; charset=UTF-8', ''), true);
+	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
+	$gallery->_phpVm->setReply('header', array('Cache-Control: no-cache', ''), true);
+	$gallery->_phpVm->setReply('header', array('Pragma: no-cache', ''), true);
+	$gallery->_phpVm->setReply('header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
 	$template = new ImageBlockDummyGalleryTemplate();
 	$external->setTemplate($template);
 	$ret = $external->renderImmediate(array(), array());
@@ -315,12 +332,21 @@ class ImageBlockTest extends GalleryTestCase {
 	/* Imageblock now uses all DataItems instead of just PhotoItems; expect movie not photo3 */
 	$this->assertEquals($this->_movie->getId(),
 			    $data['ImageBlockData']['blocks'][2]['id'], '3rd most recent=movie');
+	$this->assert($gallery->_phpVm->isComplete(), $gallery->_phpVm->getRemaining());
 
 	/* Select only from subtree.. */
 	GalleryUtilities::putRequestVariable('blocks', 'recentImage|viewedAlbum');
 	GalleryUtilities::putRequestVariable('show', 'title');
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 
+	$gallery->_phpVm->setReply('headers_sent', array(), false);
+	$gallery->_phpVm->setReply('header', array('Content-type: text/html; charset=UTF-8', ''), 
+				   true);
+	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
+	$gallery->_phpVm->setReply('header', array('Cache-Control: no-cache', ''), true);
+	$gallery->_phpVm->setReply('header', array('Pragma: no-cache', ''), true);
+	$gallery->_phpVm->setReply('header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), 
+				   true);
 	$template = new ImageBlockDummyGalleryTemplate();
 	$external->setTemplate($template);
 	$ret = $external->renderImmediate(array(), array());
@@ -334,6 +360,7 @@ class ImageBlockTest extends GalleryTestCase {
 	$this->assertBlock($data['ImageBlockData']['blocks'][0], 'C1', false);
 	$this->assertEquals($this->_photo->getId(),
 			    $data['ImageBlockData']['blocks'][0]['id'], 'Photo id');
+	$this->assert($gallery->_phpVm->isComplete(), $gallery->_phpVm->getRemaining());
 
 	/* Select specific item, scaled full size with link and link target.. */
 	GalleryUtilities::putRequestVariable('blocks', 'specificItem');
@@ -343,6 +370,12 @@ class ImageBlockTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('linkTarget', '_blank');
 	GalleryUtilities::putRequestVariable('maxSize', '500');
 
+	$gallery->_phpVm->setReply('headers_sent', array(), false);
+	$gallery->_phpVm->setReply('header', array('Content-type: text/html; charset=UTF-8', ''), true);
+	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
+	$gallery->_phpVm->setReply('header', array('Cache-Control: no-cache', ''), true);
+	$gallery->_phpVm->setReply('header', array('Pragma: no-cache', ''), true);
+	$gallery->_phpVm->setReply('header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
 	$template = new ImageBlockDummyGalleryTemplate();
 	$external->setTemplate($template);
 	$ret = $external->renderImmediate(array(), array());
@@ -356,6 +389,7 @@ class ImageBlockTest extends GalleryTestCase {
 	$this->assertBlock($data['ImageBlockData']['blocks'][0], 'D1');
 	$this->assertEquals($this->_photo->getId(),
 			    $data['ImageBlockData']['blocks'][0]['id'], 'Photo id');
+	$this->assert($gallery->_phpVm->isComplete(), $gallery->_phpVm->getRemaining());
     }
 
     function testExternalImageBlockMaxSize() {
@@ -996,18 +1030,9 @@ class ImageBlockToolkit extends GalleryToolkit {
 /**
  * Test template
  */
-class ImageBlockDummyGalleryTemplate {
-    var $_data = array();
+class ImageBlockDummyGalleryTemplate extends UnitTestTemplate {
     var $_path = null;
-    function hasVariable($key) {
-	return isset($this->_data[$key]);
-    }
-    function setVariable($key, $value) {
-	$this->_data[$key] = $value;
-    }
-    function &getVariableByReference($key) {
-	return $this->_data[$key];
-    }
+    
     function &_getSmarty($trimWhitespace) {
 	return $this;
     }

@@ -1,4 +1,4 @@
-<?php
+\<?php
 /*
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2008 Bharat Mediratta
@@ -35,9 +35,9 @@ class PasswordModule extends GalleryModule /* and GalleryEventListener */ {
 	global $gallery;
 
 	$this->setId('password');
-	$this->setName($gallery->i18n('Password Items'));
+	$this->setName($gallery->i18n('Password Protected Albums'));
 	$this->setDescription(
-	    $gallery->i18n('Assign passwords for viewing particular albums or items'));
+	    $gallery->i18n('Assign passwords for viewing particular albums'));
 	$this->setVersion('1.0.8');
 	$this->_templateVersion = 1;
 	$this->setGroup('display', $this->translate('Display'));
@@ -70,7 +70,7 @@ class PasswordModule extends GalleryModule /* and GalleryEventListener */ {
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-	    'GalleryEventListener', 'PasswordModule', 'PasswordModule', 
+	    'GalleryEventListener', 'PasswordModule', 'PasswordModule',
 	    'modules/password/module.inc', 'password', array('GalleryEntity::save'));
 	if ($ret) {
 	    return $ret;

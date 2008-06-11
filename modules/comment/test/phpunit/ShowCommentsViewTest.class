@@ -1,7 +1,7 @@
 <?php
 /*
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2008 Bharat Mediratta
+ * Copyright (C) 2000-2007 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,17 +19,17 @@
  */
 
 /**
- * Test the ShowAllComments view
+ * Test the ShowComments view
  *
  * @package Comment
  * @subpackage PHPUnit
- * @author Andy Staudacher <ast@gmx.ch>
+ * @author Felix Rabinovich <felix@rabinovich.org>
  * @version $Revision$
  */
-class ShowAllCommentsViewTest extends GalleryViewTestCase {
+class ShowCommentsViewTest extends GalleryViewTestCase {
 
-    function ShowAllCommentsViewTest($methodName) {
-	$this->GalleryViewTestCase($methodName, 'comment.ShowAllComments');
+    function ShowCommentsViewTest($methodName) {
+	$this->GalleryViewTestCase($methodName, 'comment.ShowComments');
     }
 
     function setUp() {
@@ -74,14 +74,10 @@ class ShowAllCommentsViewTest extends GalleryViewTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	list ($ret, $this->_item2) = $this->_createRandomDataItem($this->_album->getId());
-	if ($ret) {
-	    return $ret;
-	}
 
 	/* Create 4 comments */
+	$itemId = $this->_item->getId();
 	for ($i = 0; $i < 4; $i++) {
-	    $itemId = $i < 2 ? $this->_item->getId() : $this->_item2->getId();
 
 	    list ($ret, $this->_comment[$i]) =
 		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
@@ -103,82 +99,9 @@ class ShowAllCommentsViewTest extends GalleryViewTestCase {
 		return $ret;
 	    }
 	}
-
-	$ret = GalleryCoreApi::removeUserPermission(
-	    $this->_item2->getId(), $gallery->getActiveUserId(), 'comment.delete');
-	if ($ret) {
-	    return $ret;
-	}
     }
 
-    function testShowAllComments() {
-	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
-
-	$results = $this->loadTemplate();
-	if (empty($results)) {
-	    $this->fail('No results returned');
-	    return null;
-	}
-
-	$this->assertEquals(array('body' => 'modules/comment/templates/ShowAllComments.tpl'),
-			    $results);
-
-	$data = $this->_template->getVariable('ShowAllComments');
-	$this->assertEquals(3, count($data['comments']), 'comment count');
-	$this->assertEquals((array)$this->_album, $data['item'], 'item');
-
-	foreach ($this->_comment as $comment) {
-	    foreach (array('delete', 'edit', 'markSpam') as $canFlag) {
-		$can[$comment->getid()][$canFlag] = true;
-	    }
-	}
-	$can[$this->_comment[2]->getId()]['delete'] = false;
-	$can[$this->_comment[3]->getId()]['delete'] = false;
-
-	$this->assertEquals(sort($can), sort($data['can']), 'permissions');	
-    }
-
-    function testShowAllCommentsFailsWithoutViewItemPermission() {
-    	global $gallery;
-
-	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
-
-	$ret = GalleryCoreApi::removeUserPermission(
-	    $this->_album->getId(), $gallery->getActiveUserId(), 'core.view');
-	if ($ret) {
-	    return $ret;
-	}
-
-	$results = $this->loadTemplate(ERROR_MISSING_OBJECT);
-    }
-
-    function testShowAllCommentsRequiresViewItemPermissionForComments() {
-    	global $gallery;
-
-	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
-
-	$ret = GalleryCoreApi::removeUserPermission(
-	    $this->_item->getId(), $gallery->getActiveUserId(), 'core.view');
-	if ($ret) {
-	    return $ret;
-	}
-
-	$results = $this->loadTemplate();
-	if (empty($results)) {
-	    $this->fail('No results returned');
-	    return null;
-	}
-
-	$this->assertEquals(array('body' => 'modules/comment/templates/ShowAllComments.tpl'),
-			    $results);
-
-	$data = $this->_template->getVariable('ShowAllComments');
-	$this->assertEquals(1, count($data['comments']), 'comment count');
-	$this->assertEquals($this->_comment[2]->getId(), $data['comments'][0]['id'], 'comment id');
-	$this->assertEquals((array)$this->_album, $data['item'], 'item');
-    }
-    
-    function testShowAllCommentsAddsNoCacheWithoutViewPermission() {
+    function testShowCommentsAddsNoCacheWithoutViewPermission() {
 	global $gallery;
 	$gallery->_phpVm = new UnitTestPhpVm();
 	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
@@ -186,7 +109,7 @@ class ShowAllCommentsViewTest extends GalleryViewTestCase {
 	$gallery->_phpVm->setReply('header', array('Cache-Control: no-cache', ''), true);
 	$gallery->_phpVm->setReply('header', array('Pragma: no-cache', ''), true);
 	$gallery->_phpVm->setReply('header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
-	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	
 	$template = new UnitTestTemplate();
 	$template->setVariable('head', array('meta' => array()));
@@ -207,7 +130,7 @@ class ShowAllCommentsViewTest extends GalleryViewTestCase {
 	$this->assert($gallery->_phpVm->isComplete(), $gallery->_phpVm->getRemaining());
     }
     
-    function testShowAllCommentsAddsNoCacheWithoutCoreViewPermission() {
+    function testShowCommentsAddsNoCacheWithoutCoreViewPermission() {
 	global $gallery;
 	$gallery->_phpVm = new UnitTestPhpVm();
 	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
@@ -215,19 +138,8 @@ class ShowAllCommentsViewTest extends GalleryViewTestCase {
 	$gallery->_phpVm->setReply('header', array('Cache-Control: no-cache', ''), true);
 	$gallery->_phpVm->setReply('header', array('Pragma: no-cache', ''), true);
 	$gallery->_phpVm->setReply('header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
-	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	
-	list ($ret, $anonymousUserId) = GalleryCoreApi::getAnonymousUserId();
-	if ($ret) {
-	    return $ret;
-	}
-
-	$ret = GalleryCoreApi::removeUserPermission(
-	    $this->_item->getId(), $anonymousUserId, 'core.view', true);
-	if ($ret) {
-	    return $ret;
-	}
-
 	$template = new UnitTestTemplate();
 	$template->setVariable('head', array('meta' => array()));
 	$this->_template =& $template;
@@ -247,7 +159,7 @@ class ShowAllCommentsViewTest extends GalleryViewTestCase {
 	$this->assert($gallery->_phpVm->isComplete(), $gallery->_phpVm->getRemaining());
     }
     
-    function testShowAllCommentsDoesNotAddNoCacheWithViewPermission() {
+    function testShowCommentsDoesNotAddNoCacheWithViewPermission() {
 	global $gallery;
 	$gallery->_phpVm = new UnitTestPhpVm();
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());

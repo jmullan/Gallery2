@@ -219,6 +219,9 @@ class RssRenderTest extends GalleryControllerTestCase {
 	$this->assertEquals(
 	    array(
 		'Header: Content-type: text/xml; charset=UTF-8',
+		'Header: Cache-Control: no-cache',
+		'Header: Pragma: no-cache',
+		'Header: Expires: Fri, 06 Feb 2009 23:31:30 GMT',
 		'<rss version="2.0">',
 		'<channel>',
 		'<title><![CDATA[I am Jack\'s title]]></title>',
@@ -273,6 +276,9 @@ class RssRenderTest extends GalleryControllerTestCase {
 	$this->assertEquals(
 	    array(
 		'Header: Content-type: text/xml; charset=UTF-8',
+		'Header: Cache-Control: no-cache',
+		'Header: Pragma: no-cache',
+		'Header: Expires: Fri, 06 Feb 2009 23:31:30 GMT',
 		'<rss version="2.0">',
 		'<channel>',
 		'<title><![CDATA[I am Jack\'s title]]></title>',

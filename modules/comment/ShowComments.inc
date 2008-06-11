@@ -45,6 +45,28 @@ class ShowCommentsView extends GalleryView {
 
 	$commenters = array();
 	if (!empty($comments)) {
+	    /* Pages shouldn't be cached if any of the comments is not accessible for anonymous */ 
+	    list ($ret, $anonymousUserId) = GalleryCoreApi::getAnonymousUserId();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    /* If !comment.view || !core.view */
+	    list ($ret, $anonymousViewable) = GalleryCoreApi::hasItemPermission(
+		$item->getId(), 'comment.view', $anonymousUserId, false);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    if ($anonymousViewable) {
+		list ($ret, $anonymousViewable) = GalleryCoreApi::hasItemPermission(
+		    $item->getId(), 'core.view', $anonymousUserId, false);
+		if ($ret) {
+		    return array($ret, null);
+		}
+	    }
+	    
+	    if (!$anonymousViewable) {
+		$this->setCacheControl($template, 'no-cache');
+	    }
 	    for ($i = 0; $i < sizeof($comments); $i++) {
 		/* Get the commenter ids */
 		$commenters[$comments[$i]->getCommenterId()] = 1;

@@ -28,6 +28,13 @@
 class ShowAllCommentsView extends GalleryView {
 
     /**
+     * @see GalleryView::autoCacheControl
+     */
+    function autoCacheControl() {
+        return false;
+    }
+    
+    /**
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
@@ -102,6 +109,12 @@ class ShowAllCommentsView extends GalleryView {
 	    }
 	}
 
+	$cacheControl = false;
+	/* Pages shouldn't be cached if any of the comments is not accessible for anonymous */ 
+	list ($ret, $anonymousUserId) = GalleryCoreApi::getAnonymousUserId();
+	if ($ret) {
+	    return array($ret, null);
+	}
 	foreach ($comments as $comment) {
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($comment['parentId']);
 	    if ($ret) {
@@ -111,6 +124,27 @@ class ShowAllCommentsView extends GalleryView {
 			   'edit' => 'comment.edit',
 			   'markSpam' => 'comment.edit') as $canFlag => $permission) {
 		$can[$comment['id']][$canFlag] = isset($permissions[$permission]);
+	    }
+	    /* If we already set cache control, don't check any more */
+	    if (!$cacheControl) {
+		/* If !comment.view || !core.view */
+		list ($ret, $anonymousViewable) = GalleryCoreApi::hasItemPermission(
+		    $comment['parentId'], 'comment.view', $anonymousUserId, false);
+		if ($ret) {
+		    return array($ret, null);
+		}
+		if ($anonymousViewable) {
+		    list ($ret, $anonymousViewable) = GalleryCoreApi::hasItemPermission(
+			$comment['parentId'], 'core.view', $anonymousUserId, false);
+		    if ($ret) {
+			return array($ret, null);
+		    }
+		}
+		
+		if (!$anonymousViewable) {
+		    $this->setCacheControl($template, 'no-cache');
+		    $cacheControl = true;
+		}
 	    }
 
 	    if (!isset($itemData[$comment['parentId']])) {

@@ -524,6 +524,86 @@ class EmbedTest extends GalleryTestCase {
 	}
     }
 
+    function testGetEmbedPathByHttpRequestValidRequest() {
+	global $gallery;
+	$gallery->_phpVm = new UnitTestPhpVm();
+
+	GalleryUtilities::putRequestVariable('getEmbedPath', '1', false);
+	$_SERVER['REMOTE_ADDR'] = '192.168.1.25';
+	$_SERVER['SERVER_ADDR'] = '192.168.1.25';
+
+	$gallery->_phpVm->setReply('headers_sent', array(), false);
+	$gallery->_phpVm->setReply('gethostbyname', array('192.168.1.25'), '192.168.1.25');
+	$gallery->_phpVm->setReply('defined', array('GALLERY_CONFIG_DIR'), true);
+	$path = 'X-G2-EMBED-PATH: ' . GALLERY_CONFIG_DIR . '/embed.php';
+	$gallery->_phpVm->setReply('header', array($path, null), null);
+
+	GalleryEmbed::getEmbedPathByHttpRequest();
+
+	$this->assert($gallery->_phpVm->isComplete(), $gallery->_phpVm->getRemaining());
+    }
+
+    function testGetEmbedPathByHttpRequestInvalidRequest() {
+	global $gallery;
+	$gallery->_phpVm = new UnitTestPhpVm();
+
+	GalleryUtilities::putRequestVariable('getEmbedPath', '1', false);
+	$_SERVER['REMOTE_ADDR'] = '192.168.1.26';
+	$_SERVER['SERVER_ADDR'] = '192.168.1.25';
+
+	$gallery->_phpVm->setReply('headers_sent', array(), false);
+	$gallery->_phpVm->setReply('gethostbyname', array('192.168.1.26'), '192.168.1.26');
+
+	GalleryEmbed::getEmbedPathByHttpRequest();
+
+	$this->assert($gallery->_phpVm->isComplete(), $gallery->_phpVm->getRemaining());
+    }
+
+    function testGetEmbedPathByHttpRequestNoServerAddr() {
+	global $gallery;
+	$gallery->_phpVm = new UnitTestPhpVm();
+
+	$gallery->setConfig('baseUri', 'http://192.168.1.25');
+	GalleryUtilities::putRequestVariable('getEmbedPath', '1', false);
+	$_SERVER['REMOTE_ADDR'] = '192.168.1.25';
+	unset($_SERVER['SERVER_ADDR']);
+	unset($_SERVER['SERVER_NAME']);
+
+	$gallery->_phpVm->setReply('headers_sent', array(), false);
+	$gallery->_phpVm->setReply('gethostbyname', array('192.168.1.25'), '192.168.1.25');
+	$gallery->_phpVm->setReply('gethostbyname', array('192.168.1.25'), '192.168.1.25');
+	$gallery->_phpVm->setReply('defined', array('GALLERY_CONFIG_DIR'), true);
+	$path = 'X-G2-EMBED-PATH: ' . GALLERY_CONFIG_DIR . '/embed.php';
+	$gallery->_phpVm->setReply('header', array($path, null), null);
+
+	GalleryEmbed::getEmbedPathByHttpRequest();
+
+	$this->assert($gallery->_phpVm->isComplete(), $gallery->_phpVm->getRemaining());
+    }
+
+    function testGetEmbedPathByHttpRequestNoServerAddrG2NotInstalled() {
+	global $gallery;
+	$gallery->_phpVm = new UnitTestPhpVm();
+
+	$gallery->setConfig('baseUri', 'http://192.168.1.25');
+	GalleryUtilities::putRequestVariable('getEmbedPath', '1', false);
+	$_SERVER['REMOTE_ADDR'] = '192.168.1.25';
+	unset($_SERVER['SERVER_ADDR']);
+	unset($_SERVER['SERVER_NAME']);
+
+	$gallery->_phpVm->setReply('headers_sent', array(), false);
+	$gallery->_phpVm->setReply('gethostbyname', array('192.168.1.25'), '192.168.1.25');
+	$gallery->_phpVm->setReply('gethostbyname', array('192.168.1.25'), '192.168.1.25');
+	$gallery->_phpVm->setReply('defined', array('GALLERY_CONFIG_DIR'), false);
+
+	$path = 'X-G2-EMBED-PATH: ' . GalleryCoreApi::getCodeBasePath('embed.php');
+	$gallery->_phpVm->setReply('header', array($path, null), null);
+
+	GalleryEmbed::getEmbedPathByHttpRequest();
+
+	$this->assert($gallery->_phpVm->isComplete(), $gallery->_phpVm->getRemaining());
+    }
+
     function testEmbeddedLogin() {
 	global $gallery;
 
@@ -538,7 +618,7 @@ class EmbedTest extends GalleryTestCase {
 	    return $ret;
 	}
 	$this->assertEventFired('Gallery::Login', $users[0]);
-	$this->assertEquals($users[0]->getId(), $gallery->getActiveUserId(), 
+	$this->assertEquals($users[0]->getId(), $gallery->getActiveUserId(),
 	    'The active user should change');
     }
 
