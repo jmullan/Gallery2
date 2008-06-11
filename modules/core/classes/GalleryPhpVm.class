@@ -266,5 +266,25 @@ class GalleryPhpVm {
     function class_exists($class_name) {
 	return class_exists($class_name);
     }
+
+    /**
+     * Returns the IP address of the Internet host specified by hostname
+     *
+     * @param string $hostname
+     * @return string ip address
+     */
+    function gethostbyname($hostname) {
+	return gethostbyname($hostname);
+    }
+
+    /**
+     * Checks whether the given constant exists and is defined.
+     *
+     * @param string $name the name of the constant
+     * @return bool returns TRUE if the named constant has been defined, FALSE otherwise
+     */
+    function defined($name) {
+	return defined($name);
+    }
 }
 ?>

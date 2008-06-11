@@ -174,9 +174,9 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 					    'subView' => 'core.ItemAddConfirmation',
 					    'itemId' => $this->_album->getId()),
 			    $results['redirect'], 'redirect');
-	$this->assertEquals(array_fill(0, $isUnix ? 5 : 3, 'an error'),
+	$this->assertEquals(array_fill(0, $isUnix ? 7 : 4, 'an error'),
 			    $results['error'], 'error');
-	$this->assertEquals($isUnix ? 5 : 3, count($results['status']['addedFiles']),
+	$this->assertEquals($isUnix ? 7 : 4, count($results['status']['addedFiles']),
 			    'added wrong # of items');
 	$addedFiles = $results['status']['addedFiles'];
 
@@ -186,9 +186,17 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	 */
 	usort($addedFiles, $sortAddedFilesFunc);
 
+	$itemNames = array();
+	foreach ($addedFiles as $i => $addedItem) {
+	    $itemNames[] = $addedItem['fileName'];
+	    $this->assertEquals(array('a warning'), $addedItem['warnings'],
+				"warning $i - item not processed by ItemAddOption");
+	}
+
 	$expected = array();
 	$expected[] = 'blah.ext';
 	if ($isUnix) {
+	    $expected[] = 'foo&lt;body onload=alert(album_xss)&gt;bar';
 	    $expected[] = 'foo&lt;body onload=alert(item_xss)&gt;.ext';
 	}
 	$expected[] = 'foo-' . $item->getId();
@@ -196,20 +204,9 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	    $expected[] = 'foo.ext';
 	}
 	$expected[] = 'foo.ext';
+	$expected[] = 'subdir';
 
-	/* Ugh.  Drop one from the actual to match the expected */
-	$actual = array();
-	for ($i = 0; $i < count($expected); $i++) {
-	    $actual[] = $addedFiles[$i]['fileName'];
-	}
-	$this->assertEquals($expected, $actual, 'files');
-	$this->assertEquals(array('a warning'), $addedFiles[0]['warnings'], 'warning 1');
-	$this->assertEquals(array('a warning'), $addedFiles[1]['warnings'], 'warning 2');
-	$this->assertEquals(array('a warning'), $addedFiles[2]['warnings'], 'warning 3');
-	if ($isUnix) {
-	    $this->assertEquals(array('a warning'), $addedFiles[3]['warnings'], 'warning 4');
-	    $this->assertEquals(array('a warning'), $addedFiles[4]['warnings'], 'warning 5');
-	}
+	$this->assertEquals($expected, $itemNames, 'files');
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_album);
 	if ($ret) {
@@ -256,7 +253,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
  	$sortAddedFilesFunc =
  	    create_function('$a, $b', 'return strcmp($a[\'fileName\'], $b[\'fileName\']);');
  	usort($addedItems, $sortAddedFilesFunc);
- 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($addedItems[1]['id']);
+ 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($addedItems[2]['id']);
  	if ($ret) {
  	    return $this->failWithStatus($ret);
  	}
@@ -267,7 +264,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
  		array($addedItems[1]['id'], $addedItems[2]['id']),
  		'GalleryItem');
  	    if ($ret) {
- 		return $ret;
+		return $this->failWithStatus($ret);
  	    }
 
  	    /**

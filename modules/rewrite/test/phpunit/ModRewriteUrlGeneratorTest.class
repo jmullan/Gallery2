@@ -62,6 +62,44 @@ class ModRewriteUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 	}
     }
 
+    function testGetCurrentUrlFiltersIllegalCharacters() {
+	GalleryDataCache::reset();
+	$backslash = get_magic_quotes_gpc() ? '\\\\' : '\\';
+	$_SERVER['REQUEST_URI'] = sprintf(
+	    '/gallery2/"href="file:%s%shacker%s../phpunit_test.php?g2_view=%s"&baz"=1#anchor',
+	    $backslash, $backslash, $backslash, $backslash);
+	$_SERVER['SCRIPT_NAME'] = sprintf(
+	    '/gallery2/"href="file:%s%shacker%s../main.php',
+	    $backslash, $backslash, $backslash);
+	$_SERVER['QUERY_STRING'] = sprintf('g2_view=%s"&baz"=1#anchor', $backslash);
+	$_SERVER['PATH_INFO'] = '';
+	$this->assertEquals(
+	    'http://example.com/gallery2/phpunit_test.php?g2_view=/&baz=1#anchor',
+	    $this->_urlGenerator->getCurrentUrl());
+    }
+
+    function testGetCurrentUrlDirFiltersIllegalCharacters() {
+	GalleryDataCache::reset();
+	$backslash = get_magic_quotes_gpc() ? '\\\\' : '\\';
+	$_SERVER['REQUEST_URI'] = sprintf(
+	    '/gallery2/"href="file:%s%shacker%sfoobar%stemp/../main.php?g2_view=%s"&baz"=1#anchor',
+	    $backslash, $backslash, $backslash, $backslash, $backslash);
+	$_SERVER['SCRIPT_NAME'] = sprintf(
+	    '/gallery2/"href="file:%s%shacker%sfoobar%stemp/../main.php',
+	    $backslash, $backslash, $backslash, $backslash);
+	$_SERVER['QUERY_STRING'] = sprintf('g2_view=%s"&baz"=1#anchor', $backslash);
+	$_SERVER['PATH_INFO'] = '';
+
+	$this->_urlGenerator = new $this->_urlGeneratorName();
+	$ret = $this->_urlGenerator->init();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('http://example.com/gallery2/',
+	    $this->_urlGenerator->getCurrentUrlDir());
+    }
+
     function testGenerateUrlOverrideBaseUri() {
 	/* Override the expected URLs, not server-relative, but with relative ones */
 	$this->_expectedUrl[0] = 'index.php?page=photos&amp;g2_view=rand164.NonShort'

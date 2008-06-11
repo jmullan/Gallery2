@@ -190,6 +190,13 @@ class ItemAddController extends GalleryController {
 	global $gallery;
 	$this->_platform =& $gallery->getPlatform();
 
+	$parentId = $archiveItem->getParentId();
+	list ($ret, $hasAddAlbumPermission) =
+	    GalleryCoreApi::hasItemPermission($parentId, 'core.addAlbumItem');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
 	list ($ret, $file) = $archiveItem->fetchPath();
 	if ($ret) {
 	    return array($ret, null);
@@ -226,7 +233,7 @@ class ItemAddController extends GalleryController {
 
 	$addedFiles = array();
 	$ret = $this->_recursiveAddDir(
-	    $tmpDir, $archiveItem->getParentId(), $addedFiles, $archiveItem, $titleMode);
+	    $tmpDir, $parentId, $addedFiles, $archiveItem, $titleMode, $hasAddAlbumPermission);
 	@$this->_platform->recursiveRmdir($tmpDir);
 	@$this->_platform->unlink($base);
 	if ($ret) {
@@ -241,7 +248,8 @@ class ItemAddController extends GalleryController {
      * @return object GalleryStatus a status code
      * @access private
      */
-    function _recursiveAddDir($dir, $parentId, &$addedFiles, &$archiveItem, $titleMode) {
+    function _recursiveAddDir($dir, $parentId, &$addedFiles, &$archiveItem, $titleMode,
+			      $canAddAlbums) {
 	$list = array();
 	$dh = $this->_platform->opendir($dir);
 	while (($file = $this->_platform->readdir($dh)) !== false) {
@@ -254,59 +262,75 @@ class ItemAddController extends GalleryController {
 	foreach ($list as $filename) {
 	    $path = "$dir/$filename";
 	    if ($this->_platform->is_dir($path)) {
-		$title = $filename;
-		GalleryUtilities::sanitizeInputValues($title);
-		list ($ret, $album) = GalleryCoreApi::createAlbum(
-		    $parentId, $filename, $title, '', '', '');
+ 	    	if ($canAddAlbums) {
+ 		    $title = $filename;
+ 		    GalleryUtilities::sanitizeInputValues($title);
+ 		    list ($ret, $album) = GalleryCoreApi::createAlbum(
+ 			$parentId, $filename, $title, '', '', '');
+ 		    if ($ret) {
+ 			return $ret;
+ 		    }
+ 		    $ret = GalleryCoreApi::addUserPermission(
+ 			$album->getId(), $album->getOwnerId(), 'core.all', false);
+ 		    if ($ret) {
+ 			return $ret;
+ 		    }
+ 		    list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($album->getId());
+ 		    if ($ret) {
+ 			return $ret;
+ 		    }
+ 		    $ret = $this->_recursiveAddDir($path, $album->getId(), $addedFiles,
+						   $archiveItem, $titleMode, $canAddAlbums);
+ 		    if ($ret) {
+ 			GalleryCoreApi::releaseLocks($lockId);
+ 			return $ret;
+ 		    }
+ 		    $ret = GalleryCoreApi::releaseLocks($lockId);
+ 		    if ($ret) {
+ 			return $ret;
+ 		    }
+ 		    $newItem =& $album;
+ 		} else {
+ 		    /*
+		     * Flattening folder structure since we're not allowed to create albums.
+		     * Adding files but ignoring directories.
+		     */
+ 		    $ret = $this->_recursiveAddDir(
+ 			$path, $parentId, $addedFiles, $archiveItem, $titleMode, $canAddAlbums);
+ 		    if ($ret) {
+ 			return $ret;
+ 		    }
+ 		    $newItem = null;
+		}
+	    } else {
+		$extension = GalleryUtilities::getFileExtension($filename);
+		list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+		if ($ret) {
+		    $mimeType = 'application/unknown';
+		}
+		if ($titleMode == 'file') {
+		    $title = $filename;
+		    GalleryUtilities::sanitizeInputValues($title);
+		} else if ($titleMode == 'base') {
+		    list ($title) = GalleryUtilities::getFileNameComponents($filename);
+		    GalleryUtilities::sanitizeInputValues($title);
+		} else {
+		    $title = $archiveItem->getTitle();
+		}
+		list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
+		    $path, $filename, $title, $archiveItem->getSummary(),
+		    $archiveItem->getDescription(), $mimeType, $parentId);
 		if ($ret) {
 		    return $ret;
 		}
-		$ret = GalleryCoreApi::addUserPermission($album->getId(), $album->getOwnerId(),
-							 'core.all', false);
-		if ($ret) {
-		    return $ret;
-		}
-		list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($album->getId());
-		if ($ret) {
-		    return $ret;
-		}
-		$ret = $this->_recursiveAddDir($path, $album->getId(),
-					       $addedFiles, $archiveItem, $titleMode);
-		if ($ret) {
-		    GalleryCoreApi::releaseLocks($lockId);
-		    return $ret;
-		}
-		$ret = GalleryCoreApi::releaseLocks($lockId);
-		if ($ret) {
-		    return $ret;
-		}
-		continue;
 	    }
 
-	    $extension = GalleryUtilities::getFileExtension($filename);
-	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
-	    if ($ret) {
-		$mimeType = 'application/unknown';
+	    if ($newItem) {
+		$sanitizedFilename = $filename;
+		GalleryUtilities::sanitizeInputValues($sanitizedFilename);
+		$addedFiles[] = array('fileName' => $sanitizedFilename, 'id' => $newItem->getId(),
+				      'warnings' => array());
 	    }
-	    if ($titleMode == 'file') {
-		$title = $filename;
-		GalleryUtilities::sanitizeInputValues($title);
-	    } else if ($titleMode == 'base') {
-		list ($title) = GalleryUtilities::getFileNameComponents($filename);
-		GalleryUtilities::sanitizeInputValues($title);
-	    } else {
-		$title = $archiveItem->getTitle();
-	    }
-	    list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
-		$path, $filename, $title, $archiveItem->getSummary(),
-		$archiveItem->getDescription(), $mimeType, $parentId);
-	    if ($ret) {
-		return $ret;
-	    }
- 	    $sanitizedFilename = $filename;
- 	    GalleryUtilities::sanitizeInputValues($sanitizedFilename);
- 	    $addedFiles[] = array('fileName' => $sanitizedFilename, 'id' => $newItem->getId(),
-  				  'warnings' => array());
 	}
 
 	return null;

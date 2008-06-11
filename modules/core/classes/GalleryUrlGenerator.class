@@ -168,8 +168,27 @@ class GalleryUrlGenerator {
 	    }
 	}
 
-	GalleryUtilities::unsanitizeInputValues($path, false);
+	$path = GalleryUrlGenerator::_sanitizeRequestUri($path);
 	return $path;
+    }
+
+    /**
+     * Sanitize a request URI (REQUEST_URI / QUERY_STRING).
+     *
+     * Apply URL specific input filering (RFC 1738), thereby removing illegal characters.
+     * Note that single quotes and any URL encoded characters are allowed.
+     *
+     * @param string $uri
+     * @return filtered $uri
+     */
+    function _sanitizeRequestUri($uri) {
+	GalleryUtilities::unsanitizeInputValues($uri, false);
+	/* Normalize slashes */
+	$uri = str_replace('\\', '/', $uri);
+	/* Be tolerant: allow for space, single quote and pipe */
+	$uri = preg_replace("{[^A-Za-z0-9_\-$./+!*'(),~?&=# %|]}", '', $uri);
+	/* Don't allow for games in the path */
+	return str_replace('/../', '/', $uri);
     }
 
     /**

@@ -41,7 +41,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'albumselect');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'albumselect');
@@ -168,7 +168,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	    } else {
 		unset($data['tree'][$idx]);
 	    }
-	    
+
 	    $nodeId++;
 	}
 
@@ -250,7 +250,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	$callbackParams = array();
 	list ($ret, $rootAlbumId) = GalleryCoreApi::getDefaultAlbumId();
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 	$cachePathInfo = array('type' => 'module-data',
 			       'module' => 'albumselect',
@@ -300,7 +300,7 @@ class AlbumSelectTest extends GalleryTestCase {
     function testAlternateRoot() {
 	global $gallery;
 	GalleryDataCache::setFileCachingEnabled(true);
-	
+
 	$ret = $this->_module->setParameter('sort', 'manual');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -377,20 +377,20 @@ class AlbumSelectTest extends GalleryTestCase {
 	$itemId = $this->_subalbum[2]->getId();
 	$ret = GalleryCoreApi::removeItemPermissions($itemId);
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::addEntityPermission($itemId, $itemId, 'core.view');
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 	/* Clear the permission cache */
 	GalleryDataCache::reset();
 
-	/* First populate the cache for a normal user */	
+	/* First populate the cache for a normal user */
 	$ret = $callbacks->callback(
 	    array(), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 	$this->_assertAlbumTreeData(
 	    $smarty, 'test albums in tree, without session permissions (1)', false);
@@ -402,7 +402,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	$ret = $callbacks->callback(
 	    array(), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 	$this->_assertAlbumTreeData(
 	    $smarty, 'test albums in tree with session permissions', true);
@@ -414,7 +414,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	$ret = $callbacks->callback(
 	    array(), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
 	if ($ret) {
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 	$this->_assertAlbumTreeData(
 	    $smarty, 'test albums in tree, without session permissions (2)', false);

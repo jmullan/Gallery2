@@ -267,6 +267,45 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 			    'baseParams no forceDirect');
     }
 
+    function testGetCurrentRequestUriFiltersIllegalCharacters() {
+	GalleryDataCache::reset();
+	$backslash = get_magic_quotes_gpc() ? '\\\\' : '\\';
+	$_SERVER['REQUEST_URI'] =
+	    '/gallery2/"main.php?foo=\'bar./' . $backslash . '"&baz"=1#anchor';
+
+	$this->assertEquals('/gallery2/main.php?foo=\'bar.//&baz=1#anchor',
+	    $this->_urlGenerator->getCurrentRequestUri());
+    }
+
+    function testGetCurrentUrlFiltersIllegalCharacters() {
+	GalleryDataCache::reset();
+	$backslash = get_magic_quotes_gpc() ? '\\\\' : '\\';
+	$_SERVER['REQUEST_URI'] = sprintf(
+	    '/"href="file:%s%shacker%sfoobar/../main.php?g2_view=%s"&baz"=1#anchor',
+	    $backslash, $backslash, $backslash, $backslash);
+
+	$this->assertEquals(
+	    'http://example.com/href=file//hacker/foobar/main.php?g2_view=/&baz=1#anchor',
+	    $this->_urlGenerator->getCurrentUrl());
+    }
+
+    function testGetCurrentUrlDirFiltersIllegalCharacters() {
+	GalleryDataCache::reset();
+	$backslash = get_magic_quotes_gpc() ? '\\\\' : '\\';
+	$_SERVER['REQUEST_URI'] = sprintf(
+	    '/"href="file:%s%shacker%sfoobar%stemp/../main.php?g2_view=%s"&baz"=1#anchor',
+	    $backslash, $backslash, $backslash, $backslash, $backslash);
+
+	$this->_urlGenerator = new $this->_urlGeneratorName();
+	$ret = $this->_urlGenerator->init();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('http://example.com/href=file//hacker/foobar/temp/',
+	    $this->_urlGenerator->getCurrentUrlDir());
+    }
+
     function testInitAndOnLoad() {
 	/* Set something up that the _onLoad() function should handle */
 	GalleryUtilities::removeRequestVariable('itemId');
