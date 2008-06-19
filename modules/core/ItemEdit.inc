@@ -333,7 +333,7 @@ class ItemEditView extends GalleryView {
 
 	list ($ret, $entityInfo) = GalleryCoreApi::describeEntity('GalleryItem');
 	if ($ret) {
-		return array($ret, null);
+	    return array($ret, null);
 	}
 
 	$ItemEdit['fieldLengths'] = array();

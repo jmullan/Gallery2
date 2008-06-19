@@ -272,10 +272,10 @@ class ItemEditCaptionsView extends GalleryView {
 	$ItemEditCaptions['canCancel'] = $urlGenerator->isNavigationBackPossible();
 	$ItemEditCaptions['page'] = $page;
 	$ItemEditCaptions['numPages'] = $numPages;
-	
+
 	list ($ret, $entityInfo) = GalleryCoreApi::describeEntity('GalleryItem');
 	if ($ret) {
-		return array($ret, null);
+	    return array($ret, null);
 	}
 
 	$ItemEditCaptions['fieldLengths'] = array();
