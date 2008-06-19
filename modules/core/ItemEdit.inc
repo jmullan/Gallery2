@@ -177,6 +177,31 @@ class ItemEditController extends GalleryController {
  */
 class ItemEditView extends GalleryView {
 
+	/**
+     * Returns sizes for "maxlength" in forms
+     * @todo: this function is duplicated in ItemEditCaptions.inc, so it needs to be consolidated somehow
+     * @param integer $value is the value from 
+     * @return size for "maxlength" in form
+     * @access private
+     */
+    function _getSizesForMaxlength($value) {
+	switch ($value) {
+	case STORAGE_SIZE_SMALL:
+	    $size = 32;
+	    break;
+
+	case STORAGE_SIZE_MEDIUM:
+	    $size = 128;
+	    break;
+
+	case STORAGE_SIZE_LARGE:
+	    $size = 255;
+	    break;
+	}
+	
+	return $size;
+    }
+    
     /**
      * @see GalleryView::loadTemplate
      */
@@ -305,6 +330,15 @@ class ItemEditView extends GalleryView {
 		$ItemEdit['options'][] = $entry;
 	    }
 	}
+
+	list ($ret, $entityInfo) = GalleryCoreApi::describeEntity('GalleryItem');
+	if ($ret) {
+		return array($ret, null);
+	}
+
+	$ItemEdit['fieldLengths'] = array();
+	$ItemEdit['fieldLengths']['title'] =
+	     $this->_getSizesForMaxLength($entityInfo['GalleryItem']['members']['title']['size']);
 
 	$template->setVariable('ItemEdit', $ItemEdit);
 	$template->setVariable('controller', 'core.ItemEdit');

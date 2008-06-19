@@ -58,7 +58,7 @@
   {include file="gallery:modules/core/templates/MarkupBar.tpl"
 	   viewL10domain="modules_core"
 	   element="title_`$item.id`" firstMarkupBar=$smarty.foreach.itemLoop.first}
-  <input type="text" id="title_{$item.id}" size="60"
+  <input type="text" id="title_{$item.id}" size="60" maxlength="{$ItemEditCaptions.fieldLengths.title}"
    name="{g->formVar var="form[items][`$item.id`][title]"}" value="{$item.title}"/>
 
   <h4> {g->text text="Summary"} </h4>

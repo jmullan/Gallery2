@@ -57,7 +57,7 @@
 	     viewL10domain="modules_core"
 	     element="title" firstMarkupBar=true}
 
-    <input type="text" id="title" size="60"
+    <input type="text" id="title" size="60" maxlength="{$ItemEdit.fieldLengths.title}"
      name="{g->formVar var="form[title]"}" value="{$form.title}"/>
 
     {if !empty($form.error.title.missingRootTitle)}
