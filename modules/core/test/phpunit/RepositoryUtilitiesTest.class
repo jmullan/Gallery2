@@ -564,10 +564,11 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
     }
 
     function _getDescriptorForPreVerifyPackageTests() {
-	return array('files' => array(
+	return array('pluginId' => 'testplugin', 'pluginType' => 'module',
+		     'contents' => array('files' => array(
 		'f1' => array('packages' => array('p1'), 'bytes' => 1, 'hash' => md5('f1')),
 		'd2/f2' => array('packages' => array('p1'), 'bytes' => 1, 'hash' => md5('f2')),
-		'd3/f3' => array('packages' => array('p2'), 'bytes' => 1, 'hash' => md5('f3'))));
+		'd3/f3' => array('packages' => array('p2'), 'bytes' => 1, 'hash' => md5('f3')))));
     }
 
     function testPreVerifyPackageMissingOneDirectory() {

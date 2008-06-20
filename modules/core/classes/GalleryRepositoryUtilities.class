@@ -466,7 +466,7 @@ class GalleryRepositoryUtilities {
 	    return array();
 	}
 
-	foreach ($descriptor['files'] as $relativePath => $metaData) {
+	foreach ($descriptor['contents']['files'] as $relativePath => $metaData) {
 	    foreach ($metaData['packages'] as $descriptorPackage) {
 		$gallery->guaranteeTimeLimit(10);
 
