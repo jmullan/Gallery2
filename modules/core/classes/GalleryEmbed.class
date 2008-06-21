@@ -208,6 +208,27 @@ class GalleryEmbed /* implements GalleryEventListener */ {
     function checkActiveUser($activeUserId) {
 	global $gallery;
 	$session =& $gallery->getSession();
+	$phpVm = $gallery->getPhpVm();
+
+	if (!empty($activeUserId)) {
+	    list ($ret, $results) = GalleryCoreApi::getMapEntry(
+		'ExternalIdMap', array('entityId'), array('externalId' => $activeUserId, 
+							  'entityType' => 'GalleryUser'));
+	    if ($ret) {
+		return $ret;
+	    }
+	    if ($results->resultCount()) {
+		$row = $results->nextResult();
+		list ($ret, $isSiteAdmin)  = GalleryCoreApi::isUserInSiteAdminGroup($row[0]);
+		if ($ret) {
+		    return $ret;
+		}
+		/** @todo Figure out a way to enable site admin session timeouts when embedded */
+		if ($isSiteAdmin) {
+		    $session->put('session.siteAdminActivityTimestamp', $phpVm->time());
+		}
+	    }
+	}
 
 	$idInSession = $session->get('embed.id.externalUser');
 	if ($idInSession === $activeUserId) {

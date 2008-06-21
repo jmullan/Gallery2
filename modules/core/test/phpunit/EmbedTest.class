@@ -415,7 +415,7 @@ class EmbedTest extends GalleryTestCase {
 	global $gallery;
 	$session =& $gallery->getSession();
 
-	/* First, create test users an mappings */
+	/* First, create test users and mappings */
 	list ($ret, $users, $activeUserIds) = $this->_createTestUsers(1);
 	if ($ret) {
 	    return $ret;
@@ -444,6 +444,59 @@ class EmbedTest extends GalleryTestCase {
 	 * event handler which is mocked up and doesn't provide this functionality.
 	 */
 	$this->assertEventFired('Gallery::Login', $users[0]);
+    }
+
+    /* Check that timeout is reset after administrator login */
+    function testCheckActiveUserLoginAdministrator() {
+	global $gallery;
+	$session =& $gallery->getSession();
+	$phpVm = $gallery->getPhpVm();
+	$session->remove('session.siteAdminActivityTimestamp');
+
+	/* First, create test users and mappings */
+	list ($ret, $users, $activeUserIds) = $this->_createTestUsers(1);
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $this->_siteAdminGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	if ($ret) {
+	    return $ret;
+	}
+	$ret = GalleryCoreApi::addUserToGroup($users[0]->getId(), $this->_siteAdminGroupId);
+	if ($ret) {
+	    return $ret;
+	}
+	$session->put('embed.id.externalUser', $activeUserIds[0]);
+
+	$ret = GalleryEmbed::checkActiveUser($activeUserIds[0]);
+	if ($ret) {
+	    return $ret;
+	}
+	$lastActivityTimestamp = $session->get('session.siteAdminActivityTimestamp');
+	$this->assert($phpVm->time() - $lastActivityTimestamp < 1000, 'time out reset');
+    }
+
+    /* Check that timeout is not reset after non-administrator login */
+    function testCheckActiveUserLoginNonAdministrator() {
+	global $gallery;
+	$session =& $gallery->getSession();
+	$phpVm = $gallery->getPhpVm();
+	$session->remove('session.siteAdminActivityTimestamp');
+
+	/* First, create test users and mappings */
+	list ($ret, $users, $activeUserIds) = $this->_createTestUsers(1);
+	if ($ret) {
+	    return $ret;
+	}
+	$session->put('embed.id.externalUser', $activeUserIds[0]);
+
+	$ret = GalleryEmbed::checkActiveUser($activeUserIds[0]);
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assert(is_null($session->get('session.siteAdminActivityTimestamp')),  'timestamp'); 
     }
 
     function testCheckApiVersionOnInit() {
