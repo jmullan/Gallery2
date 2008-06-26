@@ -63,7 +63,7 @@ class BuildDerivativesTask extends MaintenanceTask {
 	  [DerivativeImage::id]
 	FROM
 	  [DerivativeImage]
-	ORDER BY [DerivativeImage::id]
+	ORDER BY [DerivativeImage::id] DESC
 	';
 	$gallery->guaranteeTimeLimit(120);
 	list ($ret, $derivatives) = $gallery->search($query);
@@ -95,6 +95,8 @@ class BuildDerivativesTask extends MaintenanceTask {
 	  [GalleryDataItem::id]
 	HAVING
 	  COUNT([GalleryDerivative::derivativeType]) = 0
+        ORDER BY
+          [GalleryDataItem::id] DESC
 	';
 	$gallery->guaranteeTimeLimit(120);
 	list ($ret, $items) = $gallery->search($query);
