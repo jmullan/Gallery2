@@ -2548,6 +2548,8 @@ class CoreModuleExtras {
 	case '1.2.32':
 	    /* Set the default baseUri in config.php */
 	case '1.2.33':
+	case '1.2.34':
+	    /* Change the template compile directory to include the themeId */
 
 	case 'end of upgrade path':
 	    /*
@@ -2903,6 +2905,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	    $edit['replacement'] = '$gallery->setConfig(\'baseUri\', \'' . $urlPath . '\');';
 	    $configChanges[] = array('remove' => array(), 'add' => array(), 'edit' => array($edit));
 	case '1.2.33':
+	case '1.2.34':
 
 	case 'end of upgrade path':
 	    /*
