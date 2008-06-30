@@ -1,106 +1,139 @@
 {*
  * $Revision$
- * Read this before changing templates!  http://codex.gallery2.org/Gallery2:Editing_Templates
+ * If you want to customize this file, do not edit it directly since future upgrades
+ * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
+ * version.  Gallery will look for that file first and use it if it exists.
  *}
+{literal}
+<script type='text/javascript'>
+  function submitBasicMode(){
+    document.getElementById('formDigibugCustomerId').value = '';
+    document.getElementById('formDigibugEventId').value = '';
+    document.getElementById('digibug-mode').value = 'gallery';
+    document.getElementById('siteAdminForm').submit();
+  }
+  function submitAdvancedMode(){
+    re = /^[\d]{1,6}$/;
+    if (!document.getElementById('formDigibugCustomerId').value.match(re)) {
+      document.getElementById('formDigibugCustomerId').style.border = '1px solid red';
+      alert('You must enter a valid digibug customer id');
+      return;
+    } else {
+      document.getElementById('formDigibugCustomerId').style.border = '1px solid black';
+    }
+    if (!document.getElementById('formDigibugEventId').value.match(re)) {
+      document.getElementById('formDigibugEventId').style.border = '1px solid red';
+      alert('You must enter a valid digibug event id.');
+      return;
+    } else {
+      document.getElementById('formDigibugEventId').style.border = '1px solid black';
+    }
+    document.getElementById('digibug-mode').value = 'owner';
+    document.getElementById('siteAdminForm').submit();
+  }
+</script>
+{/literal}
+
 <div class="gbBlock gcBackground1">
   <h2> {g->text text="Digibug Photo Printing Settings"} </h2>
 </div>
-
 {if isset($status.saved)}
-<div class="gbBlock"><h2 class="giSuccess">
-  {g->text text="Settings saved successfully"}
-</h2></div>
-{/if}
-
 <div class="gbBlock">
-  <p class="giDescription">
-  {g->text text="Sell your photos as prints or printed gift products!"}<br />
-  <input type="radio" id="rbDigibugGalleryId" name="{g->formVar var="form[digibugIdChoice]"}" 
-    value="gallery" {if $form.digibugIdChoice == 'gallery'}checked="checked"{/if} 
-    onclick="setCustom(0)" />
-  <label for="rbDigibugGalleryId">{g->text text="Simple mode."}</label><br />
-  {g->text text="A percentage of the proceeds of sales are donated to the Gallery project. Thank you for your support!"}
-  </p>
-  <p class="giDescription">
-  <input type="radio" id="rbDigibugCustomerId" name="{g->formVar var="form[digibugIdChoice]"}" 
-    value="owner" {if $form.digibugIdChoice == 'owner'}checked="checked"{/if} 
-    onclick="setCustom(1)" />
-  <label for="rbDigibugCustomerId">{g->text text="Advanced mode."}</label><br />
-  {g->text text="Visit the %sDigibug configuration page%s for information on registering for a Digibug Pro Photographer account, and to learn how to obtain your Digibug Company ID and Event ID.  For general information, please refer to the %sDigibug.com website.%s"
-    arg1="<a href=\"http://www.digibug.com/redirects/digibugapi_how_to.php\">" arg2="</a>"
-    arg3="<a href=\"http://www.digibug.com/\">" arg4="</a>"}
-  </p>
-  
-  <script type="text/javascript">
-    // <![CDATA[
-    var formCustomerId = '{$form.digibugCustomerId}';
-    var formPricelistId = '{$form.digibugPricelistId}';
-    {literal}
-    function setCustom(val) {
-      var customerId = document.getElementById('formDigibugCustomerId');
-      var pricelistId = document.getElementById('formDigibugEventId');
-      if (val == 0) {
-      	customerId.value = '';
-	customerId.disabled = true;
-	pricelistId.value = '';
-	pricelistId.disabled = true;
-      } else {
-      	customerId.value = formCustomerId;
-	customerId.disabled = false;
-	pricelistId.value = formPricelistId;
-	pricelistId.disabled = false;
-      }
-    }
-    {/literal}
-    // ]]>
-  </script>
-  
-  <table class="gbDataTable">
-    <tr><td>
-      <label for="formDigibugCustomerId">
-	{g->text text="Digibug Company ID"}
-      </label>
-    </td><td>
-      <input type="text" size="6" id="formDigibugCustomerId" autocomplete="off"
-       name="{g->formVar var="form[digibugCustomerId]"}"
-       value={if $form.digibugIdChoice == 'owner'}"{$form.digibugCustomerId}"
-       	     {else}"" disabled="disabled"{/if}/>
-    </td></tr>
-    {if isset($form.error.digibugCustomerId.invalid)}
-    <tr><td colspan="2">
-      <div class="giError">
-	{g->text text="You must enter a valid digibug customer id."}
-      </div>
-    </td></tr>
-    {/if}
-    <tr><td>
-      <label for="formDigibugEventId">
-	{g->text text="Event ID"}
-      </label>
-    </td><td>
-      <input type="text" size="6" id="formDigibugEventId" autocomplete="off"
-       name="{g->formVar var="form[digibugPricelistId]"}" 
-       value={if $form.digibugIdChoice == 'owner'}"{$form.digibugPricelistId}"
-             {else}"" disabled="disabled"{/if}/>
-    </td></tr>
-    {if isset($form.error.digibugPricelistId.invalid)}
-    <tr><td colspan="2">
-      <div class="giError">
-	{g->text text="Please create an event or use your default event id as your pricelist id."}
-      </div>
-    </td></tr>
-    {/if}
-  </table>
+  <h2 class="giSuccess">
+    {g->text text="Settings saved successfully"}
+  </h2>
 </div>
+{/if}
+<div class="dig-logo">
+</div>
+<div class="gbBlock">
+  <div class="dig-intro">
+    <p class="dig-text">
+      {g->text text="Digibug offers you two options for turning your photos into a wide variety of prints, gifts and games. Choose your solution and get started today!"}
+  </div>
 
-<div class="gbBlock gcBackground1">
-  <input type="submit" class="inputTypeSubmit"
-   name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
-  {if $AdminDigibug.isConfigure}
-    <input type="submit" class="inputTypeSubmit"
-     name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
-  {else}
-    <input type="submit" class="inputTypeSubmit"
-     name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}"/>
-  {/if}
+  <div class="dig-modes">
+    <div>
+      <input id="digibug-mode" type="hidden" value="gallery" name="{g->formVar var="form[digibugIdChoice]"}"/>
+      <input id="digibug-submit" type="hidden" value="Save" name="{g->formVar var="form[action][save]"}"/>
+    </div>
+    <div class="dig-basic-mode">
+      <div class="dig-mode-top"></div>
+      <div class="dig-mode-body">
+        <div class="mode-title">
+  	{g->text text="Digibug Basic"}
+	<br/>
+	{g->text text="Fast Easy Photo Fulfillment"}
+        </div>
+        <div class="mode-text">
+  	{g->text text="Power up your Gallery with professional level fulfillment from Kodak. Just use Digibug Basic and there's nothing else to do - no registration, no administration, no hassles."}
+        </div>
+        <div class="mode-items">
+	  <ul class="mode-item">
+	    <li>{g->text text="Matte and Glossy prints, from 4x6 to as big as 30x40"}</li>
+	    <li>{g->text text="Great photo gifts like canvases, apparel, bags, puzzles, mugs and sports memorabilia and more"}</li>
+	    <li>{g->text text="Outstanding quality and customer service"}</li>
+	  </ul>
+        </div>
+
+  	{if $form.digibugIdChoice != 'gallery'}
+        <div class="dig-small-rounded clickable" onclick="submitBasicMode();">
+	  <br/>
+	  {g->text text="CLICK HERE to switch back to Basic mode."}
+	</div>
+	{else}
+	<div class="dig-small-rounded">
+	  <br/>
+	  {g->text text="You are currently using Basic mode!"}
+        </div>
+	{/if}
+
+      </div>
+      <div class="dig-mode-bottom"></div>
+    </div>
+    <div class="dig-advanced-mode">
+      <div class="dig-mode-top"></div>
+      <div class="dig-mode-body">
+        <div class="mode-title">
+  	{g->text text="Digibug ADVANCED"}
+	<br/>
+	{g->text text="The Pro's Solution"}
+        </div>
+        <div class="mode-text">
+  	{g->text text="Digibug ADVANCED allows you to set your own price for photos and gifts. Simply provide us with your account information and we'll send you a check each month with your profits. It's the perfect online retail business solution for a photographer - no inventory, no overhead... just profits!"}
+        </div>
+        <div class="mode-text">
+  	{g->text text="Enjoy the same range of professional level photo prints and gifts, but set your own price and charge what you believe your photos are worth. We'll take care of the rest."}
+        </div>
+        <div class="mode-text dig-sign-in" style="width: 120px;">
+  	{g->text text="New to Digibug ADVANCED?"}
+	<br/> <br/>
+        {g->text text="%sSign up%s to get started"
+  	arg1="<a style=\"color:black;font-size:16px;font-weight:bold;text-decoration:underline;\" href=\"http://www.digibug.com/signup.php\">"
+	arg2="</a>"}
+        </div>
+        <div class="advanced-mode-form">
+	  <div class="mode-text">{g->text text="Do you have a Digibug Company ID and Event ID?"}</div>
+	  <div class="dig-company">
+	    <div class="dig-label">{g->text text="Company ID:"}</div>
+	    <div class="dig-element">
+	      <input type="text" size="6" id="formDigibugCustomerId"
+		name="{g->formVar var="form[digibugCustomerId]"}"
+		value="{if $form.digibugIdChoice != 'gallery'}{$form.digibugCustomerId}{/if}"/>
+	    </div>
+	  </div>
+	  <div class="dig-event" style="padding-bottom: 20px">
+	    <div class="dig-label">{g->text text="Event ID:"}</div>
+	    <div class="dig-element">
+	      <input type="text" size="6" id="formDigibugEventId"
+		name="{g->formVar var="form[digibugPricelistId]"}"
+		value="{if $form.digibugIdChoice != 'gallery'}{$form.digibugPricelistId}{/if}"/>
+	    </div>
+  	  </div>
+          <div onclick="submitAdvancedMode();" class="dig-save">{g->text text="SAVE"}</div>
+        </div>
+      </div>
+      <div class="dig-mode-bottom"></div>
+    </div>
+  </div>
 </div>

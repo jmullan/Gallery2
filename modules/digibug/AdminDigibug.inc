@@ -67,7 +67,7 @@ class AdminDigibugController extends GalleryController {
 		}
 
 		if ($form['digibugIdChoice'] == 'gallery') {
-		    foreach (array('digibugIdChoice' => 'gallery', 'digibugCustomerId' => '3153', 
+		    foreach (array('digibugIdChoice' => 'gallery', 'digibugCustomerId' => '3153',
 				   'digibugPricelistId' => '8491') as $key => $value) {
 			$ret = $module->setParameter($key, $value);
 			if ($ret) {
@@ -75,7 +75,7 @@ class AdminDigibugController extends GalleryController {
 			}
 		    }
 		} else {
-		    foreach (array('digibugIdChoice', 'digibugCustomerId', 'digibugPricelistId') 
+		    foreach (array('digibugIdChoice', 'digibugCustomerId', 'digibugPricelistId')
 			     as $key) {
 			$ret = $module->setParameter($key, trim($form[$key]));
 			if ($ret) {
@@ -145,7 +145,7 @@ class AdminDigibugView extends GalleryView {
 	    }
 	    $form['formName'] = 'AdminDigibug';
 	}
-
+	$template->style('modules/digibug/digibug.css');
 	$template->setVariable('AdminDigibug', array('isConfigure' => !$isActive));
 	$template->setVariable('controller', 'digibug.AdminDigibug');
 	return array(null, array('body' => 'modules/digibug/templates/AdminDigibug.tpl'));
