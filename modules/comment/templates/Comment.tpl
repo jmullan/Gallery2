@@ -19,7 +19,7 @@
 {if $can.delete}
 {if $needSeparator}|{/if}
 <span class="delete">
-  <a{if !empty($ajaxChangeCallback)} onclick="{$ajaxChangeCallback}({$comment.randomId}, 'delete'); return false;"{/if} href="{g->url arg1="view=comment.DeleteComment" arg2="itemId=`$item.id`" arg3="commentId=`$comment.id`" arg4="return=true"}">{g->text text="delete"}</a>
+  <a{if !empty($ajaxChangeCallback)} onclick="{$ajaxChangeCallback}('{$comment.randomId}', 'delete'); return false;"{/if} href="{g->url arg1="view=comment.DeleteComment" arg2="itemId=`$item.id`" arg3="commentId=`$comment.id`" arg4="return=true"}">{g->text text="delete"}</a>
 </span>
 {assign var="needSeparator" value="true"}
 {/if}
@@ -27,7 +27,7 @@
 {if !empty($can.markNotSpam)}
 {if $needSeparator}|{/if}
 <span class="marknotspam">
-  <a href="javascript:{$ajaxChangeCallback}({$comment.randomId}, 'despam');">{g->text text="mark as not spam"}</a>
+  <a href="javascript:{$ajaxChangeCallback}('{$comment.randomId}', 'despam');">{g->text text="mark as not spam"}</a>
 </span>
 {assign var="needSeparator" value="true"}
 {/if}
@@ -35,7 +35,7 @@
 {if !empty($can.markSpam)}
 {if $needSeparator}|{/if}
 <span class="markSpam">
-  <a href="javascript:{$ajaxChangeCallback}({$comment.randomId}, 'spam');">{g->text text="mark as spam"}</a>
+  <a href="javascript:{$ajaxChangeCallback}('{$comment.randomId}', 'spam');">{g->text text="mark as spam"}</a>
 </span>
 {assign var="needSeparator" value="true"}
 {/if}
