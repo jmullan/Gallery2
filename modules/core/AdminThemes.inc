@@ -469,11 +469,16 @@ class AdminThemesView extends GalleryView {
 		    $settingTypes[$setting['type']] = 1;
 		}
 	    }
+        }
 
-	    if (isset($settingTypes['block-list'])) {
-		/* Query param is "version".. bump if data format in js changes */
-		$template->javascript('lib/javascript/BlockSelectWidget.js?1');
-	    }
+	if ($theme && isset($AdminThemes['settings'])) {
+	     foreach ($AdminThemes['settings'] as $setting) {
+		if ($setting['type'] == 'block-list') {
+		    /* Query param is "version".. bump if data format in js changes */
+		    $template->javascript('lib/javascript/BlockSelectWidget.js?1');
+		    break;
+		}
+	     }
 	}
 
 	$AdminThemes['themes'] = $themes;
