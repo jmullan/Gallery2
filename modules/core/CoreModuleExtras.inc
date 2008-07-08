@@ -200,7 +200,7 @@ class CoreModuleExtras {
 			   'default.newAlbumsUseDefaults' => 'false',
 			   'session.lifetime' => 21 * 86400, /* Three weeks */
 			   'session.inactivityTimeout' => 7 * 86400, /* One week */
-			   'session.siteAdministrationTimeout' => 15 * 60, /* 15 minutes */
+			   'session.siteAdministrationTimeout' => 30 * 60, /* 30 minutes */
 			   'misc.markup' => 'bbcode',
 			   'lock.system' => $flockType,
 			   'format.date' => '%x',
@@ -2541,7 +2541,7 @@ class CoreModuleExtras {
 	    /* Implement Multipart request downloads for Language Manager */
 	case '1.2.31':
 	    /* Implement re-authentication for Site Admin Access */
-	    $ret = $module->setParameter('session.siteAdministrationTimeout', 15 * 60);
+	    $ret = $module->setParameter('session.siteAdministrationTimeout', 30 * 60);
 	    if ($ret) {
 		return $ret;
 	    }

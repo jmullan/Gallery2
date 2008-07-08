@@ -126,7 +126,7 @@
       {g->text text="Site Administration Session Timeout"}
     </td><td>
       <select name="{g->formVar var="form[session][siteAdministrationTimeout]"}">
-	{html_options options=$AdminCore.siteAdminInactivityTimeout selected=$form.session.siteAdministrationTimeout}
+	{html_options options=$AdminCore.sessionTimeList selected=$form.session.siteAdministrationTimeout}
       </select>
     </td>
   </tr></table>
