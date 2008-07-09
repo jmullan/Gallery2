@@ -185,7 +185,8 @@ class ShowAllCommentsViewTest extends GalleryViewTestCase {
 	$gallery->_phpVm->setReply('headers_sent', array(), false);
 	$gallery->_phpVm->setReply('header', array('Cache-Control: no-cache', ''), true);
 	$gallery->_phpVm->setReply('header', array('Pragma: no-cache', ''), true);
-	$gallery->_phpVm->setReply('header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
+	$gallery->_phpVm->setReply(
+		'header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	
 	$template = new UnitTestTemplate();
@@ -214,7 +215,8 @@ class ShowAllCommentsViewTest extends GalleryViewTestCase {
 	$gallery->_phpVm->setReply('headers_sent', array(), false);
 	$gallery->_phpVm->setReply('header', array('Cache-Control: no-cache', ''), true);
 	$gallery->_phpVm->setReply('header', array('Pragma: no-cache', ''), true);
-	$gallery->_phpVm->setReply('header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
+	$gallery->_phpVm->setReply(
+		'header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	
 	list ($ret, $anonymousUserId) = GalleryCoreApi::getAnonymousUserId();

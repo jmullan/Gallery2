@@ -67,7 +67,7 @@ class CommentCallbacks {
 			return $ret;
 		    }
 		}
-		/* Set headers only, since framework doesn't allow include to pollute the namespace */
+
 		if (!$anonymousViewable) {
 		    $expires = $gallery->getHttpDate($phpVm->time() - 7*24*3600);
 		    $phpVm->header('Cache-Control: no-cache');

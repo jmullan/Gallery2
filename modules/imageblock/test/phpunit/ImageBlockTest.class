@@ -283,11 +283,13 @@ class ImageBlockTest extends GalleryTestCase {
 	$gallery->_phpVm = new UnitTestPhpVm();
 	$gallery->_phpVm->setReply('rand', '*', 260300);
 	$gallery->_phpVm->setReply('headers_sent', array(), false);
-	$gallery->_phpVm->setReply('header', array('Content-type: text/html; charset=UTF-8', ''), true);
+	$gallery->_phpVm->setReply(
+		'header', array('Content-type: text/html; charset=UTF-8', ''), true);
 	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
 	$gallery->_phpVm->setReply('header', array('Cache-Control: no-cache', ''), true);
 	$gallery->_phpVm->setReply('header', array('Pragma: no-cache', ''), true);
-	$gallery->_phpVm->setReply('header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
+	$gallery->_phpVm->setReply(
+		'header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
 	
 	$template = new ImageBlockDummyGalleryTemplate();
 	$external->setTemplate($template);
@@ -307,11 +309,13 @@ class ImageBlockTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('show', 'heading');
 
 	$gallery->_phpVm->setReply('headers_sent', array(), false);
-	$gallery->_phpVm->setReply('header', array('Content-type: text/html; charset=UTF-8', ''), true);
+	$gallery->_phpVm->setReply(
+		'header', array('Content-type: text/html; charset=UTF-8', ''), true);
 	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
 	$gallery->_phpVm->setReply('header', array('Cache-Control: no-cache', ''), true);
 	$gallery->_phpVm->setReply('header', array('Pragma: no-cache', ''), true);
-	$gallery->_phpVm->setReply('header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
+	$gallery->_phpVm->setReply(
+		'header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
 	$template = new ImageBlockDummyGalleryTemplate();
 	$external->setTemplate($template);
 	$ret = $external->renderImmediate(array(), array());
@@ -371,11 +375,13 @@ class ImageBlockTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('maxSize', '500');
 
 	$gallery->_phpVm->setReply('headers_sent', array(), false);
-	$gallery->_phpVm->setReply('header', array('Content-type: text/html; charset=UTF-8', ''), true);
+	$gallery->_phpVm->setReply(
+		'header', array('Content-type: text/html; charset=UTF-8', ''), true);
 	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
 	$gallery->_phpVm->setReply('header', array('Cache-Control: no-cache', ''), true);
 	$gallery->_phpVm->setReply('header', array('Pragma: no-cache', ''), true);
-	$gallery->_phpVm->setReply('header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
+	$gallery->_phpVm->setReply(
+		'header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
 	$template = new ImageBlockDummyGalleryTemplate();
 	$external->setTemplate($template);
 	$ret = $external->renderImmediate(array(), array());

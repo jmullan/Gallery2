@@ -496,7 +496,8 @@ class ViewTest extends GalleryTestCase {
 	$gallery->_phpVm->setReply('headers_sent', array(), false);
 	$gallery->_phpVm->setReply('header', array('Cache-Control: no-cache', ''), true);
 	$gallery->_phpVm->setReply('header', array('Pragma: no-cache', ''), true);
-	$gallery->_phpVm->setReply('header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
+	$gallery->_phpVm->setReply(
+		'header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
 
 	$template = new UnitTestTemplate();
 	$view = new ViewTestAdminView();
@@ -524,7 +525,8 @@ class ViewTest extends GalleryTestCase {
 	$gallery->_phpVm->setReply('headers_sent', array(), false);
 	$gallery->_phpVm->setReply('header', array('Cache-Control: no-cache', ''), true);
 	$gallery->_phpVm->setReply('header', array('Pragma: no-cache', ''), true);
-	$gallery->_phpVm->setReply('header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
+	$gallery->_phpVm->setReply(
+		'header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
 
 	$template = new UnitTestTemplate();
 	$template->setVariable('head', array('meta' => array()));
@@ -587,7 +589,8 @@ class ViewTest extends GalleryTestCase {
 	$gallery->_phpVm->setReply('headers_sent', array(), false);
 	$gallery->_phpVm->setReply('header', array('Cache-Control: no-cache', ''), true);
 	$gallery->_phpVm->setReply('header', array('Pragma: no-cache', ''), true);
-	$gallery->_phpVm->setReply('header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
+	$gallery->_phpVm->setReply(
+		'header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
 
 	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
 	if ($ret) {
@@ -670,7 +673,8 @@ class ViewTest extends GalleryTestCase {
 	$gallery->_phpVm->setReply('headers_sent', array(), false);
 	$gallery->_phpVm->setReply('header', array('Cache-Control: no-cache', ''), true);
 	$gallery->_phpVm->setReply('header', array('Pragma: no-cache', ''), true);
-	$gallery->_phpVm->setReply('header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
+	$gallery->_phpVm->setReply(
+		'header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
 
 	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
 	if ($ret) {

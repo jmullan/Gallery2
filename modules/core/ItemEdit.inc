@@ -177,9 +177,10 @@ class ItemEditController extends GalleryController {
  */
 class ItemEditView extends GalleryView {
 
-	/**
+    /**
      * Returns sizes for "maxlength" in forms
-     * @todo: this function is duplicated in ItemEditCaptions.inc, so it needs to be consolidated somehow
+     * @todo This function is duplicated in ItemEditCaptions.inc, so it needs to be consolidated
+     *       somehow.
      * @param integer $value is the value from 
      * @return size for "maxlength" in form
      * @access private
