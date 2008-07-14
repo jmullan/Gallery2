@@ -14,7 +14,7 @@
       {if $smarty.capture.exifBlock|trim}
 	{assign var="showExifLink" value=true}
 	<div id="exif" class="gcPopupBackground"
-	 style="position:absolute; left:0px; top:0px; padding:1px; visibility:hidden;">
+	 style="position:absolute; left:0px; top:0px; padding:1px; visibility:hidden; z-index:5000">
 	  <table cellspacing="0" cellpadding="0">
 	    <tr>
 	      <td style="padding-left:5px;">
