@@ -597,7 +597,8 @@ class UserAndGroupTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$ret = GalleryCoreApi::removeUserPermission($subSubAlbumWithoutDeletePermission2->getId(), $user1->getId(), 'core.delete', false);
+	$ret = GalleryCoreApi::removeUserPermission($subSubAlbumWithoutDeletePermission2->getId(),
+						    $user1->getId(), 'core.delete', false);
 	if ($ret) {
 	    return $ret;
 	}
@@ -628,7 +629,8 @@ class UserAndGroupTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$ret = GalleryCoreApi::removeUserPermission($subSubSubItemWithoutDeletePermission2->getId(), $user1->getId(), 'core.delete', false);
+	$ret = GalleryCoreApi::removeUserPermission($subSubSubItemWithoutDeletePermission2->getId(),
+						    $user1->getId(), 'core.delete', false);
 	if ($ret) {
 	    return $ret;
 	}
@@ -1463,11 +1465,27 @@ class UserAndGroupTest extends GalleryTestCase {
 	$this->assert($user->isCorrectPassword('Ab1#+$_ ;]\?.,'), 'Ab1#+$_ ;]\?.,');
 	$user->changePassword('pass&word>');
 	$this->assert($user->isCorrectPassword('pass&word>'), 'pass&word>');
+    }
+
+    function testCheckUserPasswordSimpleMd5Legacy() {
+	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assert(!empty($user), 'factory error');
 
 	/* We still support old style simple md5 (G1 thru 1.4.0, G2 thru alpha-4) */
 	$user->setHashedPassword(md5('password'));
 	$this->assert($user->isCorrectPassword('password'), 'password');
+    }
 
+    function testCheckUserPasswordEntitiesLegacy() {
+	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assert(!empty($user), 'factory error');
+    
 	/*
 	 * 2.0 was released with installer not entitizing password prior to hashing, while
 	 * site admin(edit/create), user admin and registration all did.  Rather than simply
@@ -1482,5 +1500,51 @@ class UserAndGroupTest extends GalleryTestCase {
 	$this->assert($user->isCorrectPassword($entityPassword), 'check password entitized');
 	$this->assert($user->isCorrectPassword($password), 'check password original');
     }
+
+    function testCheckUserPasswordPhpassFallback() {
+	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assert(!empty($user), 'factory error');
+
+	set_error_handler('UserAndGroupTest_error_handler');
+
+	/* First test with a precomputed hash (12 iterations, also checks file includes) */
+	$user->setHashedPassword('$P$FFfHBaR3tCn6NGNEMqrhZZ/1Bi6JQ81');
+	$this->assert(!$user->isCorrectPassword('wrong password'), 'wrong password');
+	$this->assert($user->isCorrectPassword('password'), 'password');
+
+	/*
+	 * Verify that the number of iterations of a stored password is independent of the
+	 * configuration parameter.
+	 */
+	if (class_exists('PasswordHash')) {
+	    $hashGenerator1 = new PasswordHash(8, true);
+	    $user->setHashedPassword($hashGenerator1->HashPassword('password'));
+	    $this->assert($user->isCorrectPassword('password'), 'password, 8 iterations');
+	    $this->assert(!$user->isCorrectPassword('wrong password'),
+			  'wrong password, 8 iterations');
+
+	    $hashGenerator1 = new PasswordHash(13, true);
+	    $user->setHashedPassword($hashGenerator1->HashPassword('password'));
+	    $this->assert($user->isCorrectPassword('password'), 'password, 13 iterations');
+	} else {
+	    $this->fail('class PasswordHash should be defined at this point');
+	}
+    }
+}
+
+/*
+ * Allow the suppression of expected errors.
+ */
+function UserAndGroupTest_error_handler($errno, $errstr, $errfile, $errline) {
+    if (error_reporting() == 0 && strpos($errstr, 'fopen(/dev/urandom)') !== false) {
+	/* The @ error suppression operator was used, so don't log this error. */
+	return false;
+    }
+
+    /* Else call our default error_handler */
+    return PHPUnit_error_handler($errno, $errstr, $errfile, $errline);
 }
 ?>
