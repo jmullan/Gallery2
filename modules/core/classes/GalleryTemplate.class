@@ -557,7 +557,15 @@ class GalleryTemplate {
 	$view = new GalleryView();
 	list ($ret, $itemId) = $view->getItem();
 	if ($ret) {
-	    return array($ret, null);
+	    /*
+	     * Missing object / permission denied errors are handled elsewhere.
+	     * At this point we want to keep things going to render a page.
+	     */
+	    if ($ret->getErrorCode() & (ERROR_MISSING_OBJECT | ERROR_PERMISSION_DENIED)) {
+		$itemId = null;
+	    } else {
+		return array($ret, null);
+	    }
 	}
 
 	list ($ret, $theme) = $view->loadThemeForItem($itemId);

@@ -61,6 +61,7 @@ class TemplateTest extends GalleryTestCase {
 	$tplVersion = $module->getTemplateVersion();
 	$this->_baseDirOverride = '/legal/path/themes/mockTheme/templates/core_' . $tplVersion;
 
+	$this->_origPlatform =& $gallery->getPlatform();
 	$this->_mockPlatform = new TemplateTestMockPlatform();
 	$gallery->setPlatform($this->_mockPlatform);
     }
@@ -240,6 +241,106 @@ class TemplateTest extends GalleryTestCase {
 	    array('<link attr1="value1" attr2="value2"/>' => 1),
 	    $head['link']);
     }
+
+    function _createAlbumWithNonDefaultTheme() {
+	GalleryPluginHelper_medium::setPluginInstance('theme', 'templatetestfake',
+						      new TemplateTestFakeTheme());
+	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId(),
+							array('theme' => 'templatetestfake'));
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+	$this->_markForCleanup($album);
+
+	return array(null, $album, 'templatetestfake');
+    }
+
+    function testGetThemeIdWithViewPermission() {
+	global $gallery;
+	$gallery->setPlatform($this->_origPlatform);
+
+	list ($ret, $album, $fakeThemeId) = $this->_createAlbumWithNonDefaultTheme();
+	if ($ret) {
+	    return $ret;
+    	}
+
+	$ret = GalleryCoreApi::addUserPermission($album->getId(),
+						 $gallery->getActiveUserId(), 'core.view');
+	if ($ret) {
+	    return $ret;
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $album->getId());
+
+	/* Execute the function under test */
+	$template = new GalleryTemplate('');
+	list ($ret, $themeId) = $template->_getThemeId();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals($fakeThemeId, $themeId, 'wrong themeid');
+    }
+
+    function testGetThemeIdForMissingObject() {
+	global $gallery;
+	$gallery->setPlatform($this->_origPlatform);
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_getUnusedId());
+
+	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId(),
+								   'GalleryAlbumItem');
+	if ($ret) {
+	    return $ret;
+	}
+	list ($ret, $expectedThemeId) = GalleryCoreApi::fetchThemeId($rootAlbum);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$template = new GalleryTemplate('');
+	list ($ret, $themeId) = $template->_getThemeId();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals($expectedThemeId, $themeId, 'wrong themeid');
+    }
+
+    function testGetThemeIdWithoutViewPermissionHasFallback() {
+    	global $gallery;
+	$gallery->setPlatform($this->_origPlatform);
+
+	list ($ret, $album, $fakeThemeId) = $this->_createAlbumWithNonDefaultTheme();
+	if ($ret) {
+	    return $ret;
+    	}
+
+	$ret = GalleryCoreApi::removeItemPermissions($album->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $album->getId());
+
+	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId(),
+								   'GalleryAlbumItem');
+	if ($ret) {
+	    return $ret;
+	}
+	list ($ret, $expectedThemeId) = GalleryCoreApi::fetchThemeId($rootAlbum);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$template = new GalleryTemplate('');
+	list ($ret, $themeId) = $template->_getThemeId();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals($expectedThemeId, $themeId, 'wrong themeid');
+    }
 }
 
 class TemplateTestMockPlatform {
@@ -283,5 +384,19 @@ class TemplateTestMockSmarty {
 	}
     }
 
+}
+
+class TemplateTestFakeTheme {
+    function isActive() {
+	return array(null, true);
+    }
+
+    function getId() {
+	return 'templatetestfake';
+    }
+
+    function fetchParameters($itemId=0) {
+    	return array(null, array());
+    }
 }
 ?>
