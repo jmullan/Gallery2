@@ -2550,6 +2550,8 @@ class CoreModuleExtras {
 	case '1.2.33':
 	case '1.2.34':
 	    /* Change the template compile directory to include the themeId */
+	case '1.2.35':
+	    /* R2.3 RC1 */
 
 	case 'end of upgrade path':
 	    /*
@@ -2906,6 +2908,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	    $configChanges[] = array('remove' => array(), 'add' => array(), 'edit' => array($edit));
 	case '1.2.33':
 	case '1.2.34':
+	case '1.2.35':
 
 	case 'end of upgrade path':
 	    /*
