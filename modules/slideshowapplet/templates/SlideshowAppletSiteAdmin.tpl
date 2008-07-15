@@ -131,7 +131,7 @@
       <td>{g->text text="should the pictures be shown in random order?"}</td>
     </tr>
   </table>
-  <p><a href="http://svn.sourceforge.net/viewvc/*checkout*/gallery/trunk/gallery_remote/defaults.properties" target="_blank">
+  <p><a href="http://gallery.svn.sourceforge.net/viewvc/*checkout*/gallery/trunk/gallery_remote/defaults.properties" target="_blank">
 	{g->text text="Complete list of variables"}</a></p>
 </div>
 </td></tr></table>
