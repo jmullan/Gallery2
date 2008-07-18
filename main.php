@@ -435,6 +435,15 @@ function _GalleryMain($embedded=false, $template=null) {
 	 */
 	$data = array();
 	if ($view->isImmediate()) {
+	    if ($view->autoCacheControl()) {
+		/* r17660 removed the default on the $template parameter */
+		$null = null;
+		$ret = $view->setCacheControl($null);
+		if ($ret) {
+		    return array($ret, null);
+		}
+	    }
+
 	    $status = isset($results['status']) ? $results['status'] : array();
 	    $error = isset($results['error']) ? $results['error'] : array();
 	    $ret = $view->renderImmediate($status, $error);

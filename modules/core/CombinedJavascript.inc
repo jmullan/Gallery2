@@ -106,5 +106,12 @@ class CombinedJavascriptView extends GalleryView {
 	}
 	return null;
     }
+
+    /**
+     * @see GalleryView::autoCacheControl
+     */
+    function autoCacheControl() {
+	return false;
+    }
 }
 ?>

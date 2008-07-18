@@ -215,5 +215,41 @@ class CombinedJavascriptTest extends GalleryImmediateViewTestCase {
 
 	$this->assertEquals('', $results);
     }
+
+    /* Regression test. See bug 2021019 */
+    function testAutoCacheControlDoesNotConflict() {
+	global $gallery;
+
+	/*
+	 * Go through the complete life cycle of the view under the control of a mock VM for this
+	 * test. (Verify all header() calls, including those from loadView())
+	 */
+	GalleryCoreApi::requireOnce('modules/core/classes/GalleryView.class');
+	list ($ret, $this->_view) = GalleryView::loadView('core.CombinedJavascript');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$_SERVER['HTTP_ACCEPT_ENCODING'] = 'something_that_doesnt_include_compression';
+	GalleryUtilities::putRequestVariable('key', '123');
+	$gallery->_phpVm->setReply('function_exists', array('getallheaders'), false);
+	$gallery->_phpVm->setReply('header', array('Cache-Control: public', null), null);
+	$gallery->_phpVm->setReply(
+	    'header', array('Content-type: text/javascript; charset=UTF-8', null), null);
+	$gallery->_phpVm->setReply(
+	    'header', array('Last-Modified: Thu, 01 Jan 1970 00:00:01 GMT', null), null);
+	$gallery->_phpVm->setReply(
+	    'header', array('Expires: Tue, 19 Jan 2038 03:14:07 GMT', null), null);
+
+	$this->_prepareToReadFromDiskCache(
+	    'module/_all/0/0/CombinedJavascript_123.inc', '|' . serialize('regular data'));
+
+	list ($ret, $results) = $this->_renderImmediate();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals('regular data', $results);
+    }
 }
 ?>

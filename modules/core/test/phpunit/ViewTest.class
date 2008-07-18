@@ -669,12 +669,6 @@ class ViewTest extends GalleryTestCase {
         global $gallery;
 	$gallery->_phpVm = new UnitTestPhpVm();
 	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
-	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
-	$gallery->_phpVm->setReply('headers_sent', array(), false);
-	$gallery->_phpVm->setReply('header', array('Cache-Control: no-cache', ''), true);
-	$gallery->_phpVm->setReply('header', array('Pragma: no-cache', ''), true);
-	$gallery->_phpVm->setReply(
-		'header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
 
 	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
 	if ($ret) {
@@ -696,43 +690,8 @@ class ViewTest extends GalleryTestCase {
 
 	GalleryUtilities::putRequestVariable('itemId', $itemId);
 
-	/* This template overrides default cache control functionality */
 	$template = new UnitTestTemplate();
 	list ($ret, $view) = GalleryView::loadView('core.ViewTestImmediateItem');
-	if ($ret) {
-	    return $ret;
-	}
-	$this->assert($gallery->_phpVm->isComplete(), $gallery->_phpVm->getRemaining());
-    }
-
-    function testDoLoadTemplateImmediateViewWithoutAutoCache() {
-        global $gallery;
-	$gallery->_phpVm = new UnitTestPhpVm();
-	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
-
-	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
-	if ($ret) {
-	    return $ret;
-	}
-	$this->_markForCleanup($item);
-	$itemId = $item->getId();
-
-	list ($ret, $everybodyGroupId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
-	if ($ret) {
-	    return $ret;
-	}
-
-	$ret = GalleryCoreApi::removeGroupPermission($itemId, $everybodyGroupId, 'core.view');
-	if ($ret) {
-	    return $ret;
-	}
-
-	GalleryUtilities::putRequestVariable('itemId', $itemId);
-
-	/* This template overrides default cache control functionality */
-	$template = new UnitTestTemplate();
-	list ($ret, $view) = GalleryView::loadView('core.ViewTestImmediateItemNoAutoCache');
 	if ($ret) {
 	    return $ret;
 	}
@@ -825,30 +784,6 @@ class ViewTestItemView extends GalleryView {
 class ViewTestNoAutoCacheControlItemView extends GalleryView {
     function getViewType() {
 	return VIEW_TYPE_SHOW_ITEM;
-    }
-
-    function autoCacheControl() {
-	return false;
-    }
-}
-
-class ViewTestImmediateItemView extends GalleryView {
-    function getViewType() {
-	return VIEW_TYPE_SHOW_ITEM;
-    }
-
-    function isImmediate() {
-	return true;
-    }
-}
-
-class ViewTestImmediateItemNoAutoCacheView extends GalleryView {
-    function getViewType() {
-	return VIEW_TYPE_SHOW_ITEM;
-    }
-
-    function isImmediate() {
-	return true;
     }
 
     function autoCacheControl() {

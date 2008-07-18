@@ -544,6 +544,40 @@ class MainTest extends GalleryTestCase {
 	    'maintest_faketemplate', strtolower(get_class($receivedEvent->getEntity())));
 	$this->assertEquals('maintest_fakeview', strtolower(get_class($receivedData['view'])));
     }
+
+    function testImmediateViewRequestSetsCacheControl() {
+	GalleryUtilities::putRequestVariable('view', 'core.MainTestImmediateItem');
+
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(array('isDone' => true), $g2Data, 'returned data');
+	$this->assert($this->_hasCacheControlNoCacheHeader($_REQUEST['header']),
+	    'wrong Cache-Control header: ' . $_REQUEST['header']);
+    }
+
+    function _hasCacheControlNoCacheHeader($headers) {
+	foreach ($headers as $header) {
+	    if ($header === 'Cache-Control: no-cache') {
+		return true;
+	    }
+	}
+	return false;
+    }
+
+    function testImmediateViewRequestWithoutAutoCacheControl() {
+	GalleryUtilities::putRequestVariable('view', 'core.MainTestImmediateItemNoAutoCache');
+	$_REQUEST['header'] = array();
+
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(array('isDone' => true), $g2Data, 'returned data');
+	$this->assert(!$this->_hasCacheControlNoCacheHeader($_REQUEST['header']),
+	    'wrong Cache-Control header: ' . $_REQUEST['header']);
+    }
 }
 
 class MainTestPhpVm extends GalleryPhpVm {
@@ -551,6 +585,10 @@ class MainTestPhpVm extends GalleryPhpVm {
     function header($header, $replace=null) {
 	/* Avoid modifying actual header information */
 	$_REQUEST['header'][] = $header;
+    }
+
+    function headers_sent() {
+	return false;
     }
 }
 
@@ -601,6 +639,30 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryController.class');
 class FooControllerController extends GalleryController {
     function omitAuthTokenCheck() {
 	return true;
+    }
+}
+
+class MainTestImmediateItemView extends GalleryView {
+    function getViewType() {
+	return VIEW_TYPE_MODULE;
+    }
+
+    function isImmediate() {
+	return true;
+    }
+}
+
+class MainTestImmediateItemNoAutoCacheView extends GalleryView {
+    function getViewType() {
+	return VIEW_TYPE_MODULE;
+    }
+
+    function isImmediate() {
+	return true;
+    }
+
+    function autoCacheControl() {
+	return false;
     }
 }
 ?>

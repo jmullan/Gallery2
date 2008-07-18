@@ -63,6 +63,16 @@ class DownloadPicLensViewTest extends GalleryImmediateViewTestCase {
     function testDownloadJavascript() {
 	global $gallery;
 
+	/*
+	 * Go through the complete life cycle of the view under the control of a mock VM for this
+	 * test. (Verify all header() calls, including those from loadView())
+	 */
+	GalleryCoreApi::requireOnce('modules/core/classes/GalleryView.class');
+	list ($ret, $this->_view) = GalleryView::loadView('slideshow.DownloadPicLens');
+	if ($ret) {
+	    return $ret;
+	}
+
 	GalleryUtilities::putRequestVariable('file', 'js');
 
 	$gallery->_phpVm->setReply(
