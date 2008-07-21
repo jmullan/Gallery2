@@ -48,6 +48,11 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 	    return $ret;
 	}
 
+	list ($ret, $this->_coreModule) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret) {
+	    return $ret;
+	}
+
 	$this->_originalSession = $gallery->_session;
 	$this->_galleryTemplateAdapter =& $gallery->getTemplateAdapter();
 
@@ -103,7 +108,9 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 			      array('module', $testModule,
 				    $pluginDownloadFileList['module'][$testModule],
 				    array('method' => array($startingAdapter, 'updateProgressBar'),
-					  'title' => 'Updating Packages', 'current' => 0,
+					  'title' =>
+						$this->_coreModule->translate('Updating Packages'),
+					  'current' => 0,
 					  'total' => 7)),
 			      array(null, true, array()));
 	$repository->setReply('removeObsoleteFiles', array('module', $testModule), null);
@@ -155,7 +162,9 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 			      array('module', $testModule,
 				    $pluginDownloadFileList['module'][$testModule],
 				    array('method' => array($startingAdapter, 'updateProgressBar'),
-					  'title' => 'Updating Packages', 'current' => 0,
+					  'title' =>
+						$this->_coreModule->translate('Updating Packages'),
+					  'current' => 0,
 					  'total' => 5)),
 			      array(null, true, array()));
 	$repository->setReply('removeObsoleteFiles', array('module', $testModule), null);
@@ -202,7 +211,9 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 			      array('module', $testModule,
 				    $pluginDownloadFileList['module'][$testModule],
 				    array('method' => array($startingAdapter, 'updateProgressBar'),
-					  'title' => 'Updating Packages', 'current' => 0,
+					  'title' =>
+						$this->_coreModule->translate('Updating Packages'),
+					  'current' => 0,
 					  'total' => 5)),
 			      array(null, true, array()));
 	$repository->setReply('removeObsoleteFiles', array('module', $testModule), null);
@@ -250,7 +261,9 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 			      array('module', $testModule,
 				    $pluginDownloadFileList['module'][$testModule],
 				    array('method' => array($startingAdapter, 'updateProgressBar'),
-					  'title' => 'Updating Packages', 'current' => 0,
+					  'title' =>
+						$this->_coreModule->translate('Updating Packages'),
+					  'current' => 0,
 					  'total' => 5)),
 			      array(null, true, array()));
 	$repository->setReply('removeObsoleteFiles', array('module', $testModule), null);
@@ -304,7 +317,9 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 			      array('module', $testModule,
 				    $pluginDownloadFileList['module'][$testModule],
 				    array('method' => array($startingAdapter, 'updateProgressBar'),
-					  'title' => 'Updating Packages', 'current' => 0,
+					  'title' =>
+						$this->_coreModule->translate('Updating Packages'),
+					  'current' => 0,
 					  'total' => 9)),
 			      array(null, false, array('failedToDownload' => array('module' =>
 				  array('Test Module' => array('base-package'))))));
@@ -362,7 +377,9 @@ class AdminRepositoryDownloadAndInstallControllerTest extends GalleryControllerT
 			      array('module', $testModule,
 				    $pluginDownloadFileList['module'][$testModule],
 				    array('method' => array($startingAdapter, 'updateProgressBar'),
-					  'title' => 'Updating Packages', 'current' => 0,
+					  'title' =>
+						$this->_coreModule->translate('Updating Packages'),
+					  'current' => 0,
 					  'total' => 9)),
 			      array(null, true, array('failedToDownload' => array('module' =>
 				  array('Test Module' => array('en_GB-package'))))));
