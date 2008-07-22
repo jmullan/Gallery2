@@ -697,6 +697,101 @@ class EmbedTest extends GalleryTestCase {
 	$this->assert($sessionId != $session->getId(), "Session Id should have changed");
     }
 
+    function testCreateUserWithClearTextPassword() {
+	$externalUserId = '_test_' . rand();
+	$ret = GalleryEmbed::createUser(
+		$externalUserId, array('username' => 'test_' . rand(), 'password' => 'secret'));
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $user) =
+		GalleryCoreApi::loadEntityByExternalId($externalUserId, 'GalleryUser');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($user);
+	$this->assert($user->isCorrectPassword('secret'), 'correct password');
+	$this->assert(!$user->isCorrectPassword('123456'), 'incorrect password');
+    }
+
+    function testUpdateUserWithClearTextPassword() {
+	list ($ret, $users, $activeUserIds) = $this->_createTestUsers(1);
+	if ($ret) {
+	    return $ret;
+	}
+	$user = $users[0];
+	$externalUserId = $activeUserIds[0];
+
+	$ret = GalleryEmbed::updateUser($externalUserId, array('password' => 'secret'));
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($user->isCorrectPassword('secret'), 'correct password');
+	$this->assert(!$user->isCorrectPassword('123456'), 'incorrect password');
+    }
+
+    function testUpdateUserWithMd5PasswordHash() {
+	list ($ret, $users, $activeUserIds) = $this->_createTestUsers(1);
+	if ($ret) {
+	    return $ret;
+	}
+	$user = $users[0];
+	$externalUserId = $activeUserIds[0];
+
+	$ret = GalleryEmbed::updateUser(
+		$externalUserId, array('hashedpassword' => md5('secret'), 'hashmethod' => 'md5'));
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($user->isCorrectPassword('secret'), 'correct password');
+	$this->assert(!$user->isCorrectPassword('123456'), 'incorrect password');
+    }
+
+    function testUpdateUserWithPhpassPasswordHash() {
+	list ($ret, $users, $activeUserIds) = $this->_createTestUsers(1);
+	if ($ret) {
+	    return $ret;
+	}
+	$user = $users[0];
+	$externalUserId = $activeUserIds[0];
+
+	$ret = GalleryEmbed::updateUser($externalUserId,
+		array('hashedpassword' => 'secrethash', 'hashmethod' => 'phpass'));
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals('secrethash', $user->getHashedPassword(), 'password hash');
+    }
+
+    function testUpdateUserWithHashedPasswordMissingHashMethod() {
+	list ($ret, $users, $activeUserIds) = $this->_createTestUsers(1);
+	if ($ret) {
+	    return $ret;
+	}
+	$user = $users[0];
+	$externalUserId = $activeUserIds[0];
+
+	$ret = GalleryEmbed::updateUser($externalUserId, array('hashedpassword' => 'secret'));
+	$this->assertErrorEquals(ERROR_BAD_PARAMETER, $ret);
+    }
+
+    function testUpdateUserWithInvalidHashMethod() {
+	list ($ret, $users, $activeUserIds) = $this->_createTestUsers(1);
+	if ($ret) {
+	    return $ret;
+	}
+	$user = $users[0];
+	$externalUserId = $activeUserIds[0];
+
+	$ret = GalleryEmbed::updateUser(
+		$externalUserId, array('hashedpassword' => 'secret', 'hashmethod' => 'sha-256'));
+	$this->assertErrorEquals(ERROR_BAD_PARAMETER, $ret);
+    }
+
     function _createTestUsers($count) {
 	$users = $activeUserIds = array();
 	for ($i = 0; $i < $count; $i++) {

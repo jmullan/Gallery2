@@ -48,7 +48,7 @@ class GalleryEmbed /* implements GalleryEventListener */ {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(1, 4);
+	return array(1, 5);
     }
 
     /**
@@ -395,7 +395,10 @@ class GalleryEmbed /* implements GalleryEventListener */ {
 	if ($ret) {
 	    return $ret;
 	}
-	GalleryEmbed::_setUserData($user, $args, true);
+	$ret = GalleryEmbed::_setUserData($user, $args, true);
+	if ($ret) {
+	    return $ret;
+	}
 	$ret = $user->save();
 	if ($ret) {
 	    return $ret;
@@ -431,7 +434,11 @@ class GalleryEmbed /* implements GalleryEventListener */ {
 	    return $ret;
 	}
 
-	GalleryEmbed::_setUserData($user, $args);
+	$ret = GalleryEmbed::_setUserData($user, $args);
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $ret;
+	}
 	$ret = $user->save();
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
@@ -449,15 +456,22 @@ class GalleryEmbed /* implements GalleryEventListener */ {
      *
      * @param GalleryUser $user
      * @param array $args additional user data
+     * @param bool $create (optional) Whether to use creation mode (applying default values).
+     *                                Default false.
+     * @return GalleryStatus a status object
      * @access private
      */
-    function _setUserData(&$user, $args, $create = false) {
+    function _setUserData(&$user, $args, $create=false) {
 	if (!empty($args['password'])) {
 	    $user->changePassword($args['password']);
-	} elseif (isset($args['hashmethod']) && $args['hashmethod'] == 'md5'
-		&& !empty($args['hashedpassword'])) {
+	} else if (!empty($args['hashedpassword'])) {
+	    if (!isset($args['hashmethod'])
+		    || !in_array($args['hashmethod'], array('md5', 'phpass'))) {
+		return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+			'hashmethod must be either md5 or phpass');
+	    }
 	    $user->setHashedPassword($args['hashedpassword']);
-	} elseif ($create) {
+	} else if ($create) {
 	    /* Create a random password */
 	    $user->changePassword('G' . rand(100000,999999) . '2');
 	}
