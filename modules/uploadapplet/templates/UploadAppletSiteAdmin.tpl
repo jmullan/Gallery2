@@ -132,7 +132,7 @@
     <tr class="gbOdd"><td>im.jpegQuality</td><td>0-99</td>
       <td>{g->text text="quality of JPEG compression when resizing with ImageMagick"}</td></tr>
   </table>
-  <p><a href="http://svn.sourceforge.net/viewvc/*checkout*/gallery/trunk/gallery_remote/defaults.properties" target="other">
+  <p><a href="https://gallery.svn.sourceforge.net/svnroot/gallery/trunk/gallery_remote/defaults.properties" target="other">
   	{g->text text="Complete list of variables"}</a></p>
 </div>
 </td></tr></table>
