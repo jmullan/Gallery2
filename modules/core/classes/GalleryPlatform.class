@@ -711,7 +711,7 @@ class GalleryPlatform {
 	    return false;
 	}
 
-	if (($realpath = $this->realpath($path)) === false) {
+	if (($realpath = @$this->realpath($path)) === false) {
 	    /*
 	     * PHP's open_basedir will actually take an invalid path, resolve relative paths, parse
 	     * out .. and . and then check against the dir list.  Here we do an ok job of doing the
