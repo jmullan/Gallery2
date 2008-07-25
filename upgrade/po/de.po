@@ -27,8 +27,8 @@ msgstr ""
 "Project-Id-Version: Gallery: Upgrader 2.3\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-05-20 12:20+0200\n"
-"PO-Revision-Date: 2006-11-07 01:19+0100\n"
-"Last-Translator: Andy Staudacher <ast@gmx.ch>\n"
+"PO-Revision-Date: 2008-07-25 10:36+0100\n"
+"Last-Translator: Jens Tkotz <jens@peino.de>\n"
 "Language-Team: German <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -61,22 +61,22 @@ msgid "Unable to commit database transaction"
 msgstr "Die Datenbank-Transaktion konnte nicht abgeschlossen werden (commit)"
 
 msgid "Database Backup"
-msgstr ""
+msgstr "Datenbank Sicherung"
 
 msgid "Error attempting to enable maintenance mode."
-msgstr ""
+msgstr "Fehler beim Einschalten des Wartungsmodus."
 
 msgid "Backing up the Gallery database"
-msgstr ""
+msgstr "Start der Sicherung Ihrer Gallery Datenbank"
 
 msgid "Errors occurred during the database backup"
-msgstr ""
+msgstr "Es traten Fehler während der Sicherung auf."
 
 msgid "Error attempting to disable maintenance mode."
-msgstr ""
+msgstr "Fehler beim Beenden des Wartungsmodus."
 
 msgid "Unable to determine if automated backup is available."
-msgstr ""
+msgstr "Gallery konnte nicht feststellen, ob eine automatisierte Sicherung möglich ist."
 
 msgid "Finish Upgrade"
 msgstr "Aktualisierung abschließen"
@@ -328,9 +328,9 @@ msgstr ""
 "Fehler: Einige Dateien oder Ordner in Ihrem Speicherordner können vom Webserver nicht "
 "verändert werden. Führen Sie chown -R webserverBenutzer %s ODER chmod -R 777 %s aus."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Inaccessible or missing  files (%d)"
-msgstr "Fehlende Dateien (%d)"
+msgstr "Fehlende oder nicht lesbare Dateien (%d)"
 
 msgid "Gallery file integrity"
 msgstr "Gallery-Dateiintegrität"
@@ -362,7 +362,7 @@ msgstr ""
 msgid "Modified files (%d)"
 msgstr "Veränderte Dateien (%d)"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "These files are no longer part of Gallery. They probably won't cause any problems but it is "
 "a good idea to remove them to keep your install clean.  Gallery can't remove these files for "
@@ -371,52 +371,63 @@ msgid ""
 msgstr ""
 "Diese Dateien gehören nicht mehr zur Gallery. Wahrscheinlich machen sie keine Probleme, aber "
 "es ist dennoch eine gute Idee, sie zu entfernen, um Ihre Installation sauber zu halten.  "
-"Gallery kann diese Dateien nicht entfernen, aber Sie können %s in Ihrem Galley2 Ordner "
-"ausführen um die Dateien zu löschen."
+"Gallery kann diese Dateien nicht entfernen, aber Sie können %sdieses Skript%s in Ihrem "
+"Galley2 Ordner ausführen um die Dateien zu löschen."
 
 #, c-format
 msgid "Old files (%d)"
 msgstr "Veraltete Dateien (%d)"
 
 msgid "Database permissions"
-msgstr ""
+msgstr "Datenbank Berechtigungen"
 
 msgid ""
 "Error: The configured database user does not have the required  database priviledges to "
 "perform the upgrade."
 msgstr ""
+"Fehler: Der angegebene Datenbank-User hat nicht die erforderlichen Rechte um eine "
+"Aktualisierung durchzuführen."
 
 #, c-format
 msgid "The storage folder path is not defined in config.php (%s)"
-msgstr ""
+msgstr "Der Pfad für die Datenablage ist nicht in der config.php (%s) hinterlegt."
 
 #, c-format
 msgid "Could not find an unused table prefix similar to \"%s\"."
-msgstr ""
+msgstr "Es konnte kein ungenutztes Tabellenprefix gefunden, das änlich zu \"%s\" ist."
 
 msgid "Database permission test failed due to corrupted file integrity."
 msgstr ""
+"Der Test für die Datenbank-Berechtigungen schlug aufgrund korrupter Datei-Integrität fehl."
 
 msgid "Failed to create, alter or drop a database test table. "
-msgstr ""
+msgstr "Fehler beim Erzeugen, Löschen oder Verändern der Testtabellen in der Datenbank."
 
 msgid ""
 "Failed to create a database test sequence. Check the returned error message and README.html "
 "for missing privileges and clean up the database."
 msgstr ""
+"Fehler beim Erzeugen einer Datenbank Testsequenz.  Schauen Sie sich die zurückgegebene "
+"Fehlermeldung and und lese die README.html um weitere Informationen zum Thema fehlende "
+"Rechte und Aufräumen der Datenbank zu bekommen."
 
 msgid ""
 "Test failed to drop a database test sequence. Check the returned error message and README."
 "html for missing privileges and clean up the database."
 msgstr ""
+"Fehler beim Löschen einer Datenbank Testsequenz.  Schauen Sie sich die zurückgegebene "
+"Fehlermeldung and und lese die README.html um weitere Informationen zum Thema fehlende "
+"Rechte und Aufräumen der Datenbank zu bekommen."
 
 msgid "Missing SQL statements"
-msgstr ""
+msgstr "Fehlende SQL-Statements"
 
 msgid ""
 "Check the returned error message and README.html for missing privileges and clean up the "
 "database."
 msgstr ""
+"Schauen Sie sich die zurückgegebene Fehlermeldung and und lese die README.html um weitere "
+"Informationen zum Thema fehlende Rechte und Aufräumen der Datenbank zu bekommen."
 
 msgid "Upgrade Core"
 msgstr "Aktualisiere Kern"
@@ -588,7 +599,6 @@ msgstr ""
 msgid "Try Again"
 msgstr "Erneut versuchen"
 
-#, fuzzy
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
 "If you fail to make a backup and something goes wrong, there is a strong possibility that we "
@@ -596,20 +606,20 @@ msgid ""
 msgstr ""
 "Bevor wir die Aktualisierung vornehmen <b>raten wir Ihnen dringend</b>, eine "
 "Sicherheitskopie Ihrer Datenbank vorzunehmen! Falls Sie versäumen, eine Sicherheitskopie zu "
-"erstellen und etwas schiefläuft, ist die Wahrscheinlichkeit hoch, dass wir Ihnen beim "
+"erstellen und etwas schief läuft, ist die Wahrscheinlichkeit hoch, dass wir Ihnen beim "
 "Wiederherstellen Ihrer Daten nicht helfen können. Sehen Sie hierzu die folgenden Beispiele:"
 
 msgid "You have three options:"
-msgstr ""
+msgstr "Sie haben drei Optionen:"
 
 msgid "You have two options:"
-msgstr ""
+msgstr "Sie haben zwei Optionen:"
 
 msgid "Do the automated backup (<b>recommended</b>)."
-msgstr ""
+msgstr "Automatische Sicherung (<b>Empfohlen</b>)."
 
 msgid "Do a manual backup (see below)."
-msgstr ""
+msgstr "Manuelle Sicherung (näheres unten)."
 
 msgid "MySQL"
 msgstr "MySQL"
@@ -627,9 +637,8 @@ msgid "Microsoft SQL Server"
 msgstr "Microsoft SQL Server"
 
 msgid "Continue without a backup (<b>discouraged</b>)."
-msgstr ""
+msgstr "Keine Sicherung (<b>Raten wir ab von</b>)."
 
-#, fuzzy
 msgid ""
 "If you choose to perform the automated backup, please be patient.  If you cancel or reload "
 "the page, you may interfere with the backup process."
@@ -638,10 +647,10 @@ msgstr ""
 "Seite neu laden, könnten Sie störend auf die Installation einwirken."
 
 msgid "Begin Database Backup"
-msgstr ""
+msgstr "Datenbanksicherung starten"
 
 msgid "Skip Database Backup"
-msgstr ""
+msgstr "Datenbanksicherung überspringen"
 
 #, c-format
 msgid "Continue to Step %d&raquo;"
@@ -651,23 +660,25 @@ msgid "Stack Trace:"
 msgstr "Stack-Trace:"
 
 msgid "Gallery Database Backup successful."
-msgstr ""
+msgstr "Die Gallery Datenbank wurde erfolgreich gesichert."
 
-#, fuzzy
 msgid "We've successfully backed up the data in your Gallery database."
-msgstr "Wir haben das Gallery-Kernmodul erfolgreich aktualisiert."
+msgstr "Ihre Daten wurden erfolgreich in der Gallery Datenbank gesichert."
 
 msgid "The following warnings were produced during the backup process:"
-msgstr ""
+msgstr "Die folgenden Warnungen traten während der Sicherung auf:"
 
 #, c-format
 msgid "Database backup completed and the backup file is located at: %s."
-msgstr ""
+msgstr "Sicherung der Datenbank vollständig, die Sicherungsdatei liegt ab unter: %s."
 
 msgid ""
 "Please note that your backup contains sensitive data (like passwords) and should not be "
 "stored online! We recommend that you download it from your server and keep it safely offline."
 msgstr ""
+"Bedenken Sie, daß die Sicherung sensible Daten (zum Beispiel Passwörter) enthält und sollte "
+"nicht onlie verfügbar sein. Wir empfehlen den Download von Ihrem Server und anschließende "
+"Löschung."
 
 msgid "Finished!"
 msgstr "Abgeschlossen!"
@@ -947,6 +958,3 @@ msgstr "Sprache auswählen:"
 # Badly chosen mgsid: means: switch to selected language
 msgid "Go"
 msgstr "Sprache einstellen"
-
-#~ msgid "this script"
-#~ msgstr "dieses Skript"
