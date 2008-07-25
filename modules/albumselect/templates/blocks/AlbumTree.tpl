@@ -47,6 +47,8 @@
       {$albumTree}.config.useIcons = {if $params.treeIcons}true{else}false{/if};
       {$albumTree}.config.useCookies = {if $params.treeCookies}true{else}false{/if};
       {$albumTree}.config.closeSameLevel = {if $params.treeCloseSameLevel}true{else}false{/if};
+      {$albumTree}.config.cookiePath = '{$block.albumselect.cookiePath}';
+      {$albumTree}.config.cookieDomain = '{$block.albumselect.cookieDomain}';
       {assign var="data" value=$block.albumselect.LoadAlbumData.albumTree}
       {$albumTree}.add(0, -1, " {$data.titlesForJs.root}", '{g->url}');
       {ldelim} var pf = '{$data.links.prefix}';

@@ -30,6 +30,8 @@ class AlbumSelectCallbacks {
 	static $idCount = '';
 	switch($callback) {
 	case 'LoadAlbumData':
+	    $urlGenerator =& $gallery->getUrlGenerator();
+
 	    if (isset($callbackParams['albumTree']) && $callbackParams['albumTree']) {
 		/* Set unique name for javascript object */
 		$albumTreeName = 'albumTree' . $idCount++;
@@ -153,7 +155,7 @@ class AlbumSelectCallbacks {
 		if (!function_exists('smarty_modifier_escape')) {
 		    GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
 		}
-		$urlGenerator =& $gallery->getUrlGenerator();
+
 		$titlesForJs = $links = array();
 		foreach ($titles as $id => $title) {
 		    $titlesForJs[$id] = smarty_modifier_escape($title, 'javascript');
@@ -213,6 +215,14 @@ class AlbumSelectCallbacks {
 		'params' => $params);
 	    if (isset($albumTreeName)) {
 		$block['albumselect']['LoadAlbumData'][$type]['albumTreeName'] = $albumTreeName;
+	    }
+	    list ($ret, $block['albumselect']['cookiePath']) = $urlGenerator->getCookiePath();
+	    if ($ret) {
+		return $ret;
+	    }
+	    list ($ret, $block['albumselect']['cookieDomain']) = $session->getCookieDomain();
+	    if ($ret) {
+		return $ret;
 	    }
 
 	    return null;

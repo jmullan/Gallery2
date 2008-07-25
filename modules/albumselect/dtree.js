@@ -38,7 +38,9 @@ function dTree(objName) {
 		useIcons		: false,
 		useStatusText		: false,
 		closeSameLevel		: false,
-		inOrder			: false
+		inOrder			: false,
+		cookiePath		: null,
+		cookieDomain		: null
 	}
 	this.obj = objName;
 	this.aNodes = [];
@@ -273,6 +275,8 @@ dTree.prototype.clearCookie = function() {
 
 // [Cookie] Sets value in a cookie
 dTree.prototype.setCookie = function(cookieName, cookieValue, expires, path, domain, secure) {
+	path = path || this.config.cookiePath;
+	domain = domain || this.config.cookieDomain;
 	document.cookie =
 		escape(cookieName) + '=' + escape(cookieValue)
 		+ (expires ? '; expires=' + expires.toGMTString() : '')
