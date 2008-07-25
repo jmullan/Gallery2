@@ -2202,7 +2202,9 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
      */
     function validateConnection() {
 	if (isset($this->_gs->_nonTransactionalDb)) {
+	    $this->_gs->_traceStart();
 	    $time = $this->_gs->_nonTransactionalDb->Time();
+	    $this->_gs->_traceStop();
 	    if (!$time) {
 		unset($this->_gs->_nonTransactionalDb);
 		list ($ret) = $this->_getNonTransactionalDatabaseConnection();
@@ -2213,7 +2215,9 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	}
 
 	if (isset($this->_gs->_db)) {
+	    $this->_gs->_traceStart();
 	    $time = $this->_gs->_db->Time();
+	    $this->_gs->_traceStop();
 	    if (!$time) {
 		unset($this->_gs->_db);
 		list ($ret, $this->_gs->_db) = $this->_gs->_getConnection();

@@ -106,7 +106,8 @@ class SystemChecksStep extends UpgradeStep {
 	}
 
 	/* assert that __FILE__ works correctly */
-	if (!SystemChecksStep::CheckFileDirective()) {
+	$fileDirectiveWorks = SystemChecksStep::CheckFileDirective();
+	if (!$fileDirectiveWorks) {
 	    $templateData['check'][] =
 		array('title' => _('FILE directive supported'),
 		      'error' => true,
@@ -381,7 +382,7 @@ class SystemChecksStep extends UpgradeStep {
 
 	/* Check if the files and dirs in the storage dir are (still) writeable */
 	$title = _('Storage Directory Permissions');
-	if (!SystemChecksStep::CheckFileDirective() || !empty($missingFilesystemFunctions)) {
+	if (!$fileDirectiveWorks || !empty($missingFilesystemFunctions)) {
 	    $templateData['check'][] =
 		array('title' => $title,
 		      'warning' => true,
@@ -411,7 +412,7 @@ class SystemChecksStep extends UpgradeStep {
 
 	/* Check all files against MANIFEST */
 	$title = _('Gallery file integrity');
-	if (!SystemChecksStep::CheckFileDirective() || !empty($missingFilesystemFunctions)) {
+	if (!$fileDirectiveWorks || !empty($missingFilesystemFunctions)) {
 	    $templateData['check'][] =
 		array('title' => $title,
 		      'warning' => true,
@@ -489,8 +490,14 @@ class SystemChecksStep extends UpgradeStep {
 
 	/* Check if the db user has (all?) required db privileges to finish the upgrader */
 	$title = _('Database permissions');
-	list ($ret, $error) = $this->_testPrivileges();
-	if ($ret === false) {
+	if (!$fileDirectiveWorks || !empty($missingFilesystemFunctions)) {
+	    $templateData['check'][] =
+		array('title' => $title,
+		      'warning' => true,
+		      'notice' => _('Test skipped due to other errors.'));
+	} else {
+	    list ($ret, $error) = $this->_testPrivileges();
+	    if ($ret === false) {
 		$message = _('Error: The configured database user does not have the required '
 				    . ' database priviledges to perform the upgrade.') . '<br/>'
 				    . $error;
@@ -499,8 +506,9 @@ class SystemChecksStep extends UpgradeStep {
 			  'error' => true,
 			  'notice' => $message);
 		$failCount++;
-	} else {
-	    $templateData['check'][] = array('title' => $title, 'success' => true);
+	    } else {
+		$templateData['check'][] = array('title' => $title, 'success' => true);
+	    }
 	}
 
 	$template->renderStatusMessage(_('Performing system checks'), '', 1);
@@ -689,7 +697,21 @@ class SystemChecksStep extends UpgradeStep {
 	$storage =& $gallery->getStorage();
 	$storageExtras = $storage->_getExtras();
 
-	$metatables = $storageExtras->_metaTables();
+	/* We might have lost our database connection (timeout) so check and reconnect */
+	$ret = $storage->validateConnection();
+	if ($ret) {
+	    $gallery->debug($ret->getAsHtml());
+	    return array(false, 
+		_('Database permission test failed. Could not connect to database.'));
+	}
+
+	list ($ret, $metatables) = $storageExtras->_metaTables();
+	if ($ret) {
+	    $gallery->debug($ret->getAsHtml());
+	    return array(false, 
+		_('Database permission test failed. Could not acquire database information.'));
+	}
+
 	/*
 	 * Execute T_InstallerTest_1.sql through T_InstallerTest_4.sql.  These create, alter and
 	 * drop a table, and create and drop index.  Because our .xml transforms (MySQL.xsl,...)
