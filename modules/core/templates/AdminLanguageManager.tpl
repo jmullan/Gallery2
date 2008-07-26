@@ -128,7 +128,7 @@
 {if !$AdminLanguages.writeable.modules || !$AdminLanguages.writeable.themes}
 <div class="gbBlock">
   <h3>{g->text text="Configure your Gallery"}</h3>
-  {if $AdminRepository.OS == 'unix'}
+  {if $AdminLanguages.OS == 'unix'}
     <p class="giDescription">
       {g->text text="Before you can proceed, you have to change some permissions so that Gallery can install plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"}
     </p>

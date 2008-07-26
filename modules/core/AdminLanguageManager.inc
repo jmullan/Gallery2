@@ -414,6 +414,7 @@ class AdminLanguageManagerView extends GalleryView {
 
 	$AdminLanguages = $languageList = array();
 
+	$AdminLanguages['OS'] = strncasecmp(PHP_OS, 'win', 3) ? 'unix' : 'winnt';
 	$AdminLanguages['basePath'] = GalleryCoreApi::getCodeBasePath();
 	$AdminLanguages['writeable'] = array(
 	    'modules' => $platform->is_writeable($AdminLanguages['basePath'] . '/modules'),
