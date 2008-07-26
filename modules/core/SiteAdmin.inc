@@ -33,7 +33,11 @@ class SiteAdminView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	/* Make sure we have adequate permissions */
+	/**
+	 * Make sure we have adequate permissions.
+	 * @todo Remove _permissionCheck() since the check is done in main.php now.
+	 *       (r17170 obsoleted the check here (from r16894). Keep the assert here of course. 
+	 */
 	$ret = $this->_permissionCheck(GalleryCoreApi::assertUserIsSiteAdministrator());
 	if ($ret) {
 	    return array($ret[0], $ret[1]);
