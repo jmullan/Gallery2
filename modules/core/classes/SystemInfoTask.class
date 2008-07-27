@@ -77,6 +77,16 @@ class SystemInfoTask extends MaintenanceTask {
 	    }
 	}
 
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$baseUrl = $urlGenerator->generateUrl(
+			array(),
+			array(
+			    'forceDirect' => true,
+			    'forceFullUrl' => true,
+			    'forceSessionId' => false,
+			    'useAuthToken' => false
+			));
+
 	GalleryCoreApi::requireOnce('modules/core/classes/GalleryTheme.class');
 	GalleryCoreApi::requireOnce('modules/core/classes/GalleryEmbed.class');
 	$api = $core->translate(array('text' => 'API = Core %s, Module %s, Theme %s, Embed %s',
@@ -122,6 +132,7 @@ class SystemInfoTask extends MaintenanceTask {
 	}
 
 	$info = array(
+	    $core->translate('Gallery URL') . ' = ' . $baseUrl,
 	    $core->translate('Gallery version') . ' = ' . $version,
 	    $api,
 	    $core->translate('PHP version') . ' = ' . phpversion() . ' ' . php_sapi_name(),
