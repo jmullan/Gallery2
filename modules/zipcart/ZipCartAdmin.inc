@@ -50,6 +50,8 @@ class ZipCartAdminController extends GalleryController {
 		    if (!$platform->is_executable($form['path'])) {
 			$error[] = 'form[error][path][badPath]';
 		    }
+		} else {
+		    $error[] = 'form[error][path][badPath]';
 		}
 	    }
 	    if (empty($error)) {

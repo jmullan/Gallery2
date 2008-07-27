@@ -77,6 +77,8 @@ class AdminJpegtranController extends GalleryController {
 			    $error[] = 'form[error][path][badPath]';
 			}
 		    }
+		} else {
+		    $error[] = 'form[error][path][badPath]';
 		}
 	    }
 	}

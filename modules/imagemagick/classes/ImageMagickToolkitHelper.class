@@ -540,6 +540,16 @@ class ImageMagickToolkitHelper {
 	    }
 	}
 
+	/*
+	 * If the path is not restricted by open_basedir, then verify that it's legal.
+	 * Else just hope that it's valid and use it.
+	 */
+	if ($platform->isRestrictedByOpenBaseDir($imageMagickPath) 
+		|| !@$platform->is_dir($imageMagickPath)) {
+	    return array(GalleryCoreApi::error(ERROR_BAD_PATH, null, null, '"' . $imageMagickPath 
+			. '" is not a directory or is not specified in open_basedir.'), null);
+	}
+
 	$suffix = GalleryUtilities::isA($platform, 'WinNtPlatform') ? '.exe' : '';
 	$gmBinary = $imageMagickPath . 'gm' . $suffix;
 	if ($platform->file_exists($gmBinary) && $platform->is_executable($gmBinary)) {

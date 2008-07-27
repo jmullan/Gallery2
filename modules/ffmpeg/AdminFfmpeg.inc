@@ -77,6 +77,8 @@ class AdminFfmpegController extends GalleryController {
 			    $error[] = 'form[error][path][notExecutable]';
 			}
 		    }
+		} else {
+		    $error[] = 'form[error][path][badPath]';
 		}
 
 		if (empty($error)) {

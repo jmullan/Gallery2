@@ -54,6 +54,8 @@ class ArchiveUploadHelper {
 	    if (!$platform->is_executable($unzipPath)) {
 		return array(false, 'notExecutable', null);
 	    }
+	} else {
+	    return array(false, 'badPath', null);
 	}
 
 	list ($success, $results, $error) = $platform->exec(array(

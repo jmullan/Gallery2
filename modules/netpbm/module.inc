@@ -154,7 +154,7 @@ class NetPbmModule extends GalleryModule {
 	/* Now try each path in turn to see which ones work */
 	$success = false;
 	foreach ($paths as $path) {
-	    if (!$platform->isRestrictedByOpenBaseDir($path) && !$platform->file_exists($path)) {
+	    if ($platform->isRestrictedByOpenBaseDir($path) || !$platform->file_exists($path)) {
 		continue;
 	    }
 
