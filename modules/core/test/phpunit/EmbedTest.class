@@ -499,6 +499,35 @@ class EmbedTest extends GalleryTestCase {
 	$this->assert(is_null($session->get('session.siteAdminActivityTimestamp')),  'timestamp'); 
     }
 
+    /* Regression test for bug 2030470 */
+    function testCheckActiveUserSwitchUserGalleryUserNotSet() {
+	global $gallery;
+	$session =& $gallery->getSession();
+	$phpVm = $gallery->getPhpVm();
+
+	/* First, create test users and mappings */
+	list ($ret, $users, $activeUserIds) = $this->_createTestUsers(2);
+	if ($ret) {
+	    return $ret;
+	}
+	$session->put('embed.id.externalUser', $activeUserIds[0]);
+	$session->setUserId($users[0]->getId());
+
+	/*
+	 * When calling GalleryEmbed::init(), checkActiveUser() is called before calling
+	 * Gallery::setActiveUser(). Thus Gallery::getActiveUser() cannot be used at this point.
+	 */
+	$gallery->_activeUser = null;
+
+	/* Execute the function under test */
+	$ret = GalleryEmbed::checkActiveUser($activeUserIds[1]);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals($users[1]->getId(), $gallery->getActiveUserId(), 'active user id');
+    }
+
     function testCheckApiVersionOnInit() {
 	$apiVersion = GalleryEmbed::getApiVersion();
 	$apiVersion[1] -= 2;

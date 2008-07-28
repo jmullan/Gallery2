@@ -243,8 +243,14 @@ class GalleryEmbed /* implements GalleryEventListener */ {
 	    if ($ret) {
 		return $ret;
 	    }
-	    $activeUser = $gallery->getActiveUser();
-	    if ($anonymousUserId != $activeUser->getId()) {
+	    /* Can't use getActiveUser() since it might not be set at this point */
+	    $activeGalleryUserId = $gallery->getActiveUserId();
+	    if ($anonymousUserId != $activeGalleryUserId) {
+	    	list ($ret, $activeUser) =
+		    GalleryCoreApi::loadEntitiesById($activeGalleryUserId, 'GalleryUser');
+		if ($ret) {
+		    return $ret;
+		}
 		$event = GalleryCoreApi::newEvent('Gallery::Logout');
 		$event->setEntity($activeUser);
 		list ($ret, $ignored) = GalleryCoreApi::postEvent($event);
