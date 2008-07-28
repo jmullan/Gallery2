@@ -21,7 +21,7 @@
 # - Kennichi Uehara <ken.w3m+nospam@gmail.com>
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.35\n"
+"Project-Id-Version: Gallery: Core 1.2.36\n"
 "POT-Creation-Date: 2005-08-06 00:53+0900\n"
 "PO-Revision-Date: 2007-03-15 15:18+0900\n"
 "Last-Translator: Yosuke Suzuki <yosuke.suzuki@gmail.com>\n"
@@ -574,7 +574,7 @@ msgstr "パッケージを更新しています"
 
 #, c-format
 msgid "Cleaning up obsolete files %s"
-msgstr ""
+msgstr "旧ファイル%sをクリーンアップ中"
 
 #, c-format
 msgid "Activating %s"
@@ -670,6 +670,9 @@ msgid ""
 "Please note that your backup contains sensitive data (like passwords) and should not be "
 "stored online! We recommend that you download it from your server and keep it safely offline."
 msgstr ""
+"バックアップは機密データ(パスワードのような)を含み、オンラインで格納されるべきでないことに注"
+"意してください！サーバからそれをダウンロードし、それを安全にオフラインにしておくことをお勧め"
+"します。"
 
 msgid "Delete user sessions"
 msgstr "ユーザのセッションを削除"
@@ -1053,6 +1056,10 @@ msgstr "未知"
 msgid "API = Core %s, Module %s, Theme %s, Embed %s"
 msgstr "API = コア %s ・ モジュール %s ・ テーマ %s ・ 埋め込み %s"
 
+#, fuzzy
+msgid "Gallery URL"
+msgstr "Gallery"
+
 msgid "Gallery version"
 msgstr "Gallery バージョン"
 
@@ -1242,9 +1249,8 @@ msgstr "セッション持続時間"
 msgid "Inactivity Timeout"
 msgstr "無効化タイムアウト"
 
-#, fuzzy
 msgid "Site Administration Session Timeout"
-msgstr "Gallery サイト管理"
+msgstr "Galleryサイト管理セッションのタイムアウト"
 
 msgid "Embedded Markup"
 msgstr "組み込みマークアップ"
@@ -1310,9 +1316,9 @@ msgid ""
 "the choice between two options. Everyone else does not have to care about the cookie "
 "settings. Read on for more details."
 msgstr ""
-"Gallery が別のポータルやＣＭＳ、フォーラムなどのアプリケーションに組み込まれている時は、２つ"
-"のオプションから選択することができます。クッキーの設定については問題ありません。より詳細を読"
-"み進めてください"
+"Gallery が別のポータルやcms、フォーラムなどのアプリケーションに組み込まれている時は、2つのオ"
+"プションから選択することができます。クッキーの設定については問題ありません。より詳細を読み進"
+"めてください"
 
 msgid ""
 "If your Gallery is embedded and you leave the following fields empty, then all DownloadItem "
@@ -1993,9 +1999,9 @@ msgid ""
 "image block, other sidebar blocks, number of items in your shopping cart, view counts, etc) "
 "will get updated until the saved page expires."
 msgstr ""
-"全面的な高速化はおよそ９０％の性能向上が期待できます。ダイナミックなデータ（ランダム画像ブ"
-"ロックやサイドバー、ショッピングカートの項目数、閲覧回数など）は保存されたページが消えると更"
-"新されます"
+"全面的な高速化はおよそ90%の性能向上が期待できます。ダイナミックなデータ（ランダム画像ブロック"
+"やサイドバー、ショッピングカートの項目数、閲覧回数など）は保存されたページが消えると更新され"
+"ます"
 
 msgid ""
 "You can additionally specify when saved pages expire.  Setting a longer expiration time will "
@@ -2398,9 +2404,8 @@ msgstr "%s: バージョン %s (build %s) %sダウングレードはサポート
 msgid "%sCurrently Installed%s: version %s (build %s)"
 msgstr "%s現在インストールされたバージョン%s: %s (build %s)"
 
-#, fuzzy
 msgid "The following language packages are available for this plugin"
-msgstr "互換性のある言語パッケージがありません"
+msgstr "次の言語パックはこのプラグインで利用可能です"
 
 #, c-format
 msgid "%s version %s (upgrading from %s)"
@@ -3029,9 +3034,8 @@ msgstr "これはこのアイテムの詳しい説明です。"
 msgid "%s Date and Time"
 msgstr "%s 日付と時間"
 
-#, fuzzy
 msgid "Link Date and Time"
-msgstr "%s 日付と時間"
+msgstr "リンク日時"
 
 msgid "Set the date and time when this image was captured."
 msgstr "この画像がキャプチャーされた日付と時刻をセットします"
@@ -3043,9 +3047,8 @@ msgstr "このアイテムが表示される日付と時刻をセットします
 msgid "Set the date and time to be displayed for this %s."
 msgstr "この %s のためのに表示する日時を設定する"
 
-#, fuzzy
 msgid "Set the date and time to be displayed for this link."
-msgstr "このアイテムが表示される日付と時刻をセットします"
+msgstr "このリンクが表示される日付と時刻をセットします"
 
 msgid "Date:"
 msgstr "日付:"
@@ -3657,7 +3660,7 @@ msgstr "あなたのパスワードが回復されました。ログインして
 msgid ""
 "The administration session has expired, please re-authenticate to access the administration "
 "area."
-msgstr ""
+msgstr "管理セッションの期限切れです。管理エリアへアクセスするには再認証してください。"
 
 #, c-format
 msgid ""

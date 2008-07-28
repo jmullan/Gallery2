@@ -25,73 +25,83 @@ msgstr ""
 "Project-Id-Version: Gallery: Installer 2.3\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2007-06-14 17:57-0700\n"
-"PO-Revision-Date: 2006-08-07 20:36+0300\n"
-"Last-Translator: Yurii Smetana <Yura@stryi.com.ua>\n"
+"PO-Revision-Date: 2008-07-23 22:44+0300\n"
+"Last-Translator: Anton Gladky <gladky.anton@gmail.com>\n"
 "Language-Team: Ukrainian <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: KBabel 1.11.1\n"
+"X-Poedit-Bookmarks: 16,0,-1,-1,-1,-1,-1,-1,-1,-1\n"
 
 #, fuzzy
 msgid "Unknown"
 msgstr "Невідомо"
 
 msgid "Admin User Setup"
-msgstr ""
+msgstr "Створення Адміністратора"
 
 msgid "admin"
-msgstr ""
+msgstr "admin"
 
 msgid "Gallery Administrator"
-msgstr ""
+msgstr "Адміністратор Галереї"
 
 msgid "Authenticate"
-msgstr ""
+msgstr "Авторизація"
 
 #, c-format
 msgid ""
 "<b>Error:</b> could not locate <b>login.txt</b>. Please place it in your <tt>%s/</tt> "
 "directory."
 msgstr ""
+"<b>Помилка:</b> неможливо знайти <b>login.txt</b>. Будь ласка, розмістіть його в <tt>%s/</"
+"tt> папці."
 
 msgid ""
 "<b>Error:</b> your <b>login.txt</b> file is not readable. Please give Gallery read "
 "permissions on the file."
 msgstr ""
+"<b>Помилка:</b> вказаний вами файл <b>login.txt</b> не може бути прочитаний. Будь ласка, "
+"надайте право доступа на прочитання Галереї цього файлу"
 
 msgid ""
 "<b>Error:</b> your <b>login.txt</b> key does not match correctly. Please download a new "
 "authentication string from below and try again."
 msgstr ""
+"<b>Помилка:</b>  вказаний вами файл <b>login.txt</b> має невірний ключ. Будь ласка, "
+"завантажте нову ідентифікаційну строку, вказану нижче, та спробуйте ще раз."
 
 msgid "Create Config File"
-msgstr ""
+msgstr "Створення файлу конфігурації"
 
 #, c-format
 msgid "The config.php file does not exist in your %s directory"
-msgstr ""
+msgstr "Файл `config.php` не існує у Вашій %s директорії"
 
 msgid ""
 "The config.php file exists but is not writeable.  If your server is Windows, you may have to "
 "disable file sharing for config.php and set its permissions manually."
 msgstr ""
+"Файл `config.php` існує, але в нього неможливо записати дані. Якщо у якості сервера ви "
+"використовуєте Windows, то, можливо, Вам необхідно відключити загальний доступ для `config."
+"php`и встановити права доступу вручну."
 
 msgid "Database Setup"
-msgstr ""
+msgstr "Встановлення бази даних"
 
 msgid "You must have the MySQL PHP module installed"
-msgstr ""
+msgstr "На сервері повинен бути встановлений PHP MySQL модуль"
 
 msgid "You must have the MySQL Improved PHP module installed"
-msgstr ""
+msgstr "На сервері повинен бути встановлений PHP MySQL Improved  модуль"
 
 msgid "You must have the ibm_db2 PHP module installed"
-msgstr ""
+msgstr "На сервері повинен бути встановлений PHP ibm_db2  модуль"
 
 msgid "You must have the PostgreSQL PHP module installed"
-msgstr ""
+msgstr "На сервері повинен бути встановлений PHP PostgreSQL  модуль"
 
 msgid "You must have the Oracle OCI8 PHP module installed"
 msgstr ""
@@ -944,18 +954,22 @@ msgid ""
 "If you really want to continue, you can.  But we recommend that you take an extra moment to "
 "make sure that you're safe."
 msgstr ""
+"Якщо ви дійсно хочете продовжити, ви можете. Але ми рекомендуємо приділити увагу для "
+"перевірки безпеки."
 
 msgid "We've verified that your config.php is secure."
-msgstr ""
+msgstr "Ми перевірили: ваш config.php безпечний."
 
 #, c-format
 msgid ""
 "Please read the %1$sGallery Security Guide%3$s. For a brief overview, take a look at the %2"
 "$sshort check list%3$s within the security guide."
 msgstr ""
+"Будь ласка, прочитайте %1$sІнструкцію з безпеки і захисту Галереї%3$s. Для швидкого "
+"ознайомлення прогляньте %2$sкороткий список дій%3$s у інструкції по безпеці."
 
 msgid "Check Again"
-msgstr ""
+msgstr "Перевірити заново"
 
 #, c-format
 msgid ""
@@ -964,69 +978,90 @@ msgid ""
 "directory outside of the %sdocument root%s directory or add a random string to the end of "
 "the directory name (e.g. %s)."
 msgstr ""
+"Галерея потребує директорію для зберігання ваших зображень. Директорія, яку ми оберемо для "
+"вас, буде працювати, але її розміщення або (і) поточне ім'я не забезпечують максимальну "
+"безпеку. Виберіть нову директорію за межою %sкорневої%s директорії або додайте випадкову "
+"строку в кінці імені директорії (наприклад,  %s)."
 
 #, c-format
 msgid ""
 "For maximum security you should pick a directory that is not %sweb accessible%s. If this is "
 "not possible, specify a randomized name for this directory."
 msgstr ""
+"Для максимальної безпеки вам необхідно обрати директорію, яка не %sдоступна з інтернету%s. "
+"Якщо це неможливо, оберіть випадкове ім'я для цієї директорії."
 
 msgid ""
 "If you choose a randomized name or prefer to stick with the specified directory, please "
 "confirm your choice."
 msgstr ""
+"Якщо ви обираєте випадкове ім'я або надаєте перевагу управлінню цією специфічною папкою, "
+"підтвердіть ваш вибір"
 
 msgid "Yes, please omit the security check:"
-msgstr ""
+msgstr "Да, будь ласка, пропустіть перевірку безпеки:"
 
 msgid ""
 "This is a multisite installation. Remember that each multisite requires its own storage "
 "directory."
 msgstr ""
+"Це мультисайтова встановка. Пам'ятайте, що кожен мультисайт потребує свою власну директорію "
+"з даними. "
 
 msgid ""
 "If you're using a modern browser, we'll try to autocomplete any path you enter here.  So if "
 "you're having trouble finding the right path to your g2data directory, try experimenting "
 "with paths in the text box below and see what completions it provides for you."
 msgstr ""
+"Якщо ви використовуєте сучасний браузер, ми спробуємо позаповнювати усі путі автоматично. "
+"Тому, якщо у вас з'явилися проблеми із пошуком правильного путі до вашої директорії g2data, "
+"спробуйте поекспериментувати з путями в текстовому полі, яке знаходиться нижче, та "
+"подивіться, які автозаповнювання будуть вам запропоновані."
 
 msgid "Do not use the installation directory for storage"
-msgstr ""
+msgstr "Не використовуйте директорію встановлення у якості директорія для зберігання даних."
 
 msgid "The directory you entered is read only"
-msgstr ""
+msgstr "Директорія, яку ви вказали, має тільки доступ на прочитання."
 
 msgid "There was an error creating the directory structure within the storage directory."
-msgstr ""
+msgstr "Виникла помилка при створенні структури в директорії з даними."
 
 #, c-format
 msgid "Your storage directory is %sweb accessible%s."
-msgstr ""
+msgstr "Ваша директорія з даними %sдоступна з інтернету%s."
 
 #, c-format
 msgid "Unable to verify that the storage directory is not %sweb accessible%s."
-msgstr ""
+msgstr "Неможливо перевірити, чи є директорія з даними  %sдоступна з інтернету%s."
 
 msgid "Directory path:"
-msgstr ""
+msgstr "Путь до директорії:"
 
 msgid ""
 "Your webserver needs to be able to write to this directory. To get it working, you can "
 "follow these examples."
 msgstr ""
+"Ваш веб-сервер повинен мати право запису в цю директорію. Щоб перевірити це, ви можете "
+"спробувати ці приклади."
 
 msgid ""
 "Note: these are only examples!  You may find that they don't work quite right on your system."
 msgstr ""
+"Примітка: це тільки приклади. Ви можете з'ясувати, що вони не працюють вірно на вашій "
+"системі."
 
 msgid "Unix (with ftp access)"
-msgstr ""
+msgstr "Unix (з ftp доступом)"
 
 msgid ""
 "Note that ftp servers and clients vary so these instructions may not work for you. Consult "
 "the manual for your FTP client or talk to a system administrator for help with this if you "
 "have problems."
 msgstr ""
+"Зверніть увагу на те, що ftp сервера та клієнти відрізняються, тому ці інструкції можуть вам "
+"не підійти. Ознайомтеся з інструкцією до вашого FTP клієнту або зверніться до вашого "
+"системного адміністратора за допомогу, щоб розв'язати цю проблему."
 
 msgid ""
 "In some web hosting environments, the paths that you see in the shell or via FTP are not the "
@@ -1034,12 +1069,18 @@ msgid ""
 "can try creating a PHP script called <b>dir.php</b> containing the following code in it and "
 "put it into your data directory."
 msgstr ""
+"У деяких провайдерів путі, котрі ви бачите у консолі або через FTP не ті самі, які бачить "
+"PHP. Для того, щоб з'ясувати справжній путь до вашій директорії з даними, ви можете "
+"спробувати створити PHP скрипт, який називається <b>dir.php</b>, який буде мати наступний "
+"код та помістіть його у вашу директорію з даними."
 
 #, c-format
 msgid ""
 "then figure out the URL to dir.php and open it in your web browser (eg, %s).  This will tell "
 "you the exact path to enter here."
 msgstr ""
+"потім з'ясувати адрес URL к dir.php і відкрити його у вашому браузері (наприклад, %s). Вам "
+"буде вказано точний путь, котрий необхідно ввести тут."
 
 msgid ""
 "<b>Note</b>: This requires that your data directory is web accessible, which we don't "
@@ -1047,25 +1088,29 @@ msgid ""
 "we recommend that you move your data directory outside of your web accessible area and then "
 "update the path here accordingly."
 msgstr ""
+"<b>Примітка</b>: Необхідно, щоб ваша директорію з даними була недоступна через веб, інакше "
+"наш захист зображень можна буде обійти. Тому ми рекомендуємо перемістити вашу директорію з "
+"даними за коло доступу веб-сервера і потім оновити вказаний вами путь тут відповідно."
 
 msgid "<b>Note</b>: Don't forget to delete dir.php when you're done!"
-msgstr ""
+msgstr "<b>Примітка</b>: Не забудьте удалити dir.php, коли закінчите! "
 
 #, c-format
 msgid ""
 "For information on how to secure your Gallery storage directory, please read the %sSecurity "
 "Guide%s."
 msgstr ""
+"Для отримання інформації про те, як зробити директорію з даними більш захищеною, будь ласка, "
+"прочитайте %sПосібник по захисту%s."
 
 msgid "Storage directory set successfully."
-msgstr ""
+msgstr "Директорія з даними встановлена успішно."
 
 msgid "Success"
 msgstr "Успішно"
 
-#, fuzzy
 msgid "Warning"
-msgstr "Увага:"
+msgstr "Увага"
 
 msgid "Failed"
 msgstr "Невдало"
@@ -1074,35 +1119,41 @@ msgid ""
 "If you are using Apache, create a file named .htaccess in the main Gallery directory with "
 "the following content:"
 msgstr ""
+"Якщо ви використовуєте Apache, створіть файл з ім'ям .htaccess в головній папці галереї із "
+"слідуючим змістом:"
 
 msgid "Version Check"
-msgstr ""
+msgstr "Перевірка версії"
 
 msgid "This is not a fresh install and the installed version does not match the new version."
-msgstr ""
+msgstr "Це не перша установка і встановлена версія не співпадає із новою версією."
 
 msgid "The installed version cannot be upgraded to the new version!"
-msgstr ""
+msgstr "Встановлена версія не може бути оновлена на нову версію!"
 
 msgid ""
 "The installed version is older than the new version. You should run the upgrader and not the "
 "installer!"
 msgstr ""
+"Встановлена версія старіша за нову. Вам необхідно запустити програму оновлення, а не "
+"програму установки!"
 
 msgid "Currently installed"
-msgstr ""
+msgstr "Поточна установка"
 
 msgid "New version"
-msgstr ""
+msgstr "Нова версія"
 
 msgid "Go to the Upgrader!"
-msgstr ""
+msgstr "Перейти до програми оновлення!"
 
 #, c-format
 msgid ""
 "You should go now to the upgrader.  Enter the URL in your browser for %s/upgrade/index.php%s "
 "in your %s directory."
 msgstr ""
+"Тепер ви повинні перейти до програми оновлення. Введіть URL у адресну строку вашого браузера "
+"для  %s/upgrade/index.php%s у вашій %s директорії."
 
 #, c-format
 msgid ""
@@ -1111,12 +1162,17 @@ msgid ""
 "required to get your Gallery up and running. Once a step has been completed, you can go back "
 "and make changes at any time. Please read the %sInstaller Help File%s before proceeding."
 msgstr ""
+"Для того, щоб встановити Gallery 2 на ваш сервер необхідно зробити %d кроків. Програма "
+"встановлення допоможе зробити вам ці кроки і забезпечить допомогу у разі виникнення "
+"необхідних додаткових кроків для встановлення галереї. Зробивши один із кроків, ви завжди "
+"можете повернутися і внести зміни. Будь ласка, прочитайте  %s файл довідки%s перед "
+"продовженням."
 
 msgid "Select Language:"
-msgstr ""
+msgstr "Обрати мову:"
 
 msgid "Go"
 msgstr "Вперед"
 
 msgid "Begin Installation&raquo;"
-msgstr ""
+msgstr "Почати встановлення&raquo;"
