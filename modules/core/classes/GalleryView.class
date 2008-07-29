@@ -696,10 +696,15 @@ class GalleryView {
 
 	$result = null;
 	if ($ret) {
-	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+	    list ($ret2, $inGroup) = GalleryCoreApi::isUserInSiteAdminGroup();
+	    /* MISSING_OBJECT should be handled like PERMISSION_DENIED, unless it's an admin */
+	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT && ($ret2 || !$inGroup)) {
 		$ret->addErrorCode(ERROR_PERMISSION_DENIED);
 	    }
 	    $result = array($ret, null);
+	    if ($ret2) {
+		return $result;
+	    }
 	    if ($ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
 		list ($ret2, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
 		if ($ret2) {
@@ -709,10 +714,6 @@ class GalleryView {
 		    /* Redirect to login view */
 		    $result = array(null,
 				    array('redirect' => $gallery->getConfig('loginRedirect')));
-		}
-		list ($ret2, $inGroup) = GalleryCoreApi::isUserInSiteAdminGroup();
-		if ($ret2) {
-		    return $result;
 		}
 		if ($inGroup) {
 		    $redirect = $gallery->getConfig('loginRedirect');

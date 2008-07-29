@@ -665,43 +665,14 @@ class ViewTest extends GalleryTestCase {
 	$this->assert($gallery->_phpVm->isComplete(), $gallery->_phpVm->getRemaining());
     }
 
-    function testDoLoadTemplateImmediateView() {
-        global $gallery;
-	$gallery->_phpVm = new UnitTestPhpVm();
-	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
-
-	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
-	if ($ret) {
-	    return $ret;
-	}
-	$this->_markForCleanup($item);
-	$itemId = $item->getId();
-
-	list ($ret, $everybodyGroupId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
-	if ($ret) {
-	    return $ret;
-	}
-
-	$ret = GalleryCoreApi::removeGroupPermission($itemId, $everybodyGroupId, 'core.view');
-	if ($ret) {
-	    return $ret;
-	}
-
-	GalleryUtilities::putRequestVariable('itemId', $itemId);
-
-	$template = new UnitTestTemplate();
-	list ($ret, $view) = GalleryView::loadView('core.ViewTestImmediateItem');
-	if ($ret) {
-	    return $ret;
-	}
-	$this->assert($gallery->_phpVm->isComplete(), $gallery->_phpVm->getRemaining());
-    }
-
-    function testPermissionCheckNotAdmin() {
+    function testPermissionCheckForGuest() {
 	$galleryView = new GalleryView();
 
-	$this->_becomeGuestUser();
+	$ret = $this->_becomeGuestUser();
+	if ($ret) {
+	    return $ret;
+	}
+
 	list ($ret, $results) =
 	    $galleryView->_permissionCheck(GalleryCoreApi::error(ERROR_PERMISSION_DENIED));
 	if ($ret) {
@@ -709,6 +680,22 @@ class ViewTest extends GalleryTestCase {
 	}
 	$this->assertEquals(array('redirect' => array ('view' => 'core.UserAdmin',
 	    'subView' => 'core.UserLogin', 'return' => true)), $results, 'Unexpected result');
+    }
+
+    function testPermissionCheckForRegisteredUser() {
+	global $gallery;
+
+	$galleryView = new GalleryView();
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($user);
+	$gallery->setActiveUser($user);
+
+	list ($ret, $results) =
+	    $galleryView->_permissionCheck(GalleryCoreApi::error(ERROR_PERMISSION_DENIED));
+	$this->assertErrorEquals(ERROR_PERMISSION_DENIED, $ret, true);
     }
 
     function testPermissionCheckAuthTimeoutExpired() {
@@ -734,8 +721,13 @@ class ViewTest extends GalleryTestCase {
 	$this->assertEquals(null, $results, 'Results should be null');
     }
 
-    function testPermissionCheckErrorMissingObject() {
+    function testPermissionCheckErrorMissingObjectForGuest() {
 	$galleryView = new GalleryView();
+
+	$ret = $this->_becomeGuestUser();
+	if ($ret) {
+	    return $ret;
+	}
 
 	list ($ret, $results) =
 	    $galleryView->_permissionCheck(GalleryCoreApi::error(ERROR_MISSING_OBJECT));
@@ -743,8 +735,32 @@ class ViewTest extends GalleryTestCase {
 	    return $ret;
 	}
 	$this->assertEquals(array('redirect' => array ('view' => 'core.UserAdmin',
-	    'subView' => 'core.UserLogin', 'return' => true, 'reAuthenticate' => 1)), $results,
-	    'Unexpected result');
+	    'subView' => 'core.UserLogin', 'return' => true)), $results, 'Unexpected result');
+    }
+
+    function testPermissionCheckErrorMissingObjectForRegisteredUser() {
+	global $gallery;
+
+	$galleryView = new GalleryView();
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($user);
+	$gallery->setActiveUser($user);
+
+	list ($ret, $results) =
+	    $galleryView->_permissionCheck(GalleryCoreApi::error(ERROR_MISSING_OBJECT));
+	$this->assertErrorEquals(ERROR_MISSING_OBJECT | ERROR_PERMISSION_DENIED, $ret, true);
+    }
+
+    function testPermissionCheckErrorMissingObjectForAdmin() {
+	$galleryView = new GalleryView();
+
+	list ($ret, $results) =
+	    $galleryView->_permissionCheck(GalleryCoreApi::error(ERROR_MISSING_OBJECT));
+	$this->assertErrorEquals(ERROR_MISSING_OBJECT, $ret, true);
+	$this->assertEquals(null, $results, 'view results');
     }
 
     function testPermissionCheckOtherError() {
@@ -752,7 +768,7 @@ class ViewTest extends GalleryTestCase {
 
 	list ($ret, $results) =
 	    $galleryView->_permissionCheck(GalleryCoreApi::error(ERROR_STORAGE_FAILURE));
-	$this->assertErrorEquals(ERROR_STORAGE_FAILURE, $ret, 'Unexpected error code');
+	$this->assertErrorEquals(ERROR_STORAGE_FAILURE, $ret, true);
 	$this->assertEquals(null, $results, 'Results should be null');
     }
 }

@@ -448,7 +448,8 @@ function _GalleryMain($embedded=false, $template=null) {
 	    $error = isset($results['error']) ? $results['error'] : array();
 	    $ret = $view->renderImmediate($status, $error);
 	    if ($ret) {
-		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		list ($ret2, $inGroup) = GalleryCoreApi::isUserInSiteAdminGroup();
+		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT && ($ret2 || !$inGroup)) {
 		    /* Normalize error to GalleryView::_permissionCheck() */
 		    $ret->addErrorCode(ERROR_PERMISSION_DENIED);
 		}

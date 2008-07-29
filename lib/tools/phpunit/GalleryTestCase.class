@@ -1114,19 +1114,27 @@ class GalleryTestCase extends TestCase {
 
     /**
      * Fail if the provided GalleryStatus object does not contain the given error code.
+     * @param int $errorCode The expected error code
+     * @param GalleryStatus $ret The status object to check against
+     * @param bool $exactMatch (optional) Whether the actual error can be a superset or must match
+     *                                      the expected error code exactly. Default false.
+     * @param string $message (optional) Message to be shown on failure
      */
-    function assertErrorEquals($errorCode, $ret) {
+    function assertErrorEquals($errorCode, $ret, $exactMatch=false, $message=null) {
 	if (!$ret) {
-	    $this->fail('Failed to get error %s',
-			join(', ', GalleryStatus::getErrorCodeConstants($errorCode)));
+	    $this->fail(sprintf('Failed to get error %s%s',
+			join(', ', GalleryStatus::getErrorCodeConstants($errorCode)),
+			$message ? '<br/>' . $message : ''));
 	    return;
 	}
 
-	if (!($ret->getErrorCode() & $errorCode)) {
-	    $this->fail('Expected error %s, received %s<br>%s',
+	if (!($ret->getErrorCode() & $errorCode)
+		|| ($exactMatch && $ret->getErrorCode() != ($errorCode | GALLERY_ERROR))) {
+	    $this->fail(sprintf('Expected error %s, received %s<br>%s%s',
 			join(', ', GalleryStatus::getErrorCodeConstants($errorCode)),
 			join(', ', GalleryStatus::getErrorCodeConstants($ret->getErrorCode())),
-			$ret->getAsHtml());
+			$ret->getAsHtml(),
+			$message ? '<br/>' . $message : ''));
 	    return;
 	}
     }
