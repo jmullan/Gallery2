@@ -757,6 +757,11 @@ class EmbedTest extends GalleryTestCase {
 	    return $ret;
 	}
 
+	list ($ret, $user) = $user->refresh();
+	if ($ret) {
+	    return $ret;
+	}
+
 	$this->assert($user->isCorrectPassword('secret'), 'correct password');
 	$this->assert(!$user->isCorrectPassword('123456'), 'incorrect password');
     }
@@ -775,6 +780,11 @@ class EmbedTest extends GalleryTestCase {
 	    return $ret;
 	}
 
+	list ($ret, $user) = $user->refresh();
+	if ($ret) {
+	    return $ret;
+	}
+
 	$this->assert($user->isCorrectPassword('secret'), 'correct password');
 	$this->assert(!$user->isCorrectPassword('123456'), 'incorrect password');
     }
@@ -789,6 +799,11 @@ class EmbedTest extends GalleryTestCase {
 
 	$ret = GalleryEmbed::updateUser($externalUserId,
 		array('hashedpassword' => 'secrethash', 'hashmethod' => 'phpass'));
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $user) = $user->refresh();
 	if ($ret) {
 	    return $ret;
 	}
