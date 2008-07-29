@@ -73,7 +73,7 @@ class DcrawToolkitHelper {
 	if ($platform->isRestrictedByOpenBaseDir($dcrawPath)
 		|| !@$platform->is_file($dcrawPath)) {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PATH, null, null, '"' . $dcrawPath 
-			. '" is not a directory or is not specified in open_basedir.'), null, null);
+			. '" is not a file or is not specified in open_basedir.'), null, null);
 	}
 
 	/* Only used for translation, so ignore version mismatch during upgrade */

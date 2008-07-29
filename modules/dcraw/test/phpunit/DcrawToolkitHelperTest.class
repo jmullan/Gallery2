@@ -135,16 +135,9 @@ class DcrawToolkitHelperTest extends GalleryTestCase {
 
     function testBinaryOutsideOpenBasedir() {
 	$this->_platform->setReply('isRestrictedByOpenBaseDir', array('/path/to/dcraw'), 1);
-	$this->_platform->setReply('exec', array(array(array('/path/to/dcraw'))),
-				   array(0, array(), array('Raw Photo Decoder "dcraw" v7.17')));
 
 	list ($ret, $testArray, $version) = DcrawToolkitHelper::testBinary('/path/to/dcraw');
-	if ($ret) {
-	    return $ret;
-	}
-
-	$this->assertEquals(array(array('name' => 'dcraw', 'success' => true)), $testArray);
-	$this->assertEquals('7.17', $version);
+	$this->assertErrorEquals(ERROR_BAD_PATH, $ret);
     }
 
     function testBinaryPathIsADirectory() {
