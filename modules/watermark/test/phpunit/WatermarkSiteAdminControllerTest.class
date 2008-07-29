@@ -240,9 +240,15 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::removeFormVariables('form');
 	GalleryUtilities::putRequestVariable('form[action][delete]', '1');
 	GalleryUtilities::putRequestVariable('form[delete][watermarkId]', $idToDelete);
-	GalleryCoreApi::setPluginParameter('module', 'watermark', 'defaultWatermarkId', 
+	$ret = GalleryCoreApi::setPluginParameter('module', 'watermark', 'defaultWatermarkId', 
 	    $idToDelete);
-	GalleryCoreApi::setPluginParameter('module', 'watermark', 'forceDefaultWatermark', true);
+	if ($ret) {
+	    return $ret;
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'watermark', 'forceDefaultWatermark', true);
+	if ($ret) {
+	    return $ret;
+	}
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array(

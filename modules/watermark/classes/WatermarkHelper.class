@@ -190,9 +190,7 @@ class WatermarkHelper {
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'WatermarkImage');
 	if ($ret) {
-	    if ($ret) {
-		return array($ret, null);
-	    }
+	    return array($ret, null);
 	}
 	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	if ($ret) {
@@ -238,7 +236,7 @@ class WatermarkHelper {
 	if (!empty($params['defaultWatermarkId']) && $params['defaultWatermarkId'] == $itemId) {
 	    $newDefaultWatermarkId = null;
 	    if (!empty($params['forceDefaultWatermark'])) {
-		list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks(1);
+		list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks(2);
 		if ($ret) {
 		    return array($ret, null);
 		}
