@@ -188,7 +188,8 @@ class FfmpegToolkitHelper {
 	    }
 	} else {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PATH, null, null, '"' . $ffmpegPath 
-			. '" is not specified in open_basedir.'), null);
+			. '" is not specified in open_basedir.'), null,
+			 null, null, null, null, null);
 	}
 
 	/* We only care about video for now */
