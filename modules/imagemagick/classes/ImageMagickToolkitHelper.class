@@ -435,7 +435,7 @@ class ImageMagickToolkitHelper {
 					   array('-size', '200x200',
 						 '-geometry', '200x200',
 						 $dataPath . 'test.gif',
-						 $tmpFilename)
+						 'gif:' . $tmpFilename)
 					  );
 		    list ($success, $results) = $platform->exec(array($command));
 		}
@@ -483,7 +483,7 @@ class ImageMagickToolkitHelper {
 				       array('-geometry', '+0+0',
 					     $dataPath . 'test.jpg',
 					     $dataPath . 'test.gif',
-					     $tmpFilename)
+					     'gif:' . $tmpFilename)
 				      );
 		list ($success, $results) = $platform->exec(array($command));
 		if (!$success) {
