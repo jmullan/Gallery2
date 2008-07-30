@@ -78,7 +78,23 @@ class NotificationHelper {
 	    return array($ret, null, null);
 	}
 
-	return array(null, empty($enabled) ? array() : unserialize($enabled), $eventMapLockId);
+	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+	$enabled = unserialize($enabled);
+	foreach ($enabled as $notification => $handlers) {
+	    foreach ($handlers as $handler => $value) {
+		if (empty($value['public']) && !$isAdmin) {
+		    unset($handlers[$handler]);
+		}
+	    }
+	    if (empty($handlers)) {
+		unset($enabled[$notification]);
+	    }
+	}
+
+	return array(null, $enabled, $eventMapLockId);
     }
 
     /**

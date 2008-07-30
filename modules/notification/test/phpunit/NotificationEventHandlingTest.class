@@ -99,8 +99,8 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 	$this->_users = array();
 	$this->_userIds = array();
 
-	list ($ret, $this->_groupRegistered) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
+	list ($ret, $this->_groupAdmin) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret) {
 	    return $ret;
 	}
@@ -195,6 +195,7 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 	$event = GalleryCoreApi::newEvent($eventId);
 	$event->setEntity($this->_childAlbum);
 
+	$gallery->setActiveUser($this->_users['User1']);
 	$userId = $gallery->getActiveUserId();
 
 	$itemId = $this->_childAlbum->getId();
@@ -207,7 +208,11 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 		    array('Test::Event1'), array()),
 	      array(null, new UnitTestStorageSearchResults(array(
 						   array('Test::Event1', 'Test::EventHandler1')))));
-
+	$storage->setReply('getMapEntry',
+	      array('GalleryUserGroupMap', array('userId'),
+		    array('userId' => $this->_users['User1']->getId(), 'groupId' => $this->_groupAdmin), 
+		    array('limit' => array('count' => 1))),
+	      array(null, new UnitTestStorageSearchResults(array(array()))));
 	$storage->setReply('getMapEntry',
 	      array('SubscriptionMap', array('userId'),
 		    array('notificationName' => 'Test::Event1', 'itemId' => $itemId), array()),
@@ -251,6 +256,8 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 	$event->setEntity($this->_childAlbum);
 	$itemId = $this->_childAlbum->getId();
 
+	$gallery->setActiveUser($this->_users['User1']);
+
 	$storage->setReply('search',
 	      array('
 	    SELECT DISTINCT [::notificationName], [::handlerName]
@@ -260,6 +267,12 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 	      array(null, new UnitTestStorageSearchResults(array(
 						   array('Test::Event1', 'Test::EventHandler1')))));
 
+	$storage->setReply('getMapEntry',
+	      array('GalleryUserGroupMap', array('userId'),
+		    array('userId' => $this->_users['User1']->getId(), 
+			  'groupId' => $this->_groupAdmin), 
+		    array('limit' => array('count' => 1))),
+	      array(null, new UnitTestStorageSearchResults(array(array()))));
 
 	$storage->setReply('getMapEntry',
 	      array('SubscriptionMap', array('userId'),
@@ -282,6 +295,8 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 	$event = GalleryCoreApi::newEvent('Test::Event2');
 	$event->setData($this->_getRootId());
 
+	$gallery->setActiveUser($this->_users['User1']);
+
 	$storage->setReply('search',
 	      array('
 	    SELECT DISTINCT [::notificationName], [::handlerName]
@@ -291,6 +306,12 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 	      array(null, new UnitTestStorageSearchResults(array(
 						array('Test::Event2', 'Test::EventHandler1')))));
 
+	$storage->setReply('getMapEntry',
+	      array('GalleryUserGroupMap', array('userId'),
+		    array('userId' => $this->_users['User1']->getId(), 
+			  'groupId' => $this->_groupAdmin), 
+		    array('limit' => array('count' => 1))),
+	      array(null, new UnitTestStorageSearchResults(array(array()))));
 
 	$handler = new NotificationRouter();
 	list ($ret, $data) = $handler->handleEvent($event);
