@@ -82,7 +82,8 @@ class NotificationHelper {
 	if ($ret) {
 	    return array($ret, null, null);
 	}
-	$enabled = unserialize($enabled);
+
+	$enabled = !empty($enabled) ? unserialize($enabled) : array();
 	foreach ($enabled as $notification => $handlers) {
 	    foreach ($handlers as $handler => $value) {
 		if (empty($value['public']) && !$isAdmin) {
