@@ -67,7 +67,7 @@
     <div class="section">
       You are not logged in as a Gallery site administrator so you are
       not allowed to run the unit tests.
-      [<a href="../../../main.php?g2_view=core.UserAdmin&g2_subView=core.UserLogin&g2_reAuthenticate=1&g2_return=<?php echo $_SERVER['REQUEST_URI']?>">login</a>]
+      [<a href="../../../main.php?g2_view=core.UserAdmin&g2_subView=core.UserLogin&g2_return=<?php echo $_SERVER['REQUEST_URI']?>">login</a>]
     </div>
     <?php endif; ?>
 

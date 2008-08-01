@@ -276,7 +276,7 @@ class ControllerTest extends GalleryTestCase {
 	list ($ret, $results) = 
 	    $galleryController->permissionCheck(GalleryCoreApi::error(ERROR_PERMISSION_DENIED));
 	$this->assertEquals(array('redirect' => array ('view' => 'core.UserAdmin',
-	    'subView' => 'core.UserLogin', 'return' => true, 'reAuthenticate' => 1),
+	    'subView' => 'core.UserLogin', 'return' => true),
 	    'status' => array(), 'error' => array()), $results, 'Unexpected result');
     }
 }

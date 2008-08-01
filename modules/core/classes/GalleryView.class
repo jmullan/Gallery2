@@ -710,15 +710,10 @@ class GalleryView {
 		if ($ret2) {
 		    return $result;
 		}
-		if ($isAnonymous) {
+		if ($isAnonymous || $inGroup) {
 		    /* Redirect to login view */
 		    $result = array(null,
 				    array('redirect' => $gallery->getConfig('loginRedirect')));
-		}
-		if ($inGroup) {
-		    $redirect = $gallery->getConfig('loginRedirect');
-		    $redirect['reAuthenticate'] = 1;
-		    $result = array(null, array('redirect' => $redirect));
 		}
 	    }
 	}

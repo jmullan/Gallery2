@@ -193,6 +193,7 @@ class UserLoginView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
+	$session =& $gallery->getSession();
 
 	/* Check if the default login view URL has been overridden and redirect appropriately */
 	$loginRedirect = $gallery->getConfig('loginRedirect');
@@ -220,7 +221,17 @@ class UserLoginView extends GalleryView {
 	    $form['username'] = '';
 	}
 
-	$reauthenticate = GalleryUtilities::getRequestVariables('reAuthenticate');
+	$reauthenticate = false;
+	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	if ($ret) {
+    	    return array ($ret, null);
+	}
+	if ($isAdmin) {
+	    list ($ret, $reauthenticate) = $session->hasSiteAdminSessionExpired();
+	    if ($ret) {
+		return array ($ret, null);
+    	    }
+	}
 
 	$template->setVariable('reauthenticate', $reauthenticate);
 	$template->setVariable('controller', 'core.UserLogin');

@@ -540,6 +540,10 @@ class UserLoginControllerTestSession {
     function setUserId($userId) {
 	$this->_sessionData['core.id.activeUser'] = $userId;
     }
+    
+    function hasSiteAdminSessionExpired() {
+	return array (null, true);
+    }    
 }
 
 /**
