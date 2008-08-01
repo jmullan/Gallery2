@@ -569,11 +569,27 @@ class GalleryTemplate {
 	}
 
 	list ($ret, $theme) = $view->loadThemeForItem($itemId);
-	if ($ret) {
-	    return array($ret, null);
+	if (!$ret && isset($theme)) {
+	    $themeId = $theme->getId();
+	} else {
+	    if (!isset($theme) || $ret->getErrorCode() &
+		    (ERROR_BAD_PARAMETER | ERROR_BAD_PLUGIN | ERROR_PLUGIN_VERSION_MISMATCH)) {
+		/*
+		 * See bug 2032636.
+		 * We just need some default theme id in this context.
+		 * GalleryView::doLoadTemplate handles theme errors.
+		 */
+		list ($ret, $themeId) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
+		if ($ret) {
+		    return array($ret, null);
+		}
+	    } else {
+		return array($ret, null);
+	    }
 	}
 
-	return array(null, $theme->getId());
+	return array(null, $themeId);
     }
 
     /**

@@ -242,24 +242,28 @@ class TemplateTest extends GalleryTestCase {
 	    $head['link']);
     }
 
-    function _createAlbumWithNonDefaultTheme() {
-	GalleryPluginHelper_medium::setPluginInstance('theme', 'templatetestfake',
-						      new TemplateTestFakeTheme());
+    function _createAlbumWithNonDefaultTheme($themeId) {
+	if (class_exists($themeId . 'theme')) {
+	    $themeClassName = $themeId . 'theme';
+	    GalleryPluginHelper_medium::setPluginInstance('theme', $themeId,
+							  new $themeClassName());
+	}
 	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId(),
-							array('theme' => 'templatetestfake'));
+							array('theme' => $themeId));
 	if ($ret) {
 	    return array($ret, null, null);
 	}
 	$this->_markForCleanup($album);
 
-	return array(null, $album, 'templatetestfake');
+	return array(null, $album, $themeId);
     }
 
     function testGetThemeIdWithViewPermission() {
 	global $gallery;
 	$gallery->setPlatform($this->_origPlatform);
 
-	list ($ret, $album, $fakeThemeId) = $this->_createAlbumWithNonDefaultTheme();
+	list ($ret, $album, $fakeThemeId) =
+		$this->_createAlbumWithNonDefaultTheme('templatetestfake');
 	if ($ret) {
 	    return $ret;
     	}
@@ -311,7 +315,8 @@ class TemplateTest extends GalleryTestCase {
     	global $gallery;
 	$gallery->setPlatform($this->_origPlatform);
 
-	list ($ret, $album, $fakeThemeId) = $this->_createAlbumWithNonDefaultTheme();
+	list ($ret, $album, $fakeThemeId) =
+		$this->_createAlbumWithNonDefaultTheme('templatetestfake');
 	if ($ret) {
 	    return $ret;
     	}
@@ -329,6 +334,60 @@ class TemplateTest extends GalleryTestCase {
 	    return $ret;
 	}
 	list ($ret, $expectedThemeId) = GalleryCoreApi::fetchThemeId($rootAlbum);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$template = new GalleryTemplate('');
+	list ($ret, $themeId) = $template->_getThemeId();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals($expectedThemeId, $themeId, 'wrong themeid');
+    }
+
+    function testGetThemeIdForMissingTheme() {
+	global $gallery;
+	$gallery->setPlatform($this->_origPlatform);
+
+	list ($ret, $album, $fakeThemeId) =
+		$this->_createAlbumWithNonDefaultTheme('TemplateTest_Missing_Theme');
+	if ($ret) {
+	    return $ret;
+    	}
+
+	GalleryUtilities::putRequestVariable('itemId', $album->getId());
+
+	list ($ret, $expectedThemeId) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$template = new GalleryTemplate('');
+	list ($ret, $themeId) = $template->_getThemeId();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals($expectedThemeId, $themeId, 'wrong themeid');
+    }
+
+    function testGetThemeIdForInactiveTheme() {
+	global $gallery;
+	$gallery->setPlatform($this->_origPlatform);
+
+	list ($ret, $album, $inactiveThemeId) =
+		$this->_createAlbumWithNonDefaultTheme('templatetestinactive');
+	if ($ret) {
+	    return $ret;
+    	}
+
+	GalleryUtilities::putRequestVariable('itemId', $album->getId());
+
+	list ($ret, $expectedThemeId) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
 	if ($ret) {
 	    return $ret;
 	}
@@ -393,6 +452,20 @@ class TemplateTestFakeTheme {
 
     function getId() {
 	return 'templatetestfake';
+    }
+
+    function fetchParameters($itemId=0) {
+    	return array(null, array());
+    }
+}
+
+class TemplateTestInactiveTheme {
+    function isActive() {
+	return array(null, false);
+    }
+
+    function getId() {
+	return 'templatetestinactive';
     }
 
     function fetchParameters($itemId=0) {
