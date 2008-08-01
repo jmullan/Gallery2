@@ -42,6 +42,13 @@ class RedirectController extends GalleryController {
     }
 
     /**
+     * @see GalleryController::isAllowedInEmbedOnly
+     */
+    function isAllowedInEmbedOnly() {
+	return true;
+    }
+
+    /**
     * @see GalleryController::handleRequest
     */
     function handleRequest($form) {
@@ -166,6 +173,13 @@ class RedirectView extends GalleryView {
      * @see GalleryView::isImmediate
      */
     function isImmediate() {
+	return true;
+    }
+
+    /**
+     * @see GalleryView::isAllowedInEmbedOnly
+     */
+    function isAllowedInEmbedOnly() {
 	return true;
     }
 

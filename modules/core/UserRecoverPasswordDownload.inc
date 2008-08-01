@@ -35,6 +35,13 @@ class UserRecoverPasswordDownloadView extends GalleryView {
     }
 
     /**
+     * @see GalleryView::isAllowedInEmbedOnly
+     */
+    function isAllowedInEmbedOnly() {
+	return true;
+    }
+
+    /**
      * @see GalleryView::renderImmediate
      */
     function renderImmediate($status, $error) {

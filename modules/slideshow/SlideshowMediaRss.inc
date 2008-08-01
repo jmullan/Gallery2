@@ -38,6 +38,13 @@ class SlideshowMediaRssView extends GalleryView {
     }
 
     /**
+     * @see GalleryView::isAllowedInEmbedOnly
+     */
+    function isAllowedInEmbedOnly() {
+	return true;
+    }
+
+    /**
      * @see GalleryView::loadTemplate
      */
     function renderImmediate($status, $error) {

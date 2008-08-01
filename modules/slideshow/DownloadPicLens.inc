@@ -75,6 +75,13 @@ class DownloadPicLensView extends GalleryView {
     }
 
     /**
+     * @see GalleryView::isAllowedInEmbedOnly
+     */
+    function isAllowedInEmbedOnly() {
+	return true;
+    }
+
+    /**
      * Copied from modules/core/DownloadItem.inc
      * @todo refactor all the various _sendFile() implementations into an API call
      */
