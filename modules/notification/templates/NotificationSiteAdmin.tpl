@@ -17,11 +17,17 @@
   // <![CDATA[
   {literal}
   function enableInput(iteration) {
-    var eventValue = document.getElementById('select' + iteration).value;
-    var disabled = '' == eventValue;
+    var eventValue = eval('(' + document.getElementById('select' + iteration).value + ')');
+    var disabled = '' == eventValue.name;
     document.getElementById('handler' + iteration).disabled = disabled;
     document.getElementById('enable' + iteration).disabled = disabled;
+    document.getElementById('selectValue' + iteration).value = eventValue.name;
 
+    if (eventValue.isGlobal) {
+	document.getElementById('public' + iteration).style.visibility = 'hidden';
+    } else {
+	document.getElementById('public' + iteration).style.visibility = 'visible';
+    }
     if (!disabled) {
       var nextRow = document.getElementById('row' + (iteration + 1));
       if (nextRow != null) {
@@ -64,12 +70,18 @@
       <div class="yui-u first" style="width:150px">
 	<input type="hidden" name="{g->formVar var="form[notificationMap][$iteration][currentName]"}"
 		{if $iteration <= $eventCount}value="{$form.notificationMap[$iteration].currentName}"{/if} />
-	<select id="select{$iteration}" name="{g->formVar var="form[notificationMap][$iteration][notificationName]"}"
-		onchange="enableInput({$iteration})" style="width:100%">
+	<input type="hidden" name="{g->formVar var="form[notificationMap][$iteration][notificationName]"}"
+		id="selectValue{$iteration}" {if $iteration <= $eventCount}value="{$form.notificationMap[$iteration].currentName}"{/if}/>
+	<select id="select{$iteration}" onchange="enableInput({$iteration})" style="width:100%">
 	  {foreach from=$definedEvents item=eventDescription key=notificationName}
-	    <option value="{$notificationName}"
+	    {if !empty($eventDescription.global)}
+	      {assign var=isGlobal value='true'}
+	    {else}
+	      {assign var=isGlobal value='false'}
+	    {/if}
+	    <option value="{ldelim}'name': '{$notificationName}', 'isGlobal' : {$isGlobal}{rdelim}"
 	      {if !empty($form.notificationMap[$iteration].notificationName) && $notificationName==$form.notificationMap[$iteration].notificationName} selected="selected"{/if}>
-	      {$eventDescription}
+	      {$eventDescription.description}
 	    </option>
 	  {/foreach}
 	</select>
@@ -95,6 +107,7 @@
 	</div>
 	<div class="yui-u" style="width:80px; text-align:center">
 	  <input type="checkbox" id="public{$iteration}" name="{g->formVar var="form[notificationMap][$iteration][public]"}"
+		{if !empty($form.notificationMap[$iteration].isGlobal)}style="visibility: hidden"{/if}
 		{if $iteration >= $form.displayRows || empty($form.notificationMap[$iteration].enabled)} disabled="disabled"{/if}
 		{if !empty($form.notificationMap[$iteration].public)}checked="checked"{/if}/>
 	  </div>

@@ -78,7 +78,8 @@
 		{if !empty($item.subscribed)} checked="checked"{/if}/>
 	    </td>
 	    <td style="text-align: center">
-	      <input id="recursive{$i}" type="checkbox" name="{g->formVar var="form[notifications][$i][items][$j][recursive]"}" checked="checked" disabled="disabled"/>
+	      <input id="recursive{$i}" type="checkbox" name="{g->formVar var="form[notifications][$i][items][$j][recursive]"}" disabled="disabled"
+		{if empty($item.itemId)}style="visibility: hidden" {else} checked="checked" {/if}/>
 	    </td>
 	    {if isset($form.error.notifications[$i].notAuthorized)}
 	    <td>

@@ -45,6 +45,12 @@ class NotificationHelperTest extends GalleryTestCase {
 	    return $ret;
 	}
 
+	list ($ret, $this->_groupAdmin) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	if ($ret) {
+	    return $ret;
+	}
+
 	$this->_unregisterFactoryImplementationForTest('NotificationEvent_1_0');
 	$this->_unregisterFactoryImplementationForTest('NotificationHandler_1_0');
 
@@ -57,7 +63,7 @@ class NotificationHelperTest extends GalleryTestCase {
 	}
 
 	$ret = $this->_registerFactoryImplementationForTest('NotificationEvent_1_0',
-	    'NotificationHelperEventTest', 'Test::Event1',
+	    'NotificationHelperTestEvent', 'Test::Event1',
 	    'modules/notification/test/phpunit/NotificationHelperTest.class',
 	    'notification', array('eventName' => 'Test::Event'));
 	if ($ret) {
@@ -65,24 +71,32 @@ class NotificationHelperTest extends GalleryTestCase {
 	}
 
 	$ret = $this->_registerFactoryImplementationForTest('NotificationEvent_1_0',
-	    'NotificationHelperEventTest2', 'Test::Event2',
+	    'NotificationHelperTestEvent2', 'Test::Event2',
 	    'modules/notification/test/phpunit/NotificationHelperTest.class',
 	    'notification', array('eventName' => 'Test::Event2'));
 	if ($ret) {
 	    return $ret;
 	}
 
-	$ret = $this->_registerFactoryImplementationForTest(
-	    'NotificationHandler_1_0', 'NotificationHelperNotification', 'Test::EventHandler',
+	$ret = $this->_registerFactoryImplementationForTest('NotificationEvent_1_0',
+	    'NotificationHelperTestGlobalEvent', 'Test::GlobalEvent',
 	    'modules/notification/test/phpunit/NotificationHelperTest.class',
+	    'notification', array('eventName' => 'Test::GlobalEvent'));
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = $this->_registerFactoryImplementationForTest(
+	    'NotificationHandler_1_0', 'NotificationHelperTestNotificationHandler',
+	    'Test::EventHandler', 'modules/notification/test/phpunit/NotificationHelperTest.class',
 	    'notification', array());
 	if ($ret) {
 	    return $ret;
 	}
 
 	$ret = $this->_registerFactoryImplementationForTest(
-	    'NotificationHandler_1_0', 'NotificationHelperNotificationNew', 'Test:NewHandler',
-	    'modules/notification/test/phpunit/NotificationHelperTest.class',
+	    'NotificationHandler_1_0', 'NotificationHelperTestNotificationHandlerNew', 
+	    'Test:NewHandler', 'modules/notification/test/phpunit/NotificationHelperTest.class',
 	    'notification', array('Gallery::ViewableTreeChange',
 		  'Gallery::RemovePermission',
 		  'GalleryEntity::save',
@@ -118,15 +132,29 @@ class NotificationHelperTest extends GalleryTestCase {
 	}
 	$this->_markForCleanup($this->_user);
 
-	$userId = $gallery->getActiveUserId();
-	$gallery->setActiveUser($this->_user);
-	list ($ret) = GalleryCoreApi::fetchAccessListIds('core.view', $userId);
+	list ($ret, $this->_user2) = $this->_createRandomUser();
 	if ($ret) {
 	    return $ret;
 	}
-	list ($ret) = GalleryCoreApi::fetchAccessListIds('core.edit', $userId);
+	$this->_markForCleanup($this->_user2);
+
+	$ret = GalleryCoreApi::addUserPermission($this->_album->getId(), $this->_user2->getId(),
+		'core.edit');
 	if ($ret) {
 	    return $ret;
+	}
+	
+	$gallery->setActiveUser($this->_user);
+	$userId = $gallery->getActiveUserId();
+	list ($ret) = 
+	    GalleryCoreApi::getPermissions($this->_album->getId(), $userId);
+	if ($ret) {
+	    return array($ret, null);
+	}
+	list ($ret) = 
+	    GalleryCoreApi::getPermissions($this->_album->getId(), $this->_user2->getId());
+	if ($ret) {
+	    return array($ret, null);
 	}
 
 	list ($ret) =
@@ -185,11 +213,14 @@ class NotificationHelperTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$expected = array('' => $this->_module->translate('Select Event'),
-			  'Test::Event2' =>
-			     $this->_module->translate('NotificationEventTest2 Description'),
-			  'Test::Event1' =>
-			     $this->_module->translate('NotificationEventTest Description'));
+	$expected = array('' => array('global' => false, 'description' => 
+				$this->_module->translate('Select Event')),
+		'Test::Event1' => array('global' => false, 'description' => 
+				$this->_module->translate('NotificationEventTest Description')),
+		'Test::Event2' => array('global' => false, 'description' => 
+				$this->_module->translate('NotificationEventTest2 Description')),
+		'Test::GlobalEvent' => array('global' => true, 'description' => 
+		       $this->_module->translate('NotificationHelperTestGlobalEvent Description')));
 
 	$this->assertEquals($expected, $events, 'Display');
 
@@ -198,10 +229,12 @@ class NotificationHelperTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$expected = array('Test::Event2' =>
-			     $this->_module->translate('NotificationEventTest2 Description'),
-			  'Test::Event1' =>
-			     $this->_module->translate('NotificationEventTest Description'));
+	$expected = array('Test::GlobalEvent' =>array('global' => true, 'description' => 
+		       $this->_module->translate('NotificationHelperTestGlobalEvent Description')),
+			  'Test::Event2' =>array('global' => false, 'description' => 
+				$this->_module->translate('NotificationEventTest2 Description')),
+			  'Test::Event1' =>array('global' => false, 'description' => 
+				$this->_module->translate('NotificationEventTest Description')));
 
 	$this->assertEquals($expected, $events, 'Non Display');
     }
@@ -214,10 +247,10 @@ class NotificationHelperTest extends GalleryTestCase {
 
 	$expected =
 		array('' => $this->_module->translate('Select Handler'),
-		      'Test:NewHandler' =>
-			$this->_module->translate('NotificationHelperNotification New Description'),
-		      'Test::EventHandler' =>
-			$this->_module->translate('NotificationHelperNotification Description'));
+		      'Test:NewHandler' => $this->_module->translate(
+		 		'NotificationHelperTestNotificationHandler New Description'),
+		      'Test::EventHandler' => $this->_module->translate(
+				'NotificationHelperTestNotificationHandler Description'));
 
 	$this->assertEquals($expected, $handlers, 'Display');
 
@@ -227,10 +260,10 @@ class NotificationHelperTest extends GalleryTestCase {
 	}
 
 	$expected =
-		array('Test:NewHandler' =>
-			$this->_module->translate('NotificationHelperNotification New Description'),
-		      'Test::EventHandler' =>
-			$this->_module->translate('NotificationHelperNotification Description'));
+		array('Test:NewHandler' => $this->_module->translate(
+				'NotificationHelperTestNotificationHandler New Description'),
+		      'Test::EventHandler' => $this->_module->translate(
+				'NotificationHelperTestNotificationHandler Description'));
 
 	$this->assertEquals($expected, $handlers, 'Non Display');
     }
@@ -595,22 +628,21 @@ class NotificationHelperTest extends GalleryTestCase {
 	$this->assertEquals($msg, $testMsg, 'Multiple items not formatted propery');
     }
 
-    function testGetSubscribers() {
+    function testGetSubscribersItemEvent() {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
 	$userId = $gallery->getActiveUserId();
 	$itemId = $this->_album->getId();
 	$eventId = 'Test::Event';
-	$list = array($userId, $this->_user->getId());
 
 	$storage->setReply('getMapEntry',
 	      array('SubscriptionMap', array('userId'),
 		    array('notificationName' => 'Test::Event1', 'itemId' => $itemId), array()),
 	      array(null, new UnitTestStorageSearchResults(array(array($userId),
-								 array($this->_user->getId())))));
+								 array($this->_user2->getId())))));
 
-	$notification = new NotificationHelperNotification();
+	$notification = new NotificationHelperTestEvent();
 	$event = new GalleryEvent();
 	$event->setEventName('Test::Event');
 	$event->setData($itemId);
@@ -621,6 +653,48 @@ class NotificationHelperTest extends GalleryTestCase {
 	    return $ret;
 	}
 
+	/* Although two userids have "subscribed" only one has the required permissions. */
+	$list = array($this->_user2->getId());
+	$this->assertEquals($list, $userList, 'Unexpected user list');
+    }
+
+    function testGetSubscribersGlobalEvent() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$userId = $gallery->getActiveUserId();
+	$itemId = $this->_album->getId();
+	$eventId = 'Test::GlobalEvent';
+
+	$storage->setReply('getMapEntry',
+	      array('SubscriptionMap', array('userId'),
+		    array('notificationName' => 'Test::GlobalEvent', 'itemId' => 0), array()),
+	      array(null, new UnitTestStorageSearchResults(array(array($userId),
+								 array($this->_user2->getId())))));
+	$storage->setReply('getMapEntry',
+	      array('GalleryUserGroupMap', array('userId'),
+		    array('userId' => $userId, 'groupId' => $this->_groupAdmin), 
+			  array('limit' => array('count' => 1))),
+	      array(null, new UnitTestStorageSearchResults(array())));
+	$storage->setReply('getMapEntry',
+	      array('GalleryUserGroupMap', array('userId'),
+		    array('userId' => $this->_user2->getId(), 'groupId' => $this->_groupAdmin), 
+			  array('limit' => array('count' => 1))),
+	      array(null, new UnitTestStorageSearchResults(array(array($this->_user2->getId())))));
+	      
+	$notification = new NotificationHelperTestGlobalEvent();
+	$event = new GalleryEvent();
+	$event->setEventName('Test::GlobalEvent');
+	$event->setData($itemId);
+	$notification->setEvent($event);
+
+	list ($ret, $userList) = 
+	    NotificationHelper::getSubscribers('Test::GlobalEvent', $notification);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$list = array($this->_user2->getId());
 	$this->assertEquals($list, $userList, 'Unexpected user list');
     }
 
@@ -653,7 +727,7 @@ class NotificationHelperTest extends GalleryTestCase {
 
 GalleryCoreApi::requireOnce('modules/notification/classes/NotificationEvent_1_0.class');
 
-class NotificationHelperEventTest extends NotificationEvent_1_0 {
+class NotificationHelperTestEvent extends NotificationEvent_1_0 {
     function getDescription() {
 	global $gallery;
 	return $this->_translateText('notification',
@@ -668,9 +742,12 @@ class NotificationHelperEventTest extends NotificationEvent_1_0 {
     function isAppropriateForItem($item) {
 	return true;
     }
+    function getItemId() {
+	return (int)$this->_event->getData();
+    }
 }
 
-class NotificationHelperEventTest2 extends NotificationEvent_1_0 {
+class NotificationHelperTestEvent2 extends NotificationEvent_1_0 {
     function getDescription() {
 	global $gallery;
 	return $this->_translateText('notification',
@@ -687,13 +764,33 @@ class NotificationHelperEventTest2 extends NotificationEvent_1_0 {
     }
 }
 
-GalleryCoreApi::requireOnce('modules/notification/classes/NotificationHandler_1_0.class');
-
-class NotificationHelperNotification extends NotificationHandler_1_0 {
+class NotificationHelperTestGlobalEvent extends NotificationEvent_1_0 {
     function getDescription() {
 	global $gallery;
 	return $this->_translateText('notification',
-				     $gallery->i18n('NotificationHelperNotification Description'));
+				   $gallery->i18n('NotificationHelperTestGlobalEvent Description'));
+    }
+    function getPermission() {
+	return null;
+    }
+    function getEventSpecs() {
+	return array('eventName' => 'Test::GlobalEvent');
+    }
+    function isAppropriateForItem($item) {
+	return false;
+    }
+    function isGlobal() {
+	return true;
+    }
+}
+
+GalleryCoreApi::requireOnce('modules/notification/classes/NotificationHandler_1_0.class');
+
+class NotificationHelperTestNotificationHandler extends NotificationHandler_1_0 {
+    function getDescription() {
+	global $gallery;
+	return $this->_translateText('notification',
+		$gallery->i18n('NotificationHelperTestNotificationHandler Description'));
     }
 
     function getPermission() {
@@ -717,11 +814,11 @@ class NotificationHelperNotification extends NotificationHandler_1_0 {
     }
 }
 
-class NotificationHelperNotificationNew extends NotificationHandler_1_0 {
+class NotificationHelperTestNotificationHandlerNew extends NotificationHandler_1_0 {
     function getDescription() {
 	global $gallery;
 	return $this->_translateText('notification',
-				  $gallery->i18n('NotificationHelperNotification New Description'));
+		$gallery->i18n('NotificationHelperTestNotificationHandler New Description'));
     }
 
     function getPermission() {

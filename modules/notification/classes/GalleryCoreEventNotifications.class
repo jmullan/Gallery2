@@ -168,7 +168,7 @@ class ErrorNotification extends NotificationEvent_1_0 {
      */
     function getNotificationMessage() {
 	$error = $this->getError();
-	return $error->getAsText();
+	return array(null, $error->getAsText());
     }
 
     /**

@@ -105,7 +105,7 @@ class NotificationHelper {
      *  	     array (event id => event description)
      */
     function getDefinedEvents($display=false) {
-	$events = array();
+	$descriptions = $events = array();
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'notification');
 	if ($ret) {
 	    return array($ret, null);
@@ -123,15 +123,23 @@ class NotificationHelper {
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    list ($ret, $events[$notificationName]) = $notification->getDescription();
+	    list ($ret, $description) = $notification->getDescription();
 	    if ($ret) {
 		return array($ret, null);
 	    }
+	    $descriptions[$description] = $notificationName;
+	    $events[$notificationName] = array('global' => $notification->isGlobal(),
+					       'description' => $description);
 	}
 
 	if ($display) {
-	    asort($events);
-	    $events = array_merge(array('' => $module->translate('Select Event')), $events);
+	    ksort($descriptions);
+	    $sortedEvents = array('' => array('global' => false, 
+		    'description' => $module->translate('Select Event')));
+	    foreach ($descriptions as $notificationName) {
+		$sortedEvents[$notificationName] = $events[$notificationName];
+	    }
+	    $events = $sortedEvents;
 	}
 
 	return array(null, $events);
@@ -281,21 +289,33 @@ class NotificationHelper {
 	if ($ret) {
 	    return array($ret, null);
 	}
-	$subscriptions = array();
 
+	/**
+	 * @todo Performance: either load the permissions all at once or do more in SQL.
+	 */
+	$subscriptions = array();
 	while ($row = $searchResult->nextResult()) {
 	    $userId = $row[0];
-	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($itemId, $userId);
-	    if ($ret) {
-		return array($ret, null);
-	    }
+	    if (!$notification->isGlobal()) {
+		list ($ret, $permissions) = GalleryCoreApi::getPermissions($itemId, $userId);
+		if ($ret) {
+		    return array($ret, null);
+		}
 
-	    if (empty($requiredPermission) || empty($permissions['core.view'])
-		    || empty($permissions[$requiredPermission])) {
-		continue;
+		if (empty($requiredPermission) || empty($permissions['core.view'])
+			|| empty($permissions[$requiredPermission])) {
+		    continue;
+		}
+		$subscriptions[] = $userId;
+	    } else {
+		list ($ret, $inGroup) = GalleryCoreApi::isUserInSiteAdminGroup($userId);
+		if ($ret) {
+		    return array($ret, null);
+		}
+		if ($inGroup) {
+		    $subscriptions[] = $userId;
+		}
 	    }
-
-	    $subscriptions[] = $userId;
 	}
 
 	return array(null, $subscriptions);
