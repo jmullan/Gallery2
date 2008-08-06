@@ -165,7 +165,15 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	}
 
 	$search = array('|%src%|', '|%dst%|');
-	$replace = array($src, $dst);
+	list ($ret, $extensions) = GalleryCoreApi::convertMimeToExtensions($outputMimeType);
+	if ($ret) {
+	    return $ret;
+	}
+	if (empty($extensions)) {
+	    return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__,
+		"Can't convert to unknown mime type: $outputMimeType");
+	}
+	$replace = array($src, $extensions[0] . ':' . $dst);
 	foreach ($namedParams as $key => $value) {
 	    $search[] = sprintf('|%%%s%%|', $key);
 	    $replace[] = $value;
@@ -418,7 +426,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 			  '-geometry', '150x150'),
 		    $environment['removeMetaDataSwitch'],
 		    array('-crop', '77x59+37+27'),
-		    array('outputTmp.png', 'output.png')),
+		    array('outputTmp.png', 'png:output.png')),
 		$this->_files['output.png']['operation']['convert'], 'output ' . $this->_envName());
 	    $this->assertEquals(array('next.toolkit' => null, 'next.operation' => null,
 				      'width' => 77, 'height' => 59),
@@ -452,7 +460,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    $this->assertEquals(
 		array_merge(
 		    array('-quality', 75, '-crop', '329x250+158+113'),
-		    array('test[640x480].png', 'output1.png')),
+		    array('test[640x480].png', 'png:output1.png')),
 		$this->_files['output1.png']['operation']['convert'], 'output ' .
 		$this->_envName());
 	    $this->assertEquals(array('next.toolkit' => $this->_toolkit,
@@ -475,7 +483,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		array_merge(
 		    array('-quality', 75, '-size', '150x150', '-geometry', '150x150'),
 		    $environment['removeMetaDataSwitch'],
-		    array('output1.png', 'output.png')),
+		    array('output1.png', 'png:output.png')),
 		$this->_files['output.png']['operation']['convert'], 'output ' . $this->_envName());
 	    $this->assertEquals(array('next.toolkit' => null, 'next.operation' => null,
 				      'width' => 150, 'height' => 114),
@@ -551,7 +559,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		      '-rotate', '90',
 		      '-geometry', '150x150'),
 		$environment['removeMetaDataSwitch'],
-		array('output.png', 'output.png')),
+		array('output.png', 'png:output.png')),
 		$this->_files['output.png']['operation']['convert'], 'output ' . $this->_envName());
 	    $this->assertEquals(array('next.toolkit' => null, 'next.operation' => null,
 				      'width' => 113, 'height' => 150),
@@ -595,9 +603,9 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    }
 
 	    $this->assertEquals(array_merge(
-		array('-quality', '75', '-size', '150x150', '-geometry', '150x150'),
+		array('-quality', 75, '-size', '150x150', '-geometry', '150x150'),
 		$environment['removeMetaDataSwitch'],
-		array('TEMPFILE[0]', 'jpeg:output.jpg')),
+		array('TEMPFILE[0]', 'jpg:output.jpg')),
 		$this->_files['output.jpg']['operation']['convert'], 'output ' . $this->_envName());
 	    $this->assertEquals(array('next.toolkit' => null, 'next.operation' => null,
 				      'width' => 116, 'height' => 150),
@@ -1049,7 +1057,7 @@ class ImageMagickToolkitTestPlatform {
 		foreach (array_keys($this->_files[$newBase]['operation']) as $operation) {
 		    $count = count($this->_files[$newBase]['operation'][$operation]);
 		    $val = $this->_files[$newBase]['operation'][$operation][$count - 1];
-		    if (preg_match('/^(jpeg|png):/', $val, $regs)) {
+		    if (preg_match('/^(.*):/', $val, $regs)) {
 			$val = $regs[1] . ':' . $newName;
 		    } else {
 			$val = $newName;

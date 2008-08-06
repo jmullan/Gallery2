@@ -36,7 +36,7 @@
 $_commonOperations = array(
     'thumbnail' => array(
 	'convert' => array('-size', '%width%x%height%', '-geometry', '%width%x%height%',
-			   '+profile', '*', '%src%', '%dst%'),
+	    		   '+profile', '*', '%src%', '%dst%'),
     ),
     'scale' => array(
 	'convert' => array('-size', '%width%x%height%', '-geometry', '%width%x%height%',
@@ -53,13 +53,13 @@ $_commonOperations = array(
 	'convert' => array('-rotate', '%angle%', '%src%', '%dst%'),
     ),
     'convert-to-image/jpeg' => array(
-	'convert' => array('%src%', 'jpeg:%dst%'),
+	'convert' => array('%src%', '%dst%'),
     ),
     'composite' => array(
 	'composite' => array('-geometry', '+%x%+%y%', '%image%', '%src%', '%dst%'),
     ),
     'convert-to-image/png' => array(
-	'convert' => array('%src%', 'png:%dst%'),
+	'convert' => array('%src%', '%dst%'),
     ),
     'select-page' => array(
 	'convert' => array('%src%', '%dst%'),
@@ -102,7 +102,7 @@ $imEnvironment[] = array(
 	'operations' => array_merge($_commonOperations, array(
 	    'thumbnail' => array(
 		'convert' => array('-size', '%width%x%height%', '-geometry', '%width%x%height%',
-				   '%src%', '%dst%'),
+		    '%src%', '%dst%'),
 	    ),
 	    'scale' => array(
 		'convert' => array('-size', '%width%x%height%', '-geometry', '%width%x%height%',
@@ -284,7 +284,7 @@ $imEnvironment[] = array(
 	'removeMetaDataSwitch' => array('+profile', '*'),
 	'operations' => array_merge($_commonOperations, array(
 	    'convert-to-image/jpeg' => array(
-		'convert' => array('-colorspace', 'RGB', '%src%', 'jpeg:%dst%')))),
+		'convert' => array('-colorspace', 'RGB', '%src%', '%dst%')))),
 	'identify' => array(
 		'' => 'Version: ImageMagick 6.0.7 09/11/04 Q16 http://www.imagemagick.org
 Copyright: Copyright (C) 1999-2004 ImageMagick Studio LLC
@@ -394,7 +394,7 @@ $imEnvironment[] = array(
 		array('convert' => array('-size', '%width%x%height%',
 		      '-geometry', '%width%x%height%', '-strip', '%src%', '%dst%')),
 	    'convert-to-image/jpeg' => array(
-		'convert' => array('-colorspace', 'RGB', '%src%', 'jpeg:%dst%')))),
+		'convert' => array('-colorspace', 'RGB', '%src%', '%dst%')))),
 	'identify' => array(
 		'' => 'Version: ImageMagick 6.1.3 11/01/04 Q16 http://www.imagemagick.org
 Copyright: Copyright (C) 1999-2004 ImageMagick Studio LLC
