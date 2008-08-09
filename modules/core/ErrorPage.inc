@@ -139,6 +139,7 @@ class ErrorPageView extends GalleryView {
 	list ($ret, $eventResults) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
 	    $failsafe = true;
+	    $eventResults = array();
 	}
 
 	/* Return HTTP 404 status for ERROR_MISSING_OBJECT */
