@@ -210,7 +210,8 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 						   array('Test::Event1', 'Test::EventHandler1')))));
 	$storage->setReply('getMapEntry',
 	      array('GalleryUserGroupMap', array('userId'),
-		    array('userId' => $this->_users['User1']->getId(), 'groupId' => $this->_groupAdmin), 
+		    array('userId' => $this->_users['User1']->getId(),
+			  'groupId' => $this->_groupAdmin), 
 		    array('limit' => array('count' => 1))),
 	      array(null, new UnitTestStorageSearchResults(array(array()))));
 	$storage->setReply('getMapEntry',

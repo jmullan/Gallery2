@@ -245,7 +245,8 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$ret = GalleryCoreApi::setPluginParameter('module', 'watermark', 'forceDefaultWatermark', true);
+	$ret = GalleryCoreApi::setPluginParameter('module', 'watermark',
+						  'forceDefaultWatermark', true);
 	if ($ret) {
 	    return $ret;
 	}

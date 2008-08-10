@@ -149,12 +149,12 @@ class NotificationHelperTest extends GalleryTestCase {
 	list ($ret) = 
 	    GalleryCoreApi::getPermissions($this->_album->getId(), $userId);
 	if ($ret) {
-	    return array($ret, null);
+	    return $ret;
 	}
 	list ($ret) = 
 	    GalleryCoreApi::getPermissions($this->_album->getId(), $this->_user2->getId());
 	if ($ret) {
-	    return array($ret, null);
+	    return $ret;
 	}
 
 	list ($ret) =
@@ -178,7 +178,7 @@ class NotificationHelperTest extends GalleryTestCase {
 
 	list ($ret, $childItems) = GalleryCoreApi::fetchChildItemIds($this->_album);
 	if ($ret) {
-		return $ret;
+	    return $ret;
 	}
 
 	$entities = array($this->_getRootId(), $this->_album->getId());

@@ -224,12 +224,12 @@ class UserLoginView extends GalleryView {
 	$reauthenticate = false;
 	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	if ($ret) {
-    	    return array ($ret, null);
+    	    return array($ret, null);
 	}
 	if ($isAdmin) {
 	    list ($ret, $reauthenticate) = $session->hasSiteAdminSessionExpired();
 	    if ($ret) {
-		return array ($ret, null);
+		return array($ret, null);
     	    }
 	}
 
