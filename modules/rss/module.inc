@@ -64,6 +64,11 @@ class RssModule extends GalleryModule /* and GalleryEventListener */ {
 	    return array($ret, null);
 	}
 
+	list ($ret, $modulestatus) = GalleryCoreApi::fetchPluginStatus('module');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	
 	foreach ($items as $item) {
 	    $itemId = $item->getId();
 	    if (!isset($wantsDetailedLinks[$itemId])) {
@@ -71,6 +76,9 @@ class RssModule extends GalleryModule /* and GalleryEventListener */ {
 	    }
 
 	    if ($param['allowSimpleFeed'] == 1) {
+		$disableLink = GalleryUtilities::isA($item, 'GalleryDataItem')
+			&& $modulestatus['comment']['active'] != '1';
+		
 		$itemTypeNames = array_merge($item->itemTypeName(), $item->itemTypeName(false));
 
 		if (false) {
@@ -79,13 +87,20 @@ class RssModule extends GalleryModule /* and GalleryEventListener */ {
 		    _('RSS Feed for this Photo');
 		    _('RSS Feed for this Movie');
 		}
-		$links[$itemId][] = array(
-			'text' => $this->_translate(array(
-			    'text' => 'RSS Feed for this %s',
-			    'arg1' => $itemTypeNames[0]), $itemTypeNames[2]),
-			'params' => array(
-			    'view' => 'rss.SimpleRender',
-			    'itemId' => $itemId));
+		/*
+		 * Because SimpleFeeds for DataItems can only be comments, don't add
+		 * the link if the Comments module is disabled.
+		 */
+		if (!GalleryUtilities::isA($item, 'GalleryDataItem')
+			|| !empty($modulestatus['comment']['active'])) {
+		    $links[$itemId][] = array(
+			    'text' => $this->_translate(array(
+				'text' => 'RSS Feed for this %s',
+				'arg1' => $itemTypeNames[0]), $itemTypeNames[2]),
+			    'params' => array(
+				'view' => 'rss.SimpleRender',
+				'itemId' => $itemId));
+		}
 	    }
 
 	    list ($ret, $canConfigure) = RssMapHelper::canConfigureFeed($item, $param, $userId);
