@@ -114,12 +114,18 @@ function makeManifest($filterPath='') {
     $total = 0;
 
     foreach ($sections as $manifest => $entries) {
-	$oldLines = file($baseDir . $manifest);
-	$oldContent = implode('', $oldLines);
-	$nl = preg_match('/\r\n/', $oldContent) ? "\r\n" : "\n";
-	$matches = array();
-	preg_match('/Revision: (\d+\s*)\$/', $oldLines[0], $matches);
-	$oldRevision = $matches[1];
+	if (!file_exists($baseDir . $manifest)) {
+	    $oldLines = array();
+	    $oldContent = $oldRevision = '';
+	    $nl = DIRECTORY_SEPARATOR == '\\' ? "\r\n" : "\n";
+	} else {
+	    $oldLines = file($baseDir . $manifest);
+	    $oldContent = implode('', $oldLines);
+	    $nl = preg_match('/\r\n/', $oldContent) ? "\r\n" : "\n";
+	    $matches = array();
+	    $oldRevision =
+		preg_match('/Revision: (\d+\s*)\$/', $oldLines[0], $matches) ? $matches[1] : '';
+	}
     
 	$newContent = "# \$Revi" . "sion: $oldRevision\$$nl";
 	$newContent .= "# File crc32 crc32(crlf) size size(crlf)  or  R File$nl";
