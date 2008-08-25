@@ -146,9 +146,13 @@ class ModifyCartController extends GalleryController {
 	/* Prepare our results */
 	if (!isset($results['redirect'])) {
 	    $results['redirect']['view'] = 'cart.ViewCart';
+	    /*
+	     * Propagate the itemId to have a return link (bug 1818602).
+	     * Don't include the itemId when processing the cart though (bug 2013274).
+	     */
+	    $results['redirect']['itemId'] = GalleryUtilities::getRequestVariables('itemId');
 	}
-	
-	$results['redirect']['itemId'] = GalleryUtilities::getRequestVariables('itemId');
+
 	$results['status'] = $status;
 	$results['error'] = $error;
 
