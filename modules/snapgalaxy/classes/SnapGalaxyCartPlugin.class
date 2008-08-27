@@ -59,7 +59,8 @@ class SnapGalaxyCartPlugin /* implements CartPluginInterface_1_0 and CartPluginI
 	$urlGenerator =& $gallery->getUrlGenerator();
 
 	$returnUrl = $urlGenerator->generateUrl(
-	    array('view' => 'cart.ViewCart'), array('forceFullUrl' => true));
+	    array('view' => 'cart.ViewCart'),
+	    array('forceFullUrl' => true, 'htmlEntities' => false));
 
 	GalleryCoreApi::requireOnce('modules/snapgalaxy/classes/SnapGalaxyHelper.class');
 	list ($ret, $cartUrl) = SnapGalaxyHelper::printPhotos($cartItemIds, $returnUrl);
