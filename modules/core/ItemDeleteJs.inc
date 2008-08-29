@@ -96,7 +96,8 @@ class ItemDeleteJsView extends GalleryView {
 		}
 	    }
 	}
-	
+
+	header('Content-type: text/javascript; charset=UTF-8');
 	header('Last-Modified: ' . GalleryUtilities::getHttpDate());
 	header('Expires: ' . GalleryUtilities::getHttpDate(time() + 2592000));
 
