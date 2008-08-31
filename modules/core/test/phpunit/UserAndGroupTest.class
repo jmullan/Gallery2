@@ -474,6 +474,10 @@ class UserAndGroupTest extends GalleryTestCase {
       */
      function testDeleteUserItems() {
 	global $gallery;
+	$session =& $gallery->getSession();
+	$phpVm = $gallery->getPhpVm();
+	/* Ensure admin session isn't timed out (can happen during long unit test run) */
+	$session->put('session.siteAdminActivityTimestamp', $phpVm->time() - 2);
 
 	/*
 	 * An array for all items that should be gone and an
@@ -1329,6 +1333,12 @@ class UserAndGroupTest extends GalleryTestCase {
     }
 
     function testAssertSiteAdministrator() {
+	global $gallery;
+	$session =& $gallery->getSession();
+	$phpVm = $gallery->getPhpVm();
+	/* Ensure admin session isn't timed out (can happen during long unit test run) */
+	$session->put('session.siteAdminActivityTimestamp', $phpVm->time() - 2);
+
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return $ret;
@@ -1336,8 +1346,6 @@ class UserAndGroupTest extends GalleryTestCase {
     }
 
     function testAssertHasItemPermission() {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertHasItemPermission($this->_getRootId(), 'core.view');
 	if ($ret) {
 	    return $ret;
