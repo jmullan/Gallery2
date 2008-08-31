@@ -222,13 +222,13 @@ class ViewTest extends GalleryTestCase {
 	}
 
 	list ($ret, $paramValue) = GalleryCoreApi::getPluginParameter(
-		'theme', $expectedThemeId, 'dynamicLinks', $defaultAlbumId);
+		'theme', $expectedThemeId, '_version', $defaultAlbumId);
 	if ($ret) {
 	    return $ret;
 	}
 	if (!isset($paramValue)) {
 	    list ($ret, $paramValue) =
-		    GalleryCoreApi::getPluginParameter('theme', $expectedThemeId, 'dynamicLinks');
+		GalleryCoreApi::getPluginParameter('theme', $expectedThemeId, '_version');
 	    if ($ret) {
 		return $ret;
 	    }
@@ -246,11 +246,11 @@ class ViewTest extends GalleryTestCase {
 	    $this->fail('No item instance returned');
 	}
 
-	if (isset($params['dynamicLinks'])) {
-	    $this->assertEquals($paramValue, $params['dynamicLinks'], 'param value');
+	if (isset($params['_version'])) {
+	    $this->assertEquals($paramValue, $params['_version'], 'param value');
 	} else {
-	    $this->assertEquals(array('dynamicLinks' => $paramValue),
-		$params, 'missing test param');
+	    $this->assertEquals(array('_version' => $paramValue), $params,
+				'No param value returned');
 	}
     }
 

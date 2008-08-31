@@ -292,12 +292,8 @@ class TemplateTest extends GalleryTestCase {
 
 	GalleryUtilities::putRequestVariable('itemId', $this->_getUnusedId());
 
-	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId(),
-								   'GalleryAlbumItem');
-	if ($ret) {
-	    return $ret;
-	}
-	list ($ret, $expectedThemeId) = GalleryCoreApi::fetchThemeId($rootAlbum);
+	list ($ret, $expectedThemeId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
 	if ($ret) {
 	    return $ret;
 	}
@@ -328,12 +324,8 @@ class TemplateTest extends GalleryTestCase {
 
 	GalleryUtilities::putRequestVariable('itemId', $album->getId());
 
-	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId(),
-								   'GalleryAlbumItem');
-	if ($ret) {
-	    return $ret;
-	}
-	list ($ret, $expectedThemeId) = GalleryCoreApi::fetchThemeId($rootAlbum);
+	list ($ret, $expectedThemeId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
 	if ($ret) {
 	    return $ret;
 	}
