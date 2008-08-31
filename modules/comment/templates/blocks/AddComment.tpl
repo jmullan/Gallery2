@@ -19,7 +19,7 @@
   <div class="gbBlock gcBackground1">
     <h3> {g->text text="Add Comment"} </h3>
   </div>
-  <textarea cols=80 rows=5></textarea>
+  <textarea cols="80" rows="5"></textarea>
 </div>
 
 {literal}
