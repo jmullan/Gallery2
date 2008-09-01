@@ -499,7 +499,7 @@ class ViewTest extends GalleryTestCase {
 	$gallery->_phpVm->setReply(
 		'header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
 
-	$template = new UnitTestTemplate();
+	$template = new GalleryTemplate(GalleryCoreApi::getCodeBasePath());
 	$view = new ViewTestAdminView();
 	list ($ret, $results, $theme) = $view->doLoadTemplate($template);
 	if ($ret) {
@@ -528,7 +528,7 @@ class ViewTest extends GalleryTestCase {
 	$gallery->_phpVm->setReply(
 		'header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
 
-	$template = new UnitTestTemplate();
+	$template = new GalleryTemplate(GalleryCoreApi::getCodeBasePath());
 	$template->setVariable('head', array('meta' => array()));
 	/* Config view is Module View with no itemId defined */
 	$view = new ViewTestConfigView();
@@ -568,7 +568,7 @@ class ViewTest extends GalleryTestCase {
 	}
 	GalleryUtilities::putRequestVariable('itemId', $itemId);
 
-	$template = new UnitTestTemplate();
+	$template = new GalleryTemplate(GalleryCoreApi::getCodeBasePath());
 	$template->setVariable('head', array('meta' => array()));
 	$view = new ViewTestItemView();
 	list ($ret, $results, $theme) = $view->doLoadTemplate($template);
@@ -608,7 +608,7 @@ class ViewTest extends GalleryTestCase {
 	}
 	GalleryUtilities::putRequestVariable('itemId', $itemId);
 
-	$template = new UnitTestTemplate();
+	$template = new GalleryTemplate(GalleryCoreApi::getCodeBasePath());
 	$template->setVariable('head', array('meta' => array()));
 	$view = new ViewTestItemView();
 	list ($ret, $results, $theme) = $view->doLoadTemplate($template);
@@ -651,7 +651,7 @@ class ViewTest extends GalleryTestCase {
 
 	GalleryUtilities::putRequestVariable('itemId', $itemId);
 
-	$template = new UnitTestTemplate();
+	$template = new GalleryTemplate(GalleryCoreApi::getCodeBasePath());
 	$template->setVariable('head', array('meta' => array()));
 	/* This view overrides default cache control functionality */
 	$view = new ViewTestNoAutoCacheControlItemView();
