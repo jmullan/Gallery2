@@ -61,7 +61,10 @@ class IndexDotPhpTest extends GalleryTestCase {
 	    /* Make the HTTP request */
 	    list ($success, $body, $response, $headers) = GalleryCoreApi::fetchWebPage($url);
 	    $this->assert($success, "Could not retrieve G2 page: $url");
-	    $this->assertEquals($response, 'HTTP/1.1 200 OK', "Could not retrieve G2 page: $url");
+	    if (!preg_match('{^HTTP/1\.\d 200 OK$}', $response)) {
+		$this->assertEquals($response, 'HTTP/1.1 200 OK',
+				    "Could not retrieve G2 page: $url");
+	    }
 	    $this->assert(isset($headers['Set-Cookie']), "Set-Cookie header not set: $url");
 	    if (isset($headers['Set-Cookie'])) {
 		/* Check if the G2 cookie is present */
