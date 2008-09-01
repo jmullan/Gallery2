@@ -551,6 +551,8 @@ class ViewTest extends GalleryTestCase {
         global $gallery;
 	$gallery->_phpVm = new UnitTestPhpVm();
 	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
+	// Optional md5 call if authToken needs to be created and placed in session
+	$gallery->_phpVm->setReply('md5', array('fuzzy' => '{.*}'), '12345', true);
 
 	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
 	if ($ret) {
@@ -591,6 +593,8 @@ class ViewTest extends GalleryTestCase {
 	$gallery->_phpVm->setReply('header', array('Pragma: no-cache', ''), true);
 	$gallery->_phpVm->setReply(
 		'header', array('Expires: Sun, 09 Mar 2008 21:00:00 GMT', ''), true);
+	// Optional md5 call if authToken needs to be created and placed in session
+	$gallery->_phpVm->setReply('md5', array('fuzzy' => '{.*}'), '12345', true);
 
 	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
 	if ($ret) {
@@ -630,6 +634,8 @@ class ViewTest extends GalleryTestCase {
         global $gallery;
 	$gallery->_phpVm = new UnitTestPhpVm();
 	$gallery->_phpVm->setReply('time', array(), strtotime('Sun, 16 Mar 2008 21:00:00 GMT'));
+	// Optional md5 call if authToken needs to be created and placed in session
+	$gallery->_phpVm->setReply('md5', array('fuzzy' => '{.*}'), '12345', true);
 
 	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
 	if ($ret) {
