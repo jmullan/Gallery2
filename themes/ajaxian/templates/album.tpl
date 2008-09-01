@@ -61,17 +61,19 @@
           {assign var="childrenInColumnCount" value=0}
         {/if}
         {assign var=childrenInColumnCount value="`$childrenInColumnCount+1`"}
+	{assign var=childSummary value=$child.summary|markup|escape:html}
+	{assign var=childDescription value=$child.description|markup|escape:html}
         <td class="giItemCell">
           {if isset($theme.params.itemFrame) && isset($child.thumbnail)}
         {g->container type="imageframe.ImageFrame" frame=$theme.params.itemFrame}
           <a href="{g->url params=$theme.pageUrl arg1="itemId=`$child.id`"}">{g->image
             id="%ID%" item=$child image=$child.thumbnail
-            class="%CLASS% giThumbnail size:=`$child.size`= summary:=`$child.summary`= description:=`$child.description`="}</a>
+            class="%CLASS% giThumbnail size:=`$child.size`= summary:=`$childSummary`= description:=`$childDescription`="}</a>
         {/g->container}
           {elseif isset($child.thumbnail)}
         <a href="{g->url params=$theme.pageUrl arg1="itemId=`$child.id`"}">{g->image
             item=$child image=$child.thumbnail
-            class="r giThumbnail size:=`$child.size`= summary:=`$child.summary`= description:=`$child.description`="}</a>
+            class="r giThumbnail size:=`$child.size`= summary:=`$childSummary`= description:=`$childDescription`="}</a>
           {else}
         <a href="{g->url params=$theme.pageUrl arg1="itemId=`$child.id`"}"
            class="giMissingThumbnail">

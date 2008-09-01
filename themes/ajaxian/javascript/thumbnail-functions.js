@@ -320,12 +320,12 @@ function insertimagedatablock() {
     }
     if (thumbnails[currentImageIndex].className.match(/summary:=([^=]+)=/)) {
 	var summaryInfo = document.createElement('p');
-	summaryInfo.appendChild(document.createTextNode(SUMMARY + RegExp.$1));
+	summaryInfo.innerHTML = SUMMARY + RegExp.$1;
 	dataBlock.appendChild(summaryInfo);
     }
     if (thumbnails[currentImageIndex].className.match(/description:=(.+)=/)) {
 	var descriptionInfo = document.createElement('p');
-	descriptionInfo.appendChild(document.createTextNode(DESCRIPTION + RegExp.$1));
+	descriptionInfo.innerHTML = DESCRIPTION + RegExp.$1;
 	dataBlock.appendChild(descriptionInfo);
     }
 
