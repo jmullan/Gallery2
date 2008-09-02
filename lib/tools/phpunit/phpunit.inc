@@ -313,11 +313,26 @@ class TestCase extends Assert /* implements Test */ {
       }
 
       if (phpversion() >= '4') {
-	  if (isset($old_handler)) {
-	      set_error_handler($old_handler); // revert to prior error handler
-	  } else {
+	  // Remove PHPUnit_error_handler AND any handlers added by test
+	  while (true) {
+	      // Call set/restore just to see what the current error handler is:
+	      $old_handler = set_error_handler('PHPUnit_error_handler');
 	      restore_error_handler();
+	      // Remove current error handler:
+	      restore_error_handler();
+	      // If we just removed PHPUnit_error_handler then previous state is restored.
+	      // If all error handlers are gone then test must have called restore_error_handler
+	      // (preferably they don't do that).
+	      if ($old_handler == 'PHPUnit_error_handler' || empty($old_handler)) {
+		  break;
+	      }
 	  }
+	  // Original code:
+	  //if (isset($old_handler)) {
+	  //    set_error_handler($old_handler); // revert to prior error handler
+	  //} else {
+	  //    restore_error_handler();
+	  //}
 	  $PHPUnit_testRunning = null;
       }
   }

@@ -766,12 +766,14 @@ class PlatformTest extends GalleryTestCase {
 	@$this->_platform->fclose($fd);
     }
 
+    function ignore_error_handler($errno, $errstr) { return true; }
+
     /**
      * Try opening a socket to a bogus web server.
      */
     function testFsockopenBadHost() {
-	/* We know this is going to bomb so unset PHPunit's error handler */
-	restore_error_handler();
+	/* We know this is going to bomb so bypass PHPunit's error handler */
+	set_error_handler(array('PlatformTest', 'ignore_error_handler'));
 
 	$fd = @$this->_platform->fsockopen('www.BOGUSBOGUSBOGUSBOGUS.com', $_SERVER['SERVER_PORT'],
 					   $errno, $errstr, 30);
@@ -807,8 +809,8 @@ class PlatformTest extends GalleryTestCase {
     }
 
     function testOpenMissingFile() {
-	/* We know this is going to bomb so unset PHPunit's error handler */
-	restore_error_handler();
+	/* We know this is going to bomb so bypass PHPunit's error handler */
+	set_error_handler(array('PlatformTest', 'ignore_error_handler'));
 
 	/* And suppress warnings when we call fopen */
 	$fd = @$this->_platform->fopen(sprintf('%s_BOGUS_BOGUS', __FILE__), 'rb');
