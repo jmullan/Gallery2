@@ -144,7 +144,7 @@ class GalleryEmbed /* implements GalleryEventListener */ {
      */
     function done() {
 	global $gallery;
-	global $gallerySaveErrorHandler;
+	global $gallerySetErrorHandler;
 
 	$session =& $gallery->getSession();
 	$ret = $session->save();
@@ -159,9 +159,9 @@ class GalleryEmbed /* implements GalleryEventListener */ {
 	    }
 	}
 
-	if (isset($gallerySaveErrorHandler)) {
-	    set_error_handler($gallerySaveErrorHandler);
-	    $gallerySaveErrorHandler = null;
+	if (!empty($gallerySetErrorHandler)) {
+	    restore_error_handler();
+	    $gallerySetErrorHandler = false;
 	}
 	return null;
     }
@@ -185,12 +185,12 @@ class GalleryEmbed /* implements GalleryEventListener */ {
      *                           'themeData' => mixed theme data]
      */
     function handleRequest() {
-	global $gallerySaveErrorHandler;
+	global $gallerySetErrorHandler;
 	$result = GalleryMain(true);
 
-	if (isset($gallerySaveErrorHandler)) {
-	    set_error_handler($gallerySaveErrorHandler);
-	    $gallerySaveErrorHandler = null;
+	if (!empty($gallerySetErrorHandler)) {
+	    restore_error_handler();
+	    $gallerySetErrorHandler = false;
 	}
 	return $result;
     }

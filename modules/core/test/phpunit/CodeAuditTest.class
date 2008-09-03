@@ -37,7 +37,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 
 	$this->_exception['endphp'] = array();
 
-	$this->_exceptions['preamble'] =
+	$this->_exception['preamble'] =
 	    '{(?:/TestCase/|templates/blocks/blocks.inc|(?:install|upgrade)/index.php|' .
 	    'data/Sample(?:Descriptors|Index).inc|DataCacheTest_\d+.class|getid3/lib/getid3|' .
 	    'Php43IllegalFunctions.inc|GdFunctionMatrix.inc|frame.inc|iconpack.inc)}';
@@ -88,6 +88,12 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    'main.php' => array(
 		'::_GalleryMain_doRedirect' => 1,
 		),
+	    );
+
+	$this->_exception['errorHandler'] = array(
+	    'init.inc' => 1,
+	    'main.php' => 1,
+	    'modules/core/classes/GalleryEmbed.class' => 1,
 	    );
 
 	$this->_exception['longLineCount'] = array(
@@ -180,7 +186,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    $this->assert(false, sprintf('%s has Windows line endings', $fileName));
 	}
 	if (substr($fileName, -4) == '.tpl' || substr($fileName, -3) == '.po') {
-	    /* Only perform newlines check on tpl and po files */
+	    /* For tpl and po files only perform newlines check */
 	    return;
 	}
 
@@ -230,9 +236,8 @@ class CodeAuditTest extends CodeAuditTestCase {
 			       $lines[$i], $matches)) {
 		foreach (array_unique($matches[1]) as $item) {
 		    $this->_errorCount++;
-		    $this->assert(false,
-				  sprintf('%s gets %s by value instead of by reference on line %d',
-					  $fileName, $item, $i + 1));
+		    $this->fail(sprintf('%s gets %s by value instead of by reference on line %d',
+					$fileName, $item, $i + 1));
 		}
 	    }
 
@@ -253,11 +258,20 @@ class CodeAuditTest extends CodeAuditTestCase {
 		    }
 
 		    $this->_errorCount++;
-		    $this->assert(false,
-				  sprintf('%s uses the %s superglobal instead of ' .
-					  'its helper on line %d',
-					  $fileName, $item, $i + 1));
+		    $this->fail(sprintf('%s uses the %s superglobal instead of ' .
+					'its helper on line %d',
+					$fileName, $item, $i + 1));
 		}
+	    }
+
+	    /*
+	     * Check that we don't mess with PHP error handler (allowed in tests).
+	     */
+	    if (preg_match('/((?:set|restore)_error_handler)\s*\(/', $lines[$i], $matches)
+		    && strpos($fileName, '/test/phpunit/') === false
+		    && !isset($this->_exception['errorHandler'][$fileName])) {
+		$this->_errorCount++;
+		$this->fail(sprintf('%s calls %s on line %d', $fileName, $matches[1], $i + 1));
 	    }
 
 	    /*
@@ -381,7 +395,7 @@ class CodeAuditTest extends CodeAuditTestCase {
     }
 
     function checkPreamble($fileName, $buffer, $lines) {
-	if (preg_match($this->_exceptions['preamble'], $fileName)) {
+	if (preg_match($this->_exception['preamble'], $fileName)) {
 	    return;
 	}
 

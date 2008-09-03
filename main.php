@@ -22,7 +22,7 @@
  * @package Gallery
  */
 
-$gallerySaveErrorHandler = null;
+$gallerySetErrorHandler = false;
 include(dirname(__FILE__) . '/bootstrap.inc');
 
 /*
@@ -88,8 +88,9 @@ if ($gallery->isEmbedded()) {
     GalleryMain();
 }
 
-if (!empty($gallerySaveErrorHandler)) {
-    set_error_handler($gallerySaveErrorHandler);
+if (!empty($gallerySetErrorHandler)) {
+    restore_error_handler();
+    $gallerySetErrorHandler = false;
 }
 
 /**

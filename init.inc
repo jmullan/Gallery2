@@ -138,7 +138,8 @@ function GalleryInitFirstPass($params=array()) {
 	 * The error handler relies on a database connection and a session, so don't set it before
 	 * they're initialized.
 	 */
-	$GLOBALS['gallerySaveErrorHandler'] = set_error_handler('GalleryPhpErrorHandler');
+	set_error_handler('GalleryPhpErrorHandler');
+	$GLOBALS['gallerySetErrorHandler'] = true;
     }
 
     /* Initialize our translator */
