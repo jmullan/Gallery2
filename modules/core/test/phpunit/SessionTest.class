@@ -61,7 +61,7 @@ class SessionTest extends GalleryTestCase {
 	 * tests)
 	 */
 	$this->_saveServerVars = array();
-	foreach (array('HTTP_X_FORWARDED_SERVER', 'HTTP_HOST', 'HTTP_X_FORWARDED_FOR',
+	foreach (array('HTTP_X_FORWARDED_SERVER', 'HTTP_HOST', 'HTTP_X_FORWARDED_FOR', 'HTTPS',
 		       'HTTP_COOKIE', 'HTTP_CLIENT_IP', 'HTTP_USER_AGENT', 'REMOTE_ADDR') as $key) {
 	    $this->_saveServerVars[$key] = GalleryUtilities::getServerVar($key);
 	}
@@ -69,6 +69,7 @@ class SessionTest extends GalleryTestCase {
 	GalleryUtilities::removeRequestVariable(SESSION_ID_PARAMETER);
 	unset($_COOKIE[SESSION_ID_PARAMETER]);
 	unset($_SERVER['HTTP_COOKIE']);
+	unset($_SERVER['HTTPS']);
 
 	list ($ret, $guestId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
@@ -556,6 +557,93 @@ class SessionTest extends GalleryTestCase {
 			    'is persistent session new');
 	$this->assertEquals(false, $session->_forceSaveSession, 'force session save');
 	$this->assert(!empty($session->_remoteIdentifier), 'remote id');
+    }
+
+    function testInitEmptySecure() {
+	global $gallery;
+
+	unset($_COOKIE[SESSION_ID_PARAMETER]);
+	$_SERVER['HTTPS'] = 1;
+	$session = new GallerySession();
+	$ret = $session->initEmpty();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($session->get('secure'), 'secure should be set');
+	$this->assert(!empty($session->_sessionId), 'sid should be set');
+	$this->assertEquals($this->_anonymousUserId, $session->getUserId(), 'user should be guest');
+	$this->assert(!empty($session->_remoteIdentifier), 'remoteId should be set');
+	$this->assertEquals(true, $session->isPersistent(), 'is persistent');
+    }
+
+    function testInitSwitchToSecure() {
+	global $gallery;
+
+	unset($_COOKIE[SESSION_ID_PARAMETER]);
+	unset($_SERVER['HTTPS']);
+	$session = new GallerySession();
+	$ret = $session->initEmpty(false, $gallery->getActiveUserId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	/* Force persistence when the session is regenerated in the 2nd part of the test. */
+	$session->put('testData', 'testdata');
+	$ret = $session->save();
+	if ($ret) {
+	    return $ret;
+	}
+	$sessionId = $session->getId();
+	$isSecure = $session->get('secure');
+	$this->assert(empty($isSecure), 'session should not be secure');
+
+	$_COOKIE[SESSION_ID_PARAMETER] = $session->_sessionId;
+	$_SERVER['HTTP_COOKIE'] = SESSION_ID_PARAMETER . '=' . $sessionId;
+	$_SERVER['HTTPS'] = 1;
+	$session2 = new GallerySession();
+	$ret = $session2->init();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($sessionId != $session2->getId(), 'session id should have changed');
+	$this->assert($session2->get('secure'), 'secure should be set');
+	$this->assertEquals(true, $session2->isPersistent(), 'is persistent');
+    }
+
+    function testInitSwitchToUnsecure() {
+	global $gallery;
+
+	unset($_COOKIE[SESSION_ID_PARAMETER]);
+	$_SERVER['HTTPS'] = 1;
+	$session = new GallerySession();
+	$ret = $session->initEmpty(false, $gallery->getActiveUserId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	/* Force persistence when the session is regenerated in the 2nd part of the test. */
+	$session->put('testData', 'testdata');
+	$ret = $session->save();
+	if ($ret) {
+	    return $ret;
+	}
+	$sessionId = $session->getId();
+	$this->assert($session->get('secure'), 'secure should be set');
+
+	$_COOKIE[SESSION_ID_PARAMETER] = $sessionId;
+	$_SERVER['HTTP_COOKIE'] = SESSION_ID_PARAMETER . '=' . $sessionId;
+	unset($_SERVER['HTTPS']);
+	$session2 = new GallerySession();
+	$ret = $session2->init();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($sessionId != $session2->getId(), 'session id should have changed');
+	$this->assert(!$session2->get('secure'), 'secure should not be set');
+	$this->assertEquals(true, $session2->isPersistent(), 'is persistent');
     }
 
     function testInitInvalidSessionId() {
@@ -1800,6 +1888,7 @@ class SessionTest extends GalleryTestCase {
 	$session->_isUsingCookies = true;
 	$session->put('embed.id.externalUser', 6);
 	$session->put('core.authToken', '1234567890AB');
+	$session->put('secure', true);
 	list ($ret, $detectedLanguageCode) = GalleryTranslator::getDefaultLanguageCode();
 	if ($ret) {
 	    return $ret;
@@ -1912,6 +2001,67 @@ class SessionTest extends GalleryTestCase {
 		    preg_match('/domain=' . $cookieDomain . '(?:[,;].*)?$/i', $cookie),
 		    "Missing domain=$cookieDomain in cookie: '$cookie'");
 	    }
+	}
+    }
+
+    function testSetCookieSecure() {
+	global $gallery;
+	$gallery->_phpVm = new SessionTestPhpVm();
+
+	unset($_COOKIE[SESSION_ID_PARAMETER]);
+
+	$session = new GallerySession();
+	$ret = $session->init();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$urlGenerator =& $gallery->getUrlGenerator();
+
+	$session->_sessionId = $sid = md5('12345abc');
+	$_SERVER['HTTPS'] = 'on';
+	$ret = $session->_setCookie();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$headers = GalleryUtilities::_getResponseHeaders();
+	ob_start();
+	var_dump($headers);
+	$debugHeaders = ob_get_contents();
+	ob_end_clean();
+	$this->assert(isset($headers['set-cookie']),
+		      'Set-Cookie header not sent.  These are the headers: ' . $debugHeaders);
+	if (isset($headers['set-cookie'])) {
+	    $cookie = $headers['set-cookie'];
+	    $this->assertEquals(1,
+				preg_match('{' . $session->getKey() . '=' . $sid . ';}', $cookie),
+				'Wrong cookie value in: "' . $cookie . '"');
+
+	    /* Cookie path should be set */
+	    list ($ret, $expected) = $urlGenerator->getCookiePath();
+	    if ($ret) {
+		return $ret;
+	    }
+	    $this->assertEquals(
+		1, preg_match('{path=' . $expected . '(?:[,;].*)?$}i', $cookie),
+		'Wrong cookie path in cookie: "' . $cookie . '"');
+	    /* Cookie domain should be the configured cookie domain or not set */
+	    list ($ret, $cookieDomain) = $session->getCookieDomain();
+	    if ($ret) {
+		return $ret;
+	    }
+	    if (!empty($cookieDomain)) {
+		/* Escape dots in cookieDomain */
+		$cookieDomain = str_replace('.', '\\.', $cookieDomain);
+		$this->assert(
+		    preg_match('/domain=' . $cookieDomain . '(?:[,;].*)?/i', $cookie),
+		    "Missing domain=$cookieDomain in cookie: '$cookie'");
+	    }
+	    $this->assertEquals(
+		1, preg_match('/; secure/i', $cookie),
+		'Wrong cookie path in cookie: "' . $cookie . '"');
+
 	}
     }
 

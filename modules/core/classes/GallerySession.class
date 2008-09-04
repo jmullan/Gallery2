@@ -272,6 +272,23 @@ class GallerySession {
 	    }
 	} /* End for existing persistent sessions */
 
+	/* Initialize the secure flag if HTTPS */
+	if ($this->_isPersistent) {
+	    $isSecure = (boolean)$this->get('secure');
+	    $isHttps = $this->_isHttps();
+	    if ($isSecure !== $isHttps) {
+		if ($isHttps) {
+		    $this->put('secure', true);
+		} else {
+		    $this->remove('secure');
+		}
+		$ret = $this->regenerate();
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+	}
+
 	return null;
     }
 
@@ -379,7 +396,7 @@ class GallerySession {
 			return $ret;
 		    }
 		    $this->_isSessionSaved = true;
-		}
+	    }
 	    }
 
 	    $this->_loadedSessionData = $this->_getSerializedSession();
@@ -423,6 +440,11 @@ class GallerySession {
 	$ret = $this->_acquireNewPersistentSession();
 	if ($ret) {
 	    return $ret;
+	}
+
+	/* Initialize the secure flag if HTTPS */
+	if ($this->_isHttps()) {
+	    $this->put('secure', true);
 	}
 
 	return null;
@@ -623,6 +645,11 @@ class GallerySession {
 	    $cookie .= '; domain=' . $this->_cookieDomain;
 	}
 
+	/* Tag on the secure flag if HTTPS is in use */
+	if ($this->_isHttps()) {
+	    $cookie .= '; secure';
+	}
+
 	/*
 	 * Tag on the HttpOnly modifier.  IE 6.0 SP1 will prevent any cookies with this in it from
 	 * being visible to JavaScript, which mitigates XSS attacks.
@@ -739,6 +766,7 @@ class GallerySession {
 	    unset($sessionDataCopy['core.navigation']);
 	    unset($sessionDataCopy['embed.id.externalUser']);
 	    unset($sessionDataCopy['core.authToken']);
+	    unset($sessionDataCopy['secure']);
 	    list ($ret, $detectedLanguageCode) = GalleryTranslator::getDefaultLanguageCode();
 	    if ($ret) {
 		return array($ret, null);
@@ -874,7 +902,7 @@ class GallerySession {
 		    $this->_sessionId = '';
 		}
 	    } else { /*  There's no session with this sessionId in the database */
-		$this->_sessionId = '';
+	    	$this->_sessionId = '';
 	    }
 
 	    if (!$this->_isPersistent) {
@@ -1239,6 +1267,16 @@ class GallerySession {
 	return serialize(array($this->_sessionId, $this->_userId,
 	    serialize($this->_remoteIdentifier), $this->_creationTime, $this->_modificationTime,
 	    serialize($this->_sessionData)));
+    }
+
+    /**
+     * Determine if the request is using the HTTPS protocol.
+     * @return boolen true if the request is using HTTTPS
+     * @access private
+     */
+    function _isHttps() {
+	$httpType = GalleryUtilities::getServerVar('HTTPS');
+	return !empty($httpType);
     }
 
     /**
