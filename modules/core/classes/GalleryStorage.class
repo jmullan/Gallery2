@@ -1272,7 +1272,8 @@ class GalleryStorage {
 	global $gallery;
 	$session =& $gallery->getSession();
 
-	$isInstallOrUpgrade = $session->get('isInstall') || $session->get('isUpgrade') ;
+	$isInstallOrUpgrade = empty($session) ? false 
+		: $session->exists('isInstall') || $session->exists('isUpgrade');
 	/* @todo Remove the type constraint from selects and have describeXXX use the same map */
 	$typeInfo = array();
 	/* If this is an install or upgrade force the use all plugins including non-active. */
