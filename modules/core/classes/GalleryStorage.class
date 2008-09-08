@@ -1269,15 +1269,20 @@ class GalleryStorage {
      * @access protected
      */
     function _getEntityOrMapInfo($type, $tryAllModules) {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	$isInstallOrUpgrade = $session->get('isInstall') || $session->get('isUpgrade') ;
 	/* @todo Remove the type constraint from selects and have describeXXX use the same map */
 	$typeInfo = array();
-	if (!$tryAllModules) {
+	/* If this is an install or upgrade force the use all plugins including non-active. */
+	if (!$tryAllModules && !$isInstallOrUpgrade) {
 	    $query = 'SELECT [Schema::info] FROM [GalleryPluginMap], [Schema]
 		       WHERE [GalleryPluginMap::pluginId] = [Schema::pluginId]
 			 AND [Schema::type] = ? AND [GalleryPluginMap::active] = ?';
 	    $data = array($type, 1);
 	} else {
-	    $query = 'SELECT [::info] FROM [Schema] WHERE [Schema::type] = ?';
+	    $query = 'SELECT [Schema::info] FROM [Schema] WHERE [Schema::type] = ?';
 	    $data = array($type);
 	}
 

@@ -115,6 +115,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 		$template->renderStatusMessage(_('Upgrading themes'),
 		    $theme->getName(), $currentTheme / $totalThemes);
 
+		$gallery->guaranteeTimeLimit(120);
 		$ret = $theme->installOrUpgrade();
 		$this->resetL10Domain();
 		if ($ret) {
