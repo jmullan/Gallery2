@@ -43,7 +43,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	$template = new StatusTemplate();
 	$template->renderHeader(true);
 
-	$ret = selectAdminUser();
+	$ret = selectAdminUser(true);
 	if ($ret) {
 	    $templateData['errors'][] = _('Unable to initialize Gallery session');
 	    $templateData['stackTrace'] .= $ret->getAsHtml();
