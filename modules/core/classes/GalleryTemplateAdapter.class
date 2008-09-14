@@ -1255,7 +1255,10 @@ class GalleryTemplateAdapter {
     function completeProgressBar($continueUrl, $doRedirect=false) {
 	global $gallery;
 	$continueUrl = str_replace('&amp;', '&', $continueUrl);
-	printf('<script type="text/javascript">completeProgressBar("%s");</script>', $continueUrl);
+	/* Display the continue link after a short delay to avoid bug 2031942 */
+	printf('<script type="text/javascript">'
+	     . 'setTimeout(function(){completeProgressBar("%s")}, 2000);</script>',
+	       $continueUrl);
 	if (($debug = $gallery->getDebug()) && $debug != 'logged') {
 	    /* Don't automatically redirect when in debug mode */
 	    print '<hr/>';
@@ -1268,7 +1271,7 @@ class GalleryTemplateAdapter {
 	     * the next page is requested.
 	     */
 	    printf('<script type="text/javascript">'
-		 . 'setTimeout(\'document.location.href = "%s";\', 1000);</script>', $continueUrl);
+		 . 'setTimeout(\'document.location.href = "%s";\', 2000);</script>', $continueUrl);
 	}
     }
 }
