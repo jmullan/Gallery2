@@ -114,11 +114,11 @@ class MSSqlStorage extends GalleryStorage {
 	    break;
 
 	case 'RAND':
-	    $sql = sprintf('NEWID()');
+	    $sql = 'NEWID()';
 	    break;
 
 	case 'RANDOM_INTEGER':
-	    $sql = 'FLOOR(RAND() * 2147483647)';
+	    $sql = 'ABS(CHECKSUM(NEWID()))';
 	    break;
 
 	case 'LIMIT':
