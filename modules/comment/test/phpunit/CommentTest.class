@@ -502,6 +502,21 @@ class CommentTest extends GalleryTestCase {
 	$this->assertEquals(COMMENT_PUBLISH_STATUS_SPAM, $comment->getPublishStatus());
     }
 
+    function testCheckWithAkismet_NewNonSpamComment_AkismetError() {
+	$comment = new GalleryComment();
+	$comment->setPublishStatus(COMMENT_PUBLISH_STATUS_PUBLISHED);
+	$comment->setPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
+	$akismet = new CommentTest_MockAkismetApi();
+	$akismet->setReturnFor('checkComment', array(GalleryCoreApi::error(ERROR_UNKNOWN), false));
+	$ret = GalleryCommentHelper::checkWithAkismet($comment, $akismet);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($akismet->wasCalled('checkComment'));
+	$this->assertEquals(COMMENT_PUBLISH_STATUS_UNPUBLISHED, $comment->getPublishStatus());
+    }
+
     function testCheckWithAkismet_NewNonSpamComment() {
 	$comment = new GalleryComment();
 	$comment->setPublishStatus(COMMENT_PUBLISH_STATUS_PUBLISHED);
@@ -545,7 +560,36 @@ class CommentTest extends GalleryTestCase {
 
 	$this->assert($akismet->wasCalled('submitHam'));
     }
-    
+
+    function testCheckWithAkismet_MarkedAsHam_AkismetError() {
+	$comment = new GalleryComment();
+	$comment->_persistentStatus['originalValue']['publishStatus'] = COMMENT_PUBLISH_STATUS_SPAM;
+	$comment->setPublishStatus(COMMENT_PUBLISH_STATUS_PUBLISHED);
+	$akismet = new CommentTest_MockAkismetApi();
+	$akismet->setReturnFor('submitHam', GalleryCoreApi::error(ERROR_UNKNOWN));
+	$ret = GalleryCommentHelper::checkWithAkismet($comment, $akismet);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($akismet->wasCalled('submitHam'));
+    }
+
+    function testCheckWithAkismet_MarkedAsSpam_AkismetError() {
+	$comment = new GalleryComment();
+	$comment->_persistentStatus['originalValue']['publishStatus'] =
+	    COMMENT_PUBLISH_STATUS_PUBLISHED;
+	$comment->setPublishStatus(COMMENT_PUBLISH_STATUS_SPAM);
+	$akismet = new CommentTest_MockAkismetApi();
+	$akismet->setReturnFor('submitSpam', GalleryCoreApi::error(ERROR_UNKNOWN));
+	$ret = GalleryCommentHelper::checkWithAkismet($comment, $akismet);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($akismet->wasCalled('submitSpam'));
+    }
+
     function testGetLatestCommentTime() {
 	list ($ret, $commentTime) = GalleryCommentHelper::getLatestCommentTime('301.302.303.304');
 	if ($ret) {

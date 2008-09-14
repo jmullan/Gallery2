@@ -517,12 +517,18 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
      * @return GalleryStatus a status code
      */
     function checkWithAkismet(&$comment, $akismet) {
+	$logError = false;
 	if ($comment->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
 	    list ($ret, $isSpam) = $akismet->checkComment($comment);
-	    if ($ret) {
+	    if ($ret && $ret->getErrorCode() & ERROR_UNKNOWN) {
+		/* Akismet returned an error or akismet couldn't be contacted */
+		$logError = true;
+		if ($comment->getPublishStatus() == COMMENT_PUBLISH_STATUS_PUBLISHED) {
+		    $comment->setPublishStatus(COMMENT_PUBLISH_STATUS_UNPUBLISHED);
+		}
+	    } else if ($ret) {
 		return $ret;
-	    }
-	    if ($isSpam) {
+	    } else if ($isSpam) {
 		$comment->setPublishStatus(COMMENT_PUBLISH_STATUS_SPAM);
 	    }
 	} else {
@@ -530,15 +536,30 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	    if ($comment->isModified('publishStatus')) {
 		if ($oldStatus == COMMENT_PUBLISH_STATUS_SPAM) {
 		    $ret = $akismet->submitHam($comment);
-		    if ($ret) {
+		    if ($ret && $ret->getErrorCode() & ERROR_UNKNOWN) {
+			/* Akismet returned an error or akismet couldn't be contacted */
+			$logError = true;
+		    } else if ($ret) {
 			return $ret;
 		    }
 		} else if ($comment->getPublishStatus() == COMMENT_PUBLISH_STATUS_SPAM) {
 		    $ret = $akismet->submitSpam($comment);
-		    if ($ret) {
+		    if ($ret && $ret->getErrorCode() & ERROR_UNKNOWN) {
+			/* Akismet returned an error or akismet couldn't be contacted */
+			$logError = true;
+		    } else if ($ret) {
 			return $ret;
 		    }
 		}
+	    }
+	}
+
+	if ($logError) {
+	    $ret = GalleryCoreApi::addEventLogEntry('Gallery Error', 'Error contacting Akismet',
+		    'Failed to contact Akismet (an external spam filtering service) or Akismet '
+		  . 'was unable to process the request.');
+	    if ($ret) {
+		return $ret;
 	    }
 	}
     }

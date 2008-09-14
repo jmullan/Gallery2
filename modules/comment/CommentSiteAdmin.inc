@@ -166,6 +166,7 @@ class CommentSiteAdminController extends GalleryController {
 	$total = null;
 	while (true) {
 	    $batchSize = 100;
+	    /** @todo Should we include UNPUBLISHED comments here as well? */
 	    list ($ret, $comments, $total) = GalleryCommentHelper::fetchAllComments(
 		$rootId, $batchSize, $checkedCount, ORDER_ASCENDING,
 		COMMENT_PUBLISH_STATUS_PUBLISHED);
