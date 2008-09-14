@@ -43,7 +43,7 @@ class AkismetApi {
 	}
 
         /* Comment is not spam - just return */
-        if ($status != 'HTTP/1.0 200 OK' || $body == 'false') {
+        if (!preg_match('{^HTTP/1.\d 200 OK$}', $status) || $body == 'false') {
             return array(null, false);
         }
 
@@ -91,7 +91,7 @@ class AkismetApi {
 	    array('key' => $apiKey, 'blog' => $baseUrl),
 	    array('User-Agent' => $userAgent));
 
-        if ($status != 'HTTP/1.0 200 OK' || $body != 'valid') {
+        if (!preg_match('{^HTTP/1.\d 200 OK$}', $status) || $body != 'valid') {
             return array(null, false);
         }
 
@@ -112,7 +112,7 @@ class AkismetApi {
 	    return $ret;
 	}
 
-        if ($status != 'HTTP/1.0 200 OK') {
+        if (!preg_match('{^HTTP/1.\d 200 OK$}', $status)) {
 	    return GalleryCoreApi::error(ERROR_UNKNOWN);
 	}
 

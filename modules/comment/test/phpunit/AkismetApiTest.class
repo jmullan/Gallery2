@@ -301,6 +301,16 @@ class AkismetApiTest extends GalleryTestCase {
 	    array(null, 'body', 'HTTP/1.0 200 OK', array('Header' => 'value')),
 	    $akismet->_request('AKISMET_REQUEST', $this->_comment, false));
     }
+
+    function testResponseHandledIndependentOfHttpVersion() {
+	$this->_akismet->setReply(
+	    '_request',
+	    array('submit-ham', $this->_comment, false),
+	    /* The HTTP status 200 message should processed independently of the HTTP version */
+	    array(null, 'body', 'HTTP/1.0 200 OK', 'headers'));
+
+	$this->assertEquals(null, $this->_akismet->submitHam($this->_comment));
+    }
 }
 
 class AkismetApiTest_MockUrlGenerator {
