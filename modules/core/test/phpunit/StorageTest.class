@@ -1112,7 +1112,7 @@ class StorageTest extends GalleryTestCase {
 
 	$expectedQuery = $storage->getType() == 'sqlite'
 	    ? sprintf('DELETE FROM %sTest2Map', $storage->_tablePrefix)
-	    : sprintf('TRUNCATE %sTest2Map', $storage->_tablePrefix);
+	    : sprintf('TRUNCATE TABLE %sTest2Map', $storage->_tablePrefix);
 	$this->assertEquals(
 	    array(array($expectedQuery, array())),
 	    $this->_getNonTransactionalResults());

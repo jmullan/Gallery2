@@ -1137,7 +1137,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	list ($tableName, $unused) = $this->_gs->_translateTableName($mapName);
 	if ($useTruncate && (!$this->_gs->isTransactional() || $useNonTransactionalConnection)) {
 	    /* TRUNCATE is only safe outside of a transaction in most databases. */
-	    $query = 'TRUNCATE ' . $tableName;
+	    $query = 'TRUNCATE TABLE ' . $tableName;
 	} else {
 	    $query = 'DELETE FROM ' . $tableName;
 	}
