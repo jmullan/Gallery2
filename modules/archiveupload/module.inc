@@ -34,7 +34,7 @@ class ArchiveUploadModule extends GalleryModule {
 	$this->setId('archiveupload');
 	$this->setName($gallery->i18n('Archive Upload'));
 	$this->setDescription($gallery->i18n('Extract items from uploaded zip files'));
-	$this->setVersion('1.0.6');
+	$this->setVersion('1.0.6.1');
 	$this->setGroup('import', $gallery->i18n('Import'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 4));

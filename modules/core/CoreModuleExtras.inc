@@ -2268,6 +2268,9 @@ class CoreModuleExtras {
 	case '1.2.0.6':
 	    /* 2.2.5 Security Release */
 
+	case '1.2.0.7':
+	    /* 2.2.6 Security Release */
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we always
@@ -2585,6 +2588,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.0.4':
 	case '1.2.0.5':
 	case '1.2.0.6':
+	case '1.2.0.7':
 
 	case 'end of upgrade path':
 	    /*
