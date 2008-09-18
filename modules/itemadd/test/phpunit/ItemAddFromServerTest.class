@@ -79,6 +79,10 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	}
 
 	$gallery->setPlatform($this->_symlinkAllowedPlatform);
+
+	/* Force system charset to ISO-8859-1 so convertToUtf8 will work on test data */
+	$gallery->_phpVm = new ItemAddFromServerTestPhpVm();
+	GalleryDataCache::remove('GalleryCharsetHelper_simple::detectSystemCharset');
     }
 
     function tearDown() {
@@ -707,6 +711,19 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
     function exec($cmd) {
 	/* In case add of jpeg tries to get 'colorspace' property */
 	return array(true, array(''), array());
+    }
+}
+
+/**
+ * Test PhpVm
+ */
+class ItemAddFromServerTestPhpVm extends GalleryPhpVm {
+    function function_exists($functionName) {
+	return $functionName === 'nl_langinfo' ? true : function_exists($functionName);
+    }
+
+    function nl_langinfo($item) {
+	return 'ISO-8859-1';
     }
 }
 ?>
