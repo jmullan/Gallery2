@@ -562,11 +562,18 @@ class GalleryPlatform {
      * @param string $stringPerms permissions of the newly created directory
      * @return boolean true on success, false on failure
      */
-    function mkdir($path, $stringPerms='755') {
+    function mkdir($path, $stringPerms=null) {
 	global $gallery;
 
-	/* Convert string permission representation to octal */
-	$octalPerms = octdec($stringPerms);
+	if (empty($stringPerms)) {
+	    if (!isset($this->_filePerms) || !isset($this->_dirPerms)) {
+		$this->_loadPermissionPreferences();
+	    }
+	    $octalPerms = $this->_dirPerms;
+	} else {
+	    /* Convert string permission representation to octal */
+	    $octalPerms = octdec($stringPerms);
+	}
 	if ($gallery->getDebug()) {
 	    $gallery->debug(sprintf("mkdir(%s, %o)", $path, $octalPerms));
 	}
@@ -950,12 +957,17 @@ class GalleryPlatform {
 	    $gallery->debug("touch($file, $time, $atime)");
 	}
 
+	$exists = $this->file_exists($file);
 	if (isset($atime)) {
 	    touch($file, $time, $atime);
 	} else if (isset($time)) {
 	    touch($file, $time);
 	} else {
 	    touch($file);
+	}
+	
+	if (empty($exists)) {
+	    $this->chmod($file);
 	}
     }
 
