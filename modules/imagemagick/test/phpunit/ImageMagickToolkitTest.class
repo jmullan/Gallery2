@@ -1057,8 +1057,9 @@ class ImageMagickToolkitTestPlatform {
 		foreach (array_keys($this->_files[$newBase]['operation']) as $operation) {
 		    $count = count($this->_files[$newBase]['operation'][$operation]);
 		    $val = $this->_files[$newBase]['operation'][$operation][$count - 1];
-		    if (preg_match('/^(.*):/', $val, $regs)) {
-			$val = $regs[1] . ':' . $newName;
+		    $parts = explode(':', $val);
+		    if (!empty($parts)) {
+			$val = $parts[0] . ':' . $newName;
 		    } else {
 			$val = $newName;
 		    }
