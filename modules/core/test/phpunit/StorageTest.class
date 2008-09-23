@@ -1096,8 +1096,11 @@ class StorageTest extends GalleryTestCase {
 	    return $ret;
 	}
 
+	$expectedQuery = $storage->isTransactional()
+	    ? sprintf('DELETE FROM %sTest2Map', $storage->_tablePrefix)
+	    : sprintf('TRUNCATE TABLE %sTest2Map', $storage->_tablePrefix);
 	$this->assertEquals(
-	    array(array(sprintf('DELETE FROM %sTest2Map', $storage->_tablePrefix), array())),
+	    array(array($expectedQuery, array())),
 	    $this->_results);
     }
 
@@ -1110,7 +1113,7 @@ class StorageTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$expectedQuery = $storage->getType() == 'sqlite'
+	$expectedQuery = ($storage->getType() == 'sqlite' || $storage->getType() == 'db2')
 	    ? sprintf('DELETE FROM %sTest2Map', $storage->_tablePrefix)
 	    : sprintf('TRUNCATE TABLE %sTest2Map', $storage->_tablePrefix);
 	$this->assertEquals(
