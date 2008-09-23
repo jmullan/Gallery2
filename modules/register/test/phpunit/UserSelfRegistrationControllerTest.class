@@ -586,6 +586,10 @@ class RegisterDummyPlatform {
     function flock($handle, $operation, &$wouldblock) {
 	return $this->_platform->flock($handle, $operation, $wouldblock);
     }
+
+    function unlink($filename) {
+	return $this->_platform->unlink($filename);
+    }
 }
 
 
