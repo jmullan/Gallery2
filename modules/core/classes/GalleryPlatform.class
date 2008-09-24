@@ -1085,7 +1085,7 @@ class GalleryPlatform {
      * @access private
      */
     function _loadPermissionPreferences() {
-	static $cacheKey = 'GalleryPlatform::_loadPermissionPreferencess';
+	static $cacheKey = 'GalleryPlatform::_loadPermissionPreferences';
 	$this->_filePerms = 0644;
 	$this->_dirPerms = 0755;
 
@@ -1281,7 +1281,7 @@ class GalleryPlatform {
 	unset($this->_umask);
 	unset($this->_filePerms);
 	unset($this->_dirPerms);
-	GalleryDataCache::remove('GalleryPlatform::_loadPermissionPreferencess');
+	GalleryDataCache::remove('GalleryPlatform::_loadPermissionPreferences');
     }
 }
 ?>
