@@ -140,6 +140,13 @@ class UserAlbumTest extends GalleryTestCase {
 	$this->assert(!$seenViewSource, sprintf('unexpected view source for all users: %d',
 						$this->_allUserGroupId));
 
+	list ($ret, $hasCoreAll) =
+	    GalleryCoreApi::hasItemPermission($albumId, 'core.all', $user->getId());
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assert($hasCoreAll, 'core.all permission not granted to album owner');
+
 	/* Create a subalbum.. */
 	list ($ret, $subalbum) =
 	    $this->_createRandomAlbum($albumId, array('ownerId' => $user->getId()));

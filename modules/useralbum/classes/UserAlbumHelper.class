@@ -35,6 +35,8 @@ class UserAlbumHelper {
      * @return GalleryStatus a status code
      */
     function createUserAlbum($user) {
+	global $gallery;
+
 	list ($ret, $core) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	if ($ret) {
 	    return $ret;
@@ -78,6 +80,24 @@ class UserAlbumHelper {
 	$albumId = $album->getId();
 
 	/* Set permissions.. */
+
+	/* If the active user isn't the album owner, the default permissions should be removed */
+	$currentUserId = $gallery->getActiveUserId();
+	if ($currentUserId != $user->getId()) {
+	    $ret = GalleryCoreApi::removeUserPermission($albumId, $currentUserId, 'core.all');
+	    if ($ret) {
+		GalleryCoreApi::releaseLocks($lockId);
+		return $ret;
+	    }
+	}
+
+	/* Make sure the album owner has core.all permissions */
+	$ret = GalleryCoreApi::addUserPermission($albumId, $user->getId(), 'core.all');
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $ret;
+	}
+
 	list ($ret, $permissions) = GalleryCoreApi::fetchAllPermissionsForItem($albumId, true);
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
