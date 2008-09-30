@@ -116,7 +116,8 @@ class FlockLockSystem extends GalleryLockSystem {
 	    }
 	}
 
-	$lockId = crc32(microtime());
+	list ($ignored, $lockId) = $this->_newLockId();
+
 	$this->_locks[$lockId] = array('lockId' => $lockId, 'type' => $lockType, 'ids' => $locked);
 	return array(null, $lockId);
     }
@@ -206,7 +207,12 @@ class FlockLockSystem extends GalleryLockSystem {
      * @see GalleryLockSystem::_newLockId
      */
     function _newLockId() {
-	return array(null, crc32(microtime()));
+	$lockId = crc32(microtime());
+	if (0 > $lockId) {
+	    /* crc32 generates signed integers (-2^31..2^31-1). Cast to unsigned. */
+	    $lockId = (int)($lockId + 0x080000000);
+	}
+	return array(null, $lockId);
     }
 }
 ?>
