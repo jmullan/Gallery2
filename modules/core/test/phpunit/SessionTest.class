@@ -3374,10 +3374,10 @@ function SessionTest_error_handler($errno, $errstr, $errfile, $errline) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 	if ($storage) {
-	    $expected1 = sprintf('{pg_exec().*: Query failed: ERROR:  duplicate key violates ' .
+	    $expected1 = sprintf('{pg_exec().*: Query failed: ERROR:\s+duplicate key (value )?violates ' .
 				'unique constraint &quot;%ssessionmap_pkey&quot;}',
 				 $storage->_tablePrefix);
-	    $expected2 = '{pg_exec().*: Query failed: ERROR:  current transaction is aborted,' .
+	    $expected2 = '{pg_exec().*: Query failed: ERROR:\s+current transaction is aborted,' .
 		' commands ignored until end of transaction block}';
 	    $expected3 = '{db2_exec\(\).*: Statement Execute Failed}';
 	    $expected4 = '{ociexecute\(\).*: ORA-00001: unique constraint.*violated}';
