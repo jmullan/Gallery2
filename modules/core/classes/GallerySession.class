@@ -197,6 +197,12 @@ class GallerySession {
 		$this->_sessionId = $sessionId;
 	    }
 	} else {
+	    $this->_sessionId = GalleryUtilities::getRequestVariables(SESSION_ID_PARAMETER);
+	    /* When logging out (resetting the session), we already know if cookies are used */
+	    if (!$this->isUsingCookies()) {
+		$this->_isUsingCookies = false;
+	    }
+
 	    /*
 	     * Many search engine crawlers don't use cookies.  Normally this leads to us putting the
 	     * session id in the URL.  But doing so causes the search engine to do a lot of extra
@@ -205,16 +211,10 @@ class GallerySession {
 	     * don't send cookies / don't append the sessionId to URLs.
 	     */
 	    $searchEngineId = GalleryUtilities::identifySearchEngine();
-	    if (isset($searchEngineId)) {
+	    if (empty($this->_sessionId) && isset($searchEngineId)) {
 		$this->_isUsingCookies = true;
 		$this->doNotUseTempId();
 		$this->_isSearchEngineSession = true;
-	    } else {
-		/* When logging out (resetting the session), we already know if cookies are used */
-		if (!$this->isUsingCookies()) {
-		    $this->_isUsingCookies = false;
-		}
-		$this->_sessionId = GalleryUtilities::getRequestVariables(SESSION_ID_PARAMETER);
 	    }
 	}
 
@@ -739,13 +739,23 @@ class GallerySession {
 	    return array(null, true);
 	}
 
-	if (!empty($this->_isSearchEngineSession) || empty($this->_userId)) {
-	    return array(null, false);
+	if ($this->_userId) {
+	    list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser($this->_userId);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    if (!$isAnonymous && $this->_isSearchEngineSession) {
+		/* The search engine has been misidentified (it's a logged in user) */
+		$this->_isSearchEngineSession = false;
+		if (empty($_COOKIE[SESSION_ID_PARAMETER])) {
+		    $this->_isUsingCookies = false;
+		}
+	    }
 	}
 
-	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser($this->_userId);
-	if ($ret) {
-	    return array($ret, null);
+	if (!empty($this->_isSearchEngineSession) || empty($this->_userId)) {
+	    return array(null, false);
 	}
 
 	if ($isAnonymous) {
