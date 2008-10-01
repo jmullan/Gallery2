@@ -40,7 +40,7 @@ class CommentModule extends GalleryModule {
 	$this->setId('comment');
 	$this->setName($gallery->i18n('Comments'));
 	$this->setDescription($gallery->i18n('User commenting system'));
-	$this->setVersion('1.1.12'); /* Update upgrade() function below too */
+	$this->setVersion('1.1.13'); /* Update upgrade() function below too */
 	$this->_templateVersion = 1;
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
 	$this->setCallbacks('getItemLinks|getItemSummaries|' .
@@ -178,6 +178,9 @@ class CommentModule extends GalleryModule {
 	    if ($ret) {
 		return $ret;
 	    }
+
+	case '1.1.12':
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we

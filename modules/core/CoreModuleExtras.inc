@@ -2551,7 +2551,9 @@ class CoreModuleExtras {
 	case '1.2.34':
 	    /* Change the template compile directory to include the themeId */
 	case '1.2.35':
-	    /* R2.3 RC1 */
+	    /* R2.3 RC-1 */
+	case '1.2.36':
+	    /* R2.3 RC-2 */
 
 	case 'end of upgrade path':
 	    /*
@@ -2909,6 +2911,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.33':
 	case '1.2.34':
 	case '1.2.35':
+	case '1.2.36':
 
 	case 'end of upgrade path':
 	    /*

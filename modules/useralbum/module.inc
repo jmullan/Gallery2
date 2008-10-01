@@ -32,7 +32,7 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('useralbum');
 	$this->setName($gallery->i18n('User Albums'));
 	$this->setDescription($gallery->i18n('Create an album for each new user'));
-	$this->setVersion('1.0.9');
+	$this->setVersion('1.0.10');
 	$this->_templateVersion = 1;
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('getSiteAdminViews|getSystemLinks');

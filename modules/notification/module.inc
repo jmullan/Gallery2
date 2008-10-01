@@ -38,7 +38,7 @@ class NotificationModule extends GalleryModule {
 	$this->setDescription(
 		$gallery->i18n('Allow users to be notified of events by subscription.'));
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
-	$this->setVersion('1.0.1');
+	$this->setVersion('1.0.2');
 	$this->setRequiredCoreApi(array(7, 37));
 	$this->setRequiredModuleApi(array(3, 9));
 	$this->setCallbacks('getSiteAdminViews|getUserAdminViews|getItemLinks|getItemAdminViews');
