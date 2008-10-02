@@ -23,6 +23,7 @@
  *
  * @package Slideshow
  * @author Alan Harder <alan.harder@sun.com>
+ * @author Bharat Mediratta <bharat@menalto.com>
  * @version $Revision$
  */
 class SlideshowModule extends GalleryModule {
@@ -32,7 +33,7 @@ class SlideshowModule extends GalleryModule {
 	$this->setId('slideshow');
 	$this->setName($gallery->i18n('Slideshow'));
 	$this->setDescription($gallery->i18n('Slideshow'));
-	$this->setVersion('1.0.12');
+	$this->setVersion('2.0.0');
 	$this->_templateVersion = 1;
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getItemLinks|getSiteAdminViews');
