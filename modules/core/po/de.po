@@ -29,8 +29,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Core 1.2.37\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
-"PO-Revision-Date: 2008-07-26 00:01+0100\n"
-"Last-Translator: Jens Tkotz <jens@peino.de>\n"
+"PO-Revision-Date: 2008-10-03 10:12+0100\n"
+"Last-Translator: Andy Staudacher <ast@gmx.ch>\n"
 "Language-Team: German <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -150,7 +150,7 @@ msgid "Use these settings"
 msgstr "Diese Einstellungen benutzen"
 
 msgid "Converting Schema Table"
-msgstr ""
+msgstr "Konvertiere Schema Tabelle"
 
 msgid "Installing the core module"
 msgstr "Installiere Gallery-Kernmodul"
@@ -558,7 +558,7 @@ msgid "Logout"
 msgstr "Abmelden"
 
 msgid "Plugins"
-msgstr "Plugins"
+msgstr "Erweiterungen"
 
 msgid "Users"
 msgstr "Benutzer"
@@ -602,10 +602,10 @@ msgid "Updating Repository Index"
 msgstr "Repository Index aktualisieren"
 
 msgid "Scanning plugins"
-msgstr "Durchsuche Plugins"
+msgstr "Durchsuche Erweiterungen"
 
 msgid "Update Plugin List"
-msgstr "Aktualisiere die Plugin-Liste"
+msgstr "Aktualisiere die Erweiterungs-Liste"
 
 msgid "Done."
 msgstr "Fertig."
@@ -669,6 +669,10 @@ msgid ""
 "your Gallery installation needs to be set into maintenance mode, as this is not done "
 "automatically."
 msgstr ""
+"Sichern Sie alle Ihre Gallery Daten (Album Daten, Nutzer Einstellungen, Kommentare, etc.) in "
+"eine einzige Sicherungsdatei in Ihrem Gallery-Speicherordner. Die Datensicherung beinhaltet "
+"nicht die eigentlichen Foto-Dateien. Bevor die Datensicherung gestartet werden kann, muss "
+"die der Wartungsmodus aktiviert werden."
 
 msgid "Backing up Gallery Database"
 msgstr "Sicherung der Gallery Datenbank"
@@ -684,6 +688,9 @@ msgid ""
 "Please note that your backup contains sensitive data (like passwords) and should not be "
 "stored online! We recommend that you download it from your server and keep it safely offline."
 msgstr ""
+"Bitte beachten Sie, dass die Sicherungsdatei sensible Daten (z.B. Passwörter) beinhaltet. "
+"Daher sollte die Sicherungsdatei nicht online gespeichert werden! Wir empfehlen Ihnen die "
+"Sicherungsdatei vom Server runterzuladen und lokal zu speichern."
 
 msgid "Delete user sessions"
 msgstr "Lösche Benutzersitzungen"
@@ -804,7 +811,7 @@ msgid "photo"
 msgstr "Photo"
 
 msgid "Couldn't create repository cache path."
-msgstr "Pfad für den Plugin-Katalog-Cache konnte nicht erstellt werden."
+msgstr "Pfad für den Erweiterungs-Katalog-Cache konnte nicht erstellt werden."
 
 msgid ""
 "Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
@@ -1078,9 +1085,8 @@ msgstr "Unbekanntes Element"
 msgid "API = Core %s, Module %s, Theme %s, Embed %s"
 msgstr "API = Core %s, Modul %s, Motiv %s, Eingebettet %s"
 
-#, fuzzy
 msgid "Gallery URL"
-msgstr "Gallery"
+msgstr "Gallery URL"
 
 msgid "Gallery version"
 msgstr "Gallery-Version"
@@ -1124,32 +1130,41 @@ msgstr "Zeilen in der %s Tabelle = %d"
 
 #, c-format
 msgid "The %s \"%s\" is not installed and will not be backed up."
-msgstr ""
+msgstr "Das \"%s\" %s ist nicht installiert und wird nicht gesichert."
 
 #, c-format
 msgid "\"%s\" has no creation sql and will not be backed up."
 msgstr ""
+"Für das \"%s\" Modul sind die erforderlichen (Datenbank Erstellungs-) Informationen nicht "
+"vorhanden. Daher wird dieses Modul nicht gesichert."
 
 #, c-format
 msgid "Unable to load table description for \"%s\", no data will be exported."
 msgstr ""
+"Für das Modul  \"%s\" können die erforderlichen Datenbank Tabellen Informationen nicht "
+"abgerufen werden. Daher wird für dieses Modul nicht gesichert."
 
 msgid ""
 "Unable to find the XML parser.  The PHP XML parsing extension must be loaded.  Terminating "
 "database import."
 msgstr ""
+"Der PHP XML Parser wurde nicht gefunden. Die Sicherungs- und Wiederherstellungsfunktionen "
+"von Gallery funktionieren nur wenn die PHP XML Parsing Erweiterung geladen ist. Der Import-"
+"Prozess wird abgebrochen."
 
 #, c-format
 msgid "The exported file is not the correct version. Expecting %s received %s."
 msgstr ""
+"Die Sicherungsdatei ist nicht in der korrekten Version. Erwartete Version: %s. Version der "
+"Datei: %s."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to close import file: %s"
-msgstr "Konnte das Verzeichnis '%s' nicht löschen."
+msgstr "Konnte die Import Datei '%s' nicht schliessen."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to open import file: %s"
-msgstr "Konnte das Verzeichnis '%s' nicht löschen."
+msgstr "Konnte die Import Datei '%s' nicht öffnen."
 
 #, c-format
 msgid "Import file doesn't exist: %s"
@@ -1157,29 +1172,37 @@ msgstr "Importdatei '%s' existiert nicht."
 
 #, c-format
 msgid "Plugin %s is not currently available."
-msgstr "Das Module '%s' ist derzeit nicht verfügbar."
+msgstr "Das Modul '%s' ist derzeit nicht verfügbar."
 
 #, c-format
 msgid "The available version of plugin \"%s\" may not be compatible with the imported version."
 msgstr ""
+"Die verfügbare Version der \"%s\" Erweiterung ist möglicherweise nicht kompatibel mit der "
+"importierten Version."
 
 #, c-format
 msgid ""
 "The currently installed core API version required by \"%s\" may not be compatible with the "
 "imported version."
 msgstr ""
+"Die aktuell installierte Kern-API Version, die von der \"%s\" Erweiterung benötigt wird, ist "
+"möglicherweise nicht kompatibel mit der importierten Version."
 
 #, c-format
 msgid ""
 "The installed module API version required by \"%s\" may not be compatible with the imported "
 "version."
 msgstr ""
+"Die aktuell installierte Modul-API Version, die vom \"%s\" Modul benötigt wird, ist "
+"möglicherweise nicht kompatibel mit der importierten Version."
 
 #, c-format
 msgid ""
 "The installed theme API version required by \"%s\" is not compatible with the imported "
 "version."
 msgstr ""
+"Die aktuell installierte Motiv-API Version, die vom \"%s\" Motiv benötigt wird, ist "
+"möglicherweise nicht kompatibel mit der importierten Version."
 
 msgid "Successfully saved theme settings"
 msgstr "Die Motiv-Einstellungen wurden erfolgreich gespeichert."
@@ -1693,14 +1716,13 @@ msgid "Recent Events"
 msgstr "Letzte Aktivitäten"
 
 msgid "Type"
-msgstr ""
+msgstr "Typ"
 
 msgid "Location"
 msgstr "Ort"
 
-#, fuzzy
 msgid "Client"
-msgstr "Liste"
+msgstr "Client"
 
 msgid "No events have been reported yet."
 msgstr "Es wurden keine Aktionen bisher aufgezeichnet."
@@ -1711,9 +1733,8 @@ msgstr "Event-Details"
 msgid "User Id"
 msgstr "Benutzer ID"
 
-#, fuzzy
 msgid "Referer"
-msgstr "Umordnen"
+msgstr "Referer"
 
 msgid "Details"
 msgstr "Details"
@@ -1721,9 +1742,8 @@ msgstr "Details"
 msgid "no summary"
 msgstr "Keine Zusammenfassung"
 
-#, fuzzy
 msgid "An error occurred while retrieving the event log entry details."
-msgstr "Es ist ein Fehler beim Zugriff auf die Datenbank aufgetreten."
+msgstr "Es ist ein Fehler beim Zugriff auf das Event Log aufgetreten."
 
 msgid "Group Management"
 msgstr "Gruppenverwaltung"
@@ -1793,14 +1813,14 @@ msgstr ""
 
 #, c-format
 msgid "Failed to scan status from plugin: %s."
-msgstr "Der Status des Plugins %s konnte nicht gelesen werden."
+msgstr "Der Status der %s Erweiterung konnte nicht gelesen werden."
 
 msgid ""
 "Your local copy of the repository was broken and has been fixed.  Please download the plugin "
 "list again."
 msgstr ""
 "Ihre lokale Kopie des Erweiterungen-Katalogs war korrupt und wurde repariert. Bitte laden "
-"Sie die Liste der Plugins erneut herunter."
+"Sie die Liste der Erweiterungen erneut herunter."
 
 #, c-format
 msgid "Failed to delete the locale directory for %s."
@@ -1808,15 +1828,15 @@ msgstr "Konnte das Verzeichnis '%s' nicht löschen."
 
 #, c-format
 msgid "Failed to download the following language packages for the %s plugin:"
-msgstr ""
+msgstr "Für die %s Erweiterung konnten die folgenden Sprackpakete nicht runtergeladen werden:"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to install language packages for %s plugin because the following files/directories "
 "could not be modified:"
 msgstr ""
-"Das %s Plugin konnte nicht heruntergeladen werden, da die folgenden Dateien/Verzeichnisse "
-"nicht verändert werden können:"
+"Sprackpakete für die %s Erweiterung konnten nicht installiert werden, da die folgenden "
+"Dateien/Verzeichnisse nicht verändert werden können:"
 
 msgid "The repository index has been successfully refreshed."
 msgstr "Der Index des Erweiterungen-Katalogs wurde erfolgreich aktualisiert."
@@ -1837,7 +1857,7 @@ msgstr[0] "%d Sprachpaket gelöscht."
 msgstr[1] "%d Sprachpakete gelöscht."
 
 msgid "All the language packages for the selected languages are current"
-msgstr ""
+msgstr "Für die ausgewählten Sprachen sind alle installierten Sprachpakete aktuell."
 
 msgid ""
 "Select language defaults for Gallery. Individual users can override this setting in their "
@@ -1872,13 +1892,15 @@ msgid ""
 "plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
 msgstr ""
 "Bevor Sie weiterfahren können, müssen Sie einige Berechtigungen verändern, damit Gallery "
-"Plugins für Sie installieren kann. Es ist ganz einfach, führen Sie einfach den folgenden "
-"Befehl in der Kommandozeile oder via FTP-Programm durch:"
+"Erweiterungen für Sie installieren kann. Es ist ganz einfach, führen Sie einfach den "
+"folgenden Befehl in der Kommandozeile oder via FTP-Programm durch:"
 
 msgid ""
 "Before you can proceed, please insure the following directories and sub-directories are "
 "writable, so that Gallery can install plugins for you:"
 msgstr ""
+"Bevor Sie weiterfahren stellen Sie bitte sicher, dass die folgenden Ordner und Unterordner "
+"schreibbar sind, damit Gallery dort die Erweiterung installieren kann:"
 
 msgid ""
 "If you have trouble changing permissions, ask your system administrator for assistance.  "
@@ -1898,6 +1920,10 @@ msgid ""
 "Please click on the link below to go to 'Download Plugin List' and choose 'Update Plugin "
 "List' to get the latest language package information."
 msgstr ""
+"Um sicher zu stellen, dass Sie jeweils die aktuellsten Sprachpakete erhalten, aktualisieren "
+"Sie bitte den lokalen Index, indem Sie auf den folgenden Link klicken um zur 'Erweiterungs-"
+"Liste herunterladen' Seite zu gelangen und um dort 'Aktualisiere die Plugin-Liste' "
+"auszuführen."
 
 msgid "Administer Repositories"
 msgstr "Repositories verwalten"
@@ -1922,6 +1948,10 @@ msgid ""
 "click on the link below to go to \"Download Plugin List\" and choose \"Update Plugin List\" "
 "to get the latest language package information."
 msgstr ""
+"Es sind keine lokalen Repository Indizes vorhanden, um Informationen über Sprackpakete zu "
+"finden. Bitte klicken auf den folgenden Link \"Erweiterungs-Liste herunterladen\" und wählen "
+"sie dann \"Erweiterungs-Liste aktualisieren\" um Informationen über aktuelle Sprackpakete zu "
+"erhalten."
 
 msgid "System Maintenance"
 msgstr "System-Wartungsaufgaben"
@@ -1948,28 +1978,32 @@ msgstr "Wartungsaufgaben"
 
 msgid "Restrict user access to the system while maintenance is being performed."
 msgstr ""
+"Schränken Sie den Zugang zur Gallery ein während Wartungsaufgaben ausgeführt werden können."
 
-#, fuzzy
 msgid "Maintenance Mode Url"
-msgstr "Wartungsaufgaben"
+msgstr "Wartungsmodus URL"
 
 msgid ""
 "The Maintenance Mode Url specifies where requests will be redirected when access to the site "
 "has been restricted by the administrator."
 msgstr ""
+"die Wartungsmodus URL spezifiziert wohin Anfragen weitergeleitet werden, wenn der Zugang zur "
+"Gallery durch den Administrator eingeschränkt wurde."
 
 msgid ""
 "If left blank Gallery will display a default page with an administrator login link. This "
 "page will be themed when the code base is up to date, otherwise it will display a plain "
 "unstyled page."
 msgstr ""
+"Falls das Feld leer gelassen wird, verwendet Gallery eine Standard-Seite mit einem "
+"Administrator-Login Link. Falls Gallery gerade aktualisert wird, kann diese Seite etwas "
+"rudimentär aussehen, da in diesem Fall das Standard Motiv nicht verwendet werden kann."
 
 msgid "For example: /maintenance.html"
 msgstr "Zum Beispiel: /maintenance.html"
 
-#, fuzzy
 msgid "Set"
-msgstr "Einstellung"
+msgstr "Einstellung sichern"
 
 msgid "Task name"
 msgstr "Wartungsaufgabe"
@@ -2083,6 +2117,10 @@ msgid ""
 "your template files%s, you should disable template caching temporarily so that changes take "
 "effect immediately without clearing the template cache."
 msgstr ""
+"Um die Ladezeiten zu verkürzen, verfügt Gallery über einen Zwischenspeicher für HTML "
+"Templates (.tpl Dateien). Falls Sie die %sTemplate Dateien anpassen%s möchten, sollten Sie "
+"die diesen Zwischenspeicher abschalten, damit Sie Ihre Änderungen sofort auch im Web-Browser "
+"sehen können, ohne jedes Mal den Zwischenspeicher manuell löschen zu müssen."
 
 msgid "Enable template caching"
 msgstr "Vorlagenpuffer aktivieren"
@@ -2112,7 +2150,7 @@ msgid "Status: Upgrade Required (Inactive)"
 msgstr "Status: Aktualisierung nötig (inaktiv)"
 
 msgid "Status: Incompatible Plugin (Inactive)"
-msgstr "Status: Inkompatibles Plugin (inaktiv)"
+msgstr "Status: Inkompatible Erweiterung (inaktiv)"
 
 msgid "Status: Inactive (Configuration Required)"
 msgstr "Status: Inaktiv (Konfiguration Erforderlich)"
@@ -2127,7 +2165,7 @@ msgid "Warning!"
 msgstr "Warnung!"
 
 msgid "Do you really want to uninstall __PLUGIN__?"
-msgstr "Möchten Sie das Modul __PLUGIN__ wirklich deinstallieren?"
+msgstr "Möchten Sie __PLUGIN__ wirklich deinstallieren?"
 
 msgid "This will also remove any permissions and clean up any data created by this module."
 msgstr ""
@@ -2137,8 +2175,8 @@ msgstr ""
 msgid ""
 "This plugin will be uninstalled, but its files will be kept so that you can reinstall it."
 msgstr ""
-"Dieses Plugin wird deinstalliert werden. Dessen Dateien werden  aber nicht gelöscht, damit "
-"man es später wieder installieren kann."
+"Diese Erweiterung wird deinstalliert werden. Die entsprechenden Dateien werden  aber nicht "
+"gelöscht, damit man es später wieder installieren kann."
 
 msgid "Yes"
 msgstr "Ja"
@@ -2147,13 +2185,13 @@ msgid "No"
 msgstr "Nein"
 
 msgid "Do you really want to delete __PLUGIN__?"
-msgstr "Möchten Sie das Modul __PLUGIN__ wirklich entfernen?"
+msgstr "Möchten Sie das __PLUGIN__ wirklich entfernen?"
 
 msgid "This plugin will be uninstalled and its files will be deleted permanently."
-msgstr "Dieses Plugin wird deinstalliert und dessen Dateien werden gelöscht."
+msgstr "Diese Erweiterung wird deinstalliert und die entsprechenden Dateien werden gelöscht."
 
 msgid "The files of this plugin will be deleted permanently."
-msgstr "Die Dateien dieses Modules werden vollständig entfernt."
+msgstr "Die Dateien dieses Moduls werden vollständig entfernt."
 
 msgid "disabled(__COUNT__)"
 msgstr "deaktiviert(__COUNT__)"
@@ -2174,18 +2212,18 @@ msgid "Failed to completely delete __PLUGIN__"
 msgstr "__PLUGIN__ konnte nicht komplett gelöscht werden"
 
 msgid "Gallery Plugins"
-msgstr "Gallery Module"
+msgstr "Gallery Erweiterungen"
 
 msgid "Get More Plugins"
-msgstr "Weitere Gallery Module"
+msgstr "Weitere Gallery Erweiterungen"
 
 #, c-format
 msgid ""
 "Want more features?  New plugins are just a click away.  Just click the %s link to get "
 "started."
 msgstr ""
-"Möchten Sie mehr Features? Neue Plugins sind bloss ein Klick entfernt. Klicken Sie einfach "
-"auf den %s link."
+"Möchten Sie mehr Features? Weitere Erweiterungen sind bloss ein Klick entfernt. Klicken Sie "
+"einfach auf den %s link."
 
 msgid ""
 "Gallery features come as separate plugins.  You can download and install plugins to add more "
@@ -2193,11 +2231,12 @@ msgid ""
 "order to use a feature, you must install, configure (if necessary) and activate it.  If you "
 "don't wish to use a feature, you can deactivate it."
 msgstr ""
-"Gallerys Funktionen sind als separate Plugins erhältlich. Sie können ein Plugin "
+"Gallerys Funktionen sind als separate Erweiterungen erhältlich. Sie können eine Erweiterung "
 "herunterladen und installieren, um die entsprechende Funktion hinzuzufügen. Außerdem können "
-"Sie ein aktives Plugin deaktivieren, wenn Sie die Funktion nicht benötigen. Um eine Funktion "
-"zu nutzen, müssen Sie das entsprechende Pugin installieren, konfigurieren (falls nötig) und "
-"anschließend aktivieren. Später können Sie es nach Belieben wieder deaktivieren."
+"Sie ein aktive Erweiterung deaktivieren, wenn Sie die Funktion nicht benötigen. Um eine "
+"Funktion zu nutzen, müssen Sie die entsprechende Erweiterung installieren, konfigurieren "
+"(falls nötig) und anschließend aktivieren. Später können Sie es nach Belieben wieder "
+"deaktivieren."
 
 msgid "Plugin Name"
 msgstr "Modulname"
@@ -2249,14 +2288,14 @@ msgstr "Erweiterungen"
 
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
-msgstr ""
+msgstr "Das Runterladen folgender Pakete für die %s Erweiterung ist fehlgeschlagen:"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to install the %s plugin because the following files/directories could not be "
 "modified:"
 msgstr ""
-"Das %s Plugin konnte nicht heruntergeladen werden, da die folgenden Dateien/Verzeichnisse "
+"Die %s Erweiterung konnte nicht installiert werden, da die folgenden Dateien/Verzeichnisse "
 "nicht verändert werden können:"
 
 #, c-format
@@ -2264,6 +2303,9 @@ msgid ""
 "Some plugins could not be automatically upgraded because they are in use.  Please return to "
 "the %sPlugins%s page and click the upgrade link for each of the following plugins:"
 msgstr ""
+"Einige Erweiterungen konnten nicht aktualisiert werden, da Sie zur Zeit verwendet werden. "
+"Bitte kehren Sie zur %sErweiterungen%s Seite zurück und klicken Sie auf den Aktualiserungs-"
+"Link für jedes der folgenden Erweiterungen:"
 
 msgid "The repository index has been successfully updated."
 msgstr "Der Index des Erweiterungen-Katalogs wurde erfolgreich aktualisiert."
@@ -2273,7 +2315,7 @@ msgstr "Alle Erweiterungen sind schon auf dem neusten Stand."
 
 #, c-format
 msgid "%s plugin updated."
-msgstr "%s Plugin aktualisiert."
+msgstr "%s Erweiterung aktualisiert."
 
 msgid ""
 "No personal information about you or your Gallery installation is sent to the Gallery server "
@@ -2290,17 +2332,17 @@ msgid ""
 "chosen, you must periodically download the latest plugin list to find out about available "
 "updates. %s On slower connections the process might take a minute or two."
 msgstr ""
-"Sie können schnell und einfach neue Plugins herunterladen und installieren.  Falls Sie ein "
-"Plugin nicht mögen, können Sie es löschen.  Es gibt mehrere verschiedene Plugin Repositories "
-"und Sie können entscheiden welches Sie nutzen wollen (und Sie können sie auch alle "
-"gleichzeitig benutzen).  Nachdem Sie die Wahl getroffen haben, können Sie periodisch per "
-"Mausklick die neuste Plugin-Liste herunterladen, um von aktualisierten oder neuen Plugins zu "
-"profitieren. %s Mit langsameren Server-Verbindungen kann der Prozess ein, zwei Minuten "
-"dauern."
+"Sie können schnell und einfach neue Erweiterungen herunterladen und installieren.  Falls Sie "
+"eine Erweiterung nicht mögen, können Sie diese löschen.  Es gibt mehrere Erweiterungs-"
+"Repositories und Sie können entscheiden welches Sie nutzen wollen (und Sie können sie auch "
+"alle gleichzeitig benutzen).  Nachdem Sie die Wahl getroffen haben, können Sie periodisch "
+"per Mausklick die neuste Erweiterungs-Liste herunterladen, um von aktualisierten oder neuen "
+"Erweiterungen zu profitieren. %s Mit langsameren Server-Verbindungen kann der Prozess ein, "
+"zwei Minuten dauern."
 
 #, c-format
 msgid "Officially Released Gallery Project plugins (%srecommended%s)"
-msgstr "Offiziell veröffentlichte Plugins des Gallery Projekts (%sempfohlen%s)"
+msgstr "Offiziell veröffentlichte Erweiterungen des Gallery Projekts (%sempfohlen%s)"
 
 #, c-format
 msgid "last updated on %s"
@@ -2309,12 +2351,12 @@ msgstr "zuletzt aktualisiert am %s"
 #, c-format
 msgid "Experimental Gallery Project plugins (%scool new features, might be buggy%s)"
 msgstr ""
-"Experimentelle Plugins des Gallery Projekts (%scoole neue Funktionen, die aber auch etwas "
-"fehlerhaft sein können%s)"
+"Experimentelle Erweiterungen des Gallery Projekts (%scoole neue Funktionen, die aber auch "
+"etwas fehlerhaft sein können%s)"
 
 #, c-format
 msgid "Community plugins (%suse at your own risk!%s)"
-msgstr "Plugins von der Gallery Community (%sauf eigene Gefahr!%s)"
+msgstr "Erweiterungen von der Gallery Community (%sauf eigene Gefahr!%s)"
 
 msgid "Repository Error"
 msgstr "Repository-Fehler"
@@ -2337,7 +2379,7 @@ msgid "Continue"
 msgstr "Fortfahren..."
 
 msgid "Download Plugin List"
-msgstr "Plugin-Liste herunterladen"
+msgstr "Erweiterungs-Liste herunterladen"
 
 msgid "Show Repository List"
 msgstr "Die Repository-Liste anzeigen"
@@ -2395,7 +2437,7 @@ msgid "Latest"
 msgstr "Neuste"
 
 msgid "Locked Plugin"
-msgstr "Gesperrtes Plugin"
+msgstr "Gesperrte Erweiterung"
 
 msgid "Incompatible Plugin"
 msgstr "Inkompatible Erweiterung"
@@ -2433,8 +2475,8 @@ msgid ""
 "Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
 "of the package to download."
 msgstr ""
-"Laden Sie ein Paket herunter um dieses Plugin benutzen zu können.  Sie können das Plugin "
-"aktualisieren indem Sie eine neuere Version des Pakets herunterladen."
+"Laden Sie ein Paket herunter um diese Erweiterung benutzen zu können.  Sie können die "
+"Erweiterung aktualisieren indem Sie eine neuere Version des Pakets herunterladen."
 
 msgid "Base Packages"
 msgstr "Basis-Pakete"
@@ -2527,13 +2569,16 @@ msgid ""
 "The %s theme is incompatible with your Gallery version or no longer available.  Please "
 "upgrade the %s theme or pick another default theme."
 msgstr ""
+"Das %s Motiv ist nicht kompatibel mit Ihrer Gallery Version oder das Motiv ist nicht mehr "
+"lokal vorhanden. Bitte aktualisieren Sie das %s Motiv oder wählen Sie ein anderes Motiv als "
+"Standard-Motiv."
 
 msgid "New albums"
 msgstr "Neue Alben"
 
 #, c-format
 msgid "To activate more themes visit the %sPlugins%s page."
-msgstr ""
+msgstr "Weitere Motive können auf der Seite für %sErweiterungen%s aktiviert werden."
 
 msgid "Save Defaults"
 msgstr "Speichere Voreinstellungen"
@@ -2762,7 +2807,7 @@ msgstr ""
 
 #, c-format
 msgid "Visit the %sModules%s page to activate a Graphics Toolkit."
-msgstr "Gehen sie auf die %sModule-Seite%s um ein grafisches Werkzeug zu aktivieren."
+msgstr "Gehen sie auf die %sModul-Seite%s um ein grafisches Werkzeug zu aktivieren."
 
 msgid "Add Sub-Album"
 msgstr "Unteralbum hinzufügen"
@@ -3317,6 +3362,9 @@ msgid ""
 "version or no longer available.  Please upgrade the %s theme or use another theme for this "
 "album."
 msgstr ""
+"Dieses Album ist konfiguriert, um das %s Motiv zu verwenden. Dieses Motiv ist jedoch "
+"entweder nicht mit Ihrer Gallery Version kompatibel oder nicht mehr lokal vorhanden. Bitte "
+"aktualisieren sie das %s Motiv oder wählen sie ein anderes Motiv für dieses Album."
 
 #, c-format
 msgid ""
@@ -3749,6 +3797,8 @@ msgid ""
 "The administration session has expired, please re-authenticate to access the administration "
 "area."
 msgstr ""
+"Die Sitzung für den Administrations-Bereich ist abgelaufen. Bitte weisen Sie sich erneut als "
+"Administrator aus, um Zugang zum Administrations-Bereich zu erhalten."
 
 #, c-format
 msgid ""
@@ -4013,9 +4063,9 @@ msgstr "&laquo; Element-Aktionen &raquo;"
 msgid "Go"
 msgstr "Los"
 
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: block %s doesn't exist."
-msgstr "Gruppe '%s' existiert nicht."
+msgstr "Warnung: Der %s Block existiert nicht."
 
 msgid "next"
 msgstr "nächste"
