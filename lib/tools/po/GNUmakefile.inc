@@ -19,9 +19,10 @@
 MODULE_DIR = $(shell dirname "`pwd`")
 TYPE_DIR = $(shell dirname "$(MODULE_DIR)")
 APPLICATION ?= $(shell basename "$(TYPE_DIR)")_$(shell basename "$(MODULE_DIR)")
+PHP ?= php
 
 # Let PHP parse the config.php file to get the g2data directory.
-G2DATA = $(shell echo '<?php include("$(GALLERYDIR)/lib/support/GallerySetupUtilities.class"); $$gallery = new GallerySetupUtilitiesStub(); @include("$(GALLERYDIR)/config.php"); print $$gallery->getConfig("data.gallery.base"); ?>' | php -q 2>&1)
+G2DATA = $(shell echo '<?php include("$(GALLERYDIR)/lib/support/GallerySetupUtilities.class"); $$gallery = new GallerySetupUtilitiesStub(); @include("$(GALLERYDIR)/config.php"); print $$gallery->getConfig("data.gallery.base"); ?>' | $(PHP) -q 2>&1)
 
 ifdef QUIET
     MSGFMT_FLAGS =
@@ -41,7 +42,7 @@ all: install
 all-remove-obsolete: update remove-obsolete install
 
 messages.po: alwaysbuild
-	@php -f "$(TOOLDIR)"/po/extract.php "$(MODULE_DIR)" > strings.raw.tmp
+	@$(PHP) -f "$(TOOLDIR)"/po/extract.php "$(MODULE_DIR)" > strings.raw.tmp
 	@# Don't extract right to strings.raw because extract.php tries to preserve
 	@# some old data from strings.raw and the > redirect blanks it out.
 	@mv strings.raw.tmp strings.raw
@@ -123,7 +124,7 @@ install: check-g2data update
 		    INSTALL_FILE="$${INSTALL_DIR}/$(APPLICATION).mo"; \
 		fi; \
 	    fi; \
-	    php -f $(TOOLDIR)/po/trim-po.php `pwd`/$${LOCALE}.po > tmp.po; \
+	    $(PHP) -f $(TOOLDIR)/po/trim-po.php `pwd`/$${LOCALE}.po > tmp.po; \
 	    if $${MSGFMT_CMD} $${MO_FILE} tmp.po; then \
 		if test -n "$${QUIET}"; then \
 		    echo -n '.'; \
