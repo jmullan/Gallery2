@@ -1,0 +1,663 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2008 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+GalleryCoreApi::requireOnce('modules/notification/classes/NotificationHandler_1_0.class');
+GalleryCoreApi::requireOnce('modules/notification/classes/NotificationRouter.class');
+GalleryCoreApi::requireOnce('modules/notification/classes/GalleryCoreEventNotifications.class');
+
+/**
+ * Core Event Notification Tests
+ * @package Notification
+ * @subpackage PHPUnit
+ * @author Tim Almdal <public@timalmdal.com >
+ */
+
+class NotificationGalleryCoreEventTest extends GalleryTestCase {
+    function NotificationGalleryCoreEventTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	global $gallery;
+
+	$ret = parent::setUp();
+	if ($ret) {
+	    return $ret;
+	}
+
+	/* Load the plugin parms to the cache so we can modify them. */
+	list ($ret) = GalleryCoreApi::fetchAllPluginParameters('module', 'notification');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId());
+	if ($ret) {
+	    return $ret;
+	}
+	if ($this->name() != 'testDeleteNotification') {
+	    $this->_markForCleanup($this->_item);
+	}
+
+	list ($ret, $this->_item2) = $this->_createRandomDataItem($this->_getRootId());
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($this->_item2);
+
+	/* Get the items into the loadEntities cache for later. */
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById(
+	    array($this->_item->getId(), $this->_item2->getId()), 'GalleryItem');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret) = GalleryCoreApi::fetchPermissionsForItems(
+	    array($this->_item->getId(), $this->_item2->getId(), $this->_getRootId()), 
+	    $gallery->getActiveUserId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $this->groupAdmin) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->_markFactoryForCleanup();
+	$this->_unregisterFactoryImplementationForTest('NotificationEvent_1_0');
+	$this->_unregisterFactoryImplementationForTest('NotificationHandler_1_0');
+	$this->_unregisterFactoryImplementationForTest('GalleryEventListener');
+
+	$ret = $this->_registerFactoryImplementationForTest(
+	    'NotificationHandler_1_0', 'UnitTestNotificationHandler', 'UnitTestNotificationHandler',
+	    'modules/notification/test/phpunit/NotificationGalleryCoreEventTest.class',
+	    'notification', null);
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'notification');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->_storageSet = true;
+
+	$gallery->_storage = new UnitTestStorage();
+    }
+
+    function tearDown() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	if (!empty($this->_storageSet)) {
+	    $this->assert($storage->isComplete(), $storage->getRemaining());
+	}
+
+	$ret = parent::tearDown();
+	if ($ret) {
+	    return $ret;
+	}
+
+	/*
+	 * If this is the testDeleteNotification, then we left an item lying around.  We couldn't 
+	 * mark it for cleanup, because the parent::tearDown would assert that it had deleted more
+	 * items than we had created.
+	 */
+	if ($this->name() == 'testDeleteNotification') {
+	    list($ret, $readLockId) = GalleryCoreApi::acquireReadLock($this->_item->getParentId());
+	    if ($ret) {
+		return $ret;
+	    }
+	    list($ret, $writeLockId) = GalleryCoreApi::acquireWriteLock($this->_item->getId());
+	    if ($ret) {
+		return $ret;
+	    }
+	    $ret = $this->_item->delete();
+	    if ($ret) {
+		return $ret;
+	    }
+	    $ret = GalleryCoreApi::releaseLocks(array($readLockId, $writeLockId));
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
+	return null;
+    }
+
+    function _subscribeToEvent($event, $notification) {
+	global $gallery;
+
+	$ret = $this->_registerFactoryImplementationForTest(
+	    'NotificationEvent_1_0', $notification, $notification,
+	    'modules/notification/classes/GalleryCoreEventNotifications.class',
+	    'notification', array($event));
+	if ($ret) {
+	    return $ret;
+	}
+
+	/* Generic Notification Router */
+	$handlerPath = 'modules/notification/classes/NotificationRouter.class';
+	$ret = $this->_registerFactoryImplementationForTest('GalleryEventListener',
+	    'NotificationRouter', 'NotificationRouter',
+	    $handlerPath, 'notification', array($event), 4);
+	if ($ret) {
+	    return $ret;
+	}
+
+	return null;
+    }
+
+    function _enableNotification($notification) {
+	$cacheKey = 'GalleryPluginHelper::fetchAllParameters(module, notification, 0)';
+	$parms = GalleryDataCache::get($cacheKey);
+	$parms['_enabledMap'] = serialize(
+	    array($notification => array('UnitTestNotificationHandler' => 
+		array('public' => true, 'enabled' => true))));
+	GalleryDataCache::put($cacheKey, $parms);
+    }
+
+    function _setStorageReplies($notification, $itemId=0) {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$activeId = $gallery->getActiveUserId();
+	$storage->setReply('search',
+			   array('SELECT DISTINCT [::notificationName], [::handlerName] FROM '
+					. '[SubscriptionMap] WHERE [::notificationName] IN (?)',
+				 array($notification), array()),
+			   array(null, new UnitTestStorageSearchResults(array(
+				 array($notification, 'UnitTestNotificationHandler')))));
+	$storage->setReply('getMapEntry',
+	      array('GalleryUserGroupMap', array('userId'),
+		    array('userId' => $activeId, 
+			  'groupId' => $this->groupAdmin), 
+		    array('limit' => array('count' => 1))),
+	      array(null, new UnitTestStorageSearchResults(array(array($activeId)))));
+
+	$storage->setReply('getMapEntry',
+	      array('SubscriptionMap', array('userId'),
+		    array('notificationName' => $notification, 'itemId' => $itemId), array()),
+	      array(null, new UnitTestStorageSearchResults(array(array($activeId)))));
+    }
+
+    function testActivatePluginNotification() {
+	$ret = $this->_subscribeToEvent('Gallery::ActivatePlugin', 'ActivatePluginNotification');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->_enableNotification('ActivatePluginNotification');
+	$this->_setStorageReplies('ActivatePluginNotification');
+
+	$event = GalleryCoreApi::newEvent('Gallery::ActivatePlugin');
+	$event->setData(array('pluginType' => 'module', 'pluginId' => 'testplugin'));
+	list ($ret) = GalleryCoreApi::postEvent($event);
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (GalleryDataCache::containsKey('UnitTestNotificationHandler::notification')) {
+	    $notification = GalleryDataCache::get('UnitTestNotificationHandler::notification');
+	    $eventSpecs = $notification->getEventSpecs();
+	    $this->assertEquals('module', $notification->getPluginType(), 'Invalid PluginType');
+	    $this->assertEquals('testplugin', $notification->getPlugin(), 'Invalid Plugin Id');
+	    $this->assert($notification->isGlobal(), 'Activate Plugin is not declared global');
+	    $msg = $this->_module->translate(array('text' => 'The %s %s was activated', 
+		'arg1' => 'module', 'arg2' => 'testplugin'));
+	    $this->assertEquals(array(null, $msg), $notification->getNotificationMessage(),
+		'Unexepected notification message');
+	} else {
+	    $this->fail('Gallery::ActivatePlugin was not raised');
+	}
+    }
+
+    function testDeactivatePluginNotification() {
+	$ret = 
+	    $this->_subscribeToEvent('Gallery::DeactivatePlugin', 'DeactivatePluginNotification');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->_enableNotification('DeactivatePluginNotification', 'Gallery::DeactivatePlugin');
+	$this->_setStorageReplies('DeactivatePluginNotification');
+	
+	$event = GalleryCoreApi::newEvent('Gallery::DeactivatePlugin');
+	$event->setData(array('pluginType' => 'module', 'pluginId' => 'testplugin'));
+	list ($ret) = GalleryCoreApi::postEvent($event);
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (GalleryDataCache::containsKey('UnitTestNotificationHandler::notification')) {
+	    $notification = GalleryDataCache::get('UnitTestNotificationHandler::notification');
+	    $eventSpecs = $notification->getEventSpecs();
+	    $this->assertEquals('module', $notification->getPluginType(), 'Invalid PluginType');
+	    $this->assertEquals('testplugin', $notification->getPlugin(), 'Invalid Plugin Id');
+	    $this->assert($notification->isGlobal(), 'Deactivate Plugin is not declared global');
+	    $msg = $this->_module->translate(array('text' => 'The %s %s was deactivated', 
+		'arg1' => 'module', 'arg2' => 'testplugin'));
+	    $this->assertEquals(array(null, $msg), $notification->getNotificationMessage(),
+		'Unexepected notification message');
+	} else {
+	    $this->fail('Gallery::DeactivatePlugin was not raised');
+	}
+    }
+
+    function testErrorNotification() {
+	$ret = $this->_subscribeToEvent('Gallery::Error', 'ErrorNotification');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->_enableNotification('ErrorNotification');
+	$this->_setStorageReplies('ErrorNotification');
+
+	$error = GalleryCoreApi::error(ERROR_OBSOLETE_DATA, null, null, 'Test Message');
+	$this->assertErrorEquals(ERROR_OBSOLETE_DATA, $error, true, 'Unexpected return code');
+
+	$event = GalleryCoreApi::newEvent('Gallery::Error');
+	$event->setData(array('error' => $error));
+	list ($ret, $eventResults) = GalleryCoreApi::postEvent($event);
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (GalleryDataCache::containsKey('UnitTestNotificationHandler::notification')) {
+	    $notification = GalleryDataCache::get('UnitTestNotificationHandler::notification');
+	    $eventSpecs = $notification->getEventSpecs();
+	    $notificationError = $notification->getError();
+	    $this->assertEquals('Test Message', $notificationError->getErrorMessage(),
+		'Unexpected contained error');
+	    $this->assert($notification->isGlobal(), 'Eror notification is not declared global');
+	    $msg = $error->getAsText();
+	    $this->assertEquals(array(null, $msg), $notification->getNotificationMessage(),
+		'Unexepected notification message');
+	} else {
+	    $this->fail('Gallery::Error was not raised');
+	}
+    }
+
+    function testItemOrderNotification() {
+	$ret = $this->_subscribeToEvent('Gallery::ItemOrder', 'ItemOrderNotification');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->_enableNotification('ItemOrderNotification');
+	$this->_setStorageReplies('ItemOrderNotification', $this->_item->getId());
+	
+	$event = GalleryCoreApi::newEvent('Gallery::ItemOrder');
+	$event->setData($this->_item->getId());
+	list ($ret) = GalleryCoreApi::postEvent($event);
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (GalleryDataCache::containsKey('UnitTestNotificationHandler::notification')) {
+	    $notification = GalleryDataCache::get('UnitTestNotificationHandler::notification');
+	    $eventSpecs = $notification->getEventSpecs();
+	    $this->assert(!$notification->isGlobal(), 'Item Order notification is declared global');
+	    $this->assert($notification->isAppropriateForItem($this->_item), 
+	        'Incorrectly flagged as inappropriate for item');
+	    $this->assertEquals($this->_item->getId(), $notification->getItemId(), 
+		'The notification has the wrong item id');
+	    $title = GalleryUtilities::markup($this->_item->getTitle(), 'strip');
+	    $msg = $this->_module->translate(array('arg1' => $title,
+			 'text' => 'The child items for %s have been reordered.'));
+	    $this->assertEquals(array(null, $msg), $notification->getNotificationMessage(),
+		'Unexepected notification message');
+	} else {
+	    $this->fail('Gallery::ItemOrder was not raised');
+	}
+    }
+
+    function testLoginNotification() {
+	global $gallery;
+
+	$ret = $this->_subscribeToEvent('Gallery::Login', 'LoginNotification');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->_enableNotification('LoginNotification');
+	$this->_setStorageReplies('LoginNotification');
+	
+	$event = GalleryCoreApi::newEvent('Gallery::Login');
+	$event->setEntity($gallery->getActiveUser());
+	list ($ret) = GalleryCoreApi::postEvent($event);
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (GalleryDataCache::containsKey('UnitTestNotificationHandler::notification')) {
+	    $notification = GalleryDataCache::get('UnitTestNotificationHandler::notification');
+	    $eventSpecs = $notification->getEventSpecs();
+	    $this->assert($notification->isGlobal(), 'Login notification is not declared global');
+	    $this->assert(GalleryUtilities::isA($notification->getUser(), 'GalleryUser'), 
+	        'Login event does not contain a GalleryUser entity');
+	    $msg = $this->_module->translate(array('text' => 'User %s has logged in.',
+		'arg1' => $gallery->getActiveUser()->getUserName()));
+	    $this->assertEquals(array(null, $msg), $notification->getNotificationMessage(),
+		'Unexepected notification message');
+	} else {
+	    $this->fail('Gallery::Login was not raised');
+	}
+    }
+
+    function testFailedLoginNotification() {
+	global $gallery;
+
+	$ret = $this->_subscribeToEvent('Gallery::FailedLogin', 'FailedLoginNotification');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->_enableNotification('FailedLoginNotification');
+	$this->_setStorageReplies('FailedLoginNotification');
+	
+	$event = GalleryCoreApi::newEvent('Gallery::FailedLogin');
+	$event->setData(array('userName' => $gallery->getActiveUser()->getUserName()));
+	list ($ret) = GalleryCoreApi::postEvent($event);
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (GalleryDataCache::containsKey('UnitTestNotificationHandler::notification')) {
+	    $notification = GalleryDataCache::get('UnitTestNotificationHandler::notification');
+	    $eventSpecs = $notification->getEventSpecs();
+	    $this->assert($notification->isGlobal(), 
+		'FailedLogin notification is not declared global');
+	    $this->assertEquals($gallery->getActiveUser()->getUserName(), 
+		$notification->getUserName(), 'FailedLogin contained an incorrect name');
+	    $msg = $this->_module->translate(array('text' => 'User %s login failed.',
+		'arg1' => $gallery->getActiveUser()->getUserName()));
+	    $this->assertEquals(array(null, $msg), $notification->getNotificationMessage(),
+		'Unexepected notification message');
+	} else {
+	    $this->fail('Gallery::FailedLogin was not raised');
+	}
+    }
+
+    function testLogoutNotification() {
+	global $gallery;
+
+	$ret = $this->_subscribeToEvent('Gallery::Logout', 'LogoutNotification');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->_enableNotification('LogoutNotification');
+	$this->_setStorageReplies('LogoutNotification');
+	
+	$event = GalleryCoreApi::newEvent('Gallery::Logout');
+	$event->setEntity($gallery->getActiveUser());
+	list ($ret) = GalleryCoreApi::postEvent($event);
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (GalleryDataCache::containsKey('UnitTestNotificationHandler::notification')) {
+	    $notification = GalleryDataCache::get('UnitTestNotificationHandler::notification');
+	    $eventSpecs = $notification->getEventSpecs();
+	    $this->assert($notification->isGlobal(), 'Logout notification is not declared global');
+	    $this->assert(GalleryUtilities::isA($notification->getUser(), 'GalleryUser'), 
+	        'Logout event does not contain a GalleryUser entity');
+	    $msg = $this->_module->translate(array('text' => 'User %s has logged out.',
+		'arg1' => $gallery->getActiveUser()->getUserName()));
+	    $this->assertEquals(array(null, $msg), $notification->getNotificationMessage(),
+		'Unexepected notification message');
+	} else {
+	    $this->fail('Gallery::Logout was not raised');
+	}
+    }
+
+    function testRemovePermissionNotification() {
+	global $gallery;
+
+	$ret = 
+	    $this->_subscribeToEvent('Gallery::RemovePermission', 'RemovePermissionNotification');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$itemId = $this->_item->getId();
+	$this->_enableNotification('RemovePermissionNotification');
+	$this->_setStorageReplies('RemovePermissionNotification', $itemId);
+
+	$event = GalleryCoreApi::newEvent('Gallery::RemovePermission');
+	$event->setData(array('userId' => $gallery->getActiveUserId(), 
+			      'groupId' => $this->groupAdmin,
+			      'itemIdsAndBits' => array($itemId => 0),
+			      'format' => 'newBits'));
+	list ($ret) = GalleryCoreApi::postEvent($event);
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (GalleryDataCache::containsKey('UnitTestNotificationHandler::notification')) {
+	    $notification = GalleryDataCache::get('UnitTestNotificationHandler::notification');
+	    $eventSpecs = $notification->getEventSpecs();
+	    $this->assert(!$notification->isGlobal(), 'Remove permission is declared global');
+	    $msg = $this->_module->translate(array('arg1' => 1,
+				       'text' => $gallery->i18n('Permission Change on %s items.')));
+	    $this->assertEquals(array(null, $msg), $notification->getNotificationMessage(),
+		'Unexepected notification message');
+	} else {
+	    $this->fail('Gallery::RemovePermission was not raised');
+	}
+    }
+
+    function testUninstallPluginNotification() {
+	$ret = $this->_subscribeToEvent('Gallery::UninstallPlugin', 'UninstallPluginNotification');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->_enableNotification('UninstallPluginNotification');
+	$this->_setStorageReplies('UninstallPluginNotification');
+
+	$event = GalleryCoreApi::newEvent('Gallery::UninstallPlugin');
+	$event->setData(array('pluginType' => 'module', 'pluginId' => 'testplugin'));
+	list ($ret) = GalleryCoreApi::postEvent($event);
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (GalleryDataCache::containsKey('UnitTestNotificationHandler::notification')) {
+	    $notification = GalleryDataCache::get('UnitTestNotificationHandler::notification');
+	    $eventSpecs = $notification->getEventSpecs();
+	    $this->assertEquals('module', $notification->getPluginType(), 'Invalid PluginType');
+	    $this->assertEquals('testplugin', $notification->getPlugin(), 'Invalid Plugin Id');
+	    $this->assert($notification->isGlobal(), 'Uninstall Plugin is not declared global');
+	    $msg = $this->_module->translate(array('text' => 'The %s %s was uninstalled', 
+		'arg1' => 'module', 'arg2' => 'testplugin'));
+	    $this->assertEquals(array(null, $msg), $notification->getNotificationMessage(),
+		'Unexepected notification message');
+	} else {
+	    $this->fail('Gallery::UninstallPlugin was not raised');
+	}
+    }
+
+    function testAlbumStructureChangeNotification() {
+	global $gallery;
+
+	$ret = $this->_subscribeToEvent('Gallery::ViewableTreeChange', 
+	    'AlbumStructureChangeNotification');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$itemId = $this->_item->getId();
+
+	$this->_enableNotification('AlbumStructureChangeNotification');
+	$this->_setStorageReplies('AlbumStructureChangeNotification', $itemId);
+
+	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
+	$event->setData(array('userId' => $gallery->getActiveUserId(), 'itemId' => $itemId, 
+			      'permission' => 'core.viewAll', 'applyToChildren' => false, 
+			      'changeType' => 'add'));
+	list ($ret) = GalleryCoreApi::postEvent($event);
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (GalleryDataCache::containsKey('UnitTestNotificationHandler::notification')) {
+	    $notification = GalleryDataCache::get('UnitTestNotificationHandler::notification');
+	    $eventSpecs = $notification->getEventSpecs();
+	    $this->assert(!$notification->isGlobal(), 'Album Structure Change is declared global');
+	    $msg = $this->_module->translate('Viewable Tree Change Event Occurred');
+	    $this->assertEquals(array(null, $msg), $notification->getNotificationMessage(),
+		'Unexepected notification message');
+	} else {
+	    $this->fail('Gallery::ViewableTreeChange was not raised');
+	}
+    }
+
+    function testSaveNotification() {
+	global $gallery;
+
+	$ret = $this->_subscribeToEvent('GalleryEntity::save', 'SaveNotification');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$itemId = $this->_item->getId();
+
+	$this->_enableNotification('SaveNotification');
+	$this->_setStorageReplies('SaveNotification', $itemId);
+
+	$event = GalleryCoreApi::newEvent('GalleryEntity::save');
+	$event->setEntity($this->_item);
+	list ($ret) = GalleryCoreApi::postEvent($event);
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (GalleryDataCache::containsKey('UnitTestNotificationHandler::notification')) {
+	    $notification = GalleryDataCache::get('UnitTestNotificationHandler::notification');
+	    $eventSpecs = $notification->getEventSpecs();
+	    $this->assert(!$notification->isGlobal(), 'GalleryEntity save is declared global');
+	    $msg = $this->_module->translate(array('arg1' => $this->_item->getTitle(),
+							'text' => '%s was saved'));
+	    $this->assertEquals(array(null, $msg), $notification->getNotificationMessage(),
+		'Unexepected notification message');
+	} else {
+	    $this->fail('GalleryEntity::save was not raised');
+	}
+    }
+
+    function testDeleteNotification() {
+	global $gallery;
+
+	$ret = $this->_subscribeToEvent('GalleryEntity::delete', 'DeleteNotification');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$itemId = $this->_item->getId();
+
+	$this->_enableNotification('DeleteNotification');
+	$this->_setStorageReplies('DeleteNotification', $itemId);
+
+	$event = GalleryCoreApi::newEvent('GalleryEntity::delete');
+	$event->setEntity($this->_item);
+	list ($ret) = GalleryCoreApi::postEvent($event);
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (GalleryDataCache::containsKey('UnitTestNotificationHandler::notification')) {
+	    $notification = GalleryDataCache::get('UnitTestNotificationHandler::notification');
+	    $eventSpecs = $notification->getEventSpecs();
+	    $this->assert(!$notification->isGlobal(), 'GalleryEntity delete is declared global');
+	    $msg = $this->_module->translate(array('arg1' => $this->_item->getTitle(),
+							'text' => '%s was deleted'));
+	    $this->assertEquals(array(null, $msg), $notification->getNotificationMessage(),
+		'Unexepected notification message');
+	} else {
+	    $this->fail('GalleryEntity::delete was not raised');
+	}
+    }
+
+    function testItemAddedNotification(){
+	global $gallery;
+
+	$ret = $this->_subscribeToEvent('Gallery::itemAdded', 'ItemAddedNotification');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$itemId = $this->_item->getId();
+
+	$this->_enableNotification('ItemAddedNotification');
+	$this->_setStorageReplies('ItemAddedNotification', $this->_item->getId());
+
+	$event = GalleryCoreApi::newEvent('Gallery::itemAdded');
+	$items = array($this->_item);
+	$event->setData($items);
+	list ($ret) = GalleryCoreApi::postEvent($event);
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (GalleryDataCache::containsKey('UnitTestNotificationHandler::notification')) {
+	    $notification = GalleryDataCache::get('UnitTestNotificationHandler::notification');
+	    $eventSpecs = $notification->getEventSpecs();
+	    $this->assert(!$notification->isGlobal(), 'GalleryEntity item add is declared global');
+	    $urlGenerator =& $gallery->getUrlGenerator();
+	    $parentUrl = $urlGenerator->generateUrl(array('view' => 'core.ShowItem',
+						      'itemId' => $itemId),
+						array('forceFullUrl' => true,
+						      'forceSessionId' => false,
+						      'htmlEntities' => false));
+	    $msg = $this->_module->translate(array('arg1' => 'file',
+			'arg2' => $parentUrl, 'text' =>
+			 $gallery->i18n("A new %s has been added. To view it, click here: \n%s")));
+	    $this->assertEquals(array(null, $msg), $notification->getNotificationMessage(),
+		'Unexepected notification message');
+	} else {
+	    $this->fail('GalleryEntity::itemAdded was not raised');
+	}
+    }
+}
+
+class UnitTestNotificationHandler extends NotificationHandler_1_0 {
+    /**
+     * @see NotificationHandler_1_0::getDescription
+     */
+    function getDescription() {
+	global $gallery;
+
+	return $this->_translateText('notification', 'validate notifications');
+    }
+
+    /**
+     * @see NotificationHandler_1_0::handleNotification
+     */
+    function handleNotification($subscribers, $notification) {
+	GalleryDataCache::put('UnitTestNotificationHandler::notification', $notification);
+	return null;
+    }
+}
+?>

@@ -52,7 +52,7 @@ class ActivatePluginNotification extends NotificationEvent_1_0  {
      * @see NotificationEvent_1_0::getEventSpecs
      */
     function getEventSpecs() {
-	return array('Gallery::ActivatePlugin');
+	return array('eventName' => 'Gallery::ActivatePlugin');
     }
 
     /**
@@ -196,7 +196,7 @@ class ItemOrderNotification extends NotificationEvent_1_0 {
      * @see NotificationEvent_1_0::getEventSpecs
      */
     function getEventSpecs() {
-	return array('eventName' => 'Gallery::ItemOrder', 'entityType' => 'GalleryItem');
+	return array('eventName' => 'Gallery::ItemOrder');
     }
 
     /**
@@ -251,7 +251,7 @@ class LoginNotification extends NotificationEvent_1_0 {
      * @see NotificationEvent_1_0::getEventSpecs
      */
     function getEventSpecs() {
-	return array('eventName' => 'Gallery::Login');
+	return array('eventName' => 'Gallery::Login', 'entityType' => 'GalleryUser');
     }
 
     /**
@@ -267,7 +267,8 @@ class LoginNotification extends NotificationEvent_1_0 {
     function getNotificationMessage() {
 	global $gallery;
 
-	return $this->_translateText('notification', array('arg1' => $this->getUserName(),
+	$user = $this->getUser();
+	return $this->_translateText('notification', array('arg1' => $user->getUserName(),
 					      'text' => $gallery->i18n('User %s has logged in.')));
     }
 
@@ -276,7 +277,7 @@ class LoginNotification extends NotificationEvent_1_0 {
      * @return object GalleryUser
      */
     function getUser() {
-	return $this->getEntity();
+	return $this->_event->getEntity();
     }
 }
 
@@ -346,7 +347,7 @@ class LogoutNotification extends NotificationEvent_1_0  {
      * @see NotificationEvent_1_0::getEventSpecs
      */
     function getEventSpecs() {
-	return array('eventName' => 'Gallery::Logout');
+	return array('eventName' => 'Gallery::Logout', 'entityType' => 'GalleryUser');
     }
 
     /**
@@ -355,12 +356,8 @@ class LogoutNotification extends NotificationEvent_1_0  {
     function getNotificationMessage() {
 	global $gallery;
 
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'notification');
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	return $this->_translateText('notification', array('arg1' => $this->getUserName(),
+	$user = $this->getUser();
+	return $this->_translateText('notification', array('arg1' => $user->getUserName(),
 					      'text' => $gallery->i18n('User %s has logged out.')));
     }
 
@@ -369,7 +366,7 @@ class LogoutNotification extends NotificationEvent_1_0  {
      * @return object GalleryUser
      */
     function getUser() {
-	return $this->getEntity();
+	return $this->_event->getEntity();
     }
 }
 
@@ -388,6 +385,15 @@ class RemovePermissionNotification extends NotificationEvent_1_0  {
      */
     function getEventSpecs() {
 	return array('eventName' => 'Gallery::RemovePermission');
+    }
+
+    /**
+     * @see NotificationEvent_1_0::getItemId
+     */
+    function getItemId() {
+	$data = $this->_event->getData();
+	$itemIds = array_keys($data['itemIdsAndBits']);
+	return $itemIds[0];
     }
 
     /**
@@ -482,7 +488,7 @@ class AlbumStructureChangeNotification extends NotificationEvent_1_0  {
      * @see NotificationEvent_1_0::getEventSpecs
      */
     function getEventSpecs() {
-	return array('eventName' => 'Gallery::ViewableTreeChange', 'entityType' => 'GalleryItem');
+	return array('eventName' => 'Gallery::ViewableTreeChange');
     }
 
     /**
@@ -500,6 +506,14 @@ class AlbumStructureChangeNotification extends NotificationEvent_1_0  {
      */
     function getPermission() {
 	return 'core.view';
+    }
+
+    /**
+     * @see NotificationEvent_1_0::getItemId
+     */
+    function getItemId() {
+	$data = $this->_event->getData();
+	return $data['itemId'];
     }
 
     /**
@@ -524,7 +538,7 @@ class SaveNotification extends NotificationEvent_1_0  {
      * @see NotificationEvent_1_0::getEventSpecs
      */
     function getEventSpecs() {
-	return array('eventName' => 'GalleryEntity::save');
+	return array('eventName' => 'GalleryEntity::save', 'entityType' => 'GalleryItem');
     }
 
     /**
@@ -545,6 +559,13 @@ class SaveNotification extends NotificationEvent_1_0  {
     function getItemId() {
 	$entity = $this->_event->getEntity();
 	return $entity->getId();
+    }
+
+    /**
+     * @see NotificationEvent_1_0::getPermission
+     */
+    function getPermission() {
+	return 'core.view';
     }
 
     /**
@@ -570,7 +591,7 @@ class DeleteNotification extends NotificationEvent_1_0  {
      * @see NotificationEvent_1_0::getEventSpecs
      */
     function getEventSpecs() {
-	return array('eventName' => 'GalleryEntity::delete');
+	return array('eventName' => 'GalleryEntity::delete', 'entityType' => 'GalleryItem');
     }
 
     /**
@@ -591,6 +612,13 @@ class DeleteNotification extends NotificationEvent_1_0  {
     function getItemId() {
 	$entity = $this->_event->getEntity();
 	return $entity->getId();
+    }
+
+    /**
+     * @see NotificationEvent_1_0::getPermission
+     */
+    function getPermission() {
+	return 'core.view';
     }
 
     /**
@@ -676,7 +704,7 @@ class ItemAddedNotification extends NotificationEvent_1_0  {
      */
     function getItemId() {
 	$data = $this->_event->getData();
-	return $data[0]->getParentId();
+	return count($data) == 1 ?  $data[0]->getId() : $data[0]->getParentId();
     }
 
     /**
