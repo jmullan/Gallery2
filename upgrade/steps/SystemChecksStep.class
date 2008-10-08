@@ -499,7 +499,7 @@ class SystemChecksStep extends UpgradeStep {
 	    list ($ret, $error) = $this->_testPrivileges();
 	    if ($ret === false) {
 		$message = _('Error: The configured database user does not have the required '
-				    . ' database priviledges to perform the upgrade.') . '<br/>'
+				    . 'database privileges to perform the upgrade.') . '<br/>'
 				    . $error;
 		$templateData['check'][] = 
 		    array('title' => $title,

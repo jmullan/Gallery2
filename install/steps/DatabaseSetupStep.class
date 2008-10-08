@@ -457,13 +457,13 @@ class DatabaseSetupStep extends InstallStep {
 	$sequenceId = 'g2privtestseq';
 	$result = $this->_db->CreateSequence($tablePrefix . $sequenceId);
 	if (empty($result)) {
-	    return array(false, _('Failed to create a database test sequence.' .
+	    return array(false, _('Failed to create a database test sequence. ' .
 			 'Check the returned error message and README.html ' .
 			 'for missing privileges and clean up the database.'));
 	}
 	$result = $this->_db->DropSequence($tablePrefix . $sequenceId);
 	if (empty($result)) {
-	    return array(false, _('Test failed to drop a database test sequence.' .
+	    return array(false, _('Test failed to drop a database test sequence. ' .
 			 'Check the returned error message and README.html ' .
 			 'for missing privileges and clean up the database.'));
 	}
