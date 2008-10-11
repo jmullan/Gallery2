@@ -3008,6 +3008,26 @@ class SessionTest extends GalleryTestCase {
 	$this->_markSessionForCleanup($session);
     }
 
+    function testIsHttps() {
+	$session = new GallerySession();
+	unset($_SERVER['HTTPS']);
+	$this->assert(!$session->_isHttps(), '$_SERVER[HTTPS] is empty, should be false');
+
+	$_SERVER['HTTPS'] = 'off';
+	$this->assert(!$session->_isHttps(), '$_SERVER[HTTPS] = \'off\', should be false');
+
+	$_SERVER['HTTPS'] = 'on';
+	$this->assert($session->_isHttps(), '$_SERVER[HTTPS] = \'on\', should be true');
+
+	$_SERVER['HTTPS'] = '1';
+	$this->assert($session->_isHttps(), '$_SERVER[HTTPS] = \'1\', should be true');
+
+	$_SERVER['HTTPS'] = 1;
+	$this->assert($session->_isHttps(), '$_SERVER[HTTPS] = 1, should be true');
+
+	$this->_markSessionForCleanup($session);
+    }
+
     function testGetSerializedSession() {
 	$session = new GallerySession();
 	$ret = $session->init();

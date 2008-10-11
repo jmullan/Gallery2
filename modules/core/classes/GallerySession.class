@@ -1281,12 +1281,13 @@ class GallerySession {
 
     /**
      * Determine if the request is using the HTTPS protocol.
-     * @return boolen true if the request is using HTTTPS
+     * @return boolen true if the request is using HTTPS
      * @access private
      */
     function _isHttps() {
-	$httpType = GalleryUtilities::getServerVar('HTTPS');
-	return !empty($httpType);
+	return (isset($_SERVER['HTTPS'])
+	    && (!strcasecmp('on', $_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 1 
+		|| $_SERVER['HTTPS'] === true));
     }
 
     /**
