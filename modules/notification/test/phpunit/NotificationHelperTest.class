@@ -585,7 +585,7 @@ class NotificationHelperTest extends GalleryTestCase {
 	$storage =& $gallery->getStorage();
 	$urlGenerator =& $gallery->getUrlGenerator();
 
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'notification');
 	if ($ret) {
 	    return $ret;
 	}
@@ -608,7 +608,10 @@ class NotificationHelperTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$msg = $module->translate(array('arg1' => $module->translate('album'), 'arg2' => $url,
+	$itemTypeName = $this->_album->itemTypeName();
+	$itemTypeName = $itemTypeName[1];
+
+	$msg = $module->translate(array('arg1' => $itemTypeName, 'arg2' => $url,
 				 'text' =>"A new %s has been added. To view it, click here: \n%s"));
 	$this->assertEquals($msg, $testMsg, 'Single item not formatted propery');
 
@@ -618,7 +621,10 @@ class NotificationHelperTest extends GalleryTestCase {
 	$notifier = new ItemAddedNotification();
 	$notifier->setEvent($event);
 
-	$msg = $module->translate(array('arg1' => $module->translate('file'), 'arg2' => $url,
+	$itemTypeName = $this->_item1->itemTypeName();
+	$itemTypeName = $itemTypeName[1];
+
+	$msg = $module->translate(array('arg1' => $itemTypeName, 'arg2' => $url,
 				 'text' =>"A new %s has been added. To view it, click here: \n%s"));
 	list ($ret, $testMsg) = $notifier->getNotificationMessage();
 	if ($ret) {

@@ -337,10 +337,10 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 	$event = GalleryCoreApi::newEvent('Test::Event1');
 	$event->setData($this->_getRootId());
 
-	$body1 = $gallery->i18n('Lets put a long message here that is greater than 70 characters so'
-				. ' that we can test the word wrapping of the body text.');
-	$body2 = $gallery->i18n('If you no longer wish to subscribe to this notification '
-				. 'please update your account settings at:');
+	$body1 = 'Lets put a long message here that is greater than 70 characters so'
+				. ' that we can test the word wrapping of the body text.';
+	$body2 = 'If you no longer wish to subscribe to this notification '
+				. 'please update your account settings at:';
 
 	$notification = new NotificationRouterTest1();
 	$notification->_message = $body1;
@@ -368,8 +368,7 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 	    }
 
 	    $recipients[] = $user->getEmail();
-	    $bodies[] = wordwrap($body1, 70) . "\r\n\r\n" . wordwrap($body2, 70) .
-		"\r\n\r\n" . $unsubscribeUrl;
+
 	    list ($ret, $language) = GalleryCoreApi::fetchLanguageCodeForUser($user->getId());
 	    if ($ret) {
 		return $ret;
@@ -377,7 +376,11 @@ class NotificationEventHandlingTest extends GalleryTestCase {
 
 	    list ($ret, $currentLanguageCode) = $translator->init($language);
 
-	    $subjects[] = $module->translate('NotificationRouterTest1 Description');
+	    $subjects[] = 'NotificationRouterTest1 Description';
+
+	    $translatedBody2 = $module->translate($body2);
+	    $bodies[] = wordwrap($body1, 70) . "\r\n\r\n" . wordwrap($translatedBody2, 70) .
+		"\r\n\r\n" . $unsubscribeUrl;
 	}
 
 	list ($ret) = $translator->init($defaultLanguageCode);
