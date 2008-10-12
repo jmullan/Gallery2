@@ -234,7 +234,7 @@ class NotificationUserAdminView extends GalleryView {
 		    $form['notifications'][++$i] = array('name' => $notificationName,
 					  'description' => $description,
 					  'handler' => $handlerName,
-					  'handlerDescription' => $handlerName,
+					  'handlerDescription' => $handlerDescription,
 					  'items' => array('1' => array('itemId' => 0,
 									'title' => '',
 									'subscribed' => false)));
@@ -242,7 +242,7 @@ class NotificationUserAdminView extends GalleryView {
 		    $form['notifications'][++$i] = array('name' => $notificationName,
 					  'description' => $description,
 					  'handler' => $handlerName,
-					  'handlerDescription' => $handlerName);
+					  'handlerDescription' => $handlerDescription);
 		    $itemIds = array();
 		    /* Do the global subscriptions first */
 		    foreach ($subscriptions[$notificationName] as $itemId) {
