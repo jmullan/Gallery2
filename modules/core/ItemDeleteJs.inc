@@ -78,7 +78,6 @@ class ItemDeleteJsView extends GalleryView {
 		if ($platform->file_exists($inc)) {
 		    if (($stat = $platform->stat($inc)) && $stat[9] > $when) {
 			$new = true;
-			break;
 		    }
 		} else {
 		    $lang = substr($lang, 0, 2);
@@ -87,7 +86,6 @@ class ItemDeleteJsView extends GalleryView {
 		    if ($platform->file_exists($inc) && ($stat = $platform->stat($inc)) 
 			&& $stat[9] > $when) {
 			$new = true;
-			break;
 		    }
 		}
 		if (!isset($new)) {
