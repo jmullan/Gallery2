@@ -2539,6 +2539,9 @@ class SessionTest extends GalleryTestCase {
     }
 
     function testResumeMisidentifiedSearchEngineSessionAsRegisteredUser() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
 	unset($_COOKIE[SESSION_ID_PARAMETER]);
 	$_SERVER['HTTP_COOKIE'] = '';
 	$_SERVER['HTTP_USER_AGENT'] = 'Googlebot/2.1 (+http://www.google.com/bot.html)';
@@ -2559,6 +2562,11 @@ class SessionTest extends GalleryTestCase {
 
 	$this->assert($session->isPersistent(), 'is persistent');
 	$this->assert(!$session->_isSearchEngineSession, 'SE session');
+
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    return $ret;
+	}
 
 	/* Now resume the session, simulate a new HTTP request */
 	unset($_COOKIE[SESSION_ID_PARAMETER]);
