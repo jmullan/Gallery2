@@ -625,13 +625,15 @@ class NotificationGalleryCoreEventTest extends GalleryTestCase {
 	    $notification = GalleryDataCache::get('UnitTestNotificationHandler::notification');
 	    $eventSpecs = $notification->getEventSpecs();
 	    $this->assert(!$notification->isGlobal(), 'GalleryEntity item add is declared global');
+	    $itemTypeName = $this->_item->itemTypeName();
+	    $itemTypeName = $itemTypeName[1];
 	    $urlGenerator =& $gallery->getUrlGenerator();
 	    $parentUrl = $urlGenerator->generateUrl(array('view' => 'core.ShowItem',
 						      'itemId' => $itemId),
 						array('forceFullUrl' => true,
 						      'forceSessionId' => false,
 						      'htmlEntities' => false));
-	    $msg = $this->_module->translate(array('arg1' => 'file',
+	    $msg = $this->_module->translate(array('arg1' => $itemTypeName,
 			'arg2' => $parentUrl, 'text' =>
 			 $gallery->i18n("A new %s has been added. To view it, click here: \n%s")));
 	    $this->assertEquals(array(null, $msg), $notification->getNotificationMessage(),
