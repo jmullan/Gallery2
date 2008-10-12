@@ -403,6 +403,7 @@ class RemovePermissionNotification extends NotificationEvent_1_0  {
 	global $gallery;
 
 	$data = $this->_event->getData();
+	/** @todo: Fix the below message for i18n (%d instead of %s, plural form). */
 	return $this->_translateText('notification',
 				     array('arg1' => count($data['itemIdsAndBits']),
 				       'text' => $gallery->i18n('Permission Change on %s items.')));
