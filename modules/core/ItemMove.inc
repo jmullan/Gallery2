@@ -401,7 +401,7 @@ class ItemMoveView extends GalleryView {
 	$urlGenerator =& $gallery->getUrlGenerator();
 
 	$ItemMove = array();
-	$ItemMove['canCancel'] = $urlGenerator->isNavigationBackPossible();
+	$ItemMove['canCancel'] = (boolean)GalleryUtilities::getRequestVariables('return');
 	$ItemMove['albumIds'] = $albumIds;
 	$ItemMove['peers'] = $peers;
 	$ItemMove['peerTypes'] = $peerTypes;
