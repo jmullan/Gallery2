@@ -1285,9 +1285,10 @@ class GallerySession {
      * @access private
      */
     function _isHttps() {
-	return (isset($_SERVER['HTTPS'])
-	    && (!strcasecmp('on', $_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 1 
-		|| $_SERVER['HTTPS'] === true));
+	$httpType = GalleryUtilities::getServerVar('HTTPS');
+	return (isset($httpType)
+	    && (GalleryUtilities::strToLower($httpType) == 'on' || $httpType == 1
+		|| $httpType === true));
     }
 
     /**
