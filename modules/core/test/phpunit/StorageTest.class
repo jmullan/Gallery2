@@ -1096,7 +1096,8 @@ class StorageTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$expectedQuery = $storage->isTransactional()
+	$doesSupportTruncate = !($storage->getType() == 'sqlite' || $storage->getType() == 'db2');
+	$expectedQuery = ($storage->isTransactional() || !$doesSupportTruncate)
 	    ? sprintf('DELETE FROM %sTest2Map', $storage->_tablePrefix)
 	    : sprintf('TRUNCATE TABLE %sTest2Map', $storage->_tablePrefix);
 	$this->assertEquals(
