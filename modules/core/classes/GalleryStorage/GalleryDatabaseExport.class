@@ -236,10 +236,13 @@ class GalleryDatabaseExport {
 	foreach ($plugins as $pluginId => $plugin) {
 	    /* If the plugin version isn't set in the plugin data array, it's not installed */
 	    if (empty($plugin['version'])) {
-		    /* This plugin is not installed so issue a warning message. */
-		    $warnings[] = $coreModule->translate(
+		/* This plugin is not installed so issue a warning message. */
+		$warnings[] = $coreModule->translate(
 			array('text' => 'The %s "%s" is not installed and will not be backed up.',
-			      'arg1' => $pluginType, 'arg2' => $pluginId));
+			      'arg1' => $coreModule->translate($pluginType), 'arg2' => $pluginId));
+		if (false) {
+		    /* Specific translations for $pluginType */ _('module'); _('theme');
+		}
 		continue;
 	    }
 
