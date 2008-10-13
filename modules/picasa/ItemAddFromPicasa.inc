@@ -136,11 +136,6 @@ class ItemAddFromPicasa extends ItemAddPlugin {
 			'pictureImportSuccess' => array(),
 			'pictureImportFailure' => array());
 
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'picasa');
-	if ($ret) {
-	    return array($ret, null);
-	}
-
 	$sourceEncoding = 'UTF-8';
 
 	list ($ret, $markupType) =
@@ -340,7 +335,7 @@ class ItemAddFromPicasa extends ItemAddPlugin {
 	    $maxFileSize = $matches[1] * 1024 * 1024;
 	}
 
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'picasa');
 	if ($ret) {
 	    return array($ret, null, null);
 	}
