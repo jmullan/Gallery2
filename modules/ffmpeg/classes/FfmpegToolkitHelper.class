@@ -82,7 +82,7 @@ class FfmpegToolkitHelper {
 	    /* set-video-dimensions */
 	    $operations['set-video-dimensions']['params'] = array(
 		array('type' => 'int', 'description' => $gallery->i18n('video width in pixels')),
-                array('type' => 'int', 'description' => $gallery->i18n('video height in pixels')));
+		array('type' => 'int', 'description' => $gallery->i18n('video height in pixels')));
 	    $operations['set-video-dimensions']['description'] =
 		    $gallery->i18n('Set video dimensions');
 	    $operations['set-video-dimensions']['mimeTypes'] = $mimeTypes;
@@ -117,7 +117,7 @@ class FfmpegToolkitHelper {
 		/* set-audio-samplerate */
 		$operations['set-audio-samplerate']['params'] = array(
 		    array('type' => 'int', 'description' => $gallery->i18n(
-			  'audio sample rate (Hz / cycles per second')));
+			  'audio sample rate (Hz / cycles per second)')));
 		$operations['set-audio-samplerate']['description'] = $gallery->i18n(
 		    'Set audio rate property');
 		$operations['set-audio-samplerate']['mimeTypes'] = $mimeTypes;
@@ -187,14 +187,14 @@ class FfmpegToolkitHelper {
 			     null, null, null, null, null, null);
 	    }
 	} else {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PATH, null, null, '"' . $ffmpegPath 
-			. '" is not specified in open_basedir.'), null,
+	    return array(GalleryCoreApi::error(ERROR_BAD_PATH, null, null, '"' . $ffmpegPath
+			 . '" is not specified in open_basedir.'), null,
 			 null, null, null, null, null);
 	}
 
 	/* We only care about video for now */
 	/** @todo: Add '3g2' => '3g2', '3gp' => '3gp' when recognized as videos */
-	$relevantTypes = array('mpeg' => 'mpeg', 'asf' => 'asf', 'avi' => 'avi', 
+	$relevantTypes = array('mpeg' => 'mpeg', 'asf' => 'asf', 'avi' => 'avi',
 			       'mov' => 'mov', 'wmv1' => 'wmv', 'flv' => 'flv', 'mp4' => 'mp4');
 	/* We only care about encoding flash video for now */
 	$relevantEncode = array('flv' => 'flv');
@@ -316,7 +316,7 @@ class FfmpegToolkitHelper {
 		    $success = true;
 		} else {
 		    /* Parse codecs */
-                    do {
+		    do {
 			$type = substr($resultLine, 8);
 			$decode = ('D' == substr($resultLine, 1, 1));
 			$encode = ('E' == substr($resultLine, 2, 1));
@@ -334,8 +334,8 @@ class FfmpegToolkitHelper {
 			    }
 			    $mimeTypes[$mime] = 1;
 			}
-                        $resultLine = $results[$i++];
-                    } while (!empty($resultLine));
+			$resultLine = $results[$i++];
+		    } while (!empty($resultLine));
 		}
 	    }
 	}
