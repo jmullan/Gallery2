@@ -350,6 +350,7 @@ class NotificationGalleryCoreEventTest extends GalleryTestCase {
 	    return $ret;
 	}
 
+	$activeUser = $gallery->getActiveUser();
 	if (GalleryDataCache::containsKey('UnitTestNotificationHandler::notification')) {
 	    $notification = GalleryDataCache::get('UnitTestNotificationHandler::notification');
 	    $eventSpecs = $notification->getEventSpecs();
@@ -357,7 +358,7 @@ class NotificationGalleryCoreEventTest extends GalleryTestCase {
 	    $this->assert(GalleryUtilities::isA($notification->getUser(), 'GalleryUser'), 
 	        'Login event does not contain a GalleryUser entity');
 	    $msg = $this->_module->translate(array('text' => 'User %s has logged in.',
-		'arg1' => $gallery->getActiveUser()->getUserName()));
+		'arg1' => $activeUser->getUserName()));
 	    $this->assertEquals(array(null, $msg), $notification->getNotificationMessage(),
 		'Unexepected notification message');
 	} else {
@@ -377,21 +378,23 @@ class NotificationGalleryCoreEventTest extends GalleryTestCase {
 	$this->_setStorageReplies('FailedLoginNotification');
 	
 	$event = GalleryCoreApi::newEvent('Gallery::FailedLogin');
-	$event->setData(array('userName' => $gallery->getActiveUser()->getUserName()));
+	$activeUser = $gallery->getActiveUser();
+	$event->setData(array('userName' => $activeUser->getUserName()));
 	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
 	    return $ret;
 	}
 
+	$activeUser = $gallery->getActiveUser();
 	if (GalleryDataCache::containsKey('UnitTestNotificationHandler::notification')) {
 	    $notification = GalleryDataCache::get('UnitTestNotificationHandler::notification');
 	    $eventSpecs = $notification->getEventSpecs();
 	    $this->assert($notification->isGlobal(), 
 		'FailedLogin notification is not declared global');
-	    $this->assertEquals($gallery->getActiveUser()->getUserName(), 
+	    $this->assertEquals($activeUser->getUserName(), 
 		$notification->getUserName(), 'FailedLogin contained an incorrect name');
 	    $msg = $this->_module->translate(array('text' => 'User %s login failed.',
-		'arg1' => $gallery->getActiveUser()->getUserName()));
+		'arg1' => $activeUser->getUserName()));
 	    $this->assertEquals(array(null, $msg), $notification->getNotificationMessage(),
 		'Unexepected notification message');
 	} else {
@@ -417,6 +420,7 @@ class NotificationGalleryCoreEventTest extends GalleryTestCase {
 	    return $ret;
 	}
 
+	$activeUser = $gallery->getActiveUser();
 	if (GalleryDataCache::containsKey('UnitTestNotificationHandler::notification')) {
 	    $notification = GalleryDataCache::get('UnitTestNotificationHandler::notification');
 	    $eventSpecs = $notification->getEventSpecs();
@@ -424,7 +428,7 @@ class NotificationGalleryCoreEventTest extends GalleryTestCase {
 	    $this->assert(GalleryUtilities::isA($notification->getUser(), 'GalleryUser'), 
 	        'Logout event does not contain a GalleryUser entity');
 	    $msg = $this->_module->translate(array('text' => 'User %s has logged out.',
-		'arg1' => $gallery->getActiveUser()->getUserName()));
+		'arg1' => $activeUser->getUserName()));
 	    $this->assertEquals(array(null, $msg), $notification->getNotificationMessage(),
 		'Unexepected notification message');
 	} else {
