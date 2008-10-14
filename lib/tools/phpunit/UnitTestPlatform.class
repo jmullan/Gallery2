@@ -44,6 +44,9 @@
  * @version $Revision$
  */
 class UnitTestPlatform extends MockObject {
+    function UnitTestPlatform() {
+	parent::MockObject();
+    }
 
     function copy($source, $dest) {
 	return $this->_makeReply('copy', array($source, $dest));

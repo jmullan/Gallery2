@@ -392,7 +392,7 @@ class SimpleCallbackTestPlatform extends UnitTestPlatform {
     function SimpleCallbackTestPlatform() {
 	global $gallery;
 	$this->_originalPlatform = & $gallery->getPlatform();
-	$this->UnitTestPlatform();
+	parent::UnitTestPlatform();
     }
 
     function opendir($path) {
