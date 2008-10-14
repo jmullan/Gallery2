@@ -167,6 +167,8 @@ class RepositoryDescriptorTest extends GalleryTestCase {
     }
 
     function testDescriptorGenerationWithNoManifest() {
+	global $gallery;
+
 	$gallery->_platform = new UnitTestPlatform();
 	$gallery->_platform->setReply('file_exists', array('/MANIFEST'), false);
 
