@@ -522,7 +522,11 @@ if ($ret && ($ret->getErrorCode() & ERROR_PERMISSION_DENIED)) {
 
 /* Check that our dev environment is correct */
 $incorrectDevEnv = array();
-foreach (array('error_reporting' => array(E_ALL &~ 2048),
+$desiredErrorReporting = E_ALL & ~2048;  /* E_STRICT == 2048, but that constant isn't in PHP4 */
+if (version_compare(phpversion(), '5.3', '>=')) {
+    $desiredErrorReporting &= ~E_DEPRECATED;
+}
+foreach (array('error_reporting' => array($desiredErrorReporting),
 	       'short_open_tag' => array('off', 0),
 	       'magic_quotes_gpc' => array('on', 1),
 	       'allow_call_time_pass_reference' => array('off', 0),

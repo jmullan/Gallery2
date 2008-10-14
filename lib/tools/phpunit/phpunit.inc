@@ -30,7 +30,12 @@
 // SOFTWARE.
 //
 
-error_reporting(E_ALL);
+if (version_compare(phpversion(), '5.3', '>=')) {
+    /* Ignore these warnings for PHP 5.3 in Gallery 2.3 */
+    error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
+} else {
+    error_reporting(E_ALL);
+}
 
 /*
 interface Test {
@@ -52,7 +57,15 @@ if (phpversion() >= '4') {
 	if ($errno == 2048) {
 	    /*
 	     * We're ignoring E_STRICT for now because of PHP 5's retarded inability
-	     * to allow us to use standard PHP4 constructs like 'var'
+	     * to allow us to use standard PHP4 constructs like 'var'.
+	     */
+	    return;
+	}
+
+	if (!(error_reporting() & 8192) && $errno == 8192) {
+	    /*
+	     * We're ignoring E_DEPRECATED to avoid the "Assigning the return value of new by
+	     * reference" deprecation warning.
 	     */
 	    return;
 	}
