@@ -954,11 +954,17 @@ class GalleryUrlGenerator {
 	    if (!$check && empty($this->_localUrlMapDirty)) {
 		$this->_localUrlMapDirty = true;
 		/*
-		 * Would do array(&$this, '_saveLocalUrlMap') but this triggers a bug
-		 * in PHP 5.1.x with array comparison (@see Gallery::addShutdownAction)
+		 * Would do array(&$this, '_saveLocalUrlMap') but this triggers a bug in PHP 5.1.x
+		 * with array comparison (@see Gallery::addShutdownAction).  In PHP 5.3 that
+		 * approach doesn't work so drop the reference and call into our convenience
+		 * function instead.
 		 */
-		$gallery->addShutdownAction(
+		if (version_compare(PHP_VERSION, '5.3', '>=')) {
+		    $gallery->addShutdownAction(array($this, '_saveLocalUrlMapPhp5'), array());
+		} else {
+		    $gallery->addShutdownAction(
 			array('GalleryUrlGenerator', '_saveLocalUrlMap'), array(&$this));
+		}
 	    }
 	}
 	return $path;
@@ -975,6 +981,13 @@ class GalleryUrlGenerator {
 					$urlGenerator->_localUrlMap);
 	    $urlGenerator->_localUrlMapDirty = false;
 	}
+    }
+
+    /**
+     * Compatibility function for PHP 5.3.  See comment in GalleryUrlGenerator::_getLocalPath.
+     */
+    function _saveLocalUrlMapPhp5() {
+	GalleryUrlGenerator::_saveLocalUrlMap($this);
     }
 }
 ?>
