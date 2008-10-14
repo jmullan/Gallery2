@@ -96,7 +96,7 @@ class OracleStorage extends GalleryStorage {
 	    break;
 
 	case 'RANDOM_INTEGER':
-	    $sql = 'DBMS_RANDOM.VALUE(0, 2147483647)';
+	    $sql = 'ROUND(DBMS_RANDOM.VALUE(0, 2147483647))';
 	    break;
 
 	case 'LIMIT':
