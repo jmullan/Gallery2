@@ -461,7 +461,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	    }
 	    $this->assertEquals('Black&amp;White', $album->getTitle(), 'album title');
 	    $this->assertEquals('Black&amp;White', $album->getSummary(), 'album summary');
-	    $this->assertEquals(null, $album->getDescription(), 'album description');
+	    $this->assertEquals('', (string)$album->getDescription(), 'album description');
 	}
     }
 
