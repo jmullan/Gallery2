@@ -601,21 +601,32 @@ NATSOFT.DOMAIN =
 				return $false;
 			}
 			$stmt = $stmt_arr[1];
-			 
+			
 			 if (is_array($inputarr)) {
-			 	foreach($inputarr as $k => $v) {
+				// If there are any numeric keys, all key must be in an integer sequence
+				// starting at 0 without any gaps for OCIBindByName() to work. 
+				$arr4fields = $inputarr;
+				foreach($inputarr as $k => $v) {
+					if (is_int($k)) {
+						// Reindex array
+						$arr4fields = array_values($inputarr);
+						break;
+					}
+				}
+
+			 	foreach($arr4fields as $k => $v) {
 					if (is_array($v)) {
 						if (sizeof($v) == 2) // suggested by g.giunta@libero.
-							OCIBindByName($stmt,":$k",$inputarr[$k][0],$v[1]);
+							OCIBindByName($stmt,":$k",$arr4fields[$k][0],$v[1]);
 						else
-							OCIBindByName($stmt,":$k",$inputarr[$k][0],$v[1],$v[2]);
+							OCIBindByName($stmt,":$k",$arr4fields[$k][0],$v[1],$v[2]);
 					} else {
 						$len = -1;
 						if ($v === ' ') $len = 1;
 						if (isset($bindarr)) {	// is prepared sql, so no need to ocibindbyname again
 							$bindarr[$k] = $v;
 						} else { 				// dynamic sql, so rebind every time
-							OCIBindByName($stmt,":$k",$inputarr[$k],$len);
+							OCIBindByName($stmt,":$k",$arr4fields[$k],$len);
 						}
 					}
 				}
@@ -634,23 +645,39 @@ NATSOFT.DOMAIN =
 			
 			 OCIFreeStatement($stmt); 
 			 $fields = implode(',', $cols);
-			 $nrows += $offset;
-			 $offset += 1; // in Oracle rownum starts at 1
-			
-			if ($this->databaseType == 'oci8po') {
-					 $sql = "SELECT $fields FROM".
-					  "(SELECT rownum as adodb_rownum, $fields FROM".
-					  " ($sql) WHERE rownum <= ?".
-					  ") WHERE adodb_rownum >= ?";
-				} else {
-					 $sql = "SELECT $fields FROM".
-					  "(SELECT rownum as adodb_rownum, $fields FROM".
-					  " ($sql) WHERE rownum <= :adodb_nrows".
-					  ") WHERE adodb_rownum >= :adodb_offset";
-				} 
+
+			$nrows_placeholder = $offset_placeholder = '?';
+			if ($this->databaseType != 'oci8po') {
+				$nrows_placeholder = ':adodb_nrows';
+			 	$offset_placeholder = ':adodb_offset';
+			}
+
+			if ($offset >= 0 && $nrows >= 0) {
+				$sql = "SELECT $fields FROM".
+				 "(SELECT rownum as adodb_rownum, $fields FROM".
+				 " ($sql) WHERE rownum <= $nrows_placeholder".
+				 ") WHERE adodb_rownum >= $offset_placeholder";
+
+				$offset += 1; // in Oracle rownum starts at 1
+				$nrows += $offset;
+				 			 			 
 				$inputarr['adodb_nrows'] = $nrows;
 				$inputarr['adodb_offset'] = $offset;
-				
+			} else if ($offset >= 0) {
+				$sql = "SELECT $fields FROM".
+				 "(SELECT rownum as adodb_rownum, $fields FROM".
+				 " ($sql)" .
+				 ") WHERE adodb_rownum >= $offset_placeholder";
+
+				$offset += 1; // in Oracle rownum starts at 1
+				$inputarr['adodb_offset'] = $offset;
+			} else if ($nrows >= 0) {
+				$sql = "SELECT $fields FROM".
+				 " ($sql) WHERE rownum <= $nrows_placeholder";
+				 
+				$inputarr['adodb_nrows'] = $nrows;
+			} // else $sql is unchanged
+
 			if ($secs2cache>0) $rs =& $this->CacheExecute($secs2cache, $sql,$inputarr);
 			else $rs =& $this->Execute($sql,$inputarr);
 			return $rs;
