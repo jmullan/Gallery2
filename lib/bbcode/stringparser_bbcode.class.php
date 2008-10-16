@@ -2,15 +2,15 @@
 /**
  * BB code string parsing class
  *
- * Version: 0.3.2b
+ * Version: 0.3.3
  *
  * @author Christian Seiler <spam@christian-seiler.de>
- * @copyright Christian Seiler 2006
+ * @copyright Christian Seiler 2004-2008
  * @package stringparser
  *
  * The MIT License
  *
- * Copyright (c) 2004-2007 Christian Seiler
+ * Copyright (c) 2004-2008 Christian Seiler
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -996,7 +996,7 @@ class StringParser_BBCode extends StringParser {
 			} else {
 				$cmp_name = $this->_stack[$i]->name ();
 			}
-			if ($cmp_name == $name) {
+			if ($cmp_name == $lname) {
 				return $this->_stack[$i];
 			}
 		}

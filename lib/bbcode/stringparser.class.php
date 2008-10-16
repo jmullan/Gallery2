@@ -6,15 +6,15 @@
  * memory structure. It would e.g. be possible to create an HTML parser based
  * upon this class.
  * 
- * Version: 0.3.2b
+ * Version: 0.3.3
  *
  * @author Christian Seiler <spam@christian-seiler.de>
- * @copyright Christian Seiler 2006
+ * @copyright Christian Seiler 2004-2008
  * @package stringparser
  *
  * The MIT License
  *
- * Copyright (c) 2004-2007 Christian Seiler
+ * Copyright (c) 2004-2009 Christian Seiler
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
