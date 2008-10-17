@@ -2971,7 +2971,8 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 		$configContents =
 		    preg_replace($edit['regexp'], $edit['replacement'], $old = $configContents);
 		if ($configContents == $old) {
-		    $gallery->debug('Warning: config.php edit pattern not matched: ' . $regexp);
+		    $gallery->debug(
+			    'Warning: config.php edit pattern not matched: ' . $edit['regexp']);
 		}
 	    }
 	    foreach ($change['add'] as $content) {
