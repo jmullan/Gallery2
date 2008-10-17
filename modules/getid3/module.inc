@@ -35,7 +35,7 @@ class Getid3Module extends GalleryModule {
 	$this->setId('getid3');
 	$this->setName($gallery->i18n('Getid3'));
 	$this->setDescription($gallery->i18n('A toolkit for getting id3 tag information'));
-	$this->setVersion('1.0.5'); /* Update upgrade() function below too */
+	$this->setVersion('1.0.6'); /* Update upgrade() function below too */
 	$this->_templateVersion = 1;
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
 	$this->setCallbacks('getSiteAdminViews');
@@ -73,6 +73,7 @@ class Getid3Module extends GalleryModule {
 	    case '1.0.3':
 	    case '1.0.4':
 		/* Upgrade to GetID3 1.7.7 */
+	    case '1.0.5':
 
 	    case 'end of upgrade path':
 		break;

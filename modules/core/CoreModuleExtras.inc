@@ -66,7 +66,7 @@ class CoreModuleExtras {
 			. '   New version: ' . $module->getVersion());
 	$currentExactVersion = $currentVersion;
 	/* Enable upgrade from any patch release of earlier versions */
-	$currentVersion = preg_replace('/^(1\.[0-2]\.0)\.\d+$/', '$1.x', $currentVersion);
+	$currentVersion = preg_replace('/^(1\.[0-3]\.0)\.\d+$/', '$1.x', $currentVersion);
 
 	/*
 	 * We converted the character set for MySQL to UTF8 in version 1.0.27, but this only
@@ -2554,6 +2554,8 @@ class CoreModuleExtras {
 	    /* R2.3 RC-1 */
 	case '1.2.36':
 	    /* R2.3 RC-2 */
+	case '1.2.37':
+	    /* R2.3 */
 
 	case 'end of upgrade path':
 	    /*
@@ -2605,7 +2607,7 @@ class CoreModuleExtras {
 	$configChanges = array();
 
 	/* Enable upgrade from any patch release of earlier versions */
-	$currentVersion = preg_replace('/^(1\.[0-2]\.0)\.\d+$/', '$1.x', $currentVersion);
+	$currentVersion = preg_replace('/^(1\.[0-3]\.0)\.\d+$/', '$1.x', $currentVersion);
 
 	/**
 	 * README: How to update the block below
@@ -2912,6 +2914,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.34':
 	case '1.2.35':
 	case '1.2.36':
+	case '1.2.37':
 
 	case 'end of upgrade path':
 	    /*

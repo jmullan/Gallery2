@@ -33,7 +33,7 @@ class DigibugModule extends GalleryModule {
 	$this->setId('digibug');
 	$this->setName($gallery->i18n('Digibug'));
 	$this->setDescription($gallery->i18n('Digibug Photo Printing Module'));
-	$this->setVersion('1.0.7'); /* Update upgrade() too */
+	$this->setVersion('1.0.8'); /* Update upgrade() too */
 	$this->_templateVersion = 1;
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getSiteAdminViews|getItemLinks');
@@ -97,6 +97,8 @@ class DigibugModule extends GalleryModule {
 	    if ($ret) {
 		return $ret;
 	    }
+
+	case '1.0.7':
 	    
 	case 'end of upgrade path':
 	    break;

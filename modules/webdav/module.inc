@@ -31,7 +31,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 
 	$this->setId('webdav');
 	$this->setName($gallery->i18n('WebDAV'));
-	$this->setVersion('1.0.8'); /* Update upgrade() too! */
+	$this->setVersion('1.0.9'); /* Update upgrade() too! */
 	$this->_templateVersion = 1;
 	$this->setDescription($gallery->i18n('Mount Gallery on your desktop.'));
 	$this->setGroup('interfaces', $gallery->i18n('Remote Interfaces'));
@@ -162,6 +162,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	case '1.0.6':
 	    /* Require minimum core API 7.45 */
 	case '1.0.7':
+	case '1.0.8':
 
 	case 'end of upgrade path':
 	    break;

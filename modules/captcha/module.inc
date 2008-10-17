@@ -34,7 +34,7 @@ class CaptchaModule extends GalleryModule {
 	$this->setName($gallery->i18n('Captcha'));
 	$this->setDescription($gallery->i18n('Prevents abuse by deterring automated bots with ' .
 					     'input that requires visual comprehension'));
-	$this->setVersion('1.1.6'); /* Update upgrade() function below too */
+	$this->setVersion('1.1.7'); /* Update upgrade() function below too */
 	$this->_templateVersion = 1;
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');
@@ -102,6 +102,7 @@ class CaptchaModule extends GalleryModule {
 	case '1.1.4.1':
 	    /* .mo file migration */
 	case '1.1.5':
+	case '1.1.6':
 
 	case 'end of upgrade path':
 	    break;

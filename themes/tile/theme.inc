@@ -33,7 +33,7 @@ class TileTheme extends GalleryTheme {
 	$this->setId('tile');
 	$this->setName($gallery->i18n('Tile'));
 	$this->setDescription($gallery->i18n('Tile view of background image and image thumbnails'));
-	$this->setVersion('1.0.9');
+	$this->setVersion('1.0.10');
 	$this->setRequiredCoreApi(array(7, 27));
 	$this->setRequiredThemeApi(array(2, 5));
 	$this->setStandardSettings(array('colorpack' => '',

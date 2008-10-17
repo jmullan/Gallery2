@@ -33,7 +33,7 @@ class PhotoAccessModule extends GalleryModule {
 	$this->setId('photoaccess');
 	$this->setName($gallery->i18n('PhotoWorks'));
 	$this->setDescription($gallery->i18n('PhotoWorks Photo Printing Module'));
-	$this->setVersion('1.0.12'); /* Update upgrade() too */
+	$this->setVersion('1.0.13'); /* Update upgrade() too */
 	$this->_templateVersion = 1;
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getItemLinks');
@@ -103,6 +103,7 @@ class PhotoAccessModule extends GalleryModule {
 	    /* Implementing new version of the cart plugin interface */
 	case '1.0.10':
 	case '1.0.11':
+	case '1.0.12':
 
 	case 'end of upgrade path':
 	    break;
