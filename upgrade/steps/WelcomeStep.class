@@ -40,6 +40,8 @@ class WelcomeStep extends UpgradeStep {
 
     function loadTemplateData(&$templateData) {
 	global $gallery;
+	global $translator;
+
 	if (@$gallery->getConfig('multisite')) {
 	    /* Prevent upgrade if old style multisite config.php is found */
 	    $templateData['bodyFile'] = 'InvalidConfig.html';
@@ -50,6 +52,17 @@ class WelcomeStep extends UpgradeStep {
 	$templateData['totalSteps'] = count($GLOBALS['steps'])-1;
 	$templateData['bodyFile'] = 'Welcome.html';
 	$this->setComplete(true);
+
+	if (isset($translator)) {
+	    list ($supportedLanguages) = $translator->getLanguageData();
+	    $templateData['languages'] = array();
+	    foreach ($supportedLanguages as $lang => $list) {
+		foreach ($list as $country => $data) {
+		    $code = $lang . '_' . $country;
+		    $templateData['languages'][$code] = $data['description'];
+		}
+	    }
+	}
     }
 }
 ?>
