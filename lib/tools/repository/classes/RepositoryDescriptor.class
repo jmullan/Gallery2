@@ -145,7 +145,7 @@ class RepositoryDescriptor extends RepositoryObject {
 
 	/* Don't force the _pluginDir, so that tests can override it */
 	if (!isset($this->_pluginDir)) {
-	    $this->_pluginDir = $platform->realpath(sprintf('%s%ss/%s/', 
+	    $this->_pluginDir = $platform->realpath(sprintf('%s%ss/%s/',
 		GalleryCoreApi::getCodeBasePath(), $pluginType, $this->_pluginId));
 	    if (!in_array(substr($this->_pluginDir, -1), array('/', '\\'))) {
 		$this->_pluginDir .= '/';
@@ -175,9 +175,15 @@ class RepositoryDescriptor extends RepositoryObject {
 		$languageCode = $languageCode[1];
 
 		/* Get revision number from po file. */
-		list ($ret, $revision) = 
+		list ($ret, $revision) =
 		    $this->_utilities->getFileRevision($this->_pluginDir . $fileName);
 		if ($ret) {
+		    /* Wrap the message so that we have the filename with the error */
+		    $ret = new GalleryStatus(
+			$ret->getErrorCode(),
+ 			sprintf('Error in file: %s: %s',
+ 				$this->_pluginDir . $fileName,
+ 				$ret->getErrorMessage()));
 		    return $ret;
 		}
 
