@@ -1442,7 +1442,9 @@ class GalleryTheme extends GalleryPlugin {
 		if ($ret) {
 		    return $ret;
 		}
-	    }
+	    } else {
+                $permissions = array();
+            }
 	    foreach ($permissions as $permission) {
 		if (isset($permission['core.delete'])) {
 		    $template->javascript('lib/yui/utilities.js');
