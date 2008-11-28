@@ -96,9 +96,8 @@ msgstr "你必需裝有 Oracle OCI8 PHP 模組"
 msgid "You must have the Component Object Model(COM) PHP module installed"
 msgstr "你必需裝有 Component Object Model(COM) PHP 模組"
 
-#, fuzzy
 msgid "You must have the PHP Data Object(PDO) PHP module installed"
-msgstr "你必需裝有 Component Object Model(COM) PHP 模組"
+msgstr "你必需裝有 PHP Data Object(COM) PHP 模組"
 
 #, c-format
 msgid "You must specify a column prefix (we recommend %s)"
@@ -198,11 +197,10 @@ msgid "Microsoft SQL Server 2005 and newer"
 msgstr "Microsoft SQL Server 2005 以上的版本"
 
 msgid "SQLite v3.x (Experimental!)"
-msgstr ""
+msgstr "SQLite v3.x（實驗用！）"
 
-#, fuzzy
 msgid "Unknown database type or no known tables information."
-msgstr "不明資料庫類型或沒有表格資訊。"
+msgstr "不明資料庫類型或沒有已知的表格資訊。"
 
 #, c-format
 msgid "Could not find an unused table prefix similar to \"%s\"."
@@ -212,20 +210,18 @@ msgstr "找不到類似「%s」的可用表格字首。"
 msgid "Could not open schema file: \"%s\"."
 msgstr "無法打開綱要（schema）檔案：「%s」。"
 
-#, fuzzy
 msgid ""
 "Failed to create a database test sequence. Check the returned error message and README.html "
 "for missing privileges and clean up the database."
 msgstr ""
-"無法產生 DB 測試序列。檢查傳回的錯誤訊息和 README.html 有關缺少存取權限的資訊並清理資料庫。"
+"無法產生資料庫測試序列。檢查傳回的錯誤訊息和 README.html 有關缺少存取權限和清理資料庫的資訊。"
 
-#, fuzzy
 msgid ""
 "Test failed to drop a database test sequence. Check the returned error message and README."
 "html for missing privileges and clean up the database."
 msgstr ""
-"測試無法移除一個 DB 測試序列。檢查傳回的錯誤訊息和 README.html 有關缺少存取權限的資訊並清理資"
-"料庫。"
+"測試無法移除一個資料庫測試序列。檢查傳回的錯誤訊息和 README.html 有關缺少存取權限和清理資料庫"
+"的資訊。"
 
 msgid "Missing SQL statements"
 msgstr "沒有 SQL 指令"
@@ -651,7 +647,7 @@ msgstr "再試一次"
 msgid "Create a config file"
 msgstr "產生一個設定檔"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Unable to write to the <b>config.php</b> configuration file in your %s directory.  Please "
 "change its permissions.  If you're on Unix you can do <i>chmod 666 config.php</i> to fix "
@@ -659,7 +655,8 @@ msgid ""
 "the %s directory yourself."
 msgstr ""
 "無法寫入在你的 %s 目錄中的 <b>config.php</b> 設定檔案。請改變它的存取權限。如果你是使用 Unix "
-"你可以用「chmod 666 config.php」指令來修正。"
+"你可以用 <i>666 config.php</i> 指令來修正。你也可以下載 %sconfig.php%s 檔案並自行替換 %s 目錄"
+"中的 config.php。"
 
 #, c-format
 msgid ""
@@ -737,13 +734,13 @@ msgid "DB Password:"
 msgstr "資料庫密碼："
 
 msgid "DB Name:"
-msgstr "資料庫名稱"
+msgstr "資料庫名稱："
 
 msgid "DB Schema:"
-msgstr ""
+msgstr "資料庫模式："
 
 msgid "(optional)"
-msgstr ""
+msgstr "（選用）"
 
 msgid "Table Prefix:"
 msgstr "表格字首："
@@ -944,13 +941,11 @@ msgstr "發生錯誤。請見下列訊息。"
 msgid "Standard installation"
 msgstr "標準安裝"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "This is the most common type of installation. Your Gallery will be in the directory %s which "
 "will be accessible at %s."
-msgstr ""
-"這是預設的安裝類型。如果你要在 %s 目錄中安裝一個全新的 Gallery，並可用 %s 網址存取的話，請選"
-"這個安裝類型。"
+msgstr "這是最普遍的安裝類型。你的 Gallery 會安裝在 %s 目錄中，並可用 %s 網址存取。"
 
 msgid "Multisite installation"
 msgstr "多站台安裝"
@@ -961,17 +956,19 @@ msgid ""
 "independent with its own database of photos, albums, and users.  For more details, refer to "
 "the %s page."
 msgstr ""
+"這是用來給在一個網頁伺服器上安裝多個 Gallery 用的。各個 Gallery 是完全獨立，有自已的照片、相"
+"簿和用戶的資料庫。要進一步了解，請參考%s頁面"
 
 msgid "You must enter a directory"
 msgstr "你必需輸入一個目錄"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You entered the %s directory. If you want to install a Gallery there, select the standard "
 "installation type. If you want to install a multisite, choose a different directory."
 msgstr ""
-"你所輸入的目錄是程式所在的目錄。如果你要把一個 Gallery 安裝到程式目錄中，請選擇標準安裝類型。"
-"如果你要安裝多站台，請選一個不同的目錄。"
+"你所輸入了 %s 目錄。如果你要把 Gallery 安裝到那裡，請選擇標準安裝類型。如果你要安裝多站台，請"
+"選一個不同的目錄。"
 
 msgid ""
 "The directory you entered either does not exist, or is prohibited by your webserver "
@@ -983,7 +980,6 @@ msgstr ""
 "你必需選用一個在這些目錄下的目錄，或者更改你的 PHP 設定中的 <b>open_basedir</b> 以允許使用新"
 "的目錄。"
 
-#, fuzzy
 msgid ""
 "If your multisite installation is in a different virtual host, you should contact your "
 "system administrator and request that they configure your <b>open_basedir</b> setting so "
@@ -1004,17 +1000,16 @@ msgid "Unable to create multisite files. Ensure the files listed below are write
 msgstr "無法產生多站台檔案。請確定下列檔案可以寫入。"
 
 msgid "Directory for the new Gallery installation (example: /var/www/example.com/gallery2) "
-msgstr ""
+msgstr "新安裝的 Gallery 目錄（例如：/var/www/example.com/gallery2）"
 
 msgid "You must provide the URL for your new multisite"
-msgstr ""
+msgstr "你必需提供你的新多站台的網址"
 
 msgid "URL for the new Gallery installation (example: http://example.com/gallery2/main.php) "
-msgstr ""
+msgstr "新安裝的 Gallery 網址（例如：http://example.com/gallery2/main.php）"
 
-#, fuzzy
 msgid "Select Directory and URL"
-msgstr "選擇目錄"
+msgstr "選擇目錄和網址"
 
 msgid "Multisite directory setup successfully."
 msgstr "多站台目錄設定成功"
@@ -1105,7 +1100,7 @@ msgstr ""
 "你的 g2data 目錄的正確路徑，試著在下面的文字框中打一些可能的路徑，看看自動完成會不會找到它。"
 
 msgid "Do not use the installation directory for storage"
-msgstr ""
+msgstr "不要用安裝目錄來當儲存空間"
 
 msgid "The directory you entered is read only"
 msgstr "你輸入的目錄是唯讀的。"
@@ -1246,41 +1241,3 @@ msgstr "開始"
 
 msgid "Begin Installation&raquo;"
 msgstr "開始安裝&raquo;"
-
-#~ msgid ""
-#~ "You may now go to your new Gallery.  Enter the URL in your browser for %smain.php%s in "
-#~ "your %s directory."
-#~ msgstr ""
-#~ "你現在可以前往你的新 Gallery。在你的瀏覽程式中輸入在你的%s目錄中的 %smain.php%s 的網址。"
-
-#~ msgid "Please select the installation type"
-#~ msgstr "請選擇安裝類型"
-
-#~ msgid ""
-#~ "Gallery can support multiple independent sites with a single installation of the code. "
-#~ "Choose this installation type if you want to install a new Gallery on the same webserver "
-#~ "but in a different path, subdomain or URL domain."
-#~ msgstr ""
-#~ "Gallery 可以用一份單獨的安裝來支援多個獨立的網站。如果你要在同一個網頁伺服器上的不同路徑、"
-#~ "子網域或網址上安裝一個全新的 Gallery 的話，請選這個安裝類型。"
-
-#~ msgid ""
-#~ "The multisites don't share albums, photos, users, or anything else. They all need their "
-#~ "own database and their own storage directory. For more information and explanations about "
-#~ "Multisite installations, visit the %s page."
-#~ msgstr ""
-#~ "多站台並不共用相簿、照片、用戶、或其他任何項目。它們都需要自己的資料庫和自己的儲存目錄。前"
-#~ "參閱 %s 頁面中有關多站台安裝的資訊和解釋。"
-
-#~ msgid "All multisites are installed from this central code repository (codebase)."
-#~ msgstr "所有的站台都是從這個中央程式庫（基礎程式）安裝出來。"
-
-#~ msgid ""
-#~ "Enter the directory for the new multisite below. The path must be different from this "
-#~ "codebase installation's path:"
-#~ msgstr "在下面輸入新的站台的目錄。這個路徑不能和基礎程式安裝的路徑相同。"
-
-#~ msgid ""
-#~ "The directory must be writeable by your webserver/php user or contain the following "
-#~ "writeable files:"
-#~ msgstr "目錄必需可以讓你的網頁伺服器或 PHP 用戶寫入或含有下列可寫入的檔案："
