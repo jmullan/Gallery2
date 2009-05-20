@@ -287,7 +287,8 @@ class GalleryStorage {
 	if (!isset($this->_extras)) {
 	    GalleryCoreApi::requireOnce(
 		'modules/core/classes/GalleryStorage/GalleryStorageExtras.class', true);
-	    $this->_extras =& new GalleryStorageExtras($this);
+	    $tmp = new GalleryStorageExtras($this);
+	    $this->_extras =& $tmp;
 	}
 	return $this->_extras;
     }
@@ -1117,7 +1118,7 @@ class GalleryStorage {
      */
     function _translateQuery($query) {
 	/* Change '[Class::member]' to 'table.column' or 'alias.column' */
-	while (ereg('\[([[:alnum:]_=]*)::([[:alnum:]_]*)\]', $query, $regs)) {
+	while (preg_match('#\[([\w_=]*)::([\w_]*)\]#', $query, $regs)) {
 	    $class = $regs[1];
 	    $member = $regs[2];
 	    list ($table, $alias) = $this->_translateTableName($class);
@@ -1133,7 +1134,7 @@ class GalleryStorage {
 	}
 
 	/* Change '[Class]' to 'table' */
-	while (ereg('\[([[:alnum:]_=]*)\]', $query, $regs)) {
+	while (preg_match('#\[([\w_=]*)\]#', $query, $regs)) {
 	    $class = $regs[1];
 	    list ($table, $alias) = $this->_translateTableName($class);
 	    if ($alias == null) {

@@ -239,18 +239,17 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	}
 	$idToDelete = $watermark->getId();
 
-	list ($ret, $newDefaultWatermarkId) = 
+	list ($ret, $oldDefaultWatermarkId) = 
 		GalleryCoreApi::getPluginParameter('module', 'watermark', 'defaultWatermarkId');
 	if ($ret) {
 	    return $ret;
 	}
-
-	if (empty($newDefaultWatermarkId)) {
+	if (empty($oldDefaultWatermarkId)) {
+	    // Ensure another watermark exists for selecting a new default
 	    list ($ret, $watermark) = $this->_createTestWatermark();
 	    if ($ret) {
 		return $ret;
 	    }
-	    $newDefaultWatermarkId = $watermark->getId();
 	}
 
 	/* Delete it */
@@ -282,7 +281,8 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	    return $ret;
 	}
 	$this->assert(!empty($defaultWatermarkId), 'Expected new default watermark');
-	$this->assertEquals((int)$newDefaultWatermarkId, (int)$defaultWatermarkId, 
+	// If there are several watermarks, we can't be sure which one will be selected
+	$this->assert((int)$defaultWatermarkId != (int)$idToDelete, 
 	    'Unexpected default watermark id');
 	/* Verify that it's gone */
 	$ret = $this->_verifyMissing($idToDelete);

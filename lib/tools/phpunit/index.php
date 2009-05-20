@@ -27,6 +27,10 @@ define('G2_SUPPORT_URL_FRAGMENT', '../../support/');
 include('../../support/security.inc');
 include('../../../bootstrap.inc');
 require_once('../../../init.inc');
+if (function_exists('date_default_timezone_set')) {
+    /* PHP 5.3 requires a default be set before using any date/time functions */
+    @date_default_timezone_set(date_default_timezone_get());
+}
 
 $testReportDir = $gallery->getConfig('data.gallery.base') . 'test/';
 

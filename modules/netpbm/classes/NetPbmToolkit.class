@@ -497,7 +497,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	}
 
 	foreach ($output as $line) {
-	    if (ereg('([0-9]+) by ([0-9]+)', $line, $regs)) {
+	    if (preg_match('/(\d+) by (\d+)/', $line, $regs)) {
 		return array(null, $regs[1], $regs[2]);
 	    }
 	}

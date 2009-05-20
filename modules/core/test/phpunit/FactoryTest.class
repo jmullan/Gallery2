@@ -382,11 +382,11 @@ class FactoryTest extends GalleryTestCase {
 	$this->assert($result, 'TestErrorHandler id is set');
 			    
 	$result = empty($registry['pluginIds']['GalleryEventListener']['TestErrorHandler']);
-	$this->assert($result, 'TestErrorHandler implementation not set');
+	$this->assert($result, 'TestErrorHandler implementation is still set');
 
-	$errorListeners = $registry['hints']['GalleryEventListener']['gallery::error'];
-	$result = empty($errorListeners['TestErrorHandler']);
-	$this->assert($result, 'TestErrorHandler error listener not set');
+	$result = empty(
+		$registry['hints']['GalleryEventListener']['gallery::error']['TestErrorHandler']);
+	$this->assert($result, 'TestErrorHandler error listener is still set');
     }
 }
 

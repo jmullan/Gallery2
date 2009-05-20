@@ -40,7 +40,11 @@ require_once(dirname(__FILE__) . '/modules/core/classes/GalleryDataCache.class')
  * Everything else should be inside it so that we do not pollute the namespace
  * (especially important when we're embedded inside another application).
  */
-$gallery =& new Gallery();
+if (strncmp(phpversion(), '4', 1)) {
+    $gallery = new Gallery();  /* & not needed for PHP 5.x, deprecated in PHP 5.3+ */
+} else {
+    $gallery =& new Gallery();
+}
 $GLOBALS['gallery'] =& $gallery;
 
 if (!defined('GALLERY_CONFIG_DIR')) {
