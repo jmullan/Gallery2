@@ -91,7 +91,7 @@ function app_getcookie() {
 	case 3: if (n) sidebar_onoff(); break;
 	case 4: if (!n) album_detailsonoff(); break;
 	case 5: if (n) album_itemlinksonoff(); break;
-	case 6: if (n) text_onoff(); break;
+	case 6: if (!n) text_onoff(); break;
       }
     }
   }
@@ -235,8 +235,8 @@ var image_on=0, // Image is visible
     image_cache = new Image, // For precaching an image
     image_iscached = new Array(data_count), // Track precached images
     imagearea, imagediv, textdiv, // Containers
-    text_on=0, // Description text is visible
-    text_empty=0; // Description text is empty
+    text_on=1, // Description text is visible
+    text_empty=1; // Description text is empty
 function image_setsize() {
   imagearea.style.height = (app_wh - textdiv.offsetHeight) + 'px';
 }
@@ -345,17 +345,22 @@ function image_setbuttons() {
   ui_vis('prev_img', j >= 0, 1);
   ui_vis('prev_off', j < 0 && !has_prev_page, 1);
   ui_vis('prev_page', j < 0 && has_prev_page, 1);
+  var last_empty = text_empty;
   text_empty = document.getElementById('text_'+image_index).innerHTML ?0:1;
   if (!text_on) {
     ui_vis('text_on', !text_empty, 1);
     ui_vis('text_none', text_empty, 1);
+  }
+  else if (last_empty != text_empty) {
+    ui_vis('text', !text_empty);
+    if (image_on) { image_setsize(); image_fit(); }
   }
 }
 function text_onoff() {
   if ((text_on = text_on?0:1) && data_count > 0) text_fill();
   ui_vis(text_empty ? 'text_none' : 'text_on', !text_on, 1);
   ui_vis('text_off', text_on, 1);
-  ui_vis('text', text_on);
+  ui_vis('text', text_on && !text_empty);
   if (image_on) { image_setsize(); image_fit(); }
 }
 function text_fill() {
