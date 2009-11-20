@@ -502,11 +502,11 @@ class GalleryToolkitHelper_medium {
     function isSupportedOperationSequence($mimeType, $operations) {
 
 	$isSupported = true;
-	foreach (split(';', $operations) as $operation) {
+	foreach (explode(';', $operations) as $operation) {
 	    if (strpos($operation, '|') === false) {
 		list($operationName, $operationArgs) = array($operation, null);
 	    } else {
-		list($operationName, $operationArgs) = split('\|', $operation);
+		list($operationName, $operationArgs) = explode('|', $operation);
 	    }
 
 	    /* Get the appropriate toolkit */

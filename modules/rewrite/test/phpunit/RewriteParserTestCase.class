@@ -588,7 +588,7 @@ class RewriteParserMockPlatform extends GalleryPlatform {
 
 	    $buf = join("\n", $this->_readBuffer);
 	    $tmp = substr($buf, 0, $length);
-	    $this->_readBuffer = split("\n", substr($buf, $length + 1));
+	    $this->_readBuffer = explode("\n", substr($buf, $length + 1));
 	    return $tmp;
 	}
 

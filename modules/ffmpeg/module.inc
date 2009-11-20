@@ -111,7 +111,7 @@ class FfmpegModule extends GalleryModule {
 	global $gallery;
 
 	/* This module requires exec() */
-	if (in_array('exec', split(',\s*', ini_get('disable_functions')))) {
+	if (in_array('exec', preg_split('/,\s*/', ini_get('disable_functions')))) {
 	    return array(null, false);
 	}
 
@@ -262,7 +262,7 @@ class FfmpegModule extends GalleryModule {
      */
     function needsConfiguration() {
 	/* This module requires exec() */
-	if (in_array('exec', split(',\s*', ini_get('disable_functions')))) {
+	if (in_array('exec', preg_split('/,\s*/', ini_get('disable_functions')))) {
 	    return array(null, true);
 	}
 	/* This module requires all fields to be filled out before it can be activated. */

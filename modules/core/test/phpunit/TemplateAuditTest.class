@@ -91,7 +91,7 @@ class TemplateAuditTest extends CodeAuditTestCase {
     function checkFile($fileName, $buffer) {
 	$truncatedFileName = substr($fileName,
 				    strlen(dirname(dirname(dirname(dirname($fileName)))))+1);
-	$lines = split("(\r\n|\n)", $buffer);
+	$lines = preg_split("/(\r\n|\n)/", $buffer);
 
 	if (!in_array($truncatedFileName, $this->_exception['hiddenFormVars'])) {
 	    $this->_checkHiddenFormVars($truncatedFileName, $lines);
@@ -109,7 +109,7 @@ class TemplateAuditTest extends CodeAuditTestCase {
 	    return;
 	} else {
 	    /* Grab the expected number of lines and compare them */
-	    $actual = split("(\r\n|\n)", $buffer, sizeof($this->_expectedHeaderLines)+1);
+	    $actual = preg_split("/(\r\n|\n)/", $buffer, sizeof($this->_expectedHeaderLines)+1);
 	    array_splice($actual, sizeof($this->_expectedHeaderLines), 1);
 
 	    /* Get rid of the revision line, since we can't compare that */

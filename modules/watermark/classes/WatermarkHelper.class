@@ -369,7 +369,7 @@ class WatermarkHelper {
 		    /* Replace existing watermark, or add a new one */
 		    $postFilterOps = $derivative->getPostFilterOperations();
 		    if ($postFilterOps) {
-			$ops = split(';', $postFilterOps);
+			$ops = explode(';', $postFilterOps);
 			$replaced = false;
 			for ($i = 0; $i < count($ops); $i++) {
 			    if (strncmp($ops[$i], 'composite|plugins_data/modules/watermark', 40)) {

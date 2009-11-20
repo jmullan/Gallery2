@@ -356,7 +356,7 @@ class GalleryTestResult extends TestResult {
 	$webserver = GalleryUtilities::getServerVar('SERVER_SOFTWARE');
 	$php = 'PHP ' . phpversion();
 	$database = $storage->getAdoDbType() . ' ' . $storage->getVersion();
-	$OS = array_shift(split(' ', php_uname()));
+	$OS = array_shift(explode(' ', php_uname()));
 	$locking = $params['lock.system'];
 	$language = $translator->_languageCode;
 	$owner = 'NAME_PLACEHOLDER';

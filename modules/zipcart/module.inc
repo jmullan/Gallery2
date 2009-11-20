@@ -63,7 +63,7 @@ class ZipCartModule extends GalleryModule {
      */
     function needsConfiguration() {
 	/* This module requires exec() */
-	if (in_array('exec', split(',\s*', ini_get('disable_functions')))) {
+	if (in_array('exec', preg_split('/,\s*/', ini_get('disable_functions')))) {
 	    return array(null, true);
 	}
 
@@ -81,7 +81,7 @@ class ZipCartModule extends GalleryModule {
 	global $gallery;
 
 	/* This module requires exec() */
-	if (in_array('exec', split(',\s*', ini_get('disable_functions')))) {
+	if (in_array('exec', preg_split('/,\s*/', ini_get('disable_functions')))) {
 	    return array(null, false);
 	}
 

@@ -117,8 +117,8 @@ class SitemapViewTest extends GalleryTestCase {
 	     "<changefreq>yearly</changefreq></url>\n") .
 	    "</urlset>";
 
-	$this->assertEquals(split("\n", $expected),
-			    split("\n", $results));
+	$this->assertEquals(explode("\n", $expected),
+			    explode("\n", $results));
     }
 
     function testRenderImmediate() {

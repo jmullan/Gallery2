@@ -156,7 +156,7 @@ class ZipCartAdminView extends GalleryView {
 
 	$ZipCartAdmin = array('isConfigure' => !$isActive,
 			      'canExec' =>
-				!in_array('exec', split(',\s*', ini_get('disable_functions'))));
+				!in_array('exec', preg_split('/,\s*/', ini_get('disable_functions'))));
 	if (isset($form['error']['path']['badZip']) > 0) {
 	    $ZipCartAdmin['debugSnippet'] = GalleryUtilities::getRequestVariables('debugSnippet');
 	    $template->javascript('lib/javascript/BlockToggle.js');
