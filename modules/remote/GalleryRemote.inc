@@ -899,9 +899,12 @@ class GalleryRemoteController extends GalleryController {
 			while (!empty($resizes)) {
 			    $der = $derivatives[$item->getId()][array_shift($resizes)];
 			    $resizedNum++;
-			    $response->setProperty('image.resized.' . $resizedNum . '.name.' . $i, $der->getId());
-			    $response->setProperty('image.resized.' . $resizedNum . '.width.' . $i, $der->getWidth());
-			    $response->setProperty('image.resized.' . $resizedNum . '.height.' . $i, $der->getHeight());
+			    $response->setProperty(
+			      'image.resized.' . $resizedNum . '.name.' . $i, $der->getId());
+			    $response->setProperty(
+			      'image.resized.' . $resizedNum . '.width.' . $i, $der->getWidth());
+			    $response->setProperty(
+			      'image.resized.' . $resizedNum . '.height.' . $i, $der->getHeight());
 			}
 			$response->setProperty('image.resizedNum.' . $i, $resizedNum);
 		    }
@@ -1040,7 +1043,7 @@ class GalleryRemoteController extends GalleryController {
 	$response->setProperty('max_size', $maxSize);
 	$response->setProperty('extrafields', "Summary,Description");
 
-        list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId);
+	list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId, 'GalleryAlbumItem');
         if ($ret) {
             return $ret;
         }
