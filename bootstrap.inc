@@ -43,7 +43,7 @@ require_once(dirname(__FILE__) . '/modules/core/classes/GalleryDataCache.class')
 if (strncmp(phpversion(), '4', 1)) {
     $gallery = new Gallery();  /* & not needed for PHP 5.x, deprecated in PHP 5.3+ */
 } else {
-    $gallery =& new Gallery();
+    $gallery =& new Gallery(); /* PHP 4 */
 }
 $GLOBALS['gallery'] =& $gallery;
 
