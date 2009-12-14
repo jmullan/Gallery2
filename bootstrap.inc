@@ -34,17 +34,12 @@ require_once(dirname(__FILE__) . '/modules/core/classes/Gallery.class');
 require_once(dirname(__FILE__) . '/modules/core/classes/GalleryDataCache.class');
 
 /*
- * Set up our Gallery global.  It's important to use a reference here because
- * the constructor registers a shutdown function and ties it to the instance in
- * the constructor.  This global should be the only one that Gallery requires.
+ * Set up our Gallery global.  This global should be the only one that Gallery requires.
  * Everything else should be inside it so that we do not pollute the namespace
  * (especially important when we're embedded inside another application).
  */
-if (strncmp(phpversion(), '4', 1)) {
-    $gallery = new Gallery();  /* & not needed for PHP 5.x, deprecated in PHP 5.3+ */
-} else {
-    $gallery =& new Gallery(); /* PHP 4 */
-}
+$gallery = new Gallery();
+$gallery->init();
 $GLOBALS['gallery'] =& $gallery;
 
 if (!defined('GALLERY_CONFIG_DIR')) {
