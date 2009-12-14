@@ -373,6 +373,7 @@ class RewriteModuleExtras {
 	    /* Refactored to new event registration from core API 7.34 */
 	case '1.1.16':
 	case '1.1.17':
+	case '1.1.18':
 
 	case 'end of upgrade path':
 	    break;
