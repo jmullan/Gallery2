@@ -698,6 +698,7 @@ class GalleryRemoteController extends GalleryController {
 	$grStatusCodes = GalleryRemoteConstants::getStatusCodes();
 
 	$albumsToo = isset($form['albums_too']) && $form['albums_too'] == 'yes';
+	$allSizes = isset($form['all_sizes']) && $form['all_sizes'] == 'yes';
 
 	list ($ret, $rootId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
@@ -892,6 +893,21 @@ class GalleryRemoteController extends GalleryController {
 		    $response->setProperty('image.resizedName.' . $i, $der->getId());
 		    $response->setProperty('image.resized_width.' . $i, $der->getWidth());
 		    $response->setProperty('image.resized_height.' . $i, $der->getHeight());
+		    
+		    if ($allSizes) {
+			$resizedNum = 0;
+			while (!empty($resizes)) {
+			    $der = $derivatives[$item->getId()][array_shift($resizes)];
+			    $resizedNum++;
+			    $response->setProperty(
+			      'image.resized.' . $resizedNum . '.name.' . $i, $der->getId());
+			    $response->setProperty(
+			      'image.resized.' . $resizedNum . '.width.' . $i, $der->getWidth());
+			    $response->setProperty(
+			      'image.resized.' . $resizedNum . '.height.' . $i, $der->getHeight());
+			}
+			$response->setProperty('image.resizedNum.' . $i, $resizedNum);
+		    }
 		}
 		if (isset($thumb)) {
 		    $response->setProperty('image.thumbName.' . $i, $thumb->getId());
@@ -1026,6 +1042,13 @@ class GalleryRemoteController extends GalleryController {
 	$response->setProperty('auto_resize', $biggestDerivative);
 	$response->setProperty('max_size', $maxSize);
 	$response->setProperty('extrafields', "Summary,Description");
+
+	list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId, 'GalleryAlbumItem');
+        if ($ret) {
+            return $ret;
+        }
+
+	$response->setProperty('title', $album->getTitle());
 
 	$response->setProperty('status', $grStatusCodes['SUCCESS']);
 	$response->setProperty('status_text', 'Album-properties successful.');

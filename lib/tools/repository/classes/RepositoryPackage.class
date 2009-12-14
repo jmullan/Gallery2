@@ -182,7 +182,8 @@ class RepositoryPackage extends RepositoryObject {
     function getPackageHash($packageType, $length) {
 	global $gallery;
 	$phpVm = $gallery->getPhpVm();
-	$key = $this->getPackageFileName($packageType);
+	$key = $this->getPackageFileName($packageType) .
+          GalleryUtilities::getRequestVariables('repositoryName');
 	return substr($phpVm->md5($key), 0, $length);
     }
 }

@@ -559,21 +559,21 @@ class GalleryDerivativeHelper_advanced {
 	} else if (empty($operationSet2)) {
 	    $results = $operationSet1;
 	} else {
-	    foreach (split(';', $operationSet1) as $opString) {
+	    foreach (explode(';', $operationSet1) as $opString) {
 		if (strpos($opString, '|') === false) {
 		    $operations1[] = array('op' => $opString, 'args' => array());
 		} else {
-		    list ($op, $args) = split('\|', $opString);
-		    $operations1[] = array('op' => $op, 'args' => split(',', $args));
+		    list ($op, $args) = explode('|', $opString);
+		    $operations1[] = array('op' => $op, 'args' => explode(',', $args));
 		}
 	    }
 
-	    foreach (split(';', $operationSet2) as $opString) {
+	    foreach (explode(';', $operationSet2) as $opString) {
 		if (strpos($opString, '|') === false) {
 		    $operations2[] = array('op' => $opString, 'args' => array());
 		} else {
-		    list ($op, $args) = split('\|', $opString);
-		    $operations2[] = array('op' => $op, 'args' => split(',', $args));
+		    list ($op, $args) = explode('|', $opString);
+		    $operations2[] = array('op' => $op, 'args' => explode(',', $args));
 		}
 	    }
 
@@ -636,7 +636,7 @@ class GalleryDerivativeHelper_advanced {
 	    $newOperations = array();
 	    $match = $operation . '|';
 	    $matchLength = strlen($match);
-	    foreach (split(';', $operationSet) as $opString) {
+	    foreach (explode(';', $operationSet) as $opString) {
 		if (strncmp($opString, $match, $matchLength)) {
 		    $newOperations[] = $opString;
 		}

@@ -602,7 +602,8 @@ class DatabaseSetupStep extends InstallStep {
 	    /* Include basic G2 classes to use G2 API to get the core version etc. */
 	    require_once(dirname(__FILE__) . '/../../modules/core/classes/Gallery.class');
 	    require_once(dirname(__FILE__) .'/../../modules/core/classes/GalleryDataCache.class');
-	    $GLOBALS['gallery'] =& new Gallery();
+	    $GLOBALS['gallery'] = new Gallery();
+	    $GLOBALS['gallery']->init();
 	    /*
 	     * GalleryInitFirstPass adds a trailing slash if necessary, but we don't call it in
 	     * all cases

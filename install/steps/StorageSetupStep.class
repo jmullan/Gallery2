@@ -163,7 +163,7 @@ class StorageSetupStep extends InstallStep {
     function _isStoragePathWebAccessible($dir) {
 	/* Check if we can use fsockopen. Else we can't test it at all. */
 	if (!function_exists('fsockopen')
-		|| in_array('fsockopen', split(',\s*', ini_get('disable_functions')))) {
+		|| in_array('fsockopen', preg_split('/,\s*/', ini_get('disable_functions')))) {
 	    return array(false, false);
 	}
 

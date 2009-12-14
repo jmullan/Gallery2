@@ -208,7 +208,7 @@ class MailHelperDummyPlatform {
 	    array('to' => $to,
 		  'subject' => $subject,
 		  'body' => trim($body),
-		  'headers' => split("\r\n", $headers));
+		  'headers' => explode("\r\n", $headers));
 
 	$_REQUEST['mailedCount']++;
 	return true;

@@ -146,7 +146,7 @@ class SystemChecksStep extends UpgradeStep {
 	} /* skip showing 'success' for this one */
 
 	/* Warning when exec() is disabled */
-	if (in_array('exec', split(',\s*', ini_get('disable_functions')))) {
+	if (in_array('exec', preg_split('/,\s*/', ini_get('disable_functions')))) {
 	    $templateData['check'][] =
 		array('title' => _('exec() allowed'),
 		      'warning' => true,
@@ -163,7 +163,7 @@ class SystemChecksStep extends UpgradeStep {
 	}
 
 	/* Warning when set_time_limit() is disabled */
-	if (in_array('set_time_limit', split(',\s*', ini_get('disable_functions')))) {
+	if (in_array('set_time_limit', preg_split('/,\s*/', ini_get('disable_functions')))) {
 	    $timeLimit = ini_get('max_execution_time');
 	    $templateData['check'][] =
 		array('title' => _('set_time_limit() allowed'),
@@ -338,7 +338,7 @@ class SystemChecksStep extends UpgradeStep {
 	} /* skip showing 'success' for this one */
 
 	/* Warning if putenv is disabled */
-	if (in_array('putenv', split(',\s*', ini_get('disable_functions')))) {
+	if (in_array('putenv', preg_split('/,\s*/', ini_get('disable_functions')))) {
 	    $templateData['check'][] =
 		array('title' => _('putenv() allowed'),
 		      'warning' => true,
@@ -705,11 +705,14 @@ class SystemChecksStep extends UpgradeStep {
 		_('Database permission test failed. Could not connect to database.'));
 	}
 
+	$gallery->startRecordingDebugSnippet();
 	list ($ret, $metatables) = $storageExtras->_metaTables();
+	$snippet = $gallery->stopRecordingDebugSnippet();
 	if ($ret) {
 	    $gallery->debug($ret->getAsHtml());
 	    return array(false, 
-		_('Database permission test failed. Could not acquire database information.'));
+		_('Database permission test failed. Could not acquire database information.')
+		. "\n" . $snippet);
 	}
 
 	/*
@@ -725,7 +728,7 @@ class SystemChecksStep extends UpgradeStep {
 	$ok = false;
 	for ($i = 0; $i < 10; $i++) {
 	    $tablePrefix = 'gtst' . $i;
-	    if (empty($metatables[$tablePrefix . 'Schema'])) {
+	    if (!in_array(GalleryUtilities::strToLower($tablePrefix . 'Schema'), $metatables)) {
 		$ok = true;
 		break;
 	    }
@@ -752,22 +755,28 @@ class SystemChecksStep extends UpgradeStep {
 	}
 
 	/* Check CREATE and DROP SEQUENCE privileges */
+	$gallery->startRecordingDebugSnippet();
 	$storage->_traceStart();
 	$sequenceId = 'g2privtestseq';
 	$ret = $storage->_db->CreateSequence($tablePrefix . $sequenceId);
 	$storage->_traceStop();
+	$snippet = $gallery->stopRecordingDebugSnippet();
 	if (!$ret) {
 	    return array(false, _('Failed to create a database test sequence. ' .
 			 'Check the returned error message and README.html ' .
-			 'for missing privileges and clean up the database.'));
+			 'for missing privileges and clean up the database.')
+			. "\n" . $snippet);
 	}
+	$gallery->startRecordingDebugSnippet();
 	$storage->_traceStart();
 	$ret = $storage->_db->DropSequence($tablePrefix . $sequenceId);
 	$storage->_traceStop();
+	$snippet = $gallery->stopRecordingDebugSnippet();
 	if (!$ret) {
 	    return array(false, _('Test failed to drop a database test sequence. ' .
 			 'Check the returned error message and README.html ' .
-			 'for missing privileges and clean up the database.'));
+			 'for missing privileges and clean up the database.')
+			. "\n" . $snippet);
 	}
 
 	return array(true, null);
@@ -807,10 +816,13 @@ class SystemChecksStep extends UpgradeStep {
 		/* For mysql, another replacement is required */
 		$query = str_replace('DB_TABLE_TYPE', '', $query);
 
+		$gallery->startRecordingDebugSnippet();
 		$ret = $storage->execute($query, array());
+		$snippet = $gallery->stopRecordingDebugSnippet();
 		if ($ret) {
 		    return array(false, _('Check the returned error message and README.html ' .
-				 'for missing privileges and clean up the database.'));
+				 'for missing privileges and clean up the database.')
+				 . "\n" . $snippet);
 		}
 	    }
 	}

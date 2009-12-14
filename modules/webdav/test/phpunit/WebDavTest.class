@@ -257,7 +257,7 @@ class WebDavTest extends GalleryTestCase {
 	    $this->_headers);
 
 	$path = ltrim($path, '/');
-	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
+	$this->assertEquals(preg_split("/\r?\n/", '<?xml version="1.0" encoding="utf-8" ?>
 <D:multistatus xmlns:D="DAV:">
   <D:response xmlns:G="http://gallery2.org/dav/props/" ' .
 			    'xmlns:ns1="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">
@@ -278,7 +278,7 @@ class WebDavTest extends GalleryTestCase {
     </D:propstat>
   </D:response>
 </D:multistatus>
-'), split("\r?\n", $output));
+'), preg_split("/\r?\n/", $output));
     }
 
     function testPropfindWithoutViewPermission() {
@@ -376,7 +376,7 @@ class WebDavTest extends GalleryTestCase {
 	$itemPath = ltrim($itemPath, '/');
 
 	/* The sub-album without view permissions shouldn't be listed */
-	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
+	$this->assertEquals(preg_split("/\r?\n/", '<?xml version="1.0" encoding="utf-8" ?>
 <D:multistatus xmlns:D="DAV:">
   <D:response xmlns:G="http://gallery2.org/dav/props/" ' .
 			    'xmlns:ns1="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">
@@ -403,7 +403,7 @@ class WebDavTest extends GalleryTestCase {
     </D:propstat>
   </D:response>
 </D:multistatus>
-'), split("\r?\n", $output));
+'), preg_split("/\r?\n/", $output));
     }
 
     function testPropfindCollectionDepth0() {
@@ -446,7 +446,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$path = ltrim($path, '/');
 
-	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
+	$this->assertEquals(preg_split("/\r?\n/", '<?xml version="1.0" encoding="utf-8" ?>
 <D:multistatus xmlns:D="DAV:">
   <D:response xmlns:G="http://gallery2.org/dav/props/" ' .
 			    'xmlns:ns1="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">
@@ -461,7 +461,7 @@ class WebDavTest extends GalleryTestCase {
     </D:propstat>
   </D:response>
 </D:multistatus>
-'), split("\r?\n", $output));
+'), preg_split("/\r?\n/", $output));
     }
 
     function testPropfindCollectionDepth1() {
@@ -526,7 +526,7 @@ class WebDavTest extends GalleryTestCase {
 	$subAlbumPath = ltrim($subAlbumPath, '/');
 
 	/* The sub-album without view permissions shouldn't be listed */
-	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
+	$this->assertEquals(preg_split("/\r?\n/", '<?xml version="1.0" encoding="utf-8" ?>
 <D:multistatus xmlns:D="DAV:">
   <D:response xmlns:G="http://gallery2.org/dav/props/" ' .
 			    'xmlns:ns1="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">
@@ -565,7 +565,7 @@ class WebDavTest extends GalleryTestCase {
     </D:propstat>
   </D:response>
 </D:multistatus>
-'), split("\r?\n", $output));
+'), preg_split("/\r?\n/", $output));
     }
 
     function testProppatch() {
@@ -616,7 +616,7 @@ class WebDavTest extends GalleryTestCase {
 	    $this->_headers);
 
 	$path = ltrim($path, '/');
-	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
+	$this->assertEquals(preg_split("/\r?\n/", '<?xml version="1.0" encoding="utf-8" ?>
 <D:multistatus xmlns:D="DAV:">
   <D:response xmlns:G="http://gallery2.org/dav/props/">
     <D:href>' . $this->_getHref($path) . '</D:href>
@@ -631,7 +631,7 @@ class WebDavTest extends GalleryTestCase {
     </D:propstat>
   </D:response>
 </D:multistatus>
-'), split("\r?\n", $output));
+'), preg_split("/\r?\n/", $output));
 
 	list ($ret, $this->_item) = $this->_item->refresh();
 	if ($ret) {
@@ -692,7 +692,7 @@ class WebDavTest extends GalleryTestCase {
 	    $this->_headers);
 
 	$path = ltrim($path, '/');
-	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
+	$this->assertEquals(preg_split("/\r?\n/", '<?xml version="1.0" encoding="utf-8" ?>
 <D:multistatus xmlns:D="DAV:">
   <D:response xmlns:G="http://gallery2.org/dav/props/">
     <D:href>' . $this->_getHref($path) . '</D:href>
@@ -707,7 +707,7 @@ class WebDavTest extends GalleryTestCase {
     </D:propstat>
   </D:response>
 </D:multistatus>
-'), split("\r?\n", $output));
+'), preg_split("/\r?\n/", $output));
 
 	list ($ret, $this->_item) = $this->_item->refresh();
 	if ($ret) {
@@ -1613,7 +1613,7 @@ class WebDavTest extends GalleryTestCase {
 		'lock-token' => 'Lock-Token: <' . $lock['token'] . '>'),
 	    $this->_headers);
 
-	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
+	$this->assertEquals(preg_split("/\r?\n/", '<?xml version="1.0" encoding="utf-8" ?>
 <D:prop xmlns:D="DAV:">
   <D:lockdiscovery>
     <D:activelock>
@@ -1626,7 +1626,7 @@ class WebDavTest extends GalleryTestCase {
           </D:activelock>
   </D:lockdiscovery>
 </D:prop>
-'), split("\r?\n", $output));
+'), preg_split("/\r?\n/", $output));
 
 	return array(null, $lock);
     }
@@ -1736,7 +1736,7 @@ class WebDavTest extends GalleryTestCase {
 		'content-type' => 'Content-Type: text/xml; charset="utf-8"'),
 	    $this->_headers);
 
-	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
+	$this->assertEquals(preg_split("/\r?\n/", '<?xml version="1.0" encoding="utf-8" ?>
 <D:prop xmlns:D="DAV:">
   <D:lockdiscovery>
     <D:activelock>
@@ -1749,7 +1749,7 @@ class WebDavTest extends GalleryTestCase {
           </D:activelock>
   </D:lockdiscovery>
 </D:prop>
-'), split("\r?\n", $output));
+'), preg_split("/\r?\n/", $output));
 
 	$this->_headers = array();
 
@@ -1818,14 +1818,14 @@ class WebDavTest extends GalleryTestCase {
 		'content-type' => 'Content-Type: text/xml; charset="utf-8"'),
 	    $this->_headers);
 
-	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
+	$this->assertEquals(preg_split("/\r?\n/", '<?xml version="1.0" encoding="utf-8" ?>
 <D:multistatus xmlns:D="DAV:">
   <D:response>
     <D:href>' . $this->_getHref($lock['path']) . '</D:href>
     <D:status>HTTP/1.1 423 Locked</D:status>
   </D:response>
 </D:multistatus>
-'), split("\r?\n", $output));
+'), preg_split("/\r?\n/", $output));
 
 	$this->_headers = array();
 

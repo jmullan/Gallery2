@@ -709,10 +709,9 @@ class GalleryTemplateAdapter {
      * @access private
      */
     function _safeCssName($string) {
-	$string = ereg_replace("[^-A-Za-z0-9_]", "_", $string);
-	$string = ereg_replace('__+', '_', $string);
-	$string = ereg_replace('[-_][-_]+', '-', $string);
-	return $string;
+	$string = preg_replace('/[^-A-Za-z0-9_]+/', '_', $string);
+	$string = preg_replace('/__+/', '_', $string);
+	return preg_replace('/[-_][-_]+/', '-', $string);
     }
 
     /**
@@ -845,15 +844,13 @@ class GalleryTemplateAdapter {
 	    if (!$isAdminOrShowAll) {
 		return;
 	    }
-	    return; /* sprintf(
-		    '%s<img src="%s" alt="%s" title="%s" style="%s" width="80" height="15"/>%s',
-		    $useLink ? '' : '',
+	    return sprintf(
+		    '<img src="%s" alt="%s" title="%s" style="%s" width="80" height="15"/>',
 		    $urlGenerator->generateUrl(
 			array('href' => 'modules/core/data/g23-skidoo.png')),
 		    $core->translate('G2.3: Skidoo'),
 		    $core->translate('G2.3: Skidoo'),
-		    'border-style: none',
-		    $useLink ? '' : ''); */
+		    'border-style: none');
 	}
     }
 

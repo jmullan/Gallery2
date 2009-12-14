@@ -34,7 +34,7 @@ class ArchiveUploadModule extends GalleryModule {
 	$this->setId('archiveupload');
 	$this->setName($gallery->i18n('Archive Upload'));
 	$this->setDescription($gallery->i18n('Extract items from uploaded zip files'));
-	$this->setVersion('1.0.9');
+	$this->setVersion('1.0.10');
 	$this->_templateVersion = 1;
 	$this->setGroup('import', $gallery->i18n('Import'));
 	$this->setCallbacks('getSiteAdminViews');
@@ -81,7 +81,7 @@ class ArchiveUploadModule extends GalleryModule {
      */
     function autoConfigure() {
 	/* This module requires exec() */
-	if (in_array('exec', split(',\s*', ini_get('disable_functions')))) {
+	if (in_array('exec', preg_split('/,\s*/', ini_get('disable_functions')))) {
 	    return array(null, false);
 	}
 
@@ -113,7 +113,7 @@ class ArchiveUploadModule extends GalleryModule {
      */
     function needsConfiguration() {
 	/* This module requires exec() */
-	if (in_array('exec', split(',\s*', ini_get('disable_functions')))) {
+	if (in_array('exec', preg_split('/,\s*/', ini_get('disable_functions')))) {
 	    return array(null, true);
 	}
 

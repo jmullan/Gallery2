@@ -42,16 +42,16 @@ class MultisiteStep extends InstallStep {
 	    processAutoCompleteRequest();
 	    return false;
 	} else if (isset($_POST['isMultisite'])) {
+	    $baseDir = dirname(dirname(dirname(__FILE__)));
+	    require_once($baseDir . '/modules/core/classes/GalleryUrlGenerator.class');
 	    if ($_POST['isMultisite'] == '0') {
 		$this->_isMultisite = false;
-		$baseDir = dirname(dirname(dirname(__FILE__)));
 		$_SESSION['configPath'] = $baseDir;
 		$_SESSION['baseUri'] = getGalleryDirUrl()  . GALLERY_MAIN_PHP;
 		$this->setComplete(true);
 		$this->readConfigFile();
 		/* Remember the value also for the storage and database setup steps */
 		$galleryStub->setConfig('isMultisite', false);
-		require_once($baseDir . '/modules/core/classes/GalleryUrlGenerator.class');
 		$uri = preg_replace('{\?.*}', '', GalleryUrlGenerator::getCurrentRequestUri());
 		$uri .= '?step=' . ($this->getStepNumber() + 1);
 		/* Cookieless browsing (see index.php), 'session.use_trans_sid' won't help here */

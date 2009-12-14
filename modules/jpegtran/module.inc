@@ -37,7 +37,7 @@ class JpegtranModule extends GalleryModule {
 	$this->setName($gallery->i18n('Jpegtran'));
 	$this->setDescription(
 	    $gallery->i18n('Graphics toolkit for lossless JPEG transformations'));
-	$this->setVersion('1.0.0');
+	$this->setVersion('1.0.1');
 	$this->_templateVersion = 1;
 	$this->setGroup('toolkits', $gallery->i18n('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
@@ -132,7 +132,7 @@ class JpegtranModule extends GalleryModule {
      */
     function needsConfiguration() {
 	/* This module requires exec() */
-	if (in_array('exec', split(',\s*', ini_get('disable_functions')))) {
+	if (in_array('exec', preg_split('/,\s*/', ini_get('disable_functions')))) {
 	    return array(null, true);
 	}
 
@@ -150,7 +150,7 @@ class JpegtranModule extends GalleryModule {
 	global $gallery;
 
 	/* This module requires exec() */
-	if (in_array('exec', split(',\s*', ini_get('disable_functions')))) {
+	if (in_array('exec', preg_split('/,\s*/', ini_get('disable_functions')))) {
 	    return array(null, false);
 	}
 

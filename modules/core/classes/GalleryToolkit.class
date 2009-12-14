@@ -107,9 +107,9 @@ class GalleryToolkit {
 		}
 
 		$newOperations = array();
-		foreach (split(';', $targetOperations) as $operation) {
+		foreach (explode(';', $targetOperations) as $operation) {
 		    if (!strncmp($operation, 'crop', 4)) {
-			list ($x, $y, $width, $height) = split(',', substr($operation, 5));
+			list ($x, $y, $width, $height) = explode(',', substr($operation, 5));
 
 			switch ($rotationAmount) {
 			case '90':

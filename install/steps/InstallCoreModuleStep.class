@@ -40,6 +40,11 @@ class InstallCoreModuleStep extends InstallStep {
 
 	$templateData = array();
 
+	/* GalleryInitFirstPass does this, but need it earlier to avoid warnings in code below */
+	if (function_exists('date_default_timezone_set')) {
+	    @date_default_timezone_set(date_default_timezone_get());
+	}
+
 	/* We want to log all debug output in our install log */
 	global $gallery;
 	$gallery->setDebug('logged');

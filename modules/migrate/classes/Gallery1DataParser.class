@@ -79,7 +79,7 @@ class Gallery1DataParser {
 	 * any saved user objects.
 	 */
 	if (!strcmp(substr($tmp, 0, 10), 'O:4:"user"')) {
-	    $tmp = ereg_replace('O:4:"user"', 'O:12:"gallery_user"', $tmp);
+	    $tmp = str_replace('O:4:"user"', 'O:12:"gallery_user"', $tmp);
 	}
 
 	$object = unserialize($tmp);
@@ -294,7 +294,7 @@ class Gallery1DataParser {
 	    foreach ($userDB->userMap as $username => $uid) {
 		if (Gallery1DataParser::isValidUid($path, $uid)
 		    && !Gallery1DataParser::isValidUid($path, $username)
-		    && !eregi('nobody|everybody|loggedin', $username)) {
+		    && !preg_match('/nobody|everybody|loggedin/i', $username)) {
 		    $uids[$path][$uid] = $username;
 		}
 	    }
@@ -309,7 +309,7 @@ class Gallery1DataParser {
      * @return boolean
      */
     function isValidUidString($uid) {
-	if (ereg('^[0-9]{9,}_[0-9]+$', $uid)) {
+	if (preg_match('/^\d{9,}_\d+$/', $uid)) {
 	    return TRUE;
 	} else {
 	    return FALSE;

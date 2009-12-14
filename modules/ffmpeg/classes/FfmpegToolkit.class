@@ -307,11 +307,11 @@ Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'dscn3232.mov':
 		$audioInfo = $regs[1];
 		if (preg_match("/(\d+) Hz/", $audioInfo, $regs)) {
 		    $asamplerate = $regs[1];
-		    $audioInfo = preg_replace("/(\d+) Hz/", '', $audioInfo, $regs);
+		    $audioInfo = preg_replace("/(\d+) Hz/", '', $audioInfo, 1);
 		}
 		if (preg_match("/(\d+) kb\/s/", $audioInfo, $regs)) {
 		    $kbps = $regs[1];
-		    $audioInfo = preg_replace("/(\d+) kb\/s/", '', $audioInfo, $regs);
+		    $audioInfo = preg_replace("/(\d+) kb\/s/", '', $audioInfo, 1);
 		}
 		if (preg_match("/mono/", $audioInfo)) {
 		    $achannels = 1;

@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Core 1.3.0\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2008-10-13 10:16-0700\n"
-"PO-Revision-Date: 2005-08-24 14:00-0400\n"
+"PO-Revision-Date: 2008-11-19 10:47-0500\n"
 "Last-Translator: Stephen Chu <stephen@ju-ju.com>\n"
 "Language-Team: Chinese Traditional <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -78,19 +78,17 @@ msgid "File"
 msgstr "檔案"
 
 msgid "&lt;none&gt;"
-msgstr ""
+msgstr "&lt;無&gt;"
 
-#, fuzzy
 msgid "Link"
-msgstr "登入"
+msgstr "鏈接"
 
 #, c-format
 msgid "Page %d of %d"
 msgstr "第 %2$d 之 %1$d 頁"
 
-#, fuzzy
 msgid "Updating Language Settings"
-msgstr "語言設定"
+msgstr "正在更新語言設定"
 
 msgid "Update completed with errors."
 msgstr "更新完畢但有錯誤。"
@@ -101,9 +99,8 @@ msgstr "更新完畢。"
 msgid "Deleting Language Packs"
 msgstr "正在刪除語文包"
 
-#, fuzzy
 msgid "Synchronizing Language Packs"
-msgstr "正在刪除語文包"
+msgstr "語文包資料同步中"
 
 msgid "No acceleration"
 msgstr "無加速"
@@ -124,7 +121,7 @@ msgid "upgrade"
 msgstr "升級"
 
 msgid "activate"
-msgstr "啟動"
+msgstr "啟用"
 
 msgid "uninstall"
 msgstr "卸載"
@@ -139,7 +136,7 @@ msgid "Use these settings"
 msgstr "使用這些設定"
 
 msgid "Converting Schema Table"
-msgstr ""
+msgstr "正在轉換資料庫模式表格中"
 
 msgid "Installing the core module"
 msgstr "安裝核心模組中"
@@ -227,13 +224,11 @@ msgstr "更新全景圖片項目中"
 msgid "Optimizing AccessSubscriberMap table"
 msgstr "對 AccessSubscriberMap 表格最佳化中"
 
-#, fuzzy
 msgid "Upgrading Plugin Translations"
-msgstr "正在升級權限"
+msgstr "正在升級外掛組件的翻譯"
 
-#, fuzzy
 msgid "Creating Package Map"
-msgstr "正在更新軟體包"
+msgstr "正在產生軟體包列表"
 
 msgid "Site Admins"
 msgstr "網站管理員"
@@ -253,16 +248,14 @@ msgstr "這是 Gallery 的首頁"
 msgid "Converting MySQL data to UTF8"
 msgstr "將 MySQL 資料轉成 UTF8 中"
 
-#, fuzzy
 msgid "Adding items"
-msgstr "增加項目"
+msgstr "正在增加項目"
 
-#, fuzzy
 msgid "Processing items"
-msgstr "正在處理 %2$d 個項目中的第 %1$d 個"
+msgstr "正在處理項目"
 
 msgid "Extracting archive"
-msgstr ""
+msgstr "正在從壓縮檔取出檔案"
 
 msgid "add items"
 msgstr "增加項目"
@@ -559,7 +552,7 @@ msgid "Performance"
 msgstr "效能"
 
 msgid "Event Logs"
-msgstr ""
+msgstr "事件記錄"
 
 msgid "Language Settings"
 msgstr "語言設定"
@@ -581,7 +574,7 @@ msgstr "正在更新軟體包"
 
 #, c-format
 msgid "Cleaning up obsolete files %s"
-msgstr ""
+msgstr "清除無用的舊檔案%s"
 
 #, c-format
 msgid "Activating %s"
@@ -646,9 +639,8 @@ msgstr "成功的將資料庫轉換成 UTF8"
 msgid "No conversion required"
 msgstr "不需要轉換"
 
-#, fuzzy
 msgid "Backup the database"
-msgstr "資料庫最佳化"
+msgstr "備份資料庫"
 
 msgid ""
 "Backup all your Gallery data (item data, users, comments, etc.) to a single file in your "
@@ -656,22 +648,26 @@ msgid ""
 "your Gallery installation needs to be set into maintenance mode, as this is not done "
 "automatically."
 msgstr ""
+"將你所有的 Gallery 資料（項目、用戶、回應...等等）備份到你的資料儲存目錄裡的一個單一檔案中。"
+"這個備份不包括照片檔案。在進行備份之前，你的 Gallery 網站必需進入維護模式，這個動作並不會自動"
+"發生。"
 
 msgid "Backing up Gallery Database"
-msgstr ""
+msgstr "正在備份 Gallery 資料庫"
 
-#, fuzzy
 msgid "Exporting..."
-msgstr "準備中..."
+msgstr "滙出資料中..."
 
 #, c-format
 msgid "Database backup completed and the backup file is located at: %s"
-msgstr ""
+msgstr "資料庫備份完畢，備份檔案存放在：%s"
 
 msgid ""
 "Please note that your backup contains sensitive data (like passwords) and should not be "
 "stored online! We recommend that you download it from your server and keep it safely offline."
 msgstr ""
+"請注意你的備份資料含有敏感的資料（像密碼），不應該存在線上可以存取的位置！我們建議你從伺服器"
+"下載檔案後存在離線的設備中。"
 
 msgid "Delete user sessions"
 msgstr "刪除用戶連線"
@@ -706,15 +702,15 @@ msgstr "無法刪除目錄：%s"
 msgid "Delete template cache"
 msgstr "刪除樣版快取"
 
-#, fuzzy
 msgid ""
 "Gallery compiles template files and saves them for increased performance.  If you're "
 "experiencing problems that say <i>Smarty error</i> then you might try running this task.  "
 "Also run this if you add or remove any local/*.tpl or theme override so Smarty will find the "
 "right file."
 msgstr ""
-"Gallery 編譯樣版檔案並把它們存起來以增加速度。如果你遇到問題表示「Smarty error」，則你可以試"
-"著執行這個工作。這個工作也可以用來刪除 local/*.tpl 檔案讓 Smarty 轉回使用預設的 tpl 檔案。"
+"Gallery 編譯樣版檔案並把它們存起來以增加速度。如果你遇到<i>Smarty error</i>的問題，則你可以試"
+"著執行這個工作。這個工作也可以用來在你增刪任何 local/*.tpl 或修改佈景主題檔案之後讓 Smarty 找"
+"到正確的檔案。"
 
 msgid "Template cache deleted successfully"
 msgstr "樣版快取刪除成功"
@@ -1044,11 +1040,10 @@ msgstr "不明文件"
 
 #, c-format
 msgid "API = Core %s, Module %s, Theme %s, Embed %s"
-msgstr ""
+msgstr "API = 核心 %s，模組 %s，佈景主題 %s，內嵌 %s"
 
-#, fuzzy
 msgid "Gallery URL"
-msgstr "Gallery"
+msgstr "Gallery 網址"
 
 msgid "Gallery version"
 msgstr "Gallery 版本"
@@ -1075,7 +1070,7 @@ msgid "gettext"
 msgstr "gettext"
 
 msgid "enabled"
-msgstr "啟動"
+msgstr "啟用"
 
 msgid "disabled"
 msgstr "關閉"
@@ -1092,70 +1087,68 @@ msgstr "%s 表格中的列數 = %d"
 
 #, c-format
 msgid "The %s \"%s\" is not installed and will not be backed up."
-msgstr ""
+msgstr "%s「%s」並未安裝所以不會被備份。"
 
-#, fuzzy
 msgid "module"
 msgstr "模組"
 
-#, fuzzy
 msgid "theme"
 msgstr "佈景主題"
 
 #, c-format
 msgid "\"%s\" has no creation sql and will not be backed up."
-msgstr ""
+msgstr "「%s」並未產生資料庫資料所以不會被備份。"
 
 #, c-format
 msgid "Unable to load table description for \"%s\", no data will be exported."
-msgstr ""
+msgstr "無法載入描述「%s」表格，不會滙出任何資料。"
 
 msgid ""
 "Unable to find the XML parser.  The PHP XML parsing extension must be loaded.  Terminating "
 "database import."
-msgstr ""
+msgstr "找不到 XML 解析程式。PHP 的 XML 解析延伸組件必需要載入才能繼續。資料庫滙入將會停止。"
 
 #, c-format
 msgid "The exported file is not the correct version. Expecting %s received %s."
-msgstr ""
+msgstr "滙出的檔案版本不正確。預期 %s 但是收到 %s。"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to close import file: %s"
-msgstr "無法刪除目錄：%s"
+msgstr "無法關閉滙入檔案：%s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to open import file: %s"
-msgstr "無法刪除目錄：%s"
+msgstr "無法開啟滙入檔案：%s"
 
 #, c-format
 msgid "Import file doesn't exist: %s"
-msgstr ""
+msgstr "滙入檔案不存在：%s"
 
 #, c-format
 msgid "Plugin %s is not currently available."
-msgstr ""
+msgstr "%s外掛組件目前無法使用。"
 
 #, c-format
 msgid "The available version of plugin \"%s\" may not be compatible with the imported version."
-msgstr ""
+msgstr "「%s」外掛組件可用的版本可能和滙入的版本不相容。"
 
 #, c-format
 msgid ""
 "The currently installed core API version required by \"%s\" may not be compatible with the "
 "imported version."
-msgstr ""
+msgstr "目前安裝的核心 API 版本，同時也是「%s」要求的版本，可能和滙入的版本不相容。"
 
 #, c-format
 msgid ""
 "The installed module API version required by \"%s\" may not be compatible with the imported "
 "version."
-msgstr ""
+msgstr "目前安裝的模組 API 版本，同時也是「%s」要求的版本，可能和滙入的版本不相容。"
 
 #, c-format
 msgid ""
 "The installed theme API version required by \"%s\" is not compatible with the imported "
 "version."
-msgstr ""
+msgstr "目前安裝的佈景主題 API 版本，同時也是「%s」要求的版本，可能和滙入的版本不相容。"
 
 msgid "Successfully saved theme settings"
 msgstr "佈景主題設定儲存成功"
@@ -1234,9 +1227,8 @@ msgstr "連線期間存活時間"
 msgid "Inactivity Timeout"
 msgstr "閑置時間超時"
 
-#, fuzzy
 msgid "Site Administration Session Timeout"
-msgstr "Gallery 網站管理"
+msgstr "網站管理連線期間超時"
 
 msgid "Embedded Markup"
 msgstr "內嵌標簽"
@@ -1275,7 +1267,7 @@ msgid "Password"
 msgstr "密碼"
 
 msgid "SMTP From Address"
-msgstr "SMTP發件人地址"
+msgstr "SMTP 發件人地址"
 
 msgid "Invalid email address"
 msgstr "Email 地址不正確"
@@ -1627,48 +1619,38 @@ msgid "%d failed login attempt since the last successful login."
 msgid_plural "%d failed login attempts since the last successful login."
 msgstr[0] "自從上次成功登入後有 %d 次失敗的登入嘗試。"
 
-#, fuzzy
 msgid "Recent Events"
-msgstr "重置觀賞次數"
+msgstr "最近事件"
 
 msgid "Type"
 msgstr "類型"
 
-#, fuzzy
 msgid "Location"
-msgstr "操作"
+msgstr "檔案路徑"
 
-#, fuzzy
 msgid "Client"
-msgstr "列表"
+msgstr "瀏覽程式位置"
 
-#, fuzzy
 msgid "No events have been reported yet."
-msgstr "沒有選取任何軟體包。"
+msgstr "還沒有事件報告。"
 
-#, fuzzy
 msgid "Event Details"
-msgstr "錯誤細節"
+msgstr "事件細節"
 
-#, fuzzy
 msgid "User Id"
-msgstr "用戶"
+msgstr "用戶編號"
 
-#, fuzzy
 msgid "Referer"
-msgstr "改變順序"
+msgstr "來源網址"
 
-#, fuzzy
 msgid "Details"
-msgstr "預設值"
+msgstr "細節"
 
-#, fuzzy
 msgid "no summary"
-msgstr "摘要"
+msgstr "沒有摘要"
 
-#, fuzzy
 msgid "An error occurred while retrieving the event log entry details."
-msgstr "與資料庫交換時發生一個錯誤。"
+msgstr "與取得事件記錄細節時發生錯誤。"
 
 msgid "Group Management"
 msgstr "成員組管理"
@@ -1734,39 +1716,37 @@ msgstr "請確定你的網路連線的設定是正確的或稍後再試。"
 
 #, c-format
 msgid "Failed to scan status from plugin: %s."
-msgstr "無法掃描外掛組件%s的狀況。"
+msgstr "無法掃描%s外掛組件的狀況。"
 
 msgid ""
 "Your local copy of the repository was broken and has been fixed.  Please download the plugin "
 "list again."
 msgstr "你在本機的軟體庫拷貝損壞了但已經修復。請再下載一次外掛組件清單。"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to delete the locale directory for %s."
-msgstr "無法刪除目錄：%s"
+msgstr "無法刪除%s的區域資料目錄。"
 
 #, c-format
 msgid "Failed to download the following language packages for the %s plugin:"
-msgstr ""
+msgstr "無法下載%s外掛組件的下列語文包："
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to install language packages for %s plugin because the following files/directories "
 "could not be modified:"
-msgstr "下載%s外掛組件失敗了。因為無法修改下列的檔案或目錄："
+msgstr "無法安裝%s外掛組件的語文，因為無法修改下列的檔案或目錄："
 
-#, fuzzy
 msgid "The repository index has been successfully refreshed."
 msgstr "成功更新軟體庫索引。"
 
-#, fuzzy
 msgid "The language settings have been saved."
-msgstr "沒有選取任何軟體包。"
+msgstr "語言設定儲存完畢。"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%d language pack upgraded or downloaded."
 msgid_plural "%d language packs upgraded or downloaded."
-msgstr[0] "刪除了%d個語文包。"
+msgstr[0] "升級或下載了%d個語文包。"
 
 #, c-format
 msgid "%d language pack deleted."
@@ -1774,7 +1754,7 @@ msgid_plural "%d language packs deleted."
 msgstr[0] "刪除了%d個語文包。"
 
 msgid "All the language packages for the selected languages are current"
-msgstr ""
+msgstr "所有選取語言的語文包都是最新版的"
 
 msgid ""
 "Select language defaults for Gallery. Individual users can override this setting in their "
@@ -1795,7 +1775,7 @@ msgstr "檢查瀏覽程式偏好"
 msgid ""
 "Your webserver does not support localization.  Please instruct your system administrator to "
 "reconfigure PHP with the %s option enabled."
-msgstr "你的網頁伺服器不支援本土化。請聯絡你的系統管理員重新設定 PHP 以啟動 %s 選項。"
+msgstr "你的網頁伺服器不支援本土化。請聯絡你的系統管理員重新設定 PHP 以啟用 %s 選項。"
 
 msgid "Configure your Gallery"
 msgstr "設定你的 Gallery"
@@ -1810,62 +1790,59 @@ msgstr ""
 msgid ""
 "Before you can proceed, please insure the following directories and sub-directories are "
 "writable, so that Gallery can install plugins for you:"
-msgstr ""
+msgstr "在繼續之前，請確認下列的目錄和子目錄是可以寫入的，否則 Gallery 無法為你安裝外掛組件："
 
-#, fuzzy
 msgid ""
 "If you have trouble changing permissions, ask your system administrator for assistance.  "
 "When you've fixed the permissions, click the Check Again button to proceed."
 msgstr ""
-"如果你無法變更存取權限，請要求𡌅的系統管理員幫忙。當你修改好了存取權限後，請按「繼續」。"
+"如果你無法變更存取權限，請要求你的系統管理員幫忙。當你修改好了存取權限後，請按「再檢查一"
+"次」。"
 
-#, fuzzy
 msgid "Check Again"
-msgstr "選擇全部"
+msgstr "再檢查一次"
 
-#, fuzzy
 msgid "Add or Remove Languages"
-msgstr "增加／刪除用戶"
+msgstr "增加或刪除語言"
 
 msgid ""
 "Please click on the link below to go to 'Download Plugin List' and choose 'Update Plugin "
 "List' to get the latest language package information."
 msgstr ""
+"請按下面的鏈接前往「下載外掛組件清單」，再選擇「更新所有外掛組件清單」來取得最新的語文包資"
+"訊。"
 
-#, fuzzy
 msgid "Administer Repositories"
-msgstr "社區共享軟體庫"
+msgstr "管理軟體庫"
 
-#, fuzzy
 msgid "Upgrade"
 msgstr "升級"
 
 msgid "Remove"
 msgstr "刪除"
 
-#, fuzzy
 msgid "Download"
 msgstr "下載"
 
-#, fuzzy
 msgid "No Change"
-msgstr "變更"
+msgstr "不作變更"
 
-#, fuzzy
 msgid "Select All"
-msgstr "選擇"
+msgstr "選擇全部"
 
 msgid ""
 "There are no local repository indices from which to determine language packages. Please "
 "click on the link below to go to \"Download Plugin List\" and choose \"Update Plugin List\" "
 "to get the latest language package information."
 msgstr ""
+"主機上沒有可用來選用語文包的軟體庫索引資料。請按下面的鏈接前往「下載外掛組件清單」，再選擇"
+"「更新所有外掛組件清單」來取得最新的語文包資訊。"
 
 msgid "System Maintenance"
 msgstr "系統維護"
 
 msgid "Gallery must be in maintenance mode before the task can be run."
-msgstr ""
+msgstr "Gallery 必需進入維護模式才能執行該工作。"
 
 #, c-format
 msgid "Completed %s task successfully."
@@ -1876,37 +1853,36 @@ msgid "The %s task failed to complete successfully."
 msgstr "%s工作無法完成。"
 
 msgid "Maintenance Mode has been turned on."
-msgstr ""
+msgstr "維護模式已經打開"
 
 msgid "Maintenance Mode has been turned off."
-msgstr ""
+msgstr "維護模式已經關閉"
 
-#, fuzzy
 msgid "Maintenance Mode"
-msgstr "維護"
+msgstr "維護模式"
 
 msgid "Restrict user access to the system while maintenance is being performed."
-msgstr ""
+msgstr "在進行維護時限制使用者使用這個系統。"
 
-#, fuzzy
 msgid "Maintenance Mode Url"
-msgstr "維護"
+msgstr "維護模式網址"
 
 msgid ""
 "The Maintenance Mode Url specifies where requests will be redirected when access to the site "
 "has been restricted by the administrator."
-msgstr ""
+msgstr "維護模式網址可用來指定進入維護模式時，對網站的存取要求要轉往何處。"
 
 msgid ""
 "If left blank Gallery will display a default page with an administrator login link. This "
 "page will be themed when the code base is up to date, otherwise it will display a plain "
 "unstyled page."
 msgstr ""
+"如果留空的話，Gallery 會顯示含有管理員登入鏈接的預設頁面。當程式碼完全更新時，這個頁面會用佈"
+"景主題顯示，否則只會顯示一個沒有樣式的簡單頁面。"
 
 msgid "For example: /maintenance.html"
-msgstr ""
+msgstr "例如：/maintenance.html"
 
-#, fuzzy
 msgid "Set"
 msgstr "設定"
 
@@ -2002,9 +1978,8 @@ msgstr "訪客"
 msgid "Expires after:"
 msgstr "有效期限："
 
-#, fuzzy
 msgid "Template Cache"
-msgstr "刪除樣版快取"
+msgstr "樣版快取"
 
 #, c-format
 msgid ""
@@ -2012,10 +1987,11 @@ msgid ""
 "your template files%s, you should disable template caching temporarily so that changes take "
 "effect immediately without clearing the template cache."
 msgstr ""
+"為了達成最高的效率，Gallery 將樣版存在快取中。如果你要%s自定樣版檔案%s，你最好暫時關閉樣版快"
+"取，這樣不必清除樣版快取就可以馬上看到修改的結果。"
 
-#, fuzzy
 msgid "Enable template caching"
-msgstr "刪除樣版快取"
+msgstr "啟用樣版快取"
 
 msgid "Clear Saved Pages"
 msgstr "清除儲存頁面"
@@ -2027,7 +2003,7 @@ msgid "__PLUGIN__ deactivated"
 msgstr "__PLUGIN__已關閉"
 
 msgid "Status: Active"
-msgstr "狀態：啟動"
+msgstr "狀態：使用中"
 
 msgid "__PLUGIN__ activated"
 msgstr "__PLUGIN__已啟用"
@@ -2075,12 +2051,11 @@ msgstr "否"
 msgid "Do you really want to delete __PLUGIN__?"
 msgstr "你確定要刪除__PLUGIN__？"
 
-#, fuzzy
 msgid "This plugin will be uninstalled and its files will be deleted permanently."
 msgstr "這個外掛組件將被卸載而且它的檔案將被刪除。"
 
 msgid "The files of this plugin will be deleted permanently."
-msgstr ""
+msgstr "這個外掛組件的檔案將被刪除。"
 
 msgid "disabled(__COUNT__)"
 msgstr "關閉（__COUNT__）"
@@ -2119,7 +2094,7 @@ msgid ""
 "don't wish to use a feature, you can deactivate it."
 msgstr ""
 "Gallery 相關功能均來自獨立的外掛組件。你可以通過下載並安裝外掛組件來增加 Gallery 功能，或關閉"
-"外掛組件來停用不使用的功能。要使用一個功能，你必須安裝，設定（如需要）並啟動它。如果你不想使"
+"外掛組件來停用不使用的功能。要使用一個功能，你必須安裝，設定（如需要）並啟用它。如果你不想使"
 "用一個功能，可以關閉它。"
 
 msgid "Plugin Name"
@@ -2146,7 +2121,7 @@ msgstr "不相容的外掛組件！"
 
 #, c-format
 msgid "Core API Required: %s (available: %s)"
-msgstr "核心API需要：%s（%s 可用）"
+msgstr "核心 API 需要：%s（%s 可用）"
 
 #, c-format
 msgid "Plugin API Required: %s (available: %s)"
@@ -2172,19 +2147,20 @@ msgstr "軟體庫"
 
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
-msgstr ""
+msgstr "無法下載%s外掛組件的下列軟體包："
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to install the %s plugin because the following files/directories could not be "
 "modified:"
-msgstr "下載%s外掛組件失敗了。因為無法修改下列的檔案或目錄："
+msgstr "%s外掛組件的安裝失敗了。因為無法修改下列的檔案或目錄："
 
 #, c-format
 msgid ""
 "Some plugins could not be automatically upgraded because they are in use.  Please return to "
 "the %sPlugins%s page and click the upgrade link for each of the following plugins:"
 msgstr ""
+"有些外掛組件正在使用中，無法自動更新。請回到%s外掛組件%s頁面，按這些外掛組件的個別升級鏈接："
 
 msgid "The repository index has been successfully updated."
 msgstr "成功更新軟體庫索引。"
@@ -2242,7 +2218,7 @@ msgid ""
 "If you have trouble changing permissions, ask your system administrator for assistance.  "
 "When you've fixed the permissions, click the Continue button to proceed."
 msgstr ""
-"如果你無法變更存取權限，請要求𡌅的系統管理員幫忙。當你修改好了存取權限後，請按「繼續」。"
+"如果你無法變更存取權限，請要求你的系統管理員幫忙。當你修改好了存取權限後，請按「繼續」。"
 
 msgid "Continue"
 msgstr "繼續"
@@ -2265,9 +2241,9 @@ msgstr ""
 "Gallery 的有新的版本，可是無法經由這個界面升級。升級可能會造成某些你的外掛組件無法使用，可是"
 "可能有其他新的組件需要這個新的版本的功能。下面是建議的升級步驟："
 
-#, fuzzy, c-format
+#, c-format
 msgid "%sDownload%s the new Gallery package"
-msgstr "%s下載%s Gallery 核心"
+msgstr "%s下載%s新的 Gallery 軟體包"
 
 #, c-format
 msgid "Read the %supgrade instructions%s and perform the upgrade"
@@ -2333,32 +2309,28 @@ msgstr "下載 %s"
 msgid "No packages have been selected."
 msgstr "沒有選取任何軟體包。"
 
-#, fuzzy
 msgid ""
 "Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
 "of the package to download."
-msgstr ""
-"下載一個軟體包以使用這個外掛組件。你可以透過下載那個軟體包的新版本來升級。語文包是可選用的，"
-"你只要下載你的網站要用的語文就可以了。"
+msgstr "你必需下載軟體包才能使用這個外掛組件。你可以透過下載那個軟體包的新版本來升級。"
 
 msgid "Base Packages"
 msgstr "基礎軟體包"
 
 #, c-format
 msgid "%s: version %s (build %s)"
-msgstr "%s：版本 %s（建立版號 %s）"
+msgstr "%s：版本 %s（版本號碼 %s）"
 
 #, c-format
 msgid "%s: version %s (build %s) %sdowngrading is not supported!%s"
-msgstr "%s：版本 %s（建立版號 %s）%s不支援降級！%s"
+msgstr "%s：版本 %s（版本號碼 %s）%s不支援降級！%s"
 
 #, c-format
 msgid "%sCurrently Installed%s: version %s (build %s)"
-msgstr "%s目前安裝%s：版本 %s（建立版號 %s）"
+msgstr "%s目前安裝%s：版本 %s（版本號碼 %s）"
 
-#, fuzzy
 msgid "The following language packages are available for this plugin"
-msgstr "沒有相容的語文包"
+msgstr "這個外掛組件有下列的語文包可選用"
 
 #, c-format
 msgid "%s version %s (upgrading from %s)"
@@ -2387,7 +2359,7 @@ msgstr "Gallery 佈景主題"
 
 #, c-format
 msgid "Successfully activated theme %s"
-msgstr "佈景主題 %s 啟動成功"
+msgstr "佈景主題 %s 啟用成功"
 
 #, c-format
 msgid "Successfully deactivated theme %s"
@@ -2430,13 +2402,14 @@ msgid ""
 "The %s theme is incompatible with your Gallery version or no longer available.  Please "
 "upgrade the %s theme or pick another default theme."
 msgstr ""
+"%s佈景主題你的 Gallery 版本不相容或已經不再提供了。請升級%s佈景主題或選用另一個預設佈景主題。"
 
 msgid "New albums"
 msgstr "新相簿"
 
 #, c-format
 msgid "To activate more themes visit the %sPlugins%s page."
-msgstr ""
+msgstr "前往%s外掛組件%s頁面以啟用其他佈景主題。"
 
 msgid "Save Defaults"
 msgstr "儲存預設值"
@@ -2600,14 +2573,14 @@ msgid ""
 msgstr "因為失去了連線資料，你的更動無法完成。請再試一次。如果仍然不能完完，試著登出再登入。"
 
 msgid "An error has occurred while interacting with the database."
-msgstr "與資料庫交換時發生一個錯誤。"
+msgstr "與資料庫交換時發生錯誤。"
 
 msgid ""
 "The exact nature of database errors is not captured unless Gallery debug mode is enabled in "
 "config.php.  Before seeking support for this error please enable buffered debug output and "
 "retry the operation.  Look near the bottom of the lengthy debug output to find error details."
 msgstr ""
-"除非在 config.php 中啟動 Gallery 除錯模式，確切的資料庫錯誤內容不會被記錄。在尋求有關這個錯誤"
+"除非在 config.php 中啟用 Gallery 除錯模式，確切的資料庫錯誤內容不會被記錄。在尋求有關這個錯誤"
 "的協助前，請打開緩衝式除錯輸出並再試一次。在除錯輸出最後可以找到錯誤細節。"
 
 msgid "An error has occurred while interacting with the platform."
@@ -2625,7 +2598,7 @@ msgid "Item not found."
 msgstr "找不到項目。"
 
 msgid "An error has occurred."
-msgstr "發生一個錯誤。"
+msgstr "發生錯誤。"
 
 msgid "Back to the Gallery"
 msgstr "返回 Gallery"
@@ -2637,16 +2610,16 @@ msgid "System Information"
 msgstr "系統資訊"
 
 msgid "Not all of the specified items have been added successfully."
-msgstr ""
+msgstr "有些指定的項目並未加入成功。"
 
 msgid ""
 "You don't have any Graphics Toolkit activated that can handle JPEG images.  If you add "
 "images, you will probably not have any thumbnails."
-msgstr "你沒有任何啟動的圖形工具可以處理JPEG圖片。若增加圖片，你可能無法生成縮略圖。"
+msgstr "你沒有任何啟用的圖形工具可以處理JPEG圖片。若增加圖片，你可能無法生成縮略圖。"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Visit the %sModules%s page to activate a Graphics Toolkit."
-msgstr "前往<a href=\"%s\">模組</a>頁面以啟動圖形工具。"
+msgstr "前往%s模組%s頁面以啟用圖形工具。"
 
 msgid "Add Sub-Album"
 msgstr "增加子相簿"
@@ -2766,11 +2739,10 @@ msgstr "（第 %2$d 之 %1$d 頁）"
 msgid "Items selected here will remain selected when moving between pages."
 msgstr "在這裡選擇的項目在不同頁面間移動時仍然會保持選取的狀態。"
 
-# gettext claims this translation should have a %d in it
-#, fuzzy, c-format
+#, c-format
 msgid "One item selected on other pages."
 msgid_plural "%d items selected on other pages."
-msgstr[0] "在其他頁面中有一個選取的項目。"
+msgstr[0] "在其他頁面中有%d個選取的項目。"
 
 msgid "(data)"
 msgstr "（資料）"
@@ -2798,13 +2770,12 @@ msgstr "上一頁"
 msgid "Next Page"
 msgstr "下一頁"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Do you really want to delete %s?"
-msgstr "你確定要刪除__PLUGIN__？"
+msgstr "你真的要刪除%s？"
 
-#, fuzzy
 msgid "Delete more items..."
-msgstr "刪除項目"
+msgstr "刪除其他項目..."
 
 msgid "There was a problem processing your request."
 msgstr "處理你的請求時出現問題。"
@@ -2836,7 +2807,7 @@ msgid "Each item in your album can have multiple sizes. Define the default sizes
 msgstr "在你的相簿中的每個項目可以包含多種大小。請在這裡定義預設大小。"
 
 msgid "Active"
-msgstr "啟動"
+msgstr "啟用"
 
 msgid "Target Size (pixels)"
 msgstr "目標大小（像素數）"
@@ -2963,23 +2934,21 @@ msgstr "這是這個項目的詳細描述。"
 msgid "%s Date and Time"
 msgstr "%s日期和時間"
 
-#, fuzzy
 msgid "Link Date and Time"
-msgstr "%s日期和時間"
+msgstr "鏈接日期和時間"
 
 msgid "Set the date and time when this image was captured."
 msgstr "把這個圖片的日期和時間設成記錄時的日期和時間。"
 
 msgid "Set the date and time to be displayed for this item."
-msgstr "為這個項目設定顯示的日期和時間。"
+msgstr "設定這個項目顯示的日期和時間。"
 
 #, c-format
 msgid "Set the date and time to be displayed for this %s."
-msgstr "為這個%s設定顯示的日期和時間。"
+msgstr "設定這個%s顯示的日期和時間。"
 
-#, fuzzy
 msgid "Set the date and time to be displayed for this link."
-msgstr "為這個項目設定顯示的日期和時間。"
+msgstr "設定這個鏈接顯示的日期和時間。"
 
 msgid "Date:"
 msgstr "日期："
@@ -3004,7 +2973,7 @@ msgstr "設定縮略圖大小。最大縮略圖大小將不會超過這個值。
 msgid ""
 "There are no graphics toolkits enabled that support this type of item, so we cannot create "
 "or modify a thumbnail."
-msgstr "沒有啟動的圖形工具支援這個照片格式，所以無法建立或更改縮略圖。"
+msgstr "沒有使用中的圖形工具支援這個照片格式，所以無法建立或更改縮略圖。"
 
 msgid "Unable to create a thumbnail for this item"
 msgstr "無法產生這個項目的縮略圖"
@@ -3033,7 +3002,7 @@ msgstr "這些是在觀看時可選擇的不同縮放大小版本。"
 msgid ""
 "There are no graphics toolkits enabled that support this type of photo, so we cannot create "
 "or modify resized versions."
-msgstr "沒有啟動的圖形工具支援這個照片格式，所以無法建立或更改縮放大小的版本。"
+msgstr "沒有使用中的圖形工具支援這個照片格式，所以無法建立或更改縮放大小的版本。"
 
 msgid ""
 "You can select which part of the photo will be used for the thumbnail.  This will have no "
@@ -3055,7 +3024,7 @@ msgstr "重置為預設值"
 msgid ""
 "There are no graphics toolkits enabled that support this type of photo, so we cannot crop "
 "the thumbnail."
-msgstr "沒有啟動的圖形工具支援這個照片格式，所以無法裁切縮略圖。"
+msgstr "沒有使用中的圖形工具支援這個照片格式，所以無法裁切縮略圖。"
 
 msgid "Rotate"
 msgstr "旋轉"
@@ -3075,7 +3044,7 @@ msgstr "順時針90&deg;"
 msgid ""
 "There are no graphics toolkits enabled that support this type of photo, so we cannot rotate "
 "it."
-msgstr "沒有啟動的圖形工具支援這個照片格式，所以無法旋轉它。"
+msgstr "沒有使用中的圖形工具支援這個照片格式，所以無法旋轉它。"
 
 msgid "Scale"
 msgstr "縮放"
@@ -3091,7 +3060,7 @@ msgstr ""
 msgid ""
 "There are no graphics toolkits enabled that support this type of photo, so we cannot scale "
 "it."
-msgstr "沒有啟動的圖形工具支援這個照片格式，所以無法縮放它。"
+msgstr "沒有使用中的圖形工具支援這個照片格式，所以無法縮放它。"
 
 msgid "You must enter a size"
 msgstr "你必須輸入一個大小"
@@ -3146,6 +3115,8 @@ msgid ""
 "version or no longer available.  Please upgrade the %s theme or use another theme for this "
 "album."
 msgstr ""
+"這個相簿設定中使用了%s佈景主題，它和這個 Gallery 版本不相容或已經不再提供了。請升級%s佈景主題"
+"或在這個相簿中使用其他佈景主題。"
 
 #, c-format
 msgid ""
@@ -3202,15 +3173,14 @@ msgid "Choose the items you want to move"
 msgstr "選擇你要移動的項目"
 
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 msgid ""
 "The destination you chose does not accept sub-albums, so all sub-albums have been deselected."
 msgstr "你選擇的目標位置不接受子相簿，所以所有子相簿已被取消選擇。"
 
-#, fuzzy
 msgid "Warning"
-msgstr "警告！"
+msgstr "警告"
 
 msgid ""
 "The destination you chose only accepts sub-albums, so all non-albums have been deselected."
@@ -3433,9 +3403,9 @@ msgstr "圖片"
 msgid "color"
 msgstr "顏色"
 
-#, fuzzy, c-format
+#, c-format
 msgid "You can also use the %scolor name%s for example: %sYour Text%s"
-msgstr "你也可以使用<a href=\"%s\" target=\"_new\">顏色名稱</a>，例如：%s"
+msgstr "你也可以使用%s顏色名稱%s，例如：%s你的內文%s"
 
 msgid "Configuration Error: Missing Theme"
 msgstr "設定錯誤：沒有佈景主題"
@@ -3447,13 +3417,13 @@ msgstr "沒有佈景主題"
 msgid ""
 "This page is configured to use the %s theme, but it is either inactive, not installed, or "
 "incompatible."
-msgstr "此頁面已設定使用 %s 佈景主題，但是這個佈景主題沒有啟動，沒有安裝或不相容。"
+msgstr "此頁面已設定使用 %s 佈景主題，但是這個佈景主題沒有啟用，沒有安裝或不相容。"
 
 #, c-format
 msgid ""
 "This album is configured to use the %s theme, but it is either inactive, not installed, or "
 "incompatible."
-msgstr "此相簿已設定使用 %s 佈景主題，但是這個佈景主題沒有啟動，沒有安裝或不相容。"
+msgstr "此相簿已設定使用 %s 佈景主題，但是這個佈景主題沒有啟用，沒有安裝或不相容。"
 
 #, c-format
 msgid ""
@@ -3546,22 +3516,22 @@ msgstr "你的密碼已經重新取得，請登入。"
 msgid ""
 "The administration session has expired, please re-authenticate to access the administration "
 "area."
-msgstr ""
+msgstr "網站管理連線期間已經過期，請重新認証以使用管理功能。"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Logins to this account are temporarily disabled due to multiple failed login attempts.  Wait "
 "for access to be restored, or use the %srecover password%s page to re-enable this account."
 msgstr ""
-"由於多次失敗的登入嘗試，這個帳號的登入功能已暫時停用。請等待登入功能恢復，或利用<a href=\"%s"
-"\">重新取得密碼</a>頁面來重新啟用這個帳號。"
+"由於多次失敗的登入嘗試，這個帳號的登入功能已暫時停用。請等待登入功能恢復，或利用%s重新取得密"
+"碼%s頁面來重新啟用這個帳號。"
 
 msgid "Your login information is incorrect.  Please try again."
 msgstr "你的登入資訊不正確，請再試。"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Lost or forgotten passwords can be retrieved using the %srecover password%s page"
-msgstr "遺失或忘記的密碼可以用<a href=\"%s\">重新取得密碼</a>頁面來重新取得。"
+msgstr "遺失或忘記的密碼可以用%s重新取得密碼%s頁面來重新取得。"
 
 #, c-format
 msgid "Welcome, %s!"
@@ -3692,18 +3662,17 @@ msgstr "重新載入"
 msgid "This page will allow you to reset the password on your account."
 msgstr "這個頁面可用來重設你的帳戶的密碼。"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "There is no request which matches the username and authorization provided. Request a new "
 "authorization from the %slost password page%s."
-msgstr ""
-"找不到符合你提供的用戶名稱和授權的要求。請從<a href=\"%s\">遺失密碼頁面</a>發一個新的授權。"
+msgstr "找不到符合你提供的用戶名稱和授權的要求。請從%s遺失密碼頁面%s發一個新的授權。"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The request you are trying to access has expired.  Request a new authorization from the %"
 "slost password page%s."
-msgstr "你要存取的請求已經逾時。請從<a href=\"%s\">遺失密碼頁面</a>發一個新的授權。"
+msgstr "你要存取的請求已經逾時。請從%s遺失密碼頁面%s發一個新的授權。"
 
 msgid "Authorization missing"
 msgstr "沒有授權"
@@ -3775,9 +3744,9 @@ msgstr "&laquo; 項目操作 &raquo;"
 msgid "Go"
 msgstr "開始"
 
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: block %s doesn't exist."
-msgstr "成員組「%s」不存在"
+msgstr "警告：%s區塊不存在。"
 
 msgid "next"
 msgstr "下一頁"
@@ -3831,49 +3800,3 @@ msgstr "登入區塊"
 
 msgid "Links to album/photo peers"
 msgstr "連到同級相簿或照片"
-
-#~ msgid "Language Packages"
-#~ msgstr "語文包"
-
-#~ msgid "(%sselect all%s%sselect none%s)"
-#~ msgstr "（%s全選%s%s全不選%s）"
-
-#~ msgid "You must select a base package before choosing language packs."
-#~ msgstr "你必需先選一個基礎軟體包才能選擇語文包。"
-
-#~ msgid "Back to %s"
-#~ msgstr "返回%s"
-
-#~ msgid "Back"
-#~ msgstr "返回"
-
-#~ msgid "Navigation"
-#~ msgstr "導覽工具"
-
-#~ msgid "delete confirmation"
-#~ msgstr "刪除確認"
-
-#~ msgid "delete %s"
-#~ msgstr "刪除%s"
-
-#~ msgid "Deletion Complete"
-#~ msgstr "刪除完成"
-
-#~ msgid "Item successfully deleted"
-#~ msgstr "項目已刪除成功"
-
-#~ msgid "Are you sure you want to delete this %s?"
-#~ msgstr "你確定要刪除這個%s嗎？"
-
-#~ msgid "It contains %d item."
-#~ msgid_plural "It contains %d items."
-#~ msgstr[0] "包含 %d 個項目。"
-
-#~ msgid "There is no undo!"
-#~ msgstr "無法取消操作！"
-
-#~ msgid "key"
-#~ msgstr "主鍵"
-
-#~ msgid "G2.2: Double Double"
-#~ msgstr "G2.2: Double Double"

@@ -242,7 +242,7 @@ class RssRenderTest extends GalleryControllerTestCase {
 		'</item>',
 		'</channel>',
 		'</rss>'),
-	    split($platform->getLineEnding(), $results));
+	    explode($platform->getLineEnding(), $results));
     }
 
     function testRssSimpleRenderPhotos() {
@@ -299,7 +299,7 @@ class RssRenderTest extends GalleryControllerTestCase {
 		'</item>',
 		'</channel>',
 		'</rss>'),
-	    split($platform->getLineEnding(), $results));
+	    explode($platform->getLineEnding(), $results));
     }
 }
 

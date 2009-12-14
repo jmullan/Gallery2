@@ -385,7 +385,7 @@ class GdToolkitHelper {
 	static $gdFunctionality;
 	if (!isset($gdFunctionality)) {
 	    GalleryCoreApi::requireOnce('modules/gd/classes/GdFunctionality.class');
-	    $gdFunctionality =& new GdFunctionality();
+	    $gdFunctionality = new GdFunctionality();
 	}
 	return $gdFunctionality;
     }

@@ -851,7 +851,8 @@ class GalleryUtilities {
 	GalleryCoreApi::requireOnce('lib/pear/Safe.php');
 	static $parser;
 	if (!isset($parser)) {
-	    $parser =& new HTML_Safe();
+	    $tmp = new HTML_Safe();
+	    $parser =& $tmp;
 	}
 	if ($decode) {
 	    GalleryUtilities::unsanitizeInputValues($html, false);

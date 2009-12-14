@@ -595,7 +595,7 @@ class ItemAddWebCamTestPlatform {
 	} else {
 	    $buf = join("\n", $this->_readBuffer[$handle]);
 	    $tmp = substr($buf, 0, $length);
-	    $this->_readBuffer[$handle] = split("\n", substr($buf, $length+1));
+	    $this->_readBuffer[$handle] = explode("\n", substr($buf, $length+1));
 	    return $tmp;
 	}
     }

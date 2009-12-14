@@ -980,9 +980,9 @@ class ImageMagickToolkitTestPlatform {
 		}
 	    }
 	    if (isset($data[$file])) {
-		$output = split("\n", $data[$file]);
+		$output = explode("\n", $data[$file]);
 	    } else {
-		$output = split("\n", $this->_environment['identify']['UNKNOWN']);
+		$output = explode("\n", $this->_environment['identify']['UNKNOWN']);
 	    }
 	    $status = true;
 	} else if (($binary == 'convert' && in_array('convert', $this->_environment['binaries']))

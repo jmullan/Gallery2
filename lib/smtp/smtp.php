@@ -46,10 +46,10 @@ function smtpmail($config, $to, $subject, $body, $headers=null) {
 	$headers = preg_replace('#(?<!\r)\n#si', "\r\n", $headers);
 
 	if (preg_match('#^cc:\s*(.*?)\s*$#mi', $headers, $match)) {
-	    $cc = split(', *', $match[1]);
+	    $cc = preg_split('/, */', $match[1]);
 	}
 	if (preg_match('#^bcc:\s*(.*?)\s*$#mi', $headers, $match)) {
-	    $bcc = split(', *', $match[1]);
+	    $bcc = preg_split('/, */', $match[1]);
 	    $headers = preg_replace('#^bcc:.*$#mi', '', $headers);
 	}
     }

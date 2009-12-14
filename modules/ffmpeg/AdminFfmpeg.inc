@@ -327,7 +327,8 @@ class AdminFfmpegView extends GalleryView {
 	$AdminFfmpeg['debugSnippet'] = $debugSnippet;
 	$AdminFfmpeg['failCount'] = $failCount;
 	$AdminFfmpeg['isConfigure'] = !$isActive;
-	$AdminFfmpeg['canExec'] = !in_array('exec', split(',\s*', ini_get('disable_functions')));
+	$AdminFfmpeg['canExec'] =
+	    !in_array('exec', preg_split('/,\s*/', ini_get('disable_functions')));
 	$AdminFfmpeg['canWatermark'] = isset($toolkit);
 
 	if ($failCount > 0) {

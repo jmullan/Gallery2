@@ -556,7 +556,8 @@ class RewriteHelperTest extends GalleryTestCase {
 	$expectedActiveRules = $activeRules;
 	$expectedShortUrls = array();
 	$expectedRegexRules = array();
-	$expectedRegexRules[] = array('pattern' => 'php\\.-/(.*)',
+	$dash = preg_quote('-');  # only PHP 5.3+ escapes dash
+	$expectedRegexRules[] = array('pattern' => 'php\\.' . $dash . '/(.*)',
 				      'keywords' => array(null, 'unit'),
 				      'queryString' => array(),
 				      'options' => $this->_defaultOptions,

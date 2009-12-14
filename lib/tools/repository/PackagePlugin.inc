@@ -40,13 +40,13 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
      * @return GalleryStatus a status code
      */
     function showAvailablePlugins() {
-	list ($ret, $plugins) = $this->getAvailablePluginList(array( 
+	list ($ret, $plugins) = $this->getAvailablePluginList(array(
 	    'package' => array('controller' => 'PackagePlugin', 'action' => 'packagePlugin')));
 	if ($ret) {
 	    return $ret;
 	}
 
-	$ret = $this->showView('PackagePlugin', array( 
+	$ret = $this->showView('PackagePlugin', array(
 	    'formVariablePrefix' => GALLERY_FORM_VARIABLE_PREFIX, 'plugins' => $plugins));
 	if ($ret) {
 	    return $ret;
@@ -147,12 +147,14 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 	    return array($ret, null);
 	}
 
+        $overwrite = GalleryUtilities::getRequestVariables('overwrite');
+
 	$integrityErrors = $descriptor->checkIntegrity();
 	$pluginInfo = array('pluginId' => $descriptor->getPluginId(),
 			    'outputDir' => $descriptor->getOutputDir());
 
 	if (empty($integrityErrors)) {
-	    $ret = $descriptor->writeToDisk(false, true);
+	    $ret = $descriptor->writeToDisk($overwrite, true);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -163,7 +165,7 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 		return array($ret, null);
 	    }
 
-	    list ($ret, $packagesWritten) = $package->writeAllPackagesToDisk(false, true);
+	    list ($ret, $packagesWritten) = $package->writeAllPackagesToDisk($overwrite, true);
 	    if ($ret) {
 		return array($ret, null);
 	    }

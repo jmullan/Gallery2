@@ -604,7 +604,7 @@ class GalleryPlatform {
      */
     function getLegalPathCharacters() {
 	/*
-	 * Keep the hyphen at the end of this string, else ereg() functions will complain if you use
+	 * Keep the hyphen at the end of this string, else preg functions will complain if you use
 	 * this in a bracket expression.
 	 */
 	return 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789# _.-';
@@ -622,7 +622,7 @@ class GalleryPlatform {
 	$legalChars = $this->getLegalPathCharacters();
 
 	/* Scrub out all the illegal characters */
-	$component = ereg_replace("[^$legalChars]", '_', $component);
+	$component = preg_replace("/[^$legalChars]/", '_', $component);
 
 	if (!$forDirectory) {
 	    /* Break it into filebase and extension */

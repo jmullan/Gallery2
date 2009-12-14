@@ -171,9 +171,6 @@ class Gallery {
     function Gallery() {
 	$this->_activeUser = null;
 
-	/* Set up a shutdown function to release any hanging locks */
-	register_shutdown_function(array(&$this, '_shutdown'));
-
 	/* Default config settings (can be overridden via config.php or embedded environment) */
 	$this->_config = array(
 	    'login' => true,		/* Offer UserAdmin links (Login/Logout/Your Account) */
@@ -192,6 +189,16 @@ class Gallery {
 	    'breadcrumbRootId' => null,  /* Can omit parents above this id in fetchParentSequence */
 	    'anonymousUserId' => null,   /* Alternate user account for guest sessions */
 	);
+    }
+
+    /**
+     * Register shutdown function to release any hanging locks.
+     * This used to be done in the constructor, but moved here to avoid php4 vs php5 issue
+     * ($gallery =& new Gallery() needed for php4, but this is deprecated in php5.3).
+     */
+    function init() {
+	/* Set up a shutdown function to release any hanging locks */
+	register_shutdown_function(array(&$this, '_shutdown'));
     }
 
     /**
