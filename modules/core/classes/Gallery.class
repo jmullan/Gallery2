@@ -874,7 +874,7 @@ class Gallery {
 	    header('Content-length: ' . $contentLength);
 	    header('Expires: ' . $this->getHttpDate(2147483647));
 	    header('Cache-Control: public');
-	    set_magic_quotes_runtime(0);
+	    if (get_magic_quotes_runtime()) @set_magic_quotes_runtime(0);/* deprecated in PHP5.3 */
 	    set_time_limit(0);
 	    while (!feof($fd)) {
 		print fread($fd, 4096);

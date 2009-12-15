@@ -314,11 +314,11 @@ class Mail_mime
             $cont =  "";
         }else{
             if ($magic_quote_setting = get_magic_quotes_runtime()){
-                set_magic_quotes_runtime(0);
+                @set_magic_quotes_runtime(0);
             }
             $cont = fread($fd, $filesize);
             if ($magic_quote_setting){
-                set_magic_quotes_runtime($magic_quote_setting);
+                @set_magic_quotes_runtime($magic_quote_setting);
             }
         }
         fclose($fd);
