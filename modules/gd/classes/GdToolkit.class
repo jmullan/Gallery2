@@ -61,7 +61,7 @@ class GdToolkit extends GalleryToolkit {
     function &_getGdFunctionality() {
 	if (!isset($this->_gdFunctionality)) {
 	    GalleryCoreApi::requireOnce('modules/gd/classes/GdFunctionality.class');
-	    $gd =& new GdFunctionality();
+	    $gd = new GdFunctionality();
 	    $this->setGdFunctionality($gd);
 	}
 	return $this->_gdFunctionality;

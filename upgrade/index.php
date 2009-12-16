@@ -168,7 +168,7 @@ if (!$error) {
     $currentStep =& $steps[$stepNumber];
 } else {
     require_once(dirname(__FILE__) . '/steps/RedirectToInstallerStep.class');
-    $currentStep =& new RedirectToInstallerStep();
+    $currentStep = new RedirectToInstallerStep();
 }
 
 if (!empty($_GET['doOver'])) {

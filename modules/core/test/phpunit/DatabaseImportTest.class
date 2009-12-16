@@ -42,7 +42,7 @@ class DatabaseImportTest extends GalleryTestCase {
 
     	global $gallery;
 
-	$this->_xmlParser =& new GalleryXmlProcessor($this);
+	$this->_xmlParser = new GalleryXmlProcessor($this);
 
     	$gallery->setPlatform(new UnitTestPlatform());
     	$gallery->_storage = new UnitTestStorage();

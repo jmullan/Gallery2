@@ -39,7 +39,7 @@ class TemplateAdapterTest extends GalleryTestCase {
 
     function _setupAdapterWithMocks() {
 	global $gallery;
-	$this->_mockUrlGenerator =& new TemplateAdapterMockUrlGenerator();
+	$this->_mockUrlGenerator = new TemplateAdapterMockUrlGenerator();
 	$gallery->setUrlGenerator($this->_mockUrlGenerator);
 
 	$this->_mockSmarty = new TemplateAdapterMockSmarty();
