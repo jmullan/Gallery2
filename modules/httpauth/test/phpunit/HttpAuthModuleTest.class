@@ -86,7 +86,7 @@ class HttpAuthModuleTest extends GalleryTestCase {
 	    '')) . "\n\n\n\n";
 
 	/* Use HttpAuthModuleTestPlatform */
-	$this->_platform =& new HttpAuthModuleTestPlatform();
+	$this->_platform = new HttpAuthModuleTestPlatform();
 	$this->_platform->_messages[$this->_httpAuthWorksRequest] =
 	    $this->_accessAuthorizationResponse;
 	$gallery->setPlatform($this->_platform);
