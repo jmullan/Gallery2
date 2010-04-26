@@ -42,11 +42,27 @@ function GalleryInitFirstPass($params=array()) {
 
     /* Load all the core Gallery classes */
     $galleryBase = dirname(__FILE__) . '/';
-    require_once($galleryBase . 'modules/core/classes/GalleryCoreApi.class');
+
+    /*
+     * Conditional class loading confuses APC resulting in
+     *   "Cannot redeclare class gallerycoreapi"
+     * log spam.  Only load GalleryCoreApi if it isn't loaded.
+     */
+    if (!class_exists("GalleryCoreApi")) {
+      require_once($galleryBase . 'modules/core/classes/GalleryCoreApi.class');
+    }
     GalleryCoreApi::requireOnce('modules/core/classes/GalleryConstants.class');
     GalleryCoreApi::requireOnce('modules/core/classes/GalleryCapabilities.class');
     GalleryCoreApi::requireOnce('modules/core/classes/GalleryView.class');
     GalleryCoreApi::requireOnce('modules/core/classes/GalleryModule.class');
+
+    /*
+     * Extra hack code for APC: preload some common classes.
+     */
+    if (function_exists("apc_add")) {
+      GalleryCoreApi::requireOnce('modules/core/classes/GalleryPhotoItem.class');
+      GalleryCoreApi::requireOnce('modules/core/classes/GalleryMovieItem.class');
+    }
 
     if (!strncasecmp(PHP_OS, 'win', 3)) {
 	GalleryCoreApi::requireOnce('modules/core/classes/GalleryPlatform/WinNtPlatform.class');
