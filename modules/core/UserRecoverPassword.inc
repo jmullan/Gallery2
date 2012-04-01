@@ -111,10 +111,8 @@ class UserRecoverPasswordController extends GalleryController {
 		}
 
 		if (isset($user) && $user->getEmail() != '') {
-
 		    /* Generate a unique auth string based on userName, time of request and IP */
-		    $authString = $phpVm->md5(
-			$user->getUserName() . time() . GalleryUtilities::getRemoteHostAddress());
+		    $authString = $this->_generateAuthString();
 
 		    /* Generate the request expiration: Now + 7 Days */
 		    $requestExpires = mktime(date('G'), date('i'), date('s'),
@@ -228,6 +226,16 @@ class UserRecoverPasswordController extends GalleryController {
 	$results['error'] = $error;
 
 	return array(null, $results);
+    }
+
+    /**
+     * Generate the authorization string used for login.txt
+     * @access private
+     */
+    function _generateAuthString() {
+        GalleryCoreApi::requireOnce('lib/joomla/crypt.php');
+        $j = new JCrypt();
+        return md5($j->genRandomBytes(32));
     }
 }
 

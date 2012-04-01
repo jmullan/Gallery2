@@ -11,6 +11,7 @@ var app_ww, app_wh, // Window width/height
     app_is_ie = app_agent.indexOf('msie') >= 0 && app_agent.indexOf('opera') < 0,
     app_is_ie7 = app_agent.indexOf('msie 7') >= 0 && app_agent.indexOf('opera') < 0,
     app_is_safari = app_agent.indexOf('safari') >= 0,
+    app_is_chrome = app_agent.indexOf('chrome') >= 0,
     app_body; // Scrollable document container (<body> element, or html for IE)
 if (window.attachEvent) {
   window.attachEvent("onload", app_onload);
@@ -36,7 +37,11 @@ function app_init() {
   iframe.frameBorder = 0;
   popup.replaceChild(iframe, popup.firstChild);
 
-  document.onkeypress = app_onkeypress;
+  if (app_is_chrome) {
+    document.onkeydown = app_onkeypress;
+  } else {
+    document.onkeypress = app_onkeypress;
+  }
   if (window.attachEvent) window.attachEvent("onresize", app_onresize);
   else if (window.addEventListener) window.addEventListener("resize", app_onresize, false);
 
